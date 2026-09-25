@@ -1,3 +1,5 @@
+@file:OptIn(androidx.compose.foundation.layout.ExperimentalLayoutApi::class)
+
 package com.partyos.tv.ui.bluff
 
 import androidx.compose.animation.AnimatedVisibility
@@ -16,13 +18,18 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -63,11 +70,15 @@ fun GameStage(stage: StageInfo, players: List<PlayerSummary>, scores: List<Score
 }
 
 @Composable
-private fun Header(title: String, subtitle: String, stage: StageInfo, totalMs: Long, badge: String? = null) {
+private fun Header(title: String, subtitle: String, stage: StageInfo, totalMs: Long, badge: String? = null, status: String? = null) {
     Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
         Column(Modifier.weight(1f)) {
             Text(title, style = MaterialTheme.typography.headlineLarge, color = Party.Brass)
             Text(subtitle, style = MaterialTheme.typography.titleLarge, color = Party.Muted)
+        }
+        status?.let {
+            Text(it, style = MaterialTheme.typography.headlineMedium, color = Party.Gold)
+            Spacer(Modifier.width(20.dp))
         }
         badge?.let {
             Text(it, style = MaterialTheme.typography.labelLarge, color = Party.Ink,
@@ -89,7 +100,7 @@ private fun TutorialStage(stage: StageInfo, t: TutorialView, players: List<Playe
             t.cards.forEachIndexed { i, c ->
                 Stagger(i) {
                     Column(
-                        Modifier.width(270.dp).height(210.dp).background(Party.FeltDeep, RoundedCornerShape(20.dp))
+                        Modifier.width(280.dp).heightIn(min = 210.dp).background(Party.FeltDeep, RoundedCornerShape(20.dp))
                             .border(2.dp, Party.Brass.copy(alpha = 0.6f), RoundedCornerShape(20.dp)).padding(20.dp),
                     ) {
                         Text("${i + 1}", style = MaterialTheme.typography.displayMedium, color = Party.Brass)
@@ -119,9 +130,14 @@ private fun BluffStage(stage: StageInfo, g: BluffTv, scores: List<ScoreRow>) {
         "podium" -> BluffBattle.PODIUM_MS
         else -> BluffBattle.REVEAL_STEP_MS * g.reveal.size + BluffBattle.REVEAL_TAIL_MS
     }
-    Column(Modifier.fillMaxSize().padding(horizontal = 48.dp, vertical = 36.dp)) {
-        Header("BLUFF BATTLE", subtitle, stage, total, badge)
-        Spacer(Modifier.height(20.dp))
+    val status = when (g.phase) {
+        "write" -> "${g.submitted}/${g.expected} bluffs in"
+        "pick" -> "${g.submitted}/${g.expected} picked"
+        else -> null
+    }
+    Column(Modifier.fillMaxSize().padding(horizontal = 48.dp, vertical = 24.dp)) {
+        Header("BLUFF BATTLE", subtitle, stage, total, badge, status)
+        Spacer(Modifier.height(12.dp))
         when (g.phase) {
             "write" -> WritePhase(g)
             "pick" -> PickPhase(g)
@@ -145,43 +161,47 @@ private fun PromptCard(text: String, big: Boolean) {
 }
 
 @Composable
-private fun Counter(done: Int, of: Int, noun: String) =
-    Text("$done / $of $noun", style = MaterialTheme.typography.headlineMedium, color = Party.Gold)
-
-@Composable
 private fun WritePhase(g: BluffTv) = Column(Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
     Spacer(Modifier.weight(0.5f))
     PromptCard(g.prompt, big = true)
     Spacer(Modifier.height(24.dp))
     Text("Write a fake answer on your phone that sounds true", style = MaterialTheme.typography.titleLarge, color = Party.Muted)
     Spacer(Modifier.weight(1f))
-    Counter(g.submitted, g.expected, "bluffs in")
 }
 
 @Composable
 private fun PickPhase(g: BluffTv) = Column(Modifier.fillMaxSize()) {
     PromptCard(g.prompt, big = false)
-    Spacer(Modifier.height(18.dp))
-    val rows = g.options.chunked(2)
-    Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        rows.forEachIndexed { r, pair ->
-            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                pair.forEachIndexed { c, text ->
-                    Stagger(r * 2 + c, Modifier.weight(1f)) { OptionCard(text, Party.Card, Party.Line) }
+    Spacer(Modifier.height(12.dp))
+    val n = g.options.size
+    val cols = when {
+        n <= 4 -> 2
+        n <= 9 -> 3
+        else -> 4
+    }
+    val dense = n > 9
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        g.options.chunked(cols).forEachIndexed { r, row ->
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                row.forEachIndexed { c, text ->
+                    Stagger(r * cols + c, Modifier.weight(1f)) { OptionCard(text, Party.Card, Party.Line, dense) }
                 }
-                if (pair.size == 1) Spacer(Modifier.weight(1f))
+                repeat(cols - row.size) { Spacer(Modifier.weight(1f)) }
             }
         }
     }
-    Counter(g.submitted, g.expected, "picked")
 }
 
 @Composable
-private fun OptionCard(text: String, fill: Color, edge: Color, content: @Composable () -> Unit = {}) {
+private fun OptionCard(text: String, fill: Color, edge: Color, dense: Boolean = false, content: @Composable () -> Unit = {}) {
     Column(
-        Modifier.fillMaxWidth().background(fill, RoundedCornerShape(16.dp)).border(2.dp, edge, RoundedCornerShape(16.dp)).padding(horizontal = 20.dp, vertical = 14.dp),
+        Modifier.fillMaxWidth().background(fill, RoundedCornerShape(14.dp)).border(2.dp, edge, RoundedCornerShape(14.dp))
+            .padding(horizontal = if (dense) 12.dp else 20.dp, vertical = if (dense) 8.dp else 14.dp),
     ) {
-        Text(text, style = MaterialTheme.typography.headlineMedium, color = Party.Text, maxLines = 2, overflow = TextOverflow.Ellipsis)
+        Text(
+            text, style = if (dense) MaterialTheme.typography.bodyLarge else MaterialTheme.typography.headlineMedium,
+            color = Party.Text, maxLines = 2, overflow = TextOverflow.Ellipsis,
+        )
         content()
     }
 }
@@ -197,37 +217,46 @@ private fun RevealPhase(g: BluffTv, phaseSeq: Int) {
     }
     Column(Modifier.fillMaxSize()) {
         PromptCard(g.prompt, big = false)
-        Spacer(Modifier.height(16.dp))
-        Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-            g.reveal.forEachIndexed { i, item -> RevealRow(item, visible = i < shown, current = i == shown - 1) }
+        Spacer(Modifier.height(14.dp))
+        val current = g.reveal.getOrNull(shown - 1)
+        if (current == null) {
+            Text("Let's see who got fooled…", style = MaterialTheme.typography.headlineMedium, color = Party.Muted)
+        } else {
+            key(shown) { Stagger(0) { Spotlight(current) } }
+        }
+        Spacer(Modifier.height(12.dp))
+        FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            g.reveal.take((shown - 1).coerceAtLeast(0)).forEach { RevealChip(it) }
         }
     }
 }
 
+private fun BluffReveal.caption(): String {
+    val truth = kind == "truth"
+    val who = when (kind) {
+        "truth" -> "THE TRUTH"
+        "decoy" -> "House fake"
+        else -> "Fake by ${authors.joinToString(" & ")}"
+    }
+    val fooledText = if (fooled.isEmpty()) (if (truth) "Nobody found it!" else "Fooled nobody")
+    else (if (truth) "Found by " else "Fooled ") + fooled.joinToString(", ")
+    return "$who · $fooledText"
+}
+
 @Composable
-private fun RevealRow(item: BluffReveal, visible: Boolean, current: Boolean) {
+private fun Spotlight(item: BluffReveal) {
     val truth = item.kind == "truth"
-    val scale by animateFloatAsState(if (current) 1.02f else 1f, tween(300), label = "scale")
-    val alpha by animateFloatAsState(if (visible) 1f else 0.25f, tween(300), label = "alpha")
-    Box(Modifier.graphicsLayer { scaleX = scale; scaleY = scale; this.alpha = alpha }) {
-        OptionCard(
-            item.text,
-            fill = if (visible && truth) Party.Gold.copy(alpha = 0.22f) else Party.Card,
-            edge = if (visible && truth) Party.Gold else if (visible) Party.Pink else Party.Line,
-        ) {
-            if (visible) {
-                val who = when (item.kind) {
-                    "truth" -> "THE TRUTH"
-                    "decoy" -> "House fake"
-                    else -> "Fake by ${item.authors.joinToString(" & ")}"
-                }
-                val fooled = if (item.fooled.isEmpty()) (if (truth) "Nobody found it!" else "Fooled nobody")
-                else (if (truth) "Found by " else "Fooled ") + item.fooled.joinToString(", ")
-                Text("$who · $fooled", style = MaterialTheme.typography.titleLarge, color = if (truth) Party.Gold else Party.Pink)
-            }
-        }
+    OptionCard(item.text, fill = if (truth) Party.Gold.copy(alpha = 0.22f) else Party.Card, edge = if (truth) Party.Gold else Party.Pink) {
+        Text(item.caption(), style = MaterialTheme.typography.titleLarge, color = if (truth) Party.Gold else Party.Pink, maxLines = 2, overflow = TextOverflow.Ellipsis)
     }
 }
+
+@Composable
+private fun RevealChip(item: BluffReveal) = Text(
+    "${item.text} · ${item.fooled.size} fooled",
+    style = MaterialTheme.typography.bodyMedium, color = Party.Muted, maxLines = 1, overflow = TextOverflow.Ellipsis,
+    modifier = Modifier.widthIn(max = 260.dp).background(Party.Card, RoundedCornerShape(10.dp)).padding(horizontal = 10.dp, vertical = 6.dp),
+)
 
 @Composable
 private fun ScoresPhase(g: BluffTv, scores: List<ScoreRow>) {
