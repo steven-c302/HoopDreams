@@ -3,12 +3,14 @@ import type { JoinIn, JoinOut, PublicState, ResumeOut } from "../party/contract.
 import { loadIdentity, saveIdentity, type Identity } from "../party/identity";
 import { call, type Ack } from "../party/socket";
 import { useConnected } from "../party/store";
+import { uploadMedia } from "./upload";
 
 export interface JoinInput {
   requestId: string;
   name: string;
   emoji: string;
   teamId: string;
+  photo: Blob | null;
 }
 
 export type PlayerStatus = "joining" | "resuming" | "ready";
@@ -61,6 +63,7 @@ export function usePlayer(state: PublicState | null) {
         saveIdentity(next);
         setIdentity(next);
         setResumed(true);
+        if (input.photo) void uploadMedia(input.photo, { token: ack.token, purpose: "avatar", filename: "avatar.jpg" }, () => {});
       }
       return ack;
     },

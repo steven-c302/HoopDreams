@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { JoinOut, PublicState } from "../party/contract.gen";
 import { uuid } from "../party/ids";
 import type { Ack } from "../party/socket";
+import { downscaleImage } from "./image";
 import type { JoinInput } from "./usePlayer";
 
 const EMOJIS = ["🏀", "🔥", "😎", "🐐", "👑", "🚀", "🦄", "🎯", "🌶️", "🍋", "🐻", "🦈", "👽", "🤠", "💎", "🧃"];
@@ -19,11 +20,26 @@ export function JoinFlow({ state, onJoin }: JoinFlowProps) {
   const [busy, setBusy] = useState(false);
   // Stable across retries: if an ack is lost, retrying returns the same player instead of a twin.
   const [requestId] = useState(uuid);
+  const selfieInput = useRef<HTMLInputElement>(null);
+  const [photo, setPhoto] = useState<Blob | null>(null);
+  const [preview, setPreview] = useState<string | null>(null);
+  useEffect(
+    () => () => {
+      if (preview) URL.revokeObjectURL(preview);
+    },
+    [preview],
+  );
+
+  async function takeSelfie(file: File) {
+    const square = await downscaleImage(file, 512, true);
+    setPhoto(square);
+    setPreview(URL.createObjectURL(square));
+  }
 
   async function pickTeam(teamId: string) {
     setBusy(true);
     setError(null);
-    const ack = await onJoin({ requestId, name: name.trim(), emoji, teamId });
+    const ack = await onJoin({ requestId, name: name.trim(), emoji, teamId, photo });
     setBusy(false);
     if (!ack.ok) {
       setError(ack.error);
@@ -73,7 +89,38 @@ export function JoinFlow({ state, onJoin }: JoinFlowProps) {
               </button>
             ))}
           </div>
-          <div className="join-flow__extras" />
+          <div className="join-flow__extras">
+            <input
+              ref={selfieInput}
+              type="file"
+              accept="image/*"
+              capture="user"
+              hidden
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                e.target.value = "";
+                if (file) void takeSelfie(file);
+              }}
+            />
+            {preview ? (
+              <div className="selfie">
+                <img src={preview} alt="Your selfie" />
+                <button
+                  className="btn btn--ghost"
+                  onClick={() => {
+                    setPhoto(null);
+                    setPreview(null);
+                  }}
+                >
+                  USE EMOJI INSTEAD
+                </button>
+              </div>
+            ) : (
+              <button className="btn btn--ghost" onClick={() => selfieInput.current?.click()}>
+                📸 USE A SELFIE
+              </button>
+            )}
+          </div>
           <button className="btn" onClick={() => setStep("team")}>
             NEXT
           </button>

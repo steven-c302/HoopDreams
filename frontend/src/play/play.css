@@ -256,3 +256,74 @@
   font-size: 0.9rem;
   text-transform: none;
 }
+
+.shotcam__button {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.shotcam__hint {
+  font-family: system-ui, sans-serif;
+  font-size: 0.8rem;
+  color: var(--ink-lo);
+  text-transform: none;
+}
+
+.shotcam__progress {
+  position: relative;
+  overflow: hidden;
+  border-radius: 14px;
+  background: var(--arena-700);
+  text-align: center;
+}
+
+.shotcam__progress p {
+  position: relative;
+  margin: 0;
+  padding: 16px;
+}
+
+.shotcam__bar {
+  position: absolute;
+  inset: 0 auto 0 0;
+  background: rgb(255 176 0 / 35%);
+  transition: width 0.2s;
+}
+
+.shotcam__done {
+  margin: 0;
+  padding: 16px;
+  text-align: center;
+  border-radius: 14px;
+  background: #0f3a22;
+}
+
+.shotcam__error {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding: 10px;
+  border-radius: 14px;
+  background: #4a1020;
+}
+
+.shotcam__error span {
+  flex: 1;
+}
+
+.selfie {
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+}
+
+.selfie img {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid var(--led);
+}

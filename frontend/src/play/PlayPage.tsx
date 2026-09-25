@@ -8,6 +8,7 @@ import { call } from "../party/socket";
 import { useConnected, useNow, usePartyState } from "../party/store";
 import { JoinFlow } from "./JoinFlow";
 import { RosterGrid } from "./RosterGrid";
+import { ShotCam } from "./ShotCam";
 import { Toasts, type UndoToast } from "./Toasts";
 import { useOutbox } from "./useOutbox";
 import { usePlayer } from "./usePlayer";
@@ -21,7 +22,7 @@ export default function PlayPage() {
   let body;
   if (!state) body = <p className="play__center display">Finding the party…</p>;
   else if (player.status === "joining") body = <JoinFlow state={state} onJoin={player.join} />;
-  else if (player.me) body = <PlayScreen state={state} me={player.me} resumed={player.resumed} />;
+  else if (player.me) body = <PlayScreen state={state} me={player.me} resumed={player.resumed} token={player.identity?.token ?? ""} />;
   else if (player.status === "resuming") body = <p className="play__center display">Checking in…</p>;
   else body = <Gone onRejoin={player.forget} />;
 
@@ -45,7 +46,7 @@ function Gone({ onRejoin }: { onRejoin: () => void }) {
   );
 }
 
-function PlayScreen({ state, me, resumed }: { state: PublicState; me: PlayerView; resumed: boolean }) {
+function PlayScreen({ state, me, resumed, token }: { state: PublicState; me: PlayerView; resumed: boolean; token: string }) {
   const now = useNow(1000);
   const [selected, setSelected] = useState<string[]>([]);
   const [locked, setLocked] = useState(false);
@@ -119,6 +120,8 @@ function PlayScreen({ state, me, resumed }: { state: PublicState; me: PlayerView
       now - f.at < state.settings.notMeWindowSec * 1000 &&
       !dismissed.includes(f.shotId),
   );
+  const recentShotId =
+    state.feed.find((f) => (f.drinkerId === me.id || f.loggedById === me.id) && now - f.at < 120_000)?.shotId ?? null;
   const team = state.teams.find((t) => t.id === me.teamId);
 
   return (
@@ -144,7 +147,9 @@ function PlayScreen({ state, me, resumed }: { state: PublicState; me: PlayerView
       </button>
       {unsent.length > 0 && <p className="sending">sending {unsent.length}…</p>}
 
-      <div className="play__extras" />
+      <div className="play__extras">
+        <ShotCam token={token} recentShotId={recentShotId} />
+      </div>
 
       <section className="squad">
         <h2 className="pixel squad__title">LOG FOR THE SQUAD</h2>
