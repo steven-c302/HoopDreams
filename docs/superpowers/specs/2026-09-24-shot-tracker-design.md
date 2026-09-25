@@ -1,7 +1,7 @@
 # HoopDreams — Party Shot Tracker (v1) Design
 
 **Date:** 2026-09-24
-**Status:** Design approved in chat; written spec pending user review
+**Status:** Design approved in chat. Planning-time refinements are folded in. The plan is `docs/superpowers/plans/2026-09-24-shot-tracker.md`.
 **Builds on:** `234b6d3` (Steven's hat-draw dashboard: FastAPI + SQLAlchemy + SQLite backend, React 19 + TS 6 + Vite 8 frontend)
 
 ## 1. Goal
@@ -127,16 +127,16 @@ class GamePlugin(Protocol):
 ```
 
 `GameCtx` exposes:
-- `players`: `list()`, `get(id)`, `is_connected(id)`
-- `teams`
-- `await award_shots(drinker_ids, source, reason, logged_by_id=None)`
-- `await push_moment(moment)`
-- `await send_prompt(player_ids, prompt)`
-- `settings`
+- `players()` (ranked, each with a connected flag) and `teams()`
+- `await award_shots(drinker_ids, reason=, logged_by_id=None)`
+- `await push_moment(kind, data)`
+- `load_settings()` and `save_settings(data)`
 - `now_ms()`
 - `rng` (a seedable `random.Random`)
 - `record_event(type, data)` (writes to `game_events`)
 - `await broadcast()`
+
+Phones derive their prompts (the NOT ME offer, the challenge shot clock) from the public state, so there is no separate prompt channel. That keeps prompts correct across reconnects.
 
 A `Caller` is either `PlayerCaller(player_id)` or `HostCaller`.
 
@@ -166,11 +166,10 @@ Client → server (all acked):
 | `shot:undo` | `{ requestId }` (logger only, within 10 s) | phone |
 | `shot:reject` | `{ shotId }` ("NOT ME"; drinker only, within 60 s) | phone |
 | `game:action` | `{ requestId, gameId, action, payload }` | phone / host |
-| `tv:hello` | `{}` (joins the `tv` room) | tv |
 | `host:auth` | `{ pin }` → `{ ok }` (5 attempts/min/socket) | host |
 | `host:action` | `{ requestId, action, payload }`: team CRUD, player rename/move/remove/merge, shot add/void, settings, wifi, new night | host |
 
-Server → client: `state` (`PublicState`), `moment` (`Moment`), `prompt` (targeted: NOT ME offer, challenge shot clock).
+Server → client: `state` (`PublicState`, to everyone), `moment` (`Moment`, to everyone) and `host_state` (`HostState`, to the `host` room only).
 
 ### 3.7 Data model (new tables in `hoopdreams.db`)
 
@@ -179,10 +178,10 @@ All new timestamps are **integer epoch milliseconds (UTC)**, e.g. `1790000000000
 | Table | Columns |
 |---|---|
 | `nights` | `id, name, started_at, ended_at NULL` |
-| `teams` | `id, night_id, name, color, sort` |
+| `teams` | `id, night_id, name, color, sort, removed_at NULL` |
 | `players` | `id, night_id, name, avatar_kind ('emoji'\|'photo'), avatar_value, team_id, token_hash, created_at, removed_at NULL` |
-| `shots` | `id, night_id, drinker_id, logged_by_id NULL, request_id, source ('manual'\|'host'\|'game:<id>'), reason, media_id NULL, created_at, voided_at NULL, void_reason NULL ('undo'\|'not_me'\|'host')` — **unique (request_id, drinker_id)** |
-| `media` | `id, night_id, player_id, shot_id NULL, kind ('photo'\|'video'), status ('processing'\|'ready'\|'failed'), path, poster_path NULL, width, height, duration_ms NULL, created_at` |
+| `shots` | `id, night_id, drinker_id, logged_by_id NULL, request_id, source ('manual'\|'host'\|'game:<id>'), reason, created_at, voided_at NULL, void_reason NULL ('undo'\|'not_me'\|'host')` — **unique (request_id, drinker_id)** |
+| `media` | `id, night_id, player_id, shot_id NULL, purpose ('shot'\|'avatar'), kind ('photo'\|'video'), status ('processing'\|'ready'\|'failed'), path, poster_path NULL, duration_ms NULL, created_at` |
 | `settings` | `night_id, key, value_json` — primary key (night_id, key) |
 | `game_events` | `id, night_id, game_id, type, data_json, created_at` |
 
@@ -197,7 +196,7 @@ Media files live in `backend/media/` (gitignored).
   2. Starts `uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 1` with `HOOP_PARTY=1` (serves `frontend/dist`) under a watchdog that restarts it on crash.
   3. Runs `caffeinate -dimsu -w <pid>`.
   4. Prints the LAN URL, host PIN and a terminal QR code.
-  5. Opens `/tv` in Chrome using a dedicated profile with `--kiosk --autoplay-policy=no-user-gesture-required`.
+  5. Opens `/tv` in Chrome using a dedicated profile with `--kiosk`.
   6. `--tunnel` spawns `cloudflared tunnel --url http://localhost:8000`, parses the `trycloudflare.com` URL, and posts it to the server so the TV shows it.
   7. `--demo` starts `demo.py`.
 
@@ -212,7 +211,7 @@ Media files live in `backend/media/` (gitignored).
    - `loggedBy`
    - any milestones and lead change
 4. **Outbox:** the entry is removed on ack. After a reconnect, the outbox resends with the same `requestId`. The unique index makes the server return the original shot IDs.
-5. **NOT ME:** if the logger isn't the drinker, the drinker gets a `prompt` with a **NOT ME** button for 60 s. Rejecting voids the shot and emits a `waved-off` moment.
+5. **NOT ME:** if the logger isn't the drinker, the drinker's phone shows a **NOT ME** button for 60 s. The phone works this out from the public feed. Rejecting voids the shot and emits a `waved-off` moment.
 6. **UNDO:** the logger sees an **UNDO** toast for 10 s.
 7. **Rate limit:** 20 `shot:log` per player per minute, then an error ack and a friendly toast.
 
@@ -247,10 +246,10 @@ Moments: `shot`, `milestone`, `lead-change`, `waved-off`, `replay`, plus plugin 
   - ON FIRE: ≥ 3 shots within 30 min. The player's leaderboard row gets animated flames. The fire goes out after 30 min with no shot.
 - **Milestones:**
   - "FIRST BUCKET" for the night's first shot
-  - A player's 5th, 10th, 15th… shot
-  - Party totals of 25 and 50, 100 ("CENTURY CLUB"), then every 100
+  - Every 5th shot for a player
+  - Party totals of 25 and 50, then every 100 (100 is "CENTURY CLUB")
   - `lead-change` when the team in sole first place changes
-- **Idle reel:** after 60 s with no moments, the side panel cycles through ready media, muted, 6 s per item.
+- **Highlight reel:** the side panel cycles through the night's ready photos and clips, muted, 6 s per item.
 
 ### 4.4 Challenges (first plugin)
 
@@ -266,7 +265,7 @@ Moments: `shot`, `milestone`, `lead-change`, `waved-off`, `replay`, plus plugin 
 - **Eligibility:** only connected players can be picked. A slice with nobody eligible is skipped, and the wheel lands on the next one.
 - **Flow:**
   1. The TV plays the spin (~4 s), then reveals the targets.
-  2. Each target's phone gets a full-screen **24-second shot clock** with **DONE** (and **DID THE DARE** for dares).
+  2. Each target's phone shows a full-screen **24-second shot clock** with **DONE** (and **DID THE DARE** for dares), derived from the plugin's public state.
   3. DONE calls `award_shots(source='game:challenges', logged_by_id=self)`, and the TV shows "BUCKET!".
   4. At expiry, the TV shows **SHOT CLOCK VIOLATION** with the names of anyone who didn't respond, plus a buzzer. No shot is logged.
 - One challenge runs at a time, and the auto timer pauses while it's active.
@@ -292,7 +291,7 @@ Moments: `shot`, `milestone`, `lead-change`, `waved-off`, `replay`, plus plugin 
 - **Next challenge** countdown in shot-clock style.
 - **Overlays:** shot takeover, milestone, lead change, waved-off, instant replay, challenge wheel and shot clock.
 - **Style:** dark arena gradient with hardwood accents, Bungee headings, Press Start 2P accents, SVG seven-segment digits, team colours and scanlines. Tokens are scoped under `[data-surface="arcade"]` so Steven's `:root` pastel tokens are unaffected.
-- **Fallback:** if autoplay is blocked, a **TIP OFF** button unlocks sound and speech.
+- **TIP OFF:** browsers only allow speech after a click, so the TV shows a **TIP OFF** button once per page load. It unlocks sound and speech and plays a welcome line.
 
 ### 5.2 Phone (`/play`; portrait, one-handed)
 
@@ -326,7 +325,7 @@ Moments: `shot`, `milestone`, `lead-change`, `waved-off`, `replay`, plus plugin 
 | Phone disconnects or sleeps | Socket.IO auto-reconnect. "Reconnecting…" banner. The outbox resends with the original `requestId`, then `player:resume`, then full `state`. |
 | Duplicate intent | Unique `(request_id, drinker_id)`. The server returns the original shot IDs. |
 | Server crash | The watchdog restarts uvicorn within about 1 s. State reloads from SQLite, and clients reconnect and resync. |
-| TV tab reloads | `tv:hello` resyncs. Kiosk autoplay flag, with TIP OFF as a fallback. |
+| TV tab reloads | The fresh socket gets full `state` on connect. Click TIP OFF again for sound. |
 | LAN IP changes | Re-checked every 30 s. Join URLs are in `PublicState`, so the QR codes update. |
 | Tunnel dies | `party.py` respawns cloudflared and posts the new URL. |
 | Upload fails | Retry button on the phone. The shot is unaffected. |
@@ -365,8 +364,8 @@ Moments: `shot`, `milestone`, `lead-change`, `waved-off`, `replay`, plus plugin 
 challenge_interval_min=12, shot_clock_sec=24,
 heating_up=dict(count=2, window_min=20), on_fire=dict(count=3, window_min=30, cool_min=30),
 combo_window_ms=4000, combo_max_ms=8000, undo_window_sec=10, not_me_window_sec=60,
-idle_reel_sec=60, reel_item_sec=6, shot_log_per_min=20, max_upload_mb=200, max_video_sec=15,
-player_milestones=[5, 10, 15, 20, 25, 30], party_milestones=[25, 50, 100],  # then every 100
+reel_item_sec=6, shot_log_per_min=20, max_upload_mb=200, max_video_sec=15,
+player_milestone_every=5, party_milestones=[25, 50], party_milestone_every=100,
 voice=True, sound=True, port=8000
 ```
 
