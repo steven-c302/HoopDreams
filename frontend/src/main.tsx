@@ -6,6 +6,7 @@ import App from './App.tsx'
 
 const PlayPage = lazy(() => import('./play/PlayPage.tsx'))
 const TvPage = lazy(() => import('./tv/TvPage.tsx'))
+const HostPage = lazy(() => import('./host/HostPage.tsx'))
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -15,6 +16,7 @@ createRoot(document.getElementById('root')!).render(
           <Route path="/" element={<App />} />
           <Route path="/play" element={<PlayPage />} />
           <Route path="/tv" element={<TvPage />} />
+          <Route path="/host" element={<HostPage />} />
         </Routes>
       </Suspense>
     </BrowserRouter>
