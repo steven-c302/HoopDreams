@@ -42,7 +42,10 @@ class MainActivity : ComponentActivity() {
             PartyTheme {
                 val settings by partyRuntime.settings.settings.collectAsState(initial = null)
                 Box(Modifier.fillMaxSize()) {
-                    TvApp(partyRuntime, menuPresses, onBenchmark = ::startTour)
+                    TvApp(partyRuntime, menuPresses, onBenchmark = ::startTour, onExit = {
+                        PartyService.stop(this@MainActivity)
+                        finish()
+                    })
                     val monitor by perf
                     if (settings?.perfHud == true) monitor?.let { PerfHud(it, Modifier.align(Alignment.TopEnd).padding(12.dp)) }
                 }

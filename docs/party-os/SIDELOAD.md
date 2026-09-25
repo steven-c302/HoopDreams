@@ -4,12 +4,14 @@ PARTY OS is not on Google Play. You install (sideload) the APK yourself. It stay
 
 ## 1. Get the APK
 
+**Install the release APK on the TV.** The debug APK is noticeably slower because Android runs debuggable apps unoptimised.
+
 Pick either source:
 
-- **From CI:** open the repo's **Actions** tab, then the latest **PARTY OS** run, and download the **partyos-debug-apk** artifact. Unzip it to get `app-debug.apk`.
-- **Build locally:** run `cd controller && npm ci && npm run build`, then `cd ../tv && ./gradlew :app:assembleDebug`. The APK lands at `tv/app/build/outputs/apk/debug/app-debug.apk`.
+- **From CI:** open the repo's **Actions** tab, then the latest **PARTY OS** run, and download **partyos-release-apk**. Unzip it to get `app-release.apk`.
+- **Build locally:** run `cd controller && npm ci && npm run build`, then `cd ../tv && ./gradlew :app:assembleRelease`. The APK lands at `tv/app/build/outputs/apk/release/app-release.apk`.
 
-Every debug build is signed with the same committed key (`tv/app/debug.keystore`), so a new build installs over the old one and keeps your settings and party history.
+Debug and release builds are signed with the same committed key (`tv/app/debug.keystore`), so any new build installs over the old one and keeps your settings and party history. If you add your own `RELEASE_KEYSTORE_*` secrets, uninstall once before switching keys.
 
 ## 2. Turn on developer options (one time)
 
@@ -32,7 +34,7 @@ Run these on the Mac. The Mac and the TV must be on the same network.
 
    ```bash
    ~/Library/Android/sdk/platform-tools/adb connect <TV-IP>:<port>
-   ~/Library/Android/sdk/platform-tools/adb install -r app-debug.apk
+   ~/Library/Android/sdk/platform-tools/adb install -r app-release.apk
    ```
 
 4. **PARTY OS** now appears in the TV's apps row. If it doesn't, look under **Apps → See all apps**.
@@ -43,8 +45,8 @@ Some TV builds skip the pairing step. There, `adb connect <TV-IP>:5555` works on
 
 1. On the TV, install **Downloader** (by AFTVnews) from the Play Store.
 2. Allow it to install apps: **Settings → Apps → Security & restrictions → Unknown sources → Downloader**.
-3. On the Mac, run `cd tv/app/build/outputs/apk/debug && python3 -m http.server 8000`.
-4. In Downloader, enter `http://<your-Mac-IP>:8000/app-debug.apk` and install.
+3. On the Mac, run `cd tv/app/build/outputs/apk/release && python3 -m http.server 8000`.
+4. In Downloader, enter `http://<your-Mac-IP>:8000/app-release.apk` and install.
 
 ## 4. Party night checklist
 
@@ -52,6 +54,7 @@ Some TV builds skip the pairing step. There, `adb connect <TV-IP>:5555` works on
 - **Start it:** Open PARTY OS, choose **Play Games**, and have everyone scan the QR code.
 - **Host PIN:** Your phone can be a remote. Open `http://<TV address>/host` and enter the PIN shown in **Settings**.
 - **Mid-game controls:** Press **Back** during a game to pause, skip a phase, end the game, or remove a player.
+- **Ending the night:** Press **Back** on the home screen and choose **Stop and exit**. Hosting keeps running in the background until you do.
 
 ## Checking performance on the TV
 
@@ -62,4 +65,4 @@ With ADB connected:
 ~/Library/Android/sdk/platform-tools/adb logcat -s PARTYOS_PERF
 ```
 
-After about a minute, the log prints `PARTYOS_PERF tour=bluff-round frames=… onTime=…% janky=…%`. The target is **onTime ≥ 95%**.
+After about a minute, the log prints `PARTYOS_PERF tour=bluff-round frames=… onTime=…% janky=…%`. The target is **onTime ≥ 95%**. `onTime` counts frames that met their display deadline, and it only means something on the release APK.

@@ -71,3 +71,21 @@ test('a spectator can take a free seat between games', async ({ browser }) => {
   await expect(host.locator('.players li', { hasText: 'Watcher' })).not.toContainText('watching')
   await expect(p.getByRole('button', { name: 'Join as a player' })).toHaveCount(0)
 })
+
+test('host sees why a game could not start', async ({ browser }) => {
+  const { host } = await hostPage(browser)
+  host.on('dialog', (d) => d.accept())
+  const end = host.getByRole('button', { name: 'End game' })
+  if (await end.isVisible()) await end.click()
+  const rows = host.locator('.players li')
+  while ((await rows.count()) > 0) {
+    const n = await rows.count()
+    await rows.first().getByRole('button', { name: 'Remove' }).click()
+    await expect(rows).toHaveCount(n - 1)
+  }
+  await host.getByRole('button', { name: /Bluff Battle/ }).click()
+  const toast = host.getByRole('status')
+  await expect(toast).toHaveText('Need more players connected.')
+  await host.waitForTimeout(1_000)
+  await expect(toast).toBeVisible()
+})

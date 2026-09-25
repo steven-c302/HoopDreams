@@ -34,7 +34,8 @@ android {
     }
     buildTypes {
         getByName("release") {
-            signingConfig = signingConfigs.findByName("release")
+            // Without release secrets, sign with the shared debug key so a non-debuggable (fast) APK always exists.
+            signingConfig = signingConfigs.findByName("release") ?: signingConfigs.getByName("debug")
         }
     }
     compileOptions {

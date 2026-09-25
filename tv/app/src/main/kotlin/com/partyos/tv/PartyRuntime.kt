@@ -7,7 +7,10 @@ import com.partyos.tv.data.PartyStore
 import com.partyos.tv.net.NetworkAddressMonitor
 import com.partyos.tv.net.advertisedUrl
 import com.partyos.tv.settings.SettingsRepo
+import android.util.Log
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
@@ -31,6 +34,8 @@ import partyos.engine.games.bluff.BluffBattle
 import partyos.server.PartyHost
 import partyos.server.PartyServer
 
+private const val TAG = "PartyRuntime"
+
 /** One running party: its engine host, HTTP server and database row. */
 class LiveParty(val host: PartyHost, val server: PartyServer, val partyId: Long)
 
@@ -40,7 +45,8 @@ class LiveParty(val host: PartyHost, val server: PartyServer, val partyId: Long)
  */
 @OptIn(ExperimentalCoroutinesApi::class)
 class PartyRuntime(private val context: Context) {
-    val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+    // A failed deadline or save must never take the whole TV app down; log it and keep hosting.
+    val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default + CoroutineExceptionHandler { _, e -> Log.e(TAG, "party task failed", e) })
     val settings = SettingsRepo(context)
     val network = NetworkAddressMonitor(context)
     val games = GameRegistry(listOf(BluffBattle()))
@@ -60,19 +66,21 @@ class PartyRuntime(private val context: Context) {
 
     suspend fun start() = lock.withLock {
         if (_live.value != null) return@withLock
-        network.start()
+        runCatching { network.start() }
         val pin = settings.ensurePin()
-        val restored = store.loadActive()
-        val engine = restored?.let { PartyEngine.restore(it.second, SystemClock, SecureEntropy(), games) }
-            ?: PartyEngine(SystemClock, SecureEntropy(), games)
-        engine.setPin(pin)
-        val partyId = restored?.first ?: store.create(engine.snapshot())
-        _live.value = launch(engine, partyId)
+        // Anything unreadable in the saved party falls back to a fresh party instead of a crash loop.
+        val restored = runCatching { store.loadActive() }.getOrNull()
+        val engine = restored?.let { runCatching { PartyEngine.restore(it.second, SystemClock, SecureEntropy(), games) }.getOrNull() }
+        val fresh = engine ?: PartyEngine(SystemClock, SecureEntropy(), games)
+        fresh.setPin(pin)
+        val partyId = if (engine != null) restored.first else store.create(fresh.snapshot())
+        _live.value = launch(fresh, partyId)
     }
 
     /** Ends the current party (kept in history) and opens a fresh one with a new room code. */
     suspend fun newParty() = lock.withLock {
         _live.value?.let { old ->
+            old.host.close()
             withContext(Dispatchers.IO) { old.server.stop() }
             store.end(old.partyId)
         }
@@ -81,15 +89,19 @@ class PartyRuntime(private val context: Context) {
         _live.value = launch(engine, store.create(engine.snapshot()))
     }
 
+    /** Sets a new host PIN and signs out every co-host phone. */
     suspend fun changePin(pin: String) {
         settings.setPin(pin)
-        _live.value?.host?.mutate { setPin(pin) }
+        _live.value?.host?.changePin(pin)
     }
 
+    /** Stops hosting: timers, persistence and the server. Safe to call from the main thread. */
     fun stop() {
-        _live.value?.server?.stop()
+        val old = _live.value ?: return
         _live.value = null
+        old.host.close()
         network.stop()
+        scope.launch(Dispatchers.IO) { old.server.stop() }
     }
 
     private suspend fun launch(engine: PartyEngine, partyId: Long): LiveParty {

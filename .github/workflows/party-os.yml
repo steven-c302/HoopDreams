@@ -44,7 +44,7 @@ jobs:
 
       - name: JVM, server, simulated-party and Robolectric tests; debug APK
         working-directory: tv
-        run: ./gradlew :engine:test :server:test :app:testDebugUnitTest :app:assembleDebug :devserver:installDist --console=plain
+        run: ./gradlew :engine:test :server:test :app:testDebugUnitTest :app:assembleDebug :app:assembleRelease :devserver:installDist --console=plain
 
       - name: Browser end-to-end tests against the real server
         working-directory: controller
@@ -57,7 +57,13 @@ jobs:
           name: partyos-debug-apk
           path: tv/app/build/outputs/apk/debug/app-debug.apk
 
-      - name: Signed release APK (only when release secrets exist)
+      # Non-debuggable build for the TV (runs much faster than debug). Signed with the shared key unless secrets exist.
+      - uses: actions/upload-artifact@v4
+        with:
+          name: partyos-release-apk
+          path: tv/app/build/outputs/apk/release/app-release.apk
+
+      - name: Re-sign release APK with your own key (only when release secrets exist)
         if: ${{ env.HAS_KEYSTORE == 'true' }}
         env:
           RELEASE_KEYSTORE_PASSWORD: ${{ secrets.RELEASE_KEYSTORE_PASSWORD }}
@@ -69,10 +75,10 @@ jobs:
           RELEASE_KEYSTORE_PATH="$RUNNER_TEMP/release.keystore" ./gradlew :app:assembleRelease --console=plain
 
       - uses: actions/upload-artifact@v4
-        if: ${{ hashFiles('tv/app/build/outputs/apk/release/*.apk') != '' }}
+        if: ${{ env.HAS_KEYSTORE == 'true' }}
         with:
-          name: partyos-release-apk
-          path: tv/app/build/outputs/apk/release/*.apk
+          name: partyos-release-apk-own-key
+          path: tv/app/build/outputs/apk/release/app-release.apk
 
       - uses: actions/upload-artifact@v4
         if: failure()

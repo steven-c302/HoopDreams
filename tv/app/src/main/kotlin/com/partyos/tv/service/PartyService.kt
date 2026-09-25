@@ -36,7 +36,9 @@ class PartyService : LifecycleService() {
             .createWifiLock(WifiManager.WIFI_MODE_FULL_LOW_LATENCY, "partyos:wifi").apply { acquire() }
         wakeLock = getSystemService(PowerManager::class.java)
             .newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "partyos:server").apply { acquire() }
-        lifecycleScope.launch { partyRuntime.start() }
+        lifecycleScope.launch {
+            runCatching { partyRuntime.start() }.onFailure { android.util.Log.e("PartyService", "could not start the party server", it) }
+        }
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -54,5 +56,6 @@ class PartyService : LifecycleService() {
     companion object {
         private const val CHANNEL = "party"
         fun start(context: Context) = context.startForegroundService(Intent(context, PartyService::class.java))
+        fun stop(context: Context) = context.stopService(Intent(context, PartyService::class.java))
     }
 }

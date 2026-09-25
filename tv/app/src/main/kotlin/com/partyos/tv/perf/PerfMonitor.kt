@@ -2,6 +2,7 @@ package com.partyos.tv.perf
 
 import android.util.Log
 import android.view.Window
+import androidx.metrics.performance.FrameDataApi31
 import androidx.metrics.performance.JankStats
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -10,15 +11,22 @@ import kotlinx.coroutines.flow.asStateFlow
 data class PerfStats(val fps: Int, val onTimePct: Double)
 data class PerfReport(val frames: Int, val onTimePct: Double, val jankyPct: Double)
 
+/**
+ * A frame is on time when it met its presentation deadline. API 31+ reports the overrun directly (total
+ * duration alone overstates misses, because a pipelined renderer may take longer than one vsync and still land
+ * on time); older devices fall back to UI-thread time against a 60 Hz budget.
+ */
+fun frameOnTime(overrunNs: Long?, uiNs: Long): Boolean = overrunNs?.let { it <= 0 } ?: (uiNs <= 16_666_667L)
+
 /** Pure frame bookkeeping, separated from JankStats so it can be unit tested. */
-class FrameTally(private val budgetNs: Long = 16_666_667L) {
+class FrameTally {
     var frames = 0; private set
     var onTime = 0; private set
     var janky = 0; private set
 
-    fun add(durationNs: Long, isJank: Boolean) {
+    fun add(onTime: Boolean, isJank: Boolean) {
         frames++
-        if (durationNs <= budgetNs) onTime++
+        if (onTime) this.onTime++
         if (isJank) janky++
     }
 
@@ -42,10 +50,10 @@ class PerfMonitor(window: Window) {
     private var recording: FrameTally? = null
 
     private val jank = JankStats.createAndTrack(window) { f ->
-        val dur = f.frameDurationUiNanos
-        recording?.add(dur, f.isJank)
+        val onTime = frameOnTime((f as? FrameDataApi31)?.frameOverrunNanos, f.frameDurationUiNanos)
+        recording?.add(onTime, f.isJank)
         if (secondStartNs == 0L) secondStartNs = f.frameStartNanos
-        second.add(dur, f.isJank)
+        second.add(onTime, f.isJank)
         if (f.frameStartNanos - secondStartNs >= 1_000_000_000L) {
             val r = second.report()
             _live.value = PerfStats(r.frames, r.onTimePct)

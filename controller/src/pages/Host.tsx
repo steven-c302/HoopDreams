@@ -57,6 +57,12 @@ function HostPanel({ token, onLogout }: { token: string; onLogout(): void }) {
     return () => c.stop()
   }, [token, onLogout])
 
+  useEffect(() => {
+    if (!toast) return
+    const t = setTimeout(() => setToast(null), 3_000)
+    return () => clearTimeout(t)
+  }, [toast])
+
   const cmd = (c: HostCommand) => conn.current?.host(c)
   if (!tv) return <main className="page center"><div className="spinner" /><p>Connecting…</p></main>
   const stage = tv.stage
@@ -103,7 +109,7 @@ function HostPanel({ token, onLogout }: { token: string; onLogout(): void }) {
           ))}
         </ul>
       </section>
-      {toast && <div className="toast" role="status" onAnimationEnd={() => setToast(null)}>{toast}</div>}
+      {toast && <div className="toast" role="status">{toast}</div>}
     </main>
   )
 }
