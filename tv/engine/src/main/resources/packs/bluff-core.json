@@ -1,0 +1,958 @@
+{
+ "packId": "bluff-core",
+ "title": "Bluff Battle: House Pack",
+ "game": "bluff",
+ "version": 1,
+ "items": [
+  {
+   "id": "b001",
+   "prompt": "In 1932 the Australian army fought a 'war' against which animal, and lost?",
+   "answer": "Emus",
+   "alsoAccept": [
+    "emu"
+   ],
+   "decoys": [
+    "Kangaroos",
+    "Rabbits",
+    "Dingoes"
+   ]
+  },
+  {
+   "id": "b002",
+   "prompt": "A group of flamingos is called a ____.",
+   "answer": "flamboyance",
+   "alsoAccept": [],
+   "decoys": [
+    "parade",
+    "blush",
+    "strut"
+   ]
+  },
+  {
+   "id": "b003",
+   "prompt": "A group of crows is called a ____.",
+   "answer": "murder",
+   "alsoAccept": [],
+   "decoys": [
+    "gossip",
+    "shadow",
+    "mischief"
+   ]
+  },
+  {
+   "id": "b004",
+   "prompt": "Before it was called Google, the search engine's working name was ____.",
+   "answer": "BackRub",
+   "alsoAccept": [
+    "back rub"
+   ],
+   "decoys": [
+    "Googol",
+    "SearchPal",
+    "PageRank"
+   ]
+  },
+  {
+   "id": "b005",
+   "prompt": "The dot over a lowercase 'i' is called a ____.",
+   "answer": "tittle",
+   "alsoAccept": [],
+   "decoys": [
+    "jot",
+    "speck",
+    "fleck"
+   ]
+  },
+  {
+   "id": "b006",
+   "prompt": "The plastic tip at the end of a shoelace is called an ____.",
+   "answer": "aglet",
+   "alsoAccept": [],
+   "decoys": [
+    "lacelock",
+    "tipper",
+    "endcap"
+   ]
+  },
+  {
+   "id": "b007",
+   "prompt": "Wombat poop comes out shaped like ____.",
+   "answer": "cubes",
+   "alsoAccept": [
+    "cube",
+    "squares",
+    "little cubes"
+   ],
+   "decoys": [
+    "spirals",
+    "stars",
+    "hearts"
+   ]
+  },
+  {
+   "id": "b008",
+   "prompt": "The national animal of Scotland is the ____.",
+   "answer": "unicorn",
+   "alsoAccept": [],
+   "decoys": [
+    "red deer",
+    "golden eagle",
+    "haggis"
+   ]
+  },
+  {
+   "id": "b009",
+   "prompt": "How many hearts does an octopus have?",
+   "answer": "three",
+   "alsoAccept": [
+    "3"
+   ],
+   "decoys": [
+    "two",
+    "five",
+    "eight"
+   ]
+  },
+  {
+   "id": "b010",
+   "prompt": "The shortest war in history (Britain vs Zanzibar, 1896) lasted about ____.",
+   "answer": "38 minutes",
+   "alsoAccept": [
+    "38 mins",
+    "thirty-eight minutes",
+    "under an hour"
+   ],
+   "decoys": [
+    "six hours",
+    "two days",
+    "one week"
+   ]
+  },
+  {
+   "id": "b011",
+   "prompt": "Botanically speaking, bananas are classified as ____.",
+   "answer": "berries",
+   "alsoAccept": [
+    "berry",
+    "a berry"
+   ],
+   "decoys": [
+    "nuts",
+    "grasses",
+    "drupes"
+   ]
+  },
+  {
+   "id": "b012",
+   "prompt": "Before video games, Nintendo was founded in 1889 to make ____.",
+   "answer": "playing cards",
+   "alsoAccept": [
+    "cards",
+    "hanafuda cards",
+    "card games"
+   ],
+   "decoys": [
+    "umbrellas",
+    "rice cookers",
+    "toy trains"
+   ]
+  },
+  {
+   "id": "b013",
+   "prompt": "A study found the Scots have more than 400 words for ____.",
+   "answer": "snow",
+   "alsoAccept": [],
+   "decoys": [
+    "rain",
+    "sheep",
+    "whisky"
+   ]
+  },
+  {
+   "id": "b014",
+   "prompt": "Cleopatra lived closer in time to the Moon landing than to the building of ____.",
+   "answer": "the Great Pyramid",
+   "alsoAccept": [
+    "great pyramid",
+    "pyramids",
+    "the pyramids",
+    "great pyramid of giza"
+   ],
+   "decoys": [
+    "the Colosseum",
+    "the Parthenon",
+    "Hadrian's Wall"
+   ]
+  },
+  {
+   "id": "b015",
+   "prompt": "The man who designed the Pringles can had his ashes buried in ____.",
+   "answer": "a Pringles can",
+   "alsoAccept": [
+    "pringles can",
+    "pringles tube",
+    "a pringles tube"
+   ],
+   "decoys": [
+    "a lava lamp",
+    "a potato field",
+    "a snow globe"
+   ]
+  },
+  {
+   "id": "b016",
+   "prompt": "A group of owls is called a ____.",
+   "answer": "parliament",
+   "alsoAccept": [],
+   "decoys": [
+    "senate",
+    "council",
+    "library"
+   ]
+  },
+  {
+   "id": "b017",
+   "prompt": "The largest living thing on Earth by area is a ____ in Oregon.",
+   "answer": "fungus",
+   "alsoAccept": [
+    "mushroom",
+    "honey fungus",
+    "mycelium",
+    "honey mushroom"
+   ],
+   "decoys": [
+    "moss",
+    "blueberry bush",
+    "clover patch"
+   ]
+  },
+  {
+   "id": "b018",
+   "prompt": "In Switzerland it's illegal to own only one ____, because they get lonely.",
+   "answer": "guinea pig",
+   "alsoAccept": [
+    "guinea pigs"
+   ],
+   "decoys": [
+    "hamster",
+    "tortoise",
+    "goldfish bowl"
+   ]
+  },
+  {
+   "id": "b019",
+   "prompt": "The first product ever scanned with a barcode at a checkout was a pack of ____.",
+   "answer": "chewing gum",
+   "alsoAccept": [
+    "gum",
+    "wrigleys gum",
+    "juicy fruit",
+    "wrigleys juicy fruit gum"
+   ],
+   "decoys": [
+    "cigarettes",
+    "batteries",
+    "tea bags"
+   ]
+  },
+  {
+   "id": "b020",
+   "prompt": "Sea otters hold ____ while sleeping so they don't drift apart.",
+   "answer": "hands",
+   "alsoAccept": [
+    "paws",
+    "each others hands",
+    "each other's paws"
+   ],
+   "decoys": [
+    "their tails",
+    "shells",
+    "their breath"
+   ]
+  },
+  {
+   "id": "b021",
+   "prompt": "The Frisbee got its name from the Frisbie ____ company.",
+   "answer": "pie",
+   "alsoAccept": [
+    "pie company",
+    "baking",
+    "bakery"
+   ],
+   "decoys": [
+    "tire",
+    "paint",
+    "hat"
+   ]
+  },
+  {
+   "id": "b022",
+   "prompt": "Canada's official national summer sport is ____.",
+   "answer": "lacrosse",
+   "alsoAccept": [],
+   "decoys": [
+    "curling",
+    "baseball",
+    "canoeing"
+   ]
+  },
+  {
+   "id": "b023",
+   "prompt": "The word 'jumbo' comes from a famous ____.",
+   "answer": "elephant",
+   "alsoAccept": [
+    "circus elephant",
+    "an elephant"
+   ],
+   "decoys": [
+    "ship",
+    "airplane",
+    "giant"
+   ]
+  },
+  {
+   "id": "b024",
+   "prompt": "The UK's longest place name belongs to a village in ____.",
+   "answer": "Wales",
+   "alsoAccept": [],
+   "decoys": [
+    "Cornwall",
+    "Scotland",
+    "Yorkshire"
+   ]
+  },
+  {
+   "id": "b025",
+   "prompt": "Hot water can sometimes freeze faster than cold. This is called the ____ effect.",
+   "answer": "Mpemba",
+   "alsoAccept": [
+    "mpemba effect"
+   ],
+   "decoys": [
+    "Leidenfrost",
+    "Kessler",
+    "Doppler"
+   ]
+  },
+  {
+   "id": "b026",
+   "prompt": "On hot summer days the Eiffel Tower can grow about ____ taller.",
+   "answer": "15 centimeters",
+   "alsoAccept": [
+    "15 cm",
+    "15cm",
+    "6 inches",
+    "six inches",
+    "15 centimetres"
+   ],
+   "decoys": [
+    "two meters",
+    "one foot",
+    "one millimeter"
+   ]
+  },
+  {
+   "id": "b027",
+   "prompt": "The very first website was built at ____.",
+   "answer": "CERN",
+   "alsoAccept": [],
+   "decoys": [
+    "MIT",
+    "Xerox PARC",
+    "Stanford"
+   ]
+  },
+  {
+   "id": "b028",
+   "prompt": "The 'Q' in Q-tips stands for ____.",
+   "answer": "quality",
+   "alsoAccept": [],
+   "decoys": [
+    "quick",
+    "queen",
+    "quiet"
+   ]
+  },
+  {
+   "id": "b029",
+   "prompt": "Coca-Cola was originally sold as a ____.",
+   "answer": "medicine",
+   "alsoAccept": [
+    "tonic",
+    "patent medicine",
+    "nerve tonic",
+    "health tonic"
+   ],
+   "decoys": [
+    "soap",
+    "mouthwash",
+    "cocktail mixer"
+   ]
+  },
+  {
+   "id": "b030",
+   "prompt": "The tiny pocket inside the front pocket of jeans was made for ____.",
+   "answer": "pocket watches",
+   "alsoAccept": [
+    "watches",
+    "a watch",
+    "pocket watch",
+    "watch"
+   ],
+   "decoys": [
+    "coins",
+    "matches",
+    "condoms"
+   ]
+  },
+  {
+   "id": "b031",
+   "prompt": "In 2006 a Canadian man traded one red ____ up, swap by swap, until he got a house.",
+   "answer": "paperclip",
+   "alsoAccept": [
+    "paper clip"
+   ],
+   "decoys": [
+    "pen",
+    "button",
+    "balloon"
+   ]
+  },
+  {
+   "id": "b032",
+   "prompt": "Lobster was once so cheap in colonial America it was fed to ____.",
+   "answer": "prisoners",
+   "alsoAccept": [
+    "servants",
+    "inmates",
+    "prisoners and servants"
+   ],
+   "decoys": [
+    "horses",
+    "royalty",
+    "cats"
+   ]
+  },
+  {
+   "id": "b033",
+   "prompt": "The most shoplifted food in the world is ____.",
+   "answer": "cheese",
+   "alsoAccept": [],
+   "decoys": [
+    "chocolate",
+    "steak",
+    "coffee"
+   ]
+  },
+  {
+   "id": "b034",
+   "prompt": "An average fluffy cumulus cloud weighs about as much as ____ elephants.",
+   "answer": "100",
+   "alsoAccept": [
+    "a hundred",
+    "one hundred",
+    "100 elephants"
+   ],
+   "decoys": [
+    "5",
+    "10,000",
+    "one million"
+   ]
+  },
+  {
+   "id": "b035",
+   "prompt": "Mr. Potato Head was the first toy ever advertised on ____.",
+   "answer": "television",
+   "alsoAccept": [
+    "tv"
+   ],
+   "decoys": [
+    "radio",
+    "billboards",
+    "cereal boxes"
+   ]
+  },
+  {
+   "id": "b036",
+   "prompt": "The world's first webcam watched a ____ at Cambridge University.",
+   "answer": "coffee pot",
+   "alsoAccept": [
+    "coffee machine",
+    "coffee",
+    "trojan room coffee pot"
+   ],
+   "decoys": [
+    "fish tank",
+    "parking lot",
+    "pigeon nest"
+   ]
+  },
+  {
+   "id": "b037",
+   "prompt": "On Venus, a day is ____ than a year.",
+   "answer": "longer",
+   "alsoAccept": [],
+   "decoys": [
+    "shorter",
+    "exactly the same",
+    "twice as short"
+   ]
+  },
+  {
+   "id": "b038",
+   "prompt": "The chemical symbol for tungsten is ____.",
+   "answer": "W",
+   "alsoAccept": [],
+   "decoys": [
+    "Tu",
+    "Tn",
+    "Tg"
+   ]
+  },
+  {
+   "id": "b039",
+   "prompt": "Michael Jackson first moonwalked on TV in ____.",
+   "answer": "1983",
+   "alsoAccept": [],
+   "decoys": [
+    "1979",
+    "1987",
+    "1991"
+   ]
+  },
+  {
+   "id": "b040",
+   "prompt": "A group of pugs is called a ____.",
+   "answer": "grumble",
+   "alsoAccept": [],
+   "decoys": [
+    "snort",
+    "wrinkle",
+    "squish"
+   ]
+  },
+  {
+   "id": "b041",
+   "prompt": "The fear of being without your phone is called ____.",
+   "answer": "nomophobia",
+   "alsoAccept": [],
+   "decoys": [
+    "cellophobia",
+    "disconnectaphobia",
+    "textophobia"
+   ]
+  },
+  {
+   "id": "b042",
+   "prompt": "Kleenex was first developed during World War I as ____.",
+   "answer": "gas mask filters",
+   "alsoAccept": [
+    "gas mask filter",
+    "filters for gas masks",
+    "gas masks"
+   ],
+   "decoys": [
+    "rifle cleaners",
+    "letter paper",
+    "map paper"
+   ]
+  },
+  {
+   "id": "b043",
+   "prompt": "Ōkunoshima in Japan is an island overrun by friendly ____.",
+   "answer": "rabbits",
+   "alsoAccept": [
+    "bunnies",
+    "rabbit"
+   ],
+   "decoys": [
+    "ducks",
+    "goats",
+    "tortoises"
+   ]
+  },
+  {
+   "id": "b044",
+   "prompt": "Peanuts aren't nuts. They're ____.",
+   "answer": "legumes",
+   "alsoAccept": [
+    "legume",
+    "beans",
+    "a legume",
+    "pulses"
+   ],
+   "decoys": [
+    "tubers",
+    "grains",
+    "seeds of a berry"
+   ]
+  },
+  {
+   "id": "b045",
+   "prompt": "The 'D' in D-Day stands for ____.",
+   "answer": "Day",
+   "alsoAccept": [],
+   "decoys": [
+    "Decision",
+    "Deliverance",
+    "Destiny"
+   ]
+  },
+  {
+   "id": "b046",
+   "prompt": "In the 1830s, ketchup was sold as a cure for ____.",
+   "answer": "indigestion",
+   "alsoAccept": [
+    "diarrhea",
+    "upset stomach",
+    "jaundice",
+    "diarrhoea"
+   ],
+   "decoys": [
+    "baldness",
+    "toothache",
+    "heartbreak"
+   ]
+  },
+  {
+   "id": "b047",
+   "prompt": "A 'blue moon' is the second ____ in a single calendar month.",
+   "answer": "full moon",
+   "alsoAccept": [
+    "fullmoon"
+   ],
+   "decoys": [
+    "eclipse",
+    "new moon",
+    "meteor shower"
+   ]
+  },
+  {
+   "id": "b048",
+   "prompt": "Ruth Wakefield, inventor of the chocolate chip cookie, ran the ____ Inn.",
+   "answer": "Toll House",
+   "alsoAccept": [
+    "tollhouse"
+   ],
+   "decoys": [
+    "Sugar Hill",
+    "Cookie Jar",
+    "Maple Leaf"
+   ]
+  },
+  {
+   "id": "b049",
+   "prompt": "A snail can sleep for up to ____.",
+   "answer": "three years",
+   "alsoAccept": [
+    "3 years",
+    "three years"
+   ],
+   "decoys": [
+    "three weeks",
+    "ten years",
+    "three days"
+   ]
+  },
+  {
+   "id": "b050",
+   "prompt": "Fortune cookies are popular in the US, but historians trace them to ____.",
+   "answer": "Japan",
+   "alsoAccept": [],
+   "decoys": [
+    "China",
+    "Hong Kong",
+    "Hawaii"
+   ]
+  },
+  {
+   "id": "b051",
+   "prompt": "Before toilet paper caught on, many rural Americans used ____.",
+   "answer": "corn cobs",
+   "alsoAccept": [
+    "corncobs",
+    "corn cob",
+    "catalog pages",
+    "sears catalogs",
+    "newspaper"
+   ],
+   "decoys": [
+    "wool socks",
+    "birch bark",
+    "maple leaves"
+   ]
+  },
+  {
+   "id": "b052",
+   "prompt": "Pierre de Coubertin, founder of the modern Olympics, won an Olympic gold medal for ____.",
+   "answer": "poetry",
+   "alsoAccept": [
+    "literature",
+    "a poem",
+    "writing"
+   ],
+   "decoys": [
+    "fencing",
+    "architecture",
+    "rowing"
+   ]
+  },
+  {
+   "id": "b053",
+   "prompt": "Look closely: the Mona Lisa has no ____.",
+   "answer": "eyebrows",
+   "alsoAccept": [
+    "eyebrow",
+    "eyelashes"
+   ],
+   "decoys": [
+    "hands",
+    "smile",
+    "ears"
+   ]
+  },
+  {
+   "id": "b054",
+   "prompt": "A pineapple plant takes about ____ to produce one pineapple.",
+   "answer": "two years",
+   "alsoAccept": [
+    "2 years",
+    "18 months",
+    "two years"
+   ],
+   "decoys": [
+    "two months",
+    "six years",
+    "two weeks"
+   ]
+  },
+  {
+   "id": "b055",
+   "prompt": "The Hawaiian alphabet has only ____ letters.",
+   "answer": "13",
+   "alsoAccept": [
+    "thirteen",
+    "12",
+    "twelve"
+   ],
+   "decoys": [
+    "9",
+    "20",
+    "16"
+   ]
+  },
+  {
+   "id": "b056",
+   "prompt": "Being 'hangry' is mostly caused by low ____.",
+   "answer": "blood sugar",
+   "alsoAccept": [
+    "glucose",
+    "sugar",
+    "blood glucose"
+   ],
+   "decoys": [
+    "iron",
+    "oxygen",
+    "vitamin C"
+   ]
+  },
+  {
+   "id": "b057",
+   "prompt": "The original US Monopoly board is based on the streets of ____.",
+   "answer": "Atlantic City",
+   "alsoAccept": [
+    "atlantic city new jersey"
+   ],
+   "decoys": [
+    "Chicago",
+    "Boston",
+    "Philadelphia"
+   ]
+  },
+  {
+   "id": "b058",
+   "prompt": "Butterflies taste with their ____.",
+   "answer": "feet",
+   "alsoAccept": [
+    "legs",
+    "foot"
+   ],
+   "decoys": [
+    "wings",
+    "antennae",
+    "eyes"
+   ]
+  },
+  {
+   "id": "b059",
+   "prompt": "The first mechanical alarm clock, built in 1787, could only ring at ____.",
+   "answer": "4 am",
+   "alsoAccept": [
+    "4am",
+    "4 a.m.",
+    "four am",
+    "4:00 am",
+    "4 in the morning"
+   ],
+   "decoys": [
+    "noon",
+    "midnight",
+    "6 am"
+   ]
+  },
+  {
+   "id": "b060",
+   "prompt": "A group of porcupines is called a ____.",
+   "answer": "prickle",
+   "alsoAccept": [],
+   "decoys": [
+    "pinch",
+    "needle",
+    "pokey"
+   ]
+  },
+  {
+   "id": "b061",
+   "prompt": "Sharks have been around longer than ____.",
+   "answer": "trees",
+   "alsoAccept": [
+    "tree"
+   ],
+   "decoys": [
+    "bacteria",
+    "the oceans",
+    "rocks"
+   ]
+  },
+  {
+   "id": "b062",
+   "prompt": "One of the oldest known smiley faces was painted on a Hittite ____ about 3,700 years old.",
+   "answer": "jug",
+   "alsoAccept": [
+    "pot",
+    "vase",
+    "pottery",
+    "jar"
+   ],
+   "decoys": [
+    "cave wall",
+    "coin",
+    "shield"
+   ]
+  },
+  {
+   "id": "b063",
+   "prompt": "The largest snowflake on record was reportedly ____ wide.",
+   "answer": "15 inches",
+   "alsoAccept": [
+    "38 cm",
+    "15 in",
+    "fifteen inches",
+    "38 centimeters"
+   ],
+   "decoys": [
+    "2 inches",
+    "3 feet",
+    "1 inch"
+   ]
+  },
+  {
+   "id": "b064",
+   "prompt": "Some ancient Romans used ____ as mouthwash.",
+   "answer": "urine",
+   "alsoAccept": [
+    "pee",
+    "human urine"
+   ],
+   "decoys": [
+    "olive oil",
+    "wine",
+    "seawater"
+   ]
+  },
+  {
+   "id": "b065",
+   "prompt": "Bubble wrap was originally invented as ____.",
+   "answer": "wallpaper",
+   "alsoAccept": [
+    "textured wallpaper"
+   ],
+   "decoys": [
+    "shower curtains",
+    "egg packaging",
+    "swimming floats"
+   ]
+  },
+  {
+   "id": "b066",
+   "prompt": "Spain's national anthem has no official ____.",
+   "answer": "lyrics",
+   "alsoAccept": [
+    "words"
+   ],
+   "decoys": [
+    "drums",
+    "chorus",
+    "key"
+   ]
+  },
+  {
+   "id": "b067",
+   "prompt": "Play-Doh started life as ____.",
+   "answer": "wallpaper cleaner",
+   "alsoAccept": [
+    "wall paper cleaner",
+    "a wallpaper cleaner",
+    "cleaning putty"
+   ],
+   "decoys": [
+    "bread dough",
+    "dental putty",
+    "window caulk"
+   ]
+  },
+  {
+   "id": "b068",
+   "prompt": "Nutella was created in 1946 to stretch scarce ____.",
+   "answer": "chocolate",
+   "alsoAccept": [
+    "cocoa"
+   ],
+   "decoys": [
+    "peanut butter",
+    "sugar",
+    "butter"
+   ]
+  },
+  {
+   "id": "b069",
+   "prompt": "The microwave oven was discovered when a ____ melted in an engineer's pocket.",
+   "answer": "chocolate bar",
+   "alsoAccept": [
+    "candy bar",
+    "chocolate",
+    "peanut bar"
+   ],
+   "decoys": [
+    "crayon",
+    "lipstick",
+    "gummy bear"
+   ]
+  },
+  {
+   "id": "b070",
+   "prompt": "Cows are known to have best friends and get ____ when separated.",
+   "answer": "stressed",
+   "alsoAccept": [
+    "anxious",
+    "stress",
+    "upset"
+   ],
+   "decoys": [
+    "hungry",
+    "louder",
+    "sleepy"
+   ]
+  }
+ ]
+}
