@@ -20,3 +20,13 @@ backend/media/
 frontend/e2e/.tmp/
 frontend/test-results/
 frontend/playwright-report/
+
+# PARTY OS
+tv/.gradle/
+tv/**/build/
+tv/local.properties
+tv/.kotlin/
+controller/node_modules/
+controller/dist/
+controller/test-results/
+controller/playwright-report/
