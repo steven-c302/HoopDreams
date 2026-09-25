@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -29,23 +30,25 @@ import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     private val menuPresses = MutableSharedFlow<Unit>(extraBufferCapacity = 4)
-    private lateinit var perf: PerfMonitor
+    // Created after setContent: JankStats needs the window's DecorView to exist.
+    private val perf = mutableStateOf<PerfMonitor?>(null)
     private var tour: Job? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         PartyService.start(this)
-        perf = PerfMonitor(window)
         setContent {
             PartyTheme {
                 val settings by partyRuntime.settings.settings.collectAsState(initial = null)
                 Box(Modifier.fillMaxSize()) {
                     TvApp(partyRuntime, menuPresses, onBenchmark = ::startTour)
-                    if (settings?.perfHud == true) PerfHud(perf, Modifier.align(Alignment.TopEnd).padding(12.dp))
+                    val monitor by perf
+                    if (settings?.perfHud == true) monitor?.let { PerfHud(it, Modifier.align(Alignment.TopEnd).padding(12.dp)) }
                 }
             }
         }
+        perf.value = PerfMonitor(window)
         handleIntent(intent)
     }
 
@@ -69,7 +72,7 @@ class MainActivity : ComponentActivity() {
         if (tour?.isActive == true) return
         tour = lifecycleScope.launch {
             partyRuntime.live.filterNotNull().first()
-            BenchmarkTour(partyRuntime, perf).run()
+            BenchmarkTour(partyRuntime, perf.value ?: return@launch).run()
         }
     }
 
