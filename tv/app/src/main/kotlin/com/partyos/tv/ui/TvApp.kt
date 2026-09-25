@@ -69,7 +69,7 @@ fun TvApp(runtime: PartyRuntime, menuPresses: Flow<Unit>, onBenchmark: () -> Uni
             route == Route.Lobby -> LobbyScreen(state.roomCode, joinUrl, state.players, runtime.games.all.map { it.info }, state.lastResult) { g ->
                 controller.start(g.id, settings!!.rounds)
             }
-            route == Route.Settings -> SettingsScreen(settings!!, ip, live?.server?.port, joinUrl, controller, onBenchmark)
+            route == Route.Settings -> SettingsScreen(settings!!, ip, live?.server?.port, joinUrl, controller) { route = Route.Lobby; onBenchmark() }
             else -> HomeScreen(
                 playersOnline = state.players.count { it.connected },
                 onPlay = { route = Route.Lobby },
