@@ -69,12 +69,7 @@ def streak_status(times: list[int], now: int, settings: PartySettings) -> Streak
     if in_fire_window >= fire.count and now - last <= fire.cool_min * MINUTE_MS:
         return "fire"
     heat = settings.heating_up
-    # Check if any consecutive pair of shots is within the heating window
-    has_heating_pair = any(
-        times[i + 1] - times[i] <= heat.window_min * MINUTE_MS
-        for i in range(len(times) - 1)
-    )
-    if has_heating_pair and now - last <= heat.window_min * MINUTE_MS:
+    if sum(1 for t in times if now - t <= heat.window_min * MINUTE_MS) >= heat.count:
         return "heating"
     return None
 

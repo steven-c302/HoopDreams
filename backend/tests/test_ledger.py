@@ -47,7 +47,8 @@ def test_streak_on_fire_is_three_in_thirty_minutes_and_cools_after_thirty():
     assert ledger.streak_status(times, base + 29 * MIN, S) == "fire"
     assert ledger.streak_status(times, base + 29 * MIN + 30 * MIN, S) == "fire"
     assert ledger.streak_status(times, base + 29 * MIN + 31 * MIN, S) is None
-    assert ledger.streak_status([base, base + 10 * MIN, base + 31 * MIN], base + 31 * MIN, S) == "heating"
+    assert ledger.streak_status([base, base + 15 * MIN, base + 31 * MIN], base + 31 * MIN, S) == "heating"
+    assert ledger.streak_status([base, base + 10 * MIN, base + 31 * MIN], base + 31 * MIN, S) is None
 
 
 def test_streak_with_no_shots_is_none():
