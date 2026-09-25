@@ -17,7 +17,7 @@ from collections import Counter, defaultdict, deque
 from collections.abc import Callable, Iterator, Sequence
 from contextlib import contextmanager
 from dataclasses import dataclass
-from typing import Any, Protocol
+from typing import Any, Literal, Protocol
 
 from pydantic import BaseModel
 from sqlalchemy import select, update
@@ -35,11 +35,16 @@ from .contract import (
     JoinIn,
     JoinInfo,
     JoinOut,
+    LeadChangeMoment,
+    MilestoneMoment,
     PlayerUpdateIn,
     PlayerView,
     PublicState,
     ReelItem,
+    ShotDrinker,
+    ShotMoment,
     TeamView,
+    WavedOffMoment,
     WifiIn,
 )
 from .errors import PartyError
@@ -321,6 +326,116 @@ class PartyService:
             return True
         seen = self.last_seen.get(player_id)
         return seen is not None and self.clock() - seen <= PRESENCE_GRACE_MS
+
+    # ---------- shots ----------
+
+    async def log_shots(
+        self,
+        logged_by_id: str | None,
+        request_id: str,
+        drinker_ids: Sequence[str],
+        *,
+        source: str = "manual",
+        reason: str = "",
+    ) -> list[str]:
+        if request_id in self.by_request:
+            return list(self.by_request[request_id])
+        ids = list(dict.fromkeys(drinker_ids))
+        if not ids or any(pid not in self.players for pid in ids):
+            raise PartyError("Someone in that shot isn't in the game")
+        if source == "manual" and logged_by_id is not None:
+            self._check_rate(logged_by_id)
+        now = self.clock()
+        before_total = sum(self.counts().values())
+        recs = [ShotRec(new_id(), pid, logged_by_id, request_id, source, now) for pid in ids]
+        with self.db() as db:
+            db.add_all(
+                models.Shot(id=r.id, night_id=self.night_id, drinker_id=r.drinker_id, logged_by_id=r.logged_by_id,
+                            request_id=r.request_id, source=r.source, reason=reason, created_at=r.created_at)
+                for r in recs
+            )
+        for r in recs:
+            self.shots[r.id] = r
+        self.by_request[request_id] = [r.id for r in recs]
+        await self._announce(recs, before_total)
+        return [r.id for r in recs]
+
+    def _check_rate(self, player_id: str) -> None:
+        window, now = self.rate[player_id], self.clock()
+        while window and now - window[0] > 60_000:
+            window.popleft()
+        if len(window) >= self.settings.shot_log_per_min:
+            raise PartyError("Easy there — too many shots logged this minute")
+        window.append(now)
+
+    async def _announce(self, recs: list[ShotRec], before_total: int) -> None:
+        now, counts, first = self.clock(), self.counts(), recs[0]
+        moments: list[BaseModel] = [
+            ShotMoment(
+                id=new_id(), at=now, request_id=first.request_id, source=first.source, logged_by_id=first.logged_by_id,
+                drinkers=[
+                    ShotDrinker(player_id=r.drinker_id, count=counts[r.drinker_id],
+                                streak=ledger.streak_status(self.live_times(r.drinker_id), now, self.settings))
+                    for r in recs
+                ],
+            )
+        ]
+        if before_total == 0:
+            moments.append(MilestoneMoment(id=new_id(), at=now, scope="first", player_id=first.drinker_id, value=1))
+        moments += [
+            MilestoneMoment(id=new_id(), at=now, scope="player", player_id=r.drinker_id, value=counts[r.drinker_id])
+            for r in recs
+            if ledger.is_player_milestone(counts[r.drinker_id], self.settings)
+        ]
+        moments += [
+            MilestoneMoment(id=new_id(), at=now, scope="party", player_id=None, value=value)
+            for value in ledger.party_milestones_crossed(before_total, sum(counts.values()), self.settings)
+        ]
+        leader = ledger.sole_leader(self.team_totals())
+        if leader is not None and leader != self.last_leader:
+            self.last_leader = leader
+            moments.append(LeadChangeMoment(id=new_id(), at=now, team_id=leader))
+        await self.broadcast()
+        for moment in moments:
+            await self.emitter.moment(moment)
+
+    async def undo(self, logger_id: str, request_id: str) -> None:
+        shots = [self.shots[i] for i in self.by_request.get(request_id, [])]
+        if not shots:
+            raise PartyError("Nothing to undo")
+        if any(s.logged_by_id != logger_id for s in shots):
+            raise PartyError("You can only undo your own logs")
+        if self.clock() - shots[0].created_at > self.settings.undo_window_sec * 1000:
+            raise PartyError("Too late to undo — ask the host")
+        await self.void([s for s in shots if s.voided_at is None], "undo")
+
+    async def reject(self, player_id: str, shot_id: str) -> None:
+        shot = self.shots.get(shot_id)
+        if shot is None or shot.drinker_id != player_id:
+            raise PartyError("That shot isn't yours")
+        if shot.logged_by_id is None or shot.logged_by_id == player_id:
+            raise PartyError("Use undo for shots you logged")
+        if shot.voided_at is not None:
+            return
+        if self.clock() - shot.created_at > self.settings.not_me_window_sec * 1000:
+            raise PartyError("Too late — take it up with the host")
+        await self.void([shot], "not_me")
+
+    async def void(self, shots: list[ShotRec], reason: Literal["undo", "not_me", "host"]) -> None:
+        if not shots:
+            return
+        now = self.clock()
+        with self.db() as db:
+            db.execute(
+                update(models.Shot).where(models.Shot.id.in_([s.id for s in shots])).values(voided_at=now, void_reason=reason)
+            )
+        for s in shots:
+            s.voided_at, s.void_reason = now, reason
+        await self.broadcast()
+        for s in shots:
+            await self.emitter.moment(
+                WavedOffMoment(id=new_id(), at=now, player_id=s.drinker_id, shot_id=s.id, reason=reason)
+            )
 
     # ---------- derived state ----------
 
