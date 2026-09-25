@@ -26,6 +26,8 @@ android {
     testOptions { unitTests.isIncludeAndroidResources = true }
 }
 
+ksp { arg("room.schemaLocation", "$projectDir/schemas") }
+
 dependencies {
     implementation(project(":server"))
     implementation(platform(libs.compose.bom))
@@ -35,10 +37,46 @@ dependencies {
     implementation(libs.activity.compose)
     implementation(libs.lifecycle.runtime.compose)
     implementation(libs.coroutines.android)
+    implementation(libs.lifecycle.service)
+    implementation(libs.room.runtime)
+    implementation(libs.room.ktx)
+    ksp(libs.room.compiler)
+    implementation(libs.datastore.preferences)
+    implementation(libs.zxing.core)
+    implementation(libs.jankstats)
+    implementation(libs.profileinstaller)
     testImplementation(libs.junit4)
     testImplementation(libs.robolectric)
     testImplementation(libs.androidx.test.core)
     testImplementation(platform(libs.compose.bom))
     testImplementation(libs.compose.ui.test.junit4)
     debugImplementation(libs.compose.ui.test.manifest)
+}
+
+/** Copies the built phone controller (controller/dist) into the APK under assets/controller. */
+abstract class SyncControllerAssets : DefaultTask() {
+    @get:InputDirectory
+    abstract val sourceDir: DirectoryProperty
+
+    @get:OutputDirectory
+    abstract val outputDir: DirectoryProperty
+
+    @TaskAction
+    fun sync() {
+        val src = sourceDir.get().asFile
+        check(File(src, "index.html").isFile) { "Build the phone controller first: cd controller && npm ci && npm run build" }
+        val dest = File(outputDir.get().asFile, "controller")
+        dest.deleteRecursively()
+        src.copyRecursively(dest, overwrite = true)
+    }
+}
+
+val syncControllerAssets = tasks.register<SyncControllerAssets>("syncControllerAssets") {
+    sourceDir.set(rootProject.layout.projectDirectory.dir("../controller/dist"))
+}
+
+androidComponents {
+    onVariants { variant ->
+        variant.sources.assets?.addGeneratedSourceDirectory(syncControllerAssets, SyncControllerAssets::outputDir)
+    }
 }
