@@ -56,7 +56,13 @@ class MainActivity : ComponentActivity() {
 
     /** `adb shell am start -n com.partyos.tv/.MainActivity --ez tour true` runs the benchmark tour. */
     private fun handleIntent(intent: Intent?) {
-        if (intent?.getBooleanExtra("tour", false) == true) startTour()
+        if (intent == null) return
+        // Debug builds only: scripts/emulator-party.sh points the QR at the Mac's LAN proxy.
+        val debuggable = applicationInfo.flags and android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE != 0
+        intent.getStringExtra("override")?.takeIf { debuggable }?.let { v ->
+            lifecycleScope.launch { partyRuntime.settings.setOverride(v) }
+        }
+        if (intent.getBooleanExtra("tour", false)) startTour()
     }
 
     private fun startTour() {

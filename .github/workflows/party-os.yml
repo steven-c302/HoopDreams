@@ -1,0 +1,115 @@
+name: PARTY OS
+
+on:
+  push:
+    branches: [main, party-os]
+    paths: ['tv/**', 'controller/**', '.github/workflows/party-os.yml']
+  pull_request:
+    paths: ['tv/**', 'controller/**', '.github/workflows/party-os.yml']
+  workflow_dispatch:
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      HAS_KEYSTORE: ${{ secrets.RELEASE_KEYSTORE_BASE64 != '' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: controller/package-lock.json
+
+      - name: Controller unit tests and build
+        working-directory: controller
+        run: |
+          npm ci
+          npx vitest run
+          npm run build
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - uses: android-actions/setup-android@v3
+
+      - name: Install Android platform 37
+        run: sdkmanager "platforms;android-37.0"
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: JVM, server, simulated-party and Robolectric tests; debug APK
+        working-directory: tv
+        run: ./gradlew :engine:test :server:test :app:testDebugUnitTest :app:assembleDebug :devserver:installDist --console=plain
+
+      - name: Browser end-to-end tests against the real server
+        working-directory: controller
+        run: |
+          npx playwright install --with-deps chromium
+          npx playwright test --reporter=line
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: partyos-debug-apk
+          path: tv/app/build/outputs/apk/debug/app-debug.apk
+
+      - name: Signed release APK (only when release secrets exist)
+        if: ${{ env.HAS_KEYSTORE == 'true' }}
+        env:
+          RELEASE_KEYSTORE_PASSWORD: ${{ secrets.RELEASE_KEYSTORE_PASSWORD }}
+          RELEASE_KEY_ALIAS: ${{ secrets.RELEASE_KEY_ALIAS }}
+          RELEASE_KEY_PASSWORD: ${{ secrets.RELEASE_KEY_PASSWORD }}
+        working-directory: tv
+        run: |
+          echo "${{ secrets.RELEASE_KEYSTORE_BASE64 }}" | base64 -d > "$RUNNER_TEMP/release.keystore"
+          RELEASE_KEYSTORE_PATH="$RUNNER_TEMP/release.keystore" ./gradlew :app:assembleRelease --console=plain
+
+      - uses: actions/upload-artifact@v4
+        if: ${{ hashFiles('tv/app/build/outputs/apk/release/*.apk') != '' }}
+        with:
+          name: partyos-release-apk
+          path: tv/app/build/outputs/apk/release/*.apk
+
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: test-reports
+          path: |
+            tv/*/build/reports/tests
+            controller/test-results
+
+  emulator-smoke:
+    needs: build-test
+    if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: partyos-debug-apk
+
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Launch on an Android TV emulator and hit /healthz
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          target: google-tv
+          arch: x86_64
+          profile: tv_1080p
+          disable-animations: true
+          script: |
+            adb install -r app-debug.apk
+            adb shell am start -n com.partyos.tv/.MainActivity
+            sleep 20
+            adb forward tcp:18080 tcp:8080
+            curl --retry 10 --retry-delay 3 --retry-all-errors -fsS http://127.0.0.1:18080/healthz
+            curl -fsS http://127.0.0.1:18080/j/TEST | grep -q '<div id="root">'
