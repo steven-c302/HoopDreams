@@ -1,0 +1,425 @@
+[
+    {
+        "t": "welcome",
+        "playerId": "p-sam",
+        "role": "PLAYER",
+        "host": false,
+        "protocol": 1
+    },
+    {
+        "t": "welcome",
+        "host": true,
+        "protocol": 1
+    },
+    {
+        "t": "view",
+        "seq": 12,
+        "view": {
+            "me": {
+                "id": "p-sam",
+                "name": "Sam",
+                "avatar": {
+                    "emoji": "🦊",
+                    "color": "#FF7A00"
+                },
+                "role": "PLAYER",
+                "connected": true
+            },
+            "roomCode": "KXQT",
+            "gameId": "bluff",
+            "gameTitle": "Bluff Battle",
+            "round": 0,
+            "paused": false,
+            "remainingMs": 42000,
+            "screen": {
+                "t": "waiting",
+                "title": "You're in!",
+                "detail": "Waiting for the host to pick a game"
+            },
+            "scores": [
+                {
+                    "id": "p-sam",
+                    "name": "Sam",
+                    "avatar": {
+                        "emoji": "🦊",
+                        "color": "#FF7A00"
+                    },
+                    "score": 1500
+                },
+                {
+                    "id": "p-al",
+                    "name": "Al",
+                    "avatar": {
+                        "emoji": "🐸",
+                        "color": "#22AA55"
+                    },
+                    "score": 500
+                }
+            ]
+        }
+    },
+    {
+        "t": "view",
+        "seq": 12,
+        "view": {
+            "me": {
+                "id": "p-sam",
+                "name": "Sam",
+                "avatar": {
+                    "emoji": "🦊",
+                    "color": "#FF7A00"
+                },
+                "role": "PLAYER",
+                "connected": true
+            },
+            "roomCode": "KXQT",
+            "gameId": "bluff",
+            "gameTitle": "Bluff Battle",
+            "round": 3,
+            "paused": false,
+            "remainingMs": 42000,
+            "screen": {
+                "t": "tutorial",
+                "cards": [
+                    {
+                        "title": "Write a fake",
+                        "body": "Type a believable fake answer."
+                    }
+                ],
+                "acknowledged": false
+            },
+            "scores": [
+                {
+                    "id": "p-sam",
+                    "name": "Sam",
+                    "avatar": {
+                        "emoji": "🦊",
+                        "color": "#FF7A00"
+                    },
+                    "score": 1500
+                },
+                {
+                    "id": "p-al",
+                    "name": "Al",
+                    "avatar": {
+                        "emoji": "🐸",
+                        "color": "#22AA55"
+                    },
+                    "score": 500
+                }
+            ]
+        }
+    },
+    {
+        "t": "view",
+        "seq": 12,
+        "view": {
+            "me": {
+                "id": "p-sam",
+                "name": "Sam",
+                "avatar": {
+                    "emoji": "🦊",
+                    "color": "#FF7A00"
+                },
+                "role": "PLAYER",
+                "connected": true
+            },
+            "roomCode": "KXQT",
+            "gameId": "bluff",
+            "gameTitle": "Bluff Battle",
+            "round": 3,
+            "paused": false,
+            "remainingMs": 42000,
+            "screen": {
+                "t": "text",
+                "prompt": "Wombat poop is shaped like ____.",
+                "maxLen": 60,
+                "kind": "write",
+                "hint": "Write a believable fake answer"
+            },
+            "scores": [
+                {
+                    "id": "p-sam",
+                    "name": "Sam",
+                    "avatar": {
+                        "emoji": "🦊",
+                        "color": "#FF7A00"
+                    },
+                    "score": 1500
+                },
+                {
+                    "id": "p-al",
+                    "name": "Al",
+                    "avatar": {
+                        "emoji": "🐸",
+                        "color": "#22AA55"
+                    },
+                    "score": 500
+                }
+            ]
+        }
+    },
+    {
+        "t": "view",
+        "seq": 12,
+        "view": {
+            "me": {
+                "id": "p-sam",
+                "name": "Sam",
+                "avatar": {
+                    "emoji": "🦊",
+                    "color": "#FF7A00"
+                },
+                "role": "PLAYER",
+                "connected": true
+            },
+            "roomCode": "KXQT",
+            "gameId": "bluff",
+            "gameTitle": "Bluff Battle",
+            "round": 3,
+            "paused": false,
+            "remainingMs": 42000,
+            "screen": {
+                "t": "choice",
+                "prompt": "Which one is the truth?",
+                "options": [
+                    {
+                        "id": "o1",
+                        "text": "cubes"
+                    },
+                    {
+                        "id": "o2",
+                        "text": "stars"
+                    }
+                ],
+                "selected": "o2",
+                "kind": "pick"
+            },
+            "scores": [
+                {
+                    "id": "p-sam",
+                    "name": "Sam",
+                    "avatar": {
+                        "emoji": "🦊",
+                        "color": "#FF7A00"
+                    },
+                    "score": 1500
+                },
+                {
+                    "id": "p-al",
+                    "name": "Al",
+                    "avatar": {
+                        "emoji": "🐸",
+                        "color": "#22AA55"
+                    },
+                    "score": 500
+                }
+            ]
+        }
+    },
+    {
+        "t": "view",
+        "seq": 12,
+        "view": {
+            "me": {
+                "id": "p-sam",
+                "name": "Sam",
+                "avatar": {
+                    "emoji": "🦊",
+                    "color": "#FF7A00"
+                },
+                "role": "PLAYER",
+                "connected": true
+            },
+            "roomCode": "KXQT",
+            "gameId": "bluff",
+            "gameTitle": "Bluff Battle",
+            "round": 3,
+            "paused": false,
+            "remainingMs": 42000,
+            "screen": {
+                "t": "scores",
+                "title": "Final scores",
+                "rows": [
+                    {
+                        "id": "p-sam",
+                        "name": "Sam",
+                        "avatar": {
+                            "emoji": "🦊",
+                            "color": "#FF7A00"
+                        },
+                        "score": 1500
+                    },
+                    {
+                        "id": "p-al",
+                        "name": "Al",
+                        "avatar": {
+                            "emoji": "🐸",
+                            "color": "#22AA55"
+                        },
+                        "score": 500
+                    }
+                ]
+            },
+            "scores": [
+                {
+                    "id": "p-sam",
+                    "name": "Sam",
+                    "avatar": {
+                        "emoji": "🦊",
+                        "color": "#FF7A00"
+                    },
+                    "score": 1500
+                },
+                {
+                    "id": "p-al",
+                    "name": "Al",
+                    "avatar": {
+                        "emoji": "🐸",
+                        "color": "#22AA55"
+                    },
+                    "score": 500
+                }
+            ]
+        }
+    },
+    {
+        "t": "tv",
+        "seq": 12,
+        "tv": {
+            "roomCode": "KXQT",
+            "players": [
+                {
+                    "id": "p-sam",
+                    "name": "Sam",
+                    "avatar": {
+                        "emoji": "🦊",
+                        "color": "#FF7A00"
+                    },
+                    "role": "PLAYER",
+                    "connected": true
+                }
+            ],
+            "stage": {
+                "gameId": "bluff",
+                "title": "Bluff Battle",
+                "phaseSeq": 5,
+                "deadlineAt": 1700000060000,
+                "remainingMs": 30000,
+                "paused": false,
+                "tutorial": {
+                    "cards": [
+                        {
+                            "title": "Score",
+                            "body": "+1000 for the truth"
+                        }
+                    ],
+                    "acked": [
+                        "p-sam"
+                    ]
+                },
+                "game": {
+                    "t": "bluff",
+                    "phase": "reveal",
+                    "round": 2,
+                    "totalRounds": 5,
+                    "finalRound": false,
+                    "prompt": "Wombat poop is shaped like ____.",
+                    "submitted": 3,
+                    "expected": 3,
+                    "options": [],
+                    "reveal": [
+                        {
+                            "text": "stars",
+                            "kind": "fake",
+                            "authors": [
+                                "Al"
+                            ],
+                            "fooled": [
+                                "Sam"
+                            ]
+                        },
+                        {
+                            "text": "cubes",
+                            "kind": "truth",
+                            "authors": [],
+                            "fooled": []
+                        }
+                    ],
+                    "deltas": [
+                        {
+                            "id": "p-al",
+                            "name": "Al",
+                            "points": 500
+                        }
+                    ]
+                }
+            },
+            "scores": [
+                {
+                    "id": "p-sam",
+                    "name": "Sam",
+                    "avatar": {
+                        "emoji": "🦊",
+                        "color": "#FF7A00"
+                    },
+                    "score": 1500
+                },
+                {
+                    "id": "p-al",
+                    "name": "Al",
+                    "avatar": {
+                        "emoji": "🐸",
+                        "color": "#22AA55"
+                    },
+                    "score": 500
+                }
+            ],
+            "lastResult": {
+                "gameId": "bluff",
+                "title": "Bluff Battle",
+                "finishedAt": 1700000000000,
+                "standings": [
+                    {
+                        "id": "p-sam",
+                        "name": "Sam",
+                        "avatar": {
+                            "emoji": "🦊",
+                            "color": "#FF7A00"
+                        },
+                        "score": 1500
+                    },
+                    {
+                        "id": "p-al",
+                        "name": "Al",
+                        "avatar": {
+                            "emoji": "🐸",
+                            "color": "#22AA55"
+                        },
+                        "score": 500
+                    }
+                ],
+                "highlights": [
+                    "Al fooled 3 people with “stars”"
+                ]
+            },
+            "gamesPlayed": 1
+        }
+    },
+    {
+        "t": "ack",
+        "id": "a-1"
+    },
+    {
+        "t": "reject",
+        "id": "a-2",
+        "code": "TOO_TRUE"
+    },
+    {
+        "t": "pong"
+    },
+    {
+        "t": "bye",
+        "reason": "KICKED"
+    }
+]

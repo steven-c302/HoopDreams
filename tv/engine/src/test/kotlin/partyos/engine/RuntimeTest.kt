@@ -33,6 +33,8 @@ class RuntimeTest {
         assertNull(e.tvState().stage)
     }
 
+    @Test fun gameInfosListRegisteredGames() = assertEquals(listOf("countdown"), engine().gameInfos.map { it.id })
+
     @Test fun unknownGameIsRejected() {
         val e = engine(); e.add("A"); e.add("B")
         assertEquals(ActionResult.Rejected("UNKNOWN_GAME"), e.host(HostCmd.StartGame("nope")))

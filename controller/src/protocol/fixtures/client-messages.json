@@ -1,0 +1,88 @@
+[
+    {
+        "t": "hello",
+        "protocol": 1
+    },
+    {
+        "t": "action",
+        "id": "a-1",
+        "round": 3,
+        "payload": {
+            "kind": "write",
+            "text": "stars"
+        }
+    },
+    {
+        "t": "action",
+        "id": "a-2",
+        "round": 4,
+        "payload": {
+            "kind": "pick",
+            "option": "o2"
+        }
+    },
+    {
+        "t": "action",
+        "id": "a-3",
+        "round": 1,
+        "payload": {
+            "kind": "ack"
+        }
+    },
+    {
+        "t": "host",
+        "id": "h-1",
+        "cmd": {
+            "t": "start",
+            "gameId": "bluff",
+            "rounds": 5
+        }
+    },
+    {
+        "t": "host",
+        "id": "h-2",
+        "cmd": {
+            "t": "pause"
+        }
+    },
+    {
+        "t": "host",
+        "id": "h-3",
+        "cmd": {
+            "t": "resume"
+        }
+    },
+    {
+        "t": "host",
+        "id": "h-4",
+        "cmd": {
+            "t": "skip"
+        }
+    },
+    {
+        "t": "host",
+        "id": "h-5",
+        "cmd": {
+            "t": "end"
+        }
+    },
+    {
+        "t": "host",
+        "id": "h-6",
+        "cmd": {
+            "t": "kick",
+            "playerId": "p-al"
+        }
+    },
+    {
+        "t": "host",
+        "id": "h-7",
+        "cmd": {
+            "t": "setRounds",
+            "rounds": 6
+        }
+    },
+    {
+        "t": "ping"
+    }
+]

@@ -23,4 +23,5 @@ dependencies {
 tasks.test {
     useJUnitPlatform()
     systemProperty("fixturesDir", rootProject.file("../controller/src/protocol/fixtures").absolutePath)
+    systemProperty("updateFixtures", project.hasProperty("updateFixtures").toString())
 }

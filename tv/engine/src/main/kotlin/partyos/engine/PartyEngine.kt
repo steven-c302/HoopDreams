@@ -56,6 +56,9 @@ class PartyEngine private constructor(
     private val results = ArrayList(results)
     private var active: ActiveGame<*>? = null
 
+    /** Games this party can start, in registry order. */
+    val gameInfos: List<GameInfo> get() = games.all.map { it.info }
+
     val players: List<Player> get() = roster.values.filterNot { it.kicked }
     private val gamePlayers get() = players.filter { it.role == Role.PLAYER }
     private val connectedPlayers get() = gamePlayers.count { it.connected }
