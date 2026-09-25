@@ -117,3 +117,15 @@ class HardeningTest {
         assertEquals(null, host.pendingDeadline())
     }
 }
+
+class RoleSwitchTest {
+    @Test fun spectatorBecomesAPlayerBetweenGames() = testApplication {
+        val host = newHost(); serve(host)
+        val token = tokenOf(client.join(host.tv.value.roomCode, "Watcher", spectator = true).second)
+        val r = client.post("/api/role") { contentType(ContentType.Application.Json); setBody("""{"token":"$token","role":"PLAYER"}""") }
+        assertEquals(200, r.status.value)
+        assertEquals(partyos.engine.Role.PLAYER, host.tv.value.players.single().role)
+        val bad = client.post("/api/role") { contentType(ContentType.Application.Json); setBody("""{"token":"nope","role":"PLAYER"}""") }
+        assertEquals(401, bad.status.value)
+    }
+}

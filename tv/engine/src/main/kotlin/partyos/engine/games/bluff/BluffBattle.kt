@@ -135,6 +135,8 @@ class BluffBattle(private val pack: BluffPack = BluffPack.core()) : GameModule<B
         return Step(s.copy(phase = REVEAL, deltas = deltas), effects + Effect.Phase(REVEAL_STEP_MS * s.options.size + REVEAL_TAIL_MS))
     }
 
+    override fun restorable(s: BluffState) = s.questionId == null || s.questionId in byId
+
     override fun waitingOn(s: BluffState): Set<PlayerId>? = when (s.phase) {
         WRITE -> s.participants.filter { it.v !in s.fakes }.toSet()
         PICK -> s.participants.filter { it.v !in s.picks }.toSet()

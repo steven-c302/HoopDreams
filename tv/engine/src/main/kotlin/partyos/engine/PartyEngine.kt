@@ -100,6 +100,16 @@ class PartyEngine private constructor(
         settle()
     }
 
+    /** Switches a member between player and spectator; only between games and only into a free seat. Null = done. */
+    fun setRole(id: PlayerId, role: Role): String? {
+        val p = player(id) ?: return "UNKNOWN_PLAYER"
+        if (p.role == role) return null
+        if (active != null) return "GAME_RUNNING"
+        if (players.count { it.role == role } >= MAX_PER_ROLE) return "FULL"
+        roster[id] = p.copy(role = role)
+        return null
+    }
+
     fun setPin(pin: String) {
         val salt = entropy.token()
         pinSalt = salt
@@ -346,6 +356,14 @@ class PartyEngine private constructor(
         private fun newRoomCode(entropy: Entropy) =
             (1..4).map { ROOM_ALPHABET[entropy.nextInt(ROOM_ALPHABET.length)] }.joinToString("")
 
+        /** A saved game that can't be decoded or played any more is dropped; the party and roster survive. */
+        @Suppress("UNCHECKED_CAST")
+        private fun restoreGame(module: GameModule<*>, gs: GameSnapshot): ActiveGame<*>? {
+            val m = module as GameModule<Any>
+            val g = runCatching { ActiveGame.restore(m, gs) }.getOrNull() ?: return null
+            return g.takeIf { a -> a.state?.let { runCatching { m.restorable(it) }.getOrDefault(false) } ?: true }
+        }
+
         fun restore(
             s: PartySnapshot,
             clock: Clock,
@@ -356,7 +374,7 @@ class PartyEngine private constructor(
                 clock, entropy, games, s.roomCode, s.createdAt, s.players.map { it.copy(connected = false) },
                 s.tokenHashes, s.pinSalt, s.pinHash, s.settings, s.usedContent, s.results,
             )
-            s.game?.let { gs -> games[gs.gameId]?.let { e.active = ActiveGame.restore(it, gs) } }
+            s.game?.let { gs -> games[gs.gameId]?.let { e.active = restoreGame(it, gs) } }
             return e
         }
     }

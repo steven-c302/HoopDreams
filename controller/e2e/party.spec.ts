@@ -54,3 +54,20 @@ test('a refreshed phone rejoins as the same player', async ({ browser }) => {
   await expect(p.locator('.me')).toContainText('Dee')
   await expect(host.locator('.players li', { hasText: 'Dee' })).toHaveCount(1)
 })
+
+test('a spectator can take a free seat between games', async ({ browser }) => {
+  const { host, room } = await hostPage(browser)
+  // The dev server is shared across tests; finish any game an earlier test left running.
+  host.on('dialog', (d) => d.accept())
+  const end = host.getByRole('button', { name: 'End game' })
+  if (await end.isVisible()) await end.click()
+  await expect(host.getByRole('heading', { name: 'Start a game' })).toBeVisible()
+  const p = await (await browser.newContext()).newPage()
+  await p.goto(`/j/${room}`)
+  await p.getByPlaceholder('What should the TV call you?').fill('Watcher')
+  await p.getByRole('button', { name: 'Just watch' }).click()
+  await expect(host.locator('.players li', { hasText: 'Watcher (watching)' })).toHaveCount(1)
+  await p.getByRole('button', { name: 'Join as a player' }).click()
+  await expect(host.locator('.players li', { hasText: 'Watcher' })).not.toContainText('watching')
+  await expect(p.getByRole('button', { name: 'Join as a player' })).toHaveCount(0)
+})

@@ -45,10 +45,11 @@ internal class ActiveGame<S : Any>(
 
     companion object {
         const val MAX_HANDLED = 2048
+        private val lenient = Json { ignoreUnknownKeys = true }
 
         fun <S : Any> restore(module: GameModule<S>, s: GameSnapshot) = ActiveGame(
             module = module,
-            state = s.state?.let { Json.decodeFromJsonElement(module.stateSerializer, it) },
+            state = s.state?.let { lenient.decodeFromJsonElement(module.stateSerializer, it) },
             phaseSeq = s.phaseSeq,
             deadlineAt = null,
             pausedRemaining = s.remainingMs,

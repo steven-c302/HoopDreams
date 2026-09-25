@@ -10,6 +10,14 @@ const BYE: Record<string, string> = {
   BAD_TOKEN: 'That party has ended or the TV restarted. Join again!',
 }
 
+async function takeSeat(token: string, report: (m: string) => void) {
+  const r = await fetch('/api/role', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ token, role: 'PLAYER' }) })
+    .catch(() => null)
+  if (r?.ok) return
+  const code = (await r?.json().catch(() => ({})))?.error
+  report(code === 'FULL' ? 'All 16 player seats are taken.' : code === 'GAME_RUNNING' ? 'You can join when this game ends.' : "Couldn't switch right now.")
+}
+
 export function Play({ session, onLeave }: { session: Session; onLeave(why: string): void }) {
   const [view, setView] = useState<PhoneState | null>(null)
   const [seq, setSeq] = useState(0)
@@ -53,6 +61,9 @@ export function Play({ session, onLeave }: { session: Session; onLeave(why: stri
       {view.paused && <div className="banner">{view.pauseReason === 'WAITING_FOR_PLAYERS' ? 'Paused: waiting for players' : 'Paused'}</div>}
       <section className="screen" key={`${view.round}-${view.screen.t}`}>
         <ScreenView screen={view.screen} disabled={view.paused} onAction={send} meId={view.me.id} />
+        {view.me.role === 'SPECTATOR' && !view.gameId && (
+          <button className="primary big" onClick={() => void takeSeat(session.token, setToast)}>Join as a player</button>
+        )}
       </section>
       {toast && <div className="toast" role="status">{toast}</div>}
     </main>

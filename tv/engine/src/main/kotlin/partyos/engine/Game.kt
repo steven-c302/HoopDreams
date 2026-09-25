@@ -59,6 +59,8 @@ interface GameModule<S : Any> {
     fun waitingOn(s: S): Set<PlayerId>?
     fun tvView(s: S, ctx: GameContext): TvGame
     fun playerView(s: S, who: PlayerId, ctx: GameContext): Screen
+    /** False if a saved state can no longer be played (e.g. its content left the pack); restore then drops the game. */
+    fun restorable(s: S): Boolean = true
 }
 
 class GameRegistry(modules: List<GameModule<*>>) {

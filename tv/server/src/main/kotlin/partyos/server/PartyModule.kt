@@ -88,6 +88,20 @@ fun Application.partyModule(host: PartyHost, static: StaticFiles, cfg: ServerCon
             }
         }
 
+        post("/api/role") {
+            val req = call.receiveSmall<RoleRequest>() ?: return@post call.respond(HttpStatusCode.BadRequest, ErrorResponse("BAD_REQUEST"))
+            val result = host.mutate {
+                val id = resolve(req.token) ?: return@mutate "BAD_TOKEN"
+                setRole(id, req.role)
+            }
+            when (result) {
+                null -> call.respond(HttpStatusCode.OK, ErrorResponse("OK"))
+                "BAD_TOKEN" -> call.respond(HttpStatusCode.Unauthorized, ErrorResponse(result))
+                "FULL" -> call.respond(HttpStatusCode.Forbidden, ErrorResponse(result))
+                else -> call.respond(HttpStatusCode.Conflict, ErrorResponse(result))
+            }
+        }
+
         post("/api/host/login") {
             val ip = call.request.origin.remoteAddress
             if (!lockout.tryAttempt(ip)) {

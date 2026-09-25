@@ -72,6 +72,9 @@ data class JoinResponse(val playerId: PlayerId, val token: String)
 data class PinRequest(val pin: String)
 
 @Serializable
+data class RoleRequest(val token: String, val role: Role)
+
+@Serializable
 data class HostLoginResponse(val hostToken: String)
 
 @Serializable
