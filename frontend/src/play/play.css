@@ -1,0 +1,258 @@
+.play {
+  max-width: 520px;
+  margin: 0 auto;
+  padding: 16px 16px 120px;
+  display: grid;
+  gap: 16px;
+}
+
+.play__center {
+  min-height: 70vh;
+  display: grid;
+  place-content: center;
+  gap: 12px;
+  text-align: center;
+}
+
+.me {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 18px;
+  background: var(--arena-700);
+  border-left: 8px solid var(--team, var(--ink-lo));
+}
+
+.me__who {
+  flex: 1;
+  display: grid;
+}
+
+.me__team {
+  color: var(--ink-lo);
+  font-size: 0.85rem;
+}
+
+.me__score {
+  display: grid;
+  justify-items: end;
+}
+
+.me__count {
+  font-size: 2.4rem;
+  color: var(--led);
+  line-height: 1;
+}
+
+.streak {
+  margin: 0;
+  text-align: center;
+  padding: 8px;
+  border-radius: 12px;
+}
+
+.streak--heating {
+  background: #4a2a00;
+  color: var(--led);
+}
+
+.streak--fire {
+  background: linear-gradient(90deg, var(--hot), var(--fire), var(--hot));
+  color: var(--arena-900);
+  animation: flicker 0.5s infinite alternate;
+}
+
+.shot-button {
+  min-height: 38vh;
+  border: none;
+  border-radius: 28px;
+  font-size: 2.2rem;
+  color: var(--arena-900);
+  background: radial-gradient(circle at 50% 30%, #ffd46b, var(--led) 45%, #d47a00);
+  box-shadow: 0 10px 0 #8a5200, 0 20px 40px rgb(255 176 0 / 25%);
+  display: grid;
+  place-content: center;
+  gap: 8px;
+  touch-action: manipulation;
+  cursor: pointer;
+}
+
+.shot-button:active {
+  transform: translateY(6px);
+  box-shadow: 0 4px 0 #8a5200;
+}
+
+.shot-button:disabled {
+  filter: saturate(0.4);
+}
+
+.shot-button__glass {
+  font-size: 4.5rem;
+}
+
+.sending {
+  margin: -8px 0 0;
+  text-align: center;
+  color: var(--ink-lo);
+}
+
+.squad__title {
+  margin: 0 0 8px;
+  color: var(--ink-lo);
+}
+
+.squad__empty {
+  color: var(--ink-lo);
+}
+
+.roster {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(92px, 1fr));
+  gap: 10px;
+}
+
+.roster__item {
+  position: relative;
+  width: 100%;
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  padding: 10px 6px;
+  border-radius: 16px;
+  border: 2px solid transparent;
+  background: var(--arena-700);
+  color: var(--ink-hi);
+  font: inherit;
+}
+
+.roster__item--on {
+  border-color: var(--team, var(--led));
+  background: var(--arena-600);
+}
+
+.roster__name {
+  font-size: 0.85rem;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.roster__check {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  color: var(--good);
+  font-weight: 900;
+}
+
+.log-bar {
+  position: fixed;
+  left: 12px;
+  right: 12px;
+  bottom: 12px;
+  z-index: 30;
+  display: flex;
+  gap: 10px;
+}
+
+.log-bar__go {
+  flex: 1;
+}
+
+.standings ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 6px;
+}
+
+.standings li {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 8px 12px;
+  border-radius: 12px;
+  background: var(--arena-800);
+}
+
+.standings__me {
+  outline: 2px solid var(--led);
+}
+
+.standings__rank {
+  width: 1.5em;
+  color: var(--ink-lo);
+}
+
+.standings__name {
+  flex: 1;
+}
+
+.join-flow {
+  display: grid;
+  gap: 18px;
+  padding-top: 4vh;
+}
+
+.join-flow__title {
+  margin: 0;
+  text-align: center;
+  font-size: 3rem;
+  line-height: 0.95;
+  color: var(--led);
+  text-shadow: 0 4px 0 #8a5200;
+}
+
+.join-flow__step {
+  display: grid;
+  gap: 12px;
+}
+
+.join-flow__error {
+  color: var(--bad);
+  text-align: center;
+}
+
+.emoji-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.emoji-grid__item {
+  font-size: 2rem;
+  aspect-ratio: 1;
+  border-radius: 14px;
+  border: 2px solid transparent;
+  background: var(--arena-700);
+}
+
+.emoji-grid__item--on {
+  border-color: var(--led);
+  background: var(--arena-600);
+}
+
+.team-pick {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 72px;
+  padding: 0 20px;
+  border: none;
+  border-radius: 18px;
+  font-size: 1.6rem;
+  color: #fff;
+  text-shadow: 0 2px 0 rgb(0 0 0 / 35%);
+}
+
+.team-pick__size {
+  font-family: system-ui, sans-serif;
+  font-size: 0.9rem;
+  text-transform: none;
+}
