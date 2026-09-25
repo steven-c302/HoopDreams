@@ -153,22 +153,24 @@ def main():
         subprocess.run(["npm", "run", "build"], cwd=FRONTEND, check=True)
 
     env = {**os.environ, "HOOP_PARTY": "1", "HOOP_HOST_PIN": pin, "HOOP_PUBLIC_PORT": str(PORT)}
-    children = [Supervisor("server", [sys.executable, "-m", "uvicorn", "app.main:app", "--host", "0.0.0.0",
-                                      "--port", str(PORT), "--workers", "1", "--log-level", "warning"],
-                           cwd=BACKEND, env=env).start()]
-    caffeinate = subprocess.Popen(["caffeinate", "-dimsu", "-w", str(os.getpid())])
-    wait_for_server()
-    print_banner(join_url(), pin)
-
-    if args.tunnel:
-        children.append(start_tunnel(pin))
-    if args.demo:
-        children.append(Supervisor("demo", [sys.executable, str(BACKEND / "scripts" / "demo.py"),
-                                            "--url", f"http://127.0.0.1:{PORT}"]).start())
-    if not args.no_open:
-        open_tv()
-
+    children = []
+    caffeinate = None
     try:
+        children.append(Supervisor("server", [sys.executable, "-m", "uvicorn", "app.main:app", "--host", "0.0.0.0",
+                                              "--port", str(PORT), "--workers", "1", "--log-level", "warning"],
+                                   cwd=BACKEND, env=env).start())
+        caffeinate = subprocess.Popen(["caffeinate", "-dimsu", "-w", str(os.getpid())])
+        wait_for_server()
+        print_banner(join_url(), pin)
+
+        if args.tunnel:
+            children.append(start_tunnel(pin))
+        if args.demo:
+            children.append(Supervisor("demo", [sys.executable, str(BACKEND / "scripts" / "demo.py"),
+                                                "--url", f"http://127.0.0.1:{PORT}"]).start())
+        if not args.no_open:
+            open_tv()
+
         while True:
             time.sleep(3600)
     except KeyboardInterrupt:
@@ -176,7 +178,8 @@ def main():
     finally:
         for child in reversed(children):
             child.stop()
-        caffeinate.terminate()
+        if caffeinate:
+            caffeinate.terminate()
 
 
 if __name__ == "__main__":
