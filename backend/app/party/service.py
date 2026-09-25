@@ -41,6 +41,7 @@ from .contract import (
     PlayerView,
     PublicState,
     ReelItem,
+    ReplayMoment,
     ShotDrinker,
     ShotMoment,
     TeamView,
@@ -73,6 +74,14 @@ class Emitter(Protocol):
     async def moment(self, moment: BaseModel) -> None: ...
 
     async def host_state(self, state: HostState) -> None: ...
+
+
+class Processed(Protocol):
+    """A finished media job (media.MediaResult)."""
+
+    path: str
+    poster_path: str | None
+    duration_ms: int | None
 
 
 @dataclass
@@ -436,6 +445,45 @@ class PartyService:
             await self.emitter.moment(
                 WavedOffMoment(id=new_id(), at=now, player_id=s.drinker_id, shot_id=s.id, reason=reason)
             )
+
+    # ---------- media ----------
+
+    async def add_media(self, media_id: str, player_id: str, *, purpose: str, kind: str, shot_id: str | None) -> None:
+        if shot_id is not None:
+            shot = self.shots.get(shot_id)
+            if shot is None or player_id not in (shot.drinker_id, shot.logged_by_id):
+                raise PartyError("That shot isn't yours to film")
+        rec = MediaRec(media_id, player_id, shot_id, purpose, kind, "processing", "", None, self.clock())
+        with self.db() as db:
+            db.add(models.Media(id=rec.id, night_id=self.night_id, player_id=player_id, shot_id=shot_id, purpose=purpose,
+                                kind=kind, status="processing", created_at=rec.created_at))
+        self.media[media_id] = rec
+
+    async def media_done(self, media_id: str, result: Processed | None) -> None:
+        rec = self.media.get(media_id)
+        if rec is None:  # a new night started while it was processing
+            return
+        if result is None:
+            values: dict[str, Any] = {"status": "failed"}
+        else:
+            values = {"status": "ready", "path": result.path, "poster_path": result.poster_path,
+                      "duration_ms": result.duration_ms}
+        with self.db() as db:
+            db.execute(update(models.Media).where(models.Media.id == media_id).values(**values))
+        if result is None:
+            rec.status = "failed"
+            return
+        rec.status, rec.path, rec.poster_path = "ready", result.path, result.poster_path
+        if rec.purpose == "avatar":
+            player = self.players.get(rec.player_id)
+            if player is not None:
+                with self.db() as db:
+                    db.execute(update(models.Player).where(models.Player.id == player.id).values(avatar_kind="photo", avatar_value=media_id))
+                player.avatar_kind, player.avatar_value = "photo", media_id
+            await self.broadcast()
+            return
+        await self.broadcast()
+        await self.emitter.moment(ReplayMoment(id=new_id(), at=self.clock(), item=self.reel_item(rec)))
 
     # ---------- derived state ----------
 

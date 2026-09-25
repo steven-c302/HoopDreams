@@ -16,6 +16,7 @@ from starlette.staticfiles import StaticFiles
 
 from . import net
 from .admin import PartyAdmin
+from .media import MEDIA_DIR, MediaProcessor, media_router
 from .realtime import SioEmitter, register_handlers
 from .service import PartyService
 
@@ -26,6 +27,7 @@ sio = socketio.AsyncServer(async_mode="asgi", cors_allowed_origins="*")
 service = PartyService(SioEmitter(sio), lan_url=net.join_url)
 admin = PartyAdmin(service)
 sessions = register_handlers(sio, service, host_pin=HOST_PIN, admin=admin)
+processor = MediaProcessor(MEDIA_DIR, service.media_done)
 party_router = APIRouter(prefix="/api/party")
 
 
@@ -63,17 +65,22 @@ class SPAStaticFiles(StaticFiles):
 @asynccontextmanager
 async def party_lifespan(_app: FastAPI):
     service.load()
+    processor.start()
     print(f"🏀 HoopDreams party is live — phones: {service.lan_url} · host PIN: {HOST_PIN}", flush=True)
     ticker = asyncio.create_task(service.run_ticker())
     try:
         yield
     finally:
         ticker.cancel()
+        await processor.stop()
 
 
 def mount_party(app: FastAPI) -> None:
     app.include_router(party_router)
+    app.include_router(media_router(service, processor))
     app.mount("/socket.io", socketio.ASGIApp(sio, socketio_path=""))
+    MEDIA_DIR.mkdir(parents=True, exist_ok=True)
+    app.mount("/media", StaticFiles(directory=MEDIA_DIR), name="media")
     if os.environ.get("HOOP_PARTY") == "1":
         if not (DIST_DIR / "index.html").exists():
             raise RuntimeError(f"HOOP_PARTY=1 but {DIST_DIR} has no build. Run `npm run build` in frontend/.")
