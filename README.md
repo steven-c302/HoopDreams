@@ -38,3 +38,21 @@ Open the printed URL (defaults to `http://localhost:5180`). The frontend expects
 - Once every game has been drawn, the next tap reshuffles the hat automatically.
 - "Recently drawn" pulls the last few draws from `GET /api/history`.
 - Add or edit games directly in `backend/app/seed_data.py` (only used to seed an empty database) or the `games` table.
+
+## Party mode (shot tracker)
+
+Run it on the MacBook that is plugged into the TV:
+
+```bash
+backend/venv/bin/python backend/scripts/party.py            # add --tunnel for guests on cell data
+```
+
+This builds the frontend, serves everything on port 8000 and keeps the Mac awake. It prints a QR code and a host PIN, then opens the TV page in Chrome.
+
+- **TV**: `http://localhost:8000/tv`. Mirror the Mac onto the TV and click **TIP OFF** once to turn on sound.
+- **Phones**: scan the QR code on the TV (same Wi-Fi), or the "not on Wi-Fi?" code when `--tunnel` is on.
+- **Host panel**: `http://localhost:8000/host` with the printed PIN (set `HOOP_HOST_PIN` to choose one).
+- **Rehearsal**: add `--demo` for 8 simulated guests.
+
+Development: run the backend as above, then `npm run dev -- --host` in `frontend/`. Open `/tv`, `/play` or `/host` on the Vite port, and set `HOOP_PUBLIC_PORT=5173` for the backend so the TV's QR code points at Vite.
+Tests: `cd backend && venv/bin/python -m pytest` and `cd frontend && npm test`.
