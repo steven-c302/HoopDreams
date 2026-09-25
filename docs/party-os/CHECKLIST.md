@@ -47,13 +47,18 @@ This covers sub-project 1: the core platform and Bluff Battle. "Tested" means a 
 - **Everything on real hardware.** The whole app has run only on the emulator so far.
 - **Real phones and remote:** actual phone cameras scanning the QR on your Wi-Fi (tested only with headless browsers through the proxy), and the TCL remote's own buttons.
 - **Networking and background running:** Wi-Fi and wake locks under real standby, and live network-change updates to the QR code.
-- **60 fps pass mark:** the benchmark tour on the emulator (release APK) gave 2,114 frames, **65.4% on time by display deadline**, and 0.3% janky by JankStats' heuristic. The emulator renders through the Mac's GPU translation layer, so this is informational only; the ≥95% pass mark must be measured on the QM6K.
+- **60 fps pass mark:** two benchmark tours on the emulator with the release APK. Both are informational only; the ≥95% pass mark must be measured on the QM6K.
+
+  | Run | Frames | On time (display deadline) | Janky |
+  |---|---|---|---|
+  | Right after install, cold (ART not yet optimised, shaders being compiled) | 2,114 | 65.4% | 0.3% |
+  | Warmed up | 3,873 | 98.9% | 0.0% |
 - **CI workflow:** it passes lint but hasn't run on GitHub yet. The branch isn't pushed, and the emulator-smoke job runs only on `main` and PRs.
 - **Signed release APK:** needs `RELEASE_KEYSTORE_*` secrets.
 
 ## Known issues and limits
 
-- **Frame timing risk:** 65% on time on the emulator. If the QM6K is similar, the next step is a Baseline Profile plus trimming the always-running backdrop animation.
+- **First-launch stutter:** a cold run on the emulator was 65% on time, against 99% once warmed up. A Baseline Profile should close most of that gap.
 - **Mac disk space:** only about 4.5 GB is free while the emulator is installed.
 - **Reveal replays after restore:** the reveal animation keeps advancing under the pause overlay, and restarts after a restore. Scores are unaffected.
 - **Auto-pause needs the host to resume:** "Waiting for players" doesn't resume by itself when players come back.
