@@ -1,0 +1,1450 @@
+{
+  "$defs": {
+    "AvatarIn": {
+      "properties": {
+        "kind": {
+          "enum": [
+            "emoji",
+            "photo"
+          ],
+          "type": "string"
+        },
+        "value": {
+          "maxLength": 64,
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "value"
+      ],
+      "title": "AvatarIn",
+      "type": "object"
+    },
+    "AvatarView": {
+      "properties": {
+        "kind": {
+          "enum": [
+            "emoji",
+            "photo"
+          ],
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "value"
+      ],
+      "title": "AvatarView",
+      "type": "object"
+    },
+    "FeedItem": {
+      "properties": {
+        "at": {
+          "type": "integer"
+        },
+        "drinkerId": {
+          "type": "string"
+        },
+        "loggedById": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "requestId": {
+          "type": "string"
+        },
+        "shotId": {
+          "type": "string"
+        },
+        "source": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "shotId",
+        "requestId",
+        "drinkerId",
+        "loggedById",
+        "source",
+        "at"
+      ],
+      "title": "FeedItem",
+      "type": "object"
+    },
+    "FireRule": {
+      "properties": {
+        "coolMin": {
+          "maximum": 240,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "count": {
+          "maximum": 50,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "windowMin": {
+          "maximum": 240,
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "count",
+        "windowMin",
+        "coolMin"
+      ],
+      "title": "FireRule",
+      "type": "object"
+    },
+    "GameActionIn": {
+      "properties": {
+        "action": {
+          "maxLength": 64,
+          "minLength": 1,
+          "type": "string"
+        },
+        "gameId": {
+          "maxLength": 64,
+          "minLength": 1,
+          "type": "string"
+        },
+        "payload": {
+          "additionalProperties": true,
+          "default": {},
+          "type": "object"
+        },
+        "requestId": {
+          "maxLength": 64,
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "requestId",
+        "gameId",
+        "action"
+      ],
+      "title": "GameActionIn",
+      "type": "object"
+    },
+    "GameEnableIn": {
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "gameId": {
+          "maxLength": 64,
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "gameId",
+        "enabled"
+      ],
+      "title": "GameEnableIn",
+      "type": "object"
+    },
+    "GameMoment": {
+      "properties": {
+        "at": {
+          "type": "integer"
+        },
+        "data": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "gameId": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "kind": {
+          "type": "string"
+        },
+        "type": {
+          "const": "game",
+          "default": "game",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "id",
+        "at",
+        "gameId",
+        "kind",
+        "data"
+      ],
+      "title": "GameMoment",
+      "type": "object"
+    },
+    "HostActionIn": {
+      "properties": {
+        "action": {
+          "maxLength": 64,
+          "minLength": 1,
+          "type": "string"
+        },
+        "payload": {
+          "additionalProperties": true,
+          "default": {},
+          "type": "object"
+        },
+        "requestId": {
+          "maxLength": 64,
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "requestId",
+        "action"
+      ],
+      "title": "HostActionIn",
+      "type": "object"
+    },
+    "HostAuthIn": {
+      "properties": {
+        "pin": {
+          "maxLength": 12,
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "pin"
+      ],
+      "title": "HostAuthIn",
+      "type": "object"
+    },
+    "HostShot": {
+      "properties": {
+        "at": {
+          "type": "integer"
+        },
+        "drinkerId": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "loggedById": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "requestId": {
+          "type": "string"
+        },
+        "source": {
+          "type": "string"
+        },
+        "voidReason": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "voidedAt": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "requestId",
+        "drinkerId",
+        "loggedById",
+        "source",
+        "at",
+        "voidedAt",
+        "voidReason"
+      ],
+      "title": "HostShot",
+      "type": "object"
+    },
+    "HostState": {
+      "properties": {
+        "shots": {
+          "items": {
+            "$ref": "#/$defs/HostShot"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "shots"
+      ],
+      "title": "HostState",
+      "type": "object"
+    },
+    "JoinIn": {
+      "properties": {
+        "avatar": {
+          "$ref": "#/$defs/AvatarIn"
+        },
+        "name": {
+          "maxLength": 20,
+          "minLength": 1,
+          "type": "string"
+        },
+        "requestId": {
+          "maxLength": 64,
+          "minLength": 1,
+          "type": "string"
+        },
+        "teamId": {
+          "maxLength": 64,
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "requestId",
+        "name",
+        "avatar",
+        "teamId"
+      ],
+      "title": "JoinIn",
+      "type": "object"
+    },
+    "JoinInfo": {
+      "properties": {
+        "lanUrl": {
+          "type": "string"
+        },
+        "tunnelUrl": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "wifiPassword": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "wifiSsid": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "lanUrl",
+        "tunnelUrl",
+        "wifiSsid",
+        "wifiPassword"
+      ],
+      "title": "JoinInfo",
+      "type": "object"
+    },
+    "JoinOut": {
+      "properties": {
+        "playerId": {
+          "type": "string"
+        },
+        "token": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "playerId",
+        "token"
+      ],
+      "title": "JoinOut",
+      "type": "object"
+    },
+    "LeadChangeMoment": {
+      "properties": {
+        "at": {
+          "type": "integer"
+        },
+        "id": {
+          "type": "string"
+        },
+        "teamId": {
+          "type": "string"
+        },
+        "type": {
+          "const": "lead-change",
+          "default": "lead-change",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "id",
+        "at",
+        "teamId"
+      ],
+      "title": "LeadChangeMoment",
+      "type": "object"
+    },
+    "MediaOut": {
+      "properties": {
+        "mediaId": {
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "processing",
+            "ready",
+            "failed"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "mediaId",
+        "status"
+      ],
+      "title": "MediaOut",
+      "type": "object"
+    },
+    "MilestoneMoment": {
+      "properties": {
+        "at": {
+          "type": "integer"
+        },
+        "id": {
+          "type": "string"
+        },
+        "playerId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "scope": {
+          "enum": [
+            "first",
+            "player",
+            "party"
+          ],
+          "type": "string"
+        },
+        "type": {
+          "const": "milestone",
+          "default": "milestone",
+          "type": "string"
+        },
+        "value": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "type",
+        "id",
+        "at",
+        "scope",
+        "playerId",
+        "value"
+      ],
+      "title": "MilestoneMoment",
+      "type": "object"
+    },
+    "MomentEnvelope": {
+      "description": "Exists so the Moment union gets a named TypeScript type.",
+      "properties": {
+        "moment": {
+          "discriminator": {
+            "mapping": {
+              "game": "#/$defs/GameMoment",
+              "lead-change": "#/$defs/LeadChangeMoment",
+              "milestone": "#/$defs/MilestoneMoment",
+              "replay": "#/$defs/ReplayMoment",
+              "shot": "#/$defs/ShotMoment",
+              "waved-off": "#/$defs/WavedOffMoment"
+            },
+            "propertyName": "type"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/ShotMoment"
+            },
+            {
+              "$ref": "#/$defs/MilestoneMoment"
+            },
+            {
+              "$ref": "#/$defs/LeadChangeMoment"
+            },
+            {
+              "$ref": "#/$defs/WavedOffMoment"
+            },
+            {
+              "$ref": "#/$defs/ReplayMoment"
+            },
+            {
+              "$ref": "#/$defs/GameMoment"
+            }
+          ]
+        }
+      },
+      "required": [
+        "moment"
+      ],
+      "title": "MomentEnvelope",
+      "type": "object"
+    },
+    "NightNewIn": {
+      "properties": {
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 80,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "title": "NightNewIn",
+      "type": "object"
+    },
+    "PartySettings-Input": {
+      "description": "Host-tunable party behaviour. Stored per night in the settings table under key \"party\".",
+      "properties": {
+        "comboMaxMs": {
+          "default": 8000,
+          "maximum": 30000,
+          "minimum": 1000,
+          "type": "integer"
+        },
+        "comboWindowMs": {
+          "default": 4000,
+          "maximum": 20000,
+          "minimum": 0,
+          "type": "integer"
+        },
+        "heatingUp": {
+          "$ref": "#/$defs/StreakRule",
+          "default": {
+            "count": 2,
+            "windowMin": 20
+          }
+        },
+        "notMeWindowSec": {
+          "default": 60,
+          "maximum": 600,
+          "minimum": 0,
+          "type": "integer"
+        },
+        "onFire": {
+          "$ref": "#/$defs/FireRule",
+          "default": {
+            "coolMin": 30,
+            "count": 3,
+            "windowMin": 30
+          }
+        },
+        "partyMilestoneEvery": {
+          "default": 100,
+          "maximum": 10000,
+          "minimum": 0,
+          "type": "integer"
+        },
+        "partyMilestones": {
+          "default": [
+            25,
+            50
+          ],
+          "items": {
+            "type": "integer"
+          },
+          "type": "array"
+        },
+        "playerMilestoneEvery": {
+          "default": 5,
+          "maximum": 100,
+          "minimum": 0,
+          "type": "integer"
+        },
+        "reelItemSec": {
+          "default": 6,
+          "maximum": 60,
+          "minimum": 2,
+          "type": "integer"
+        },
+        "shotLogPerMin": {
+          "default": 20,
+          "maximum": 200,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "sound": {
+          "default": true,
+          "type": "boolean"
+        },
+        "undoWindowSec": {
+          "default": 10,
+          "maximum": 120,
+          "minimum": 0,
+          "type": "integer"
+        },
+        "voice": {
+          "default": true,
+          "type": "boolean"
+        }
+      },
+      "title": "PartySettingsInput",
+      "type": "object"
+    },
+    "PartySettings-Output": {
+      "description": "Host-tunable party behaviour. Stored per night in the settings table under key \"party\".",
+      "properties": {
+        "comboMaxMs": {
+          "default": 8000,
+          "maximum": 30000,
+          "minimum": 1000,
+          "type": "integer"
+        },
+        "comboWindowMs": {
+          "default": 4000,
+          "maximum": 20000,
+          "minimum": 0,
+          "type": "integer"
+        },
+        "heatingUp": {
+          "$ref": "#/$defs/StreakRule",
+          "default": {
+            "count": 2,
+            "windowMin": 20
+          }
+        },
+        "notMeWindowSec": {
+          "default": 60,
+          "maximum": 600,
+          "minimum": 0,
+          "type": "integer"
+        },
+        "onFire": {
+          "$ref": "#/$defs/FireRule",
+          "default": {
+            "coolMin": 30,
+            "count": 3,
+            "windowMin": 30
+          }
+        },
+        "partyMilestoneEvery": {
+          "default": 100,
+          "maximum": 10000,
+          "minimum": 0,
+          "type": "integer"
+        },
+        "partyMilestones": {
+          "default": [
+            25,
+            50
+          ],
+          "items": {
+            "type": "integer"
+          },
+          "type": "array"
+        },
+        "playerMilestoneEvery": {
+          "default": 5,
+          "maximum": 100,
+          "minimum": 0,
+          "type": "integer"
+        },
+        "reelItemSec": {
+          "default": 6,
+          "maximum": 60,
+          "minimum": 2,
+          "type": "integer"
+        },
+        "shotLogPerMin": {
+          "default": 20,
+          "maximum": 200,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "sound": {
+          "default": true,
+          "type": "boolean"
+        },
+        "undoWindowSec": {
+          "default": 10,
+          "maximum": 120,
+          "minimum": 0,
+          "type": "integer"
+        },
+        "voice": {
+          "default": true,
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "heatingUp",
+        "onFire",
+        "comboWindowMs",
+        "comboMaxMs",
+        "undoWindowSec",
+        "notMeWindowSec",
+        "reelItemSec",
+        "shotLogPerMin",
+        "playerMilestoneEvery",
+        "partyMilestones",
+        "partyMilestoneEvery",
+        "voice",
+        "sound"
+      ],
+      "title": "PartySettingsOutput",
+      "type": "object"
+    },
+    "PlayerEditIn": {
+      "properties": {
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 20,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "playerId": {
+          "maxLength": 64,
+          "minLength": 1,
+          "type": "string"
+        },
+        "teamId": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "playerId"
+      ],
+      "title": "PlayerEditIn",
+      "type": "object"
+    },
+    "PlayerMergeIn": {
+      "properties": {
+        "fromId": {
+          "maxLength": 64,
+          "minLength": 1,
+          "type": "string"
+        },
+        "intoId": {
+          "maxLength": 64,
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "fromId",
+        "intoId"
+      ],
+      "title": "PlayerMergeIn",
+      "type": "object"
+    },
+    "PlayerRemoveIn": {
+      "properties": {
+        "playerId": {
+          "maxLength": 64,
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "playerId"
+      ],
+      "title": "PlayerRemoveIn",
+      "type": "object"
+    },
+    "PlayerUpdateIn": {
+      "properties": {
+        "avatar": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/AvatarIn"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 20,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "teamId": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "title": "PlayerUpdateIn",
+      "type": "object"
+    },
+    "PlayerView": {
+      "properties": {
+        "avatar": {
+          "$ref": "#/$defs/AvatarView"
+        },
+        "connected": {
+          "type": "boolean"
+        },
+        "count": {
+          "type": "integer"
+        },
+        "id": {
+          "type": "string"
+        },
+        "lastShotAt": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "name": {
+          "type": "string"
+        },
+        "rank": {
+          "type": "integer"
+        },
+        "streak": {
+          "anyOf": [
+            {
+              "enum": [
+                "heating",
+                "fire"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "teamId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "avatar",
+        "teamId",
+        "count",
+        "rank",
+        "streak",
+        "connected",
+        "lastShotAt"
+      ],
+      "title": "PlayerView",
+      "type": "object"
+    },
+    "PublicState": {
+      "properties": {
+        "feed": {
+          "items": {
+            "$ref": "#/$defs/FeedItem"
+          },
+          "type": "array"
+        },
+        "games": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "gamesEnabled": {
+          "additionalProperties": {
+            "type": "boolean"
+          },
+          "type": "object"
+        },
+        "join": {
+          "$ref": "#/$defs/JoinInfo"
+        },
+        "nightId": {
+          "type": "string"
+        },
+        "nightName": {
+          "type": "string"
+        },
+        "now": {
+          "type": "integer"
+        },
+        "players": {
+          "items": {
+            "$ref": "#/$defs/PlayerView"
+          },
+          "type": "array"
+        },
+        "reel": {
+          "items": {
+            "$ref": "#/$defs/ReelItem"
+          },
+          "type": "array"
+        },
+        "settings": {
+          "$ref": "#/$defs/PartySettings-Output"
+        },
+        "startedAt": {
+          "type": "integer"
+        },
+        "teams": {
+          "items": {
+            "$ref": "#/$defs/TeamView"
+          },
+          "type": "array"
+        },
+        "total": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "nightId",
+        "nightName",
+        "startedAt",
+        "now",
+        "total",
+        "teams",
+        "players",
+        "feed",
+        "reel",
+        "join",
+        "settings",
+        "games",
+        "gamesEnabled"
+      ],
+      "title": "PublicState",
+      "type": "object"
+    },
+    "ReelItem": {
+      "properties": {
+        "at": {
+          "type": "integer"
+        },
+        "kind": {
+          "enum": [
+            "photo",
+            "video"
+          ],
+          "type": "string"
+        },
+        "mediaId": {
+          "type": "string"
+        },
+        "playerId": {
+          "type": "string"
+        },
+        "posterUrl": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "shotId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "url": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "mediaId",
+        "kind",
+        "url",
+        "posterUrl",
+        "playerId",
+        "shotId",
+        "at"
+      ],
+      "title": "ReelItem",
+      "type": "object"
+    },
+    "ReplayMoment": {
+      "properties": {
+        "at": {
+          "type": "integer"
+        },
+        "id": {
+          "type": "string"
+        },
+        "item": {
+          "$ref": "#/$defs/ReelItem"
+        },
+        "type": {
+          "const": "replay",
+          "default": "replay",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "id",
+        "at",
+        "item"
+      ],
+      "title": "ReplayMoment",
+      "type": "object"
+    },
+    "ResumeIn": {
+      "properties": {
+        "token": {
+          "maxLength": 64,
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "token"
+      ],
+      "title": "ResumeIn",
+      "type": "object"
+    },
+    "ResumeOut": {
+      "properties": {
+        "playerId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "playerId"
+      ],
+      "title": "ResumeOut",
+      "type": "object"
+    },
+    "SettingsIn": {
+      "properties": {
+        "settings": {
+          "$ref": "#/$defs/PartySettings-Input"
+        }
+      },
+      "required": [
+        "settings"
+      ],
+      "title": "SettingsIn",
+      "type": "object"
+    },
+    "ShotAddIn": {
+      "properties": {
+        "drinkerIds": {
+          "items": {
+            "maxLength": 64,
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxItems": 60,
+          "minItems": 1,
+          "type": "array"
+        }
+      },
+      "required": [
+        "drinkerIds"
+      ],
+      "title": "ShotAddIn",
+      "type": "object"
+    },
+    "ShotDrinker": {
+      "properties": {
+        "count": {
+          "type": "integer"
+        },
+        "playerId": {
+          "type": "string"
+        },
+        "streak": {
+          "anyOf": [
+            {
+              "enum": [
+                "heating",
+                "fire"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "playerId",
+        "count",
+        "streak"
+      ],
+      "title": "ShotDrinker",
+      "type": "object"
+    },
+    "ShotLogIn": {
+      "properties": {
+        "drinkerIds": {
+          "items": {
+            "maxLength": 64,
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxItems": 60,
+          "minItems": 1,
+          "type": "array"
+        },
+        "requestId": {
+          "maxLength": 64,
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "requestId",
+        "drinkerIds"
+      ],
+      "title": "ShotLogIn",
+      "type": "object"
+    },
+    "ShotLogOut": {
+      "properties": {
+        "shotIds": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "shotIds"
+      ],
+      "title": "ShotLogOut",
+      "type": "object"
+    },
+    "ShotMoment": {
+      "properties": {
+        "at": {
+          "type": "integer"
+        },
+        "drinkers": {
+          "items": {
+            "$ref": "#/$defs/ShotDrinker"
+          },
+          "type": "array"
+        },
+        "id": {
+          "type": "string"
+        },
+        "loggedById": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "requestId": {
+          "type": "string"
+        },
+        "source": {
+          "type": "string"
+        },
+        "type": {
+          "const": "shot",
+          "default": "shot",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "id",
+        "at",
+        "requestId",
+        "source",
+        "loggedById",
+        "drinkers"
+      ],
+      "title": "ShotMoment",
+      "type": "object"
+    },
+    "ShotRejectIn": {
+      "properties": {
+        "shotId": {
+          "maxLength": 64,
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "shotId"
+      ],
+      "title": "ShotRejectIn",
+      "type": "object"
+    },
+    "ShotUndoIn": {
+      "properties": {
+        "requestId": {
+          "maxLength": 64,
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "requestId"
+      ],
+      "title": "ShotUndoIn",
+      "type": "object"
+    },
+    "ShotVoidIn": {
+      "properties": {
+        "shotId": {
+          "maxLength": 64,
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "shotId"
+      ],
+      "title": "ShotVoidIn",
+      "type": "object"
+    },
+    "StreakRule": {
+      "properties": {
+        "count": {
+          "maximum": 50,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "windowMin": {
+          "maximum": 240,
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "count",
+        "windowMin"
+      ],
+      "title": "StreakRule",
+      "type": "object"
+    },
+    "TeamRemoveIn": {
+      "properties": {
+        "teamId": {
+          "maxLength": 64,
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "teamId"
+      ],
+      "title": "TeamRemoveIn",
+      "type": "object"
+    },
+    "TeamUpsertIn": {
+      "properties": {
+        "color": {
+          "pattern": "^#[0-9A-Fa-f]{6}$",
+          "type": "string"
+        },
+        "id": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "name": {
+          "maxLength": 16,
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "color"
+      ],
+      "title": "TeamUpsertIn",
+      "type": "object"
+    },
+    "TeamView": {
+      "properties": {
+        "color": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "size": {
+          "type": "integer"
+        },
+        "total": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "color",
+        "total",
+        "size"
+      ],
+      "title": "TeamView",
+      "type": "object"
+    },
+    "WavedOffMoment": {
+      "properties": {
+        "at": {
+          "type": "integer"
+        },
+        "id": {
+          "type": "string"
+        },
+        "playerId": {
+          "type": "string"
+        },
+        "reason": {
+          "enum": [
+            "undo",
+            "not_me",
+            "host"
+          ],
+          "type": "string"
+        },
+        "shotId": {
+          "type": "string"
+        },
+        "type": {
+          "const": "waved-off",
+          "default": "waved-off",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "id",
+        "at",
+        "playerId",
+        "shotId",
+        "reason"
+      ],
+      "title": "WavedOffMoment",
+      "type": "object"
+    },
+    "WifiIn": {
+      "properties": {
+        "password": {
+          "default": "",
+          "maxLength": 63,
+          "type": "string"
+        },
+        "ssid": {
+          "default": "",
+          "maxLength": 32,
+          "type": "string"
+        }
+      },
+      "title": "WifiIn",
+      "type": "object"
+    }
+  },
+  "title": "HoopContract"
+}
