@@ -30,3 +30,4 @@ controller/node_modules/
 controller/dist/
 controller/test-results/
 controller/playwright-report/
+controller/tsconfig.tsbuildinfo
