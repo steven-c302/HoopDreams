@@ -15,6 +15,7 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 from starlette.staticfiles import StaticFiles
 
 from . import net
+from .admin import PartyAdmin
 from .realtime import SioEmitter, register_handlers
 from .service import PartyService
 
@@ -23,7 +24,8 @@ DIST_DIR = Path(os.environ.get("HOOP_DIST", Path(__file__).resolve().parents[3] 
 
 sio = socketio.AsyncServer(async_mode="asgi", cors_allowed_origins="*")
 service = PartyService(SioEmitter(sio), lan_url=net.join_url)
-sessions = register_handlers(sio, service, host_pin=HOST_PIN)
+admin = PartyAdmin(service)
+sessions = register_handlers(sio, service, host_pin=HOST_PIN, admin=admin)
 party_router = APIRouter(prefix="/api/party")
 
 

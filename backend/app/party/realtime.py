@@ -1,5 +1,7 @@
 """Socket.IO transport: validate intents, route them to PartyService, fan state out to screens."""
 import logging
+import secrets
+import time
 from collections.abc import Awaitable, Callable
 from dataclasses import dataclass, field
 from typing import Any
@@ -7,7 +9,19 @@ from typing import Any
 import socketio
 from pydantic import BaseModel, ValidationError
 
-from .contract import JoinIn, PlayerUpdateIn, ResumeIn, ResumeOut, ShotLogIn, ShotLogOut, ShotRejectIn, ShotUndoIn
+from .admin import PartyAdmin
+from .contract import (
+    HostActionIn,
+    HostAuthIn,
+    JoinIn,
+    PlayerUpdateIn,
+    ResumeIn,
+    ResumeOut,
+    ShotLogIn,
+    ShotLogOut,
+    ShotRejectIn,
+    ShotUndoIn,
+)
 from .errors import PartyError
 from .service import PartyService
 
@@ -78,7 +92,9 @@ def handler(
     return decorate
 
 
-def register_handlers(sio: socketio.AsyncServer, service: PartyService, *, host_pin: str, admin: Any = None) -> dict[str, Session]:
+def register_handlers(
+    sio: socketio.AsyncServer, service: PartyService, *, host_pin: str, admin: PartyAdmin
+) -> dict[str, Session]:
     sessions: dict[str, Session] = {}
 
     def on(event: str, model: type[BaseModel] | None = None, **kw: bool) -> Callable[[Handler], Handler]:
@@ -124,5 +140,22 @@ def register_handlers(sio: socketio.AsyncServer, service: PartyService, *, host_
     @on("shot:reject", ShotRejectIn, player=True)
     async def reject(sid, session, payload):
         await service.reject(session.player_id, payload.shot_id)
+
+    @on("host:auth", HostAuthIn)
+    async def host_auth(sid, session, payload):
+        now = time.monotonic()
+        session.pin_attempts = [t for t in session.pin_attempts if now - t < 60]
+        if len(session.pin_attempts) >= 5:
+            raise PartyError("Too many tries — wait a minute")
+        session.pin_attempts.append(now)
+        if not secrets.compare_digest(payload.pin.encode(), host_pin.encode()):
+            raise PartyError("Wrong PIN")
+        session.host = True
+        await sio.enter_room(sid, "host")
+        await sio.emit("host_state", service.host_state().wire(), to=sid)
+
+    @on("host:action", HostActionIn, host=True)
+    async def host_action(sid, session, payload):
+        await admin.dispatch(payload.action, payload.payload)
 
     return sessions
