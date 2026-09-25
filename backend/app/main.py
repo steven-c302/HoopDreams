@@ -6,7 +6,7 @@ from pydantic import BaseModel
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from . import models, schemas
+from . import models, schemas, trivia
 from .database import Base, SessionLocal, engine, get_db
 from .seed_data import SEED_GAMES
 
@@ -85,6 +85,16 @@ def draw_history(limit: int = 10, db: Session = Depends(get_db)):
         select(models.Draw).order_by(models.Draw.drawn_at.desc()).limit(limit)
     ).all()
     return draws
+
+
+@app.get("/api/trivia/question", response_model=schemas.TriviaQuestionOut)
+async def trivia_question(difficulty: str | None = None):
+    try:
+        return await trivia.fetch_question(difficulty)
+    except Exception as exc:
+        raise HTTPException(
+            status_code=502, detail=f"Couldn't fetch a trivia question: {exc}"
+        ) from exc
 
 
 @app.get("/api/health")
