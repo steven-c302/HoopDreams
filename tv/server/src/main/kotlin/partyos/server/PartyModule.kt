@@ -8,7 +8,10 @@ import io.ktor.server.application.install
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.server.plugins.origin
 import io.ktor.server.request.contentLength
-import io.ktor.server.request.receive
+import io.ktor.server.request.receiveChannel
+import io.ktor.utils.io.readRemaining
+import kotlinx.io.readByteArray
+import kotlinx.coroutines.flow.first
 import io.ktor.server.response.respond
 import io.ktor.server.response.respondBytes
 import io.ktor.server.response.respondText
@@ -34,10 +37,7 @@ import partyos.engine.JoinError
 import partyos.engine.JoinResult
 import partyos.engine.PlayerId
 import partyos.engine.Role
-import partyos.engine.SecureEntropy
 import partyos.engine.SystemClock
-import partyos.engine.sha256
-import java.util.concurrent.ConcurrentHashMap
 
 data class ServerConfig(
     val clock: Clock = SystemClock,
@@ -61,8 +61,6 @@ val LanOnly = createApplicationPlugin("LanOnly") {
 
 fun Application.partyModule(host: PartyHost, static: StaticFiles, cfg: ServerConfig = ServerConfig()) {
     val lockout = PinLockout(cfg.pinMaxFailures, cfg.pinLockMs, cfg.clock::now)
-    val hostTokens = ConcurrentHashMap.newKeySet<String>()
-    val entropy = SecureEntropy()
 
     install(ContentNegotiation) { json(PartyJson) }
     install(WebSockets) {
@@ -92,24 +90,21 @@ fun Application.partyModule(host: PartyHost, static: StaticFiles, cfg: ServerCon
 
         post("/api/host/login") {
             val ip = call.request.origin.remoteAddress
-            if (lockout.locked(ip)) {
+            if (!lockout.tryAttempt(ip)) {
                 return@post call.respond(HttpStatusCode.TooManyRequests, ErrorResponse("LOCKED", lockout.retryAfterSec(ip).toInt()))
             }
             val req = call.receiveSmall<PinRequest>() ?: return@post call.respond(HttpStatusCode.BadRequest, ErrorResponse("BAD_REQUEST"))
             if (host.read { checkPin(req.pin) }) {
                 lockout.succeed(ip)
-                val token = entropy.token()
-                hostTokens += sha256(token)
-                call.respond(HostLoginResponse(token))
+                call.respond(HostLoginResponse(host.issueHostToken()))
             } else {
-                lockout.fail(ip)
                 call.respond(HttpStatusCode.Unauthorized, ErrorResponse("BAD_PIN"))
             }
         }
 
         webSocket("/ws") {
             val pid = call.request.queryParameters["token"]?.let { t -> host.read { resolve(t) } }
-            val isHost = call.request.queryParameters["host"]?.let { sha256(it) in hostTokens } == true
+            val isHost = call.request.queryParameters["host"]?.let { host.isHostToken(it) } == true
             if (pid == null && !isHost) {
                 send(ServerMsg.Bye("BAD_TOKEN"))
                 close(CloseReason(CloseReason.Codes.VIOLATED_POLICY, "BAD_TOKEN"))
@@ -135,9 +130,12 @@ fun Application.partyModule(host: PartyHost, static: StaticFiles, cfg: ServerCon
     }
 }
 
+/** Reads at most [MAX_BODY] bytes whether or not the client sent a Content-Length, then decodes JSON. */
 private suspend inline fun <reified T : Any> RoutingCall.receiveSmall(): T? {
     if ((request.contentLength() ?: 0) > MAX_BODY) return null
-    return runCatching { receive<T>() }.getOrNull()
+    val bytes = receiveChannel().readRemaining(MAX_BODY + 1).readByteArray()
+    if (bytes.size > MAX_BODY) return null
+    return runCatching { PartyJson.decodeFromString<T>(bytes.decodeToString()) }.getOrNull()
 }
 
 internal suspend fun DefaultWebSocketServerSession.send(m: ServerMsg) =
@@ -159,6 +157,12 @@ private class PartySession(
         ws.send(ServerMsg.Welcome(pid, role, isHost))
         pid?.let { host.connected(it) }
         val sender = ws.launch { host.version.collect { seq -> push(seq) } }
+        val pinWatch = if (!isHost) null else ws.launch {
+            val gen = host.pinGeneration.value
+            host.pinGeneration.first { it != gen }
+            ws.send(ServerMsg.Bye("PIN_CHANGED"))
+            ws.close(CloseReason(CloseReason.Codes.NORMAL, "PIN_CHANGED"))
+        }
         val watchdog = ws.launch {
             while (isActive) {
                 delay(1_000)
@@ -182,6 +186,7 @@ private class PartySession(
         } finally {
             sender.cancel()
             watchdog.cancel()
+            pinWatch?.cancel()
             pid?.let { withContext(NonCancellable) { host.disconnected(it) } }
         }
     }
@@ -200,6 +205,15 @@ private class PartySession(
     }
 
     private suspend fun handle(msg: ClientMsg) {
+        val id = when (msg) {
+            is ClientMsg.Action -> msg.id
+            is ClientMsg.Host -> msg.id
+            else -> null
+        }
+        if (id != null && !isValidMessageId(id)) {
+            ws.send(ServerMsg.Reject(id.take(64), "BAD_ID"))
+            return
+        }
         when (msg) {
             ClientMsg.Ping -> ws.send(ServerMsg.Pong)
             is ClientMsg.Hello -> Unit
@@ -208,7 +222,7 @@ private class PartySession(
                 else host.mutate { action(pid, msg.id, msg.round, msg.payload) }
             }
             is ClientMsg.Host -> reply(msg.id) {
-                if (!isHost) ActionResult.Rejected("NOT_HOST") else host.mutate { host(msg.cmd.toCmd()) }
+                if (!isHost) ActionResult.Rejected("NOT_HOST") else host.hostCommand(msg.id, msg.cmd.toCmd())
             }
         }
     }

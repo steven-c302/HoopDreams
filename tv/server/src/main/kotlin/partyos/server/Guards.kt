@@ -27,27 +27,39 @@ class TokenBucket(private val capacity: Int, private val perSecond: Double, priv
     }
 }
 
-/** Counts failed PIN attempts per client address and locks it out for [lockMs] after [maxFailures]. */
-class PinLockout(private val maxFailures: Int, private val lockMs: Long, private val now: () -> Long) {
-    private val failures = HashMap<String, Int>()
+/**
+ * Limits PIN guesses per client address. Each attempt is counted *before* the PIN is checked, so a burst
+ * of parallel requests gets at most [maxAttempts] tries per [lockMs] window; a correct PIN clears the count.
+ */
+class PinLockout(private val maxAttempts: Int, private val lockMs: Long, private val now: () -> Long) {
+    private val attempts = HashMap<String, Int>()
     private val lockedUntil = HashMap<String, Long>()
 
     @Synchronized fun locked(ip: String): Boolean {
         val until = lockedUntil[ip] ?: return false
         if (now() < until) return true
-        lockedUntil.remove(ip); failures.remove(ip)
+        lockedUntil.remove(ip); attempts.remove(ip)
         return false
+    }
+
+    /** Reserves one guess for [ip]; false when it is locked out. */
+    @Synchronized fun tryAttempt(ip: String): Boolean {
+        if (locked(ip)) return false
+        val n = (attempts[ip] ?: 0) + 1
+        attempts[ip] = n
+        if (n >= maxAttempts) lockedUntil[ip] = now() + lockMs
+        return true
     }
 
     @Synchronized fun retryAfterSec(ip: String) = ((lockedUntil[ip] ?: now()) - now()).coerceAtLeast(0) / 1000 + 1
 
-    @Synchronized fun fail(ip: String) {
-        val n = (failures[ip] ?: 0) + 1
-        failures[ip] = n
-        if (n >= maxFailures) lockedUntil[ip] = now() + lockMs
-    }
-
     @Synchronized fun succeed(ip: String) {
-        failures.remove(ip)
+        attempts.remove(ip)
+        lockedUntil.remove(ip)
     }
 }
+
+/** Client-chosen message ids: short and boring, so they can't bloat memory or snapshots. */
+private val ID_PATTERN = Regex("[A-Za-z0-9_-]{1,64}")
+
+fun isValidMessageId(id: String) = ID_PATTERN.matches(id)

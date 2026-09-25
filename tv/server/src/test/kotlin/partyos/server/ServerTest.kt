@@ -209,7 +209,7 @@ class UnitsTest {
     @Test fun lockoutExpiresAfterSixtySeconds() {
         var now = 0L
         val l = PinLockout(5, 60_000) { now }
-        repeat(5) { l.fail("1.2.3.4") }
+        repeat(5) { l.tryAttempt("1.2.3.4") }
         assertTrue(l.locked("1.2.3.4")); assertFalse(l.locked("5.6.7.8"))
         now += 60_001
         assertFalse(l.locked("1.2.3.4"))

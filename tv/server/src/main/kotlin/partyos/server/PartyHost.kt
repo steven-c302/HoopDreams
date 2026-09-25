@@ -10,7 +10,11 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import partyos.engine.ActionResult
 import partyos.engine.Clock
+import partyos.engine.HostCmd
+import partyos.engine.SecureEntropy
+import partyos.engine.sha256
 import partyos.engine.PartyEngine
 import partyos.engine.PartySnapshot
 import partyos.engine.PlayerId
@@ -33,6 +37,14 @@ class PartyHost(
     private val connections = HashMap<PlayerId, Int>()
     private val pending = Channel<PartySnapshot>(Channel.CONFLATED)
     private var deadlineJob: Job? = null
+    private var persistJob: Job? = null
+    private val recentHostIds = ArrayDeque<String>()
+    private val hostTokenHashes = HashSet<String>()
+    private val _pinGeneration = MutableStateFlow(0)
+    private val entropy = SecureEntropy()
+
+    /** Bumps whenever the PIN changes; co-host sockets from an older generation are signed out. */
+    val pinGeneration: StateFlow<Int> = _pinGeneration.asStateFlow()
 
     /** Latest TV state; updated after every committed change. */
     val tv: StateFlow<TvState> = _tv.asStateFlow()
@@ -44,12 +56,51 @@ class PartyHost(
         engine.gameInfos.map { GameListing(it.id, it.title, it.tagline, it.minPlayers, it.maxPlayers) }
 
     init {
-        scope.launch {
+        persistJob = scope.launch {
             for (s in pending) {
                 runCatching { onCommit(s) }
                 delay(persistEveryMs)
             }
         }
+    }
+
+    /** Runs a host command once per [id]; a resent id (e.g. after a reconnect) is acknowledged without re-running. */
+    suspend fun hostCommand(id: String?, cmd: HostCmd): ActionResult = mutex.withLock {
+        if (id != null && id in recentHostIds) return@withLock ActionResult.Ack
+        val r = engine.host(cmd)
+        if (id != null && r == ActionResult.Ack) {
+            recentHostIds.addLast(id)
+            while (recentHostIds.size > MAX_HOST_IDS) recentHostIds.removeFirst()
+        }
+        commit()
+        r
+    }
+
+    suspend fun issueHostToken(): String = mutex.withLock {
+        entropy.token().also { hostTokenHashes += sha256(it) }
+    }
+
+    suspend fun isHostToken(token: String): Boolean = mutex.withLock { sha256(token) in hostTokenHashes }
+
+    /** Sets a new PIN and signs out every co-host phone. */
+    suspend fun changePin(pin: String) {
+        mutex.withLock {
+            engine.setPin(pin)
+            hostTokenHashes.clear()
+            commit()
+        }
+        _pinGeneration.value += 1
+    }
+
+    /** The deadline this host will fire next, if its timer is still armed (for tests and diagnostics). */
+    fun pendingDeadline(): Job? = deadlineJob?.takeIf { it.isActive }
+
+    /** Stops this host's timers and persistence; call when the party is replaced or the server stops. */
+    fun close() {
+        deadlineJob?.cancel()
+        deadlineJob = null
+        persistJob?.cancel()
+        pending.close()
     }
 
     suspend fun <T> mutate(block: PartyEngine.() -> T): T = mutex.withLock {
@@ -89,5 +140,9 @@ class PartyHost(
             delay((at - clock.now()).coerceAtLeast(0))
             mutate { tick() }
         }
+    }
+
+    private companion object {
+        const val MAX_HOST_IDS = 256
     }
 }
