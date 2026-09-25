@@ -2,3 +2,6 @@ fastapi
 uvicorn[standard]
 sqlalchemy
 pydantic
+python-socketio
+python-multipart
+qrcode

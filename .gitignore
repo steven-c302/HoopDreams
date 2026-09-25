@@ -12,3 +12,11 @@ backend/.pytest_cache
 
 # OS
 .DS_Store
+
+# party
+__pycache__/
+backend/*.db-*
+backend/media/
+frontend/e2e/.tmp/
+frontend/test-results/
+frontend/playwright-report/
