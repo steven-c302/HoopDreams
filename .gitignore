@@ -33,3 +33,6 @@ controller/playwright-report/
 controller/tsconfig.tsbuildinfo
 .playwright-mcp/
 brag-output/work/
+
+# Party OS audio: raw ElevenLabs takes (mastered copies live in controller/public/assets/audio)
+controller/scripts/audio/raw/

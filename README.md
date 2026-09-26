@@ -1,15 +1,15 @@
 <div align="center">
 
-<img src="docs/media/hero.gif" alt="PARTY OS: the dealer busts, drinks every bet, then the PARTY OS marquee lights up" width="100%">
+<img src="docs/media/trivia-quick-reveal.png" alt="Brain Drain on the TV: a Quick Draw reveal with wrong answers scribbled out, team flags on their picks and Brainy the host reacting" width="100%">
 
 # PARTY OS
 
 **Your TV hosts game night. Phones are the controllers.**
 
-A Jackbox-style party game show for the living room. The TV runs the show; up to 16 friends play from their
-phone's browser. No app, no account, one double-click.
+A party game show for the living room, built for trivia night. The TV runs the show; up to 16 friends play in
+teams from their phone's browser. No app, no account, one double-click.
 
-[▶ Watch the 20-second launch video](docs/media/party-os-launch.mp4) · [Quick start](#quick-start) · [The games](#the-games) · [How it's built](#how-its-built)
+[Quick start](#quick-start) · [Brain Drain](#brain-drain-team-trivia-night) · [The other games](#the-other-games) · [How it's built](#how-its-built)
 
 </div>
 
@@ -26,81 +26,98 @@ brew install openjdk@17 node          # once
 Then double-click **`Start Party OS.command`** in this folder.
 
 1. It builds everything, starts the party server and keeps the Mac awake.
-2. The TV screen opens full screen in Chrome, with sound.
-3. Friends scan the QR code on the TV (same Wi-Fi) and pick a name and an avatar.
+2. The TV screen opens full screen in Chrome. Press **Enter** to go live with sound.
+3. Friends scan the QR code on the TV (same Wi-Fi), type a name and **draw their own face**.
 4. Pick a game with **← →** and press **Enter**.
 
-No friends yet? Rehearse with bots that join, bluff, bet and deal like people do:
+No friends yet? Rehearse with bots that join, team up, argue and vote like people do:
 
 ```bash
-node controller/scripts/bots.mjs 6
+node controller/scripts/bots.mjs 12
 ```
 
 | On the TV | Does |
 | --- | --- |
 | ← → · Enter | pick a game · start it |
-| ↑ ↓ | number of rounds |
-| Esc | host controls: pause, skip, end, remove players, sound and music volume |
+| ↑ ↓ | questions per round (Brain Drain) or rounds (3–8) |
+| T · D | Brain Drain teams (auto, 2–6) · drink calls on/off |
+| Esc | host controls: pause, skip ahead, end, remove players, music and effects volume |
 | P · M · F | pause · mute · full screen |
 
-<p align="center"><img src="docs/media/lobby.png" alt="The lobby: QR code in a marquee of chasing bulbs, contestants' HELLO name tags, and the game picker" width="88%"></p>
+<p align="center"><img src="docs/media/lobby.png" alt="The lobby: QR code, every player's hand-drawn face, and the three games as comic-book covers" width="88%"></p>
 
-## The games
+## Brain Drain: team trivia night
 
-### 🃏 Drunk Blackjack: everyone deals, everyone drinks
+Teams vote on their phones. **The team's answer is whatever most of them pick**, so the fun is arguing out loud
+before the buzzer. Five rounds, five different formats, one host: Brainy, a pink brain sipping through a bendy straw.
 
-The dealer rotates round the room. Everyone else bets **sips or a shot** against this hand's dealer, plays their
-hand from their phone, and then the dealer plays theirs, live, from *their* phone. They must hit under 17.
-
-**If the dealer busts, they drink every bet on the table.**
-
-<p align="center">
-  <img src="docs/media/blackjack-deal.gif" alt="Cards fly from the shoe and flip over at every seat" width="49%">
-  <img src="docs/media/dealer-bust.gif" alt="DEV BUSTS! DRINK 10 SHOTS + 4 SIPS slams onto the table" width="49%">
-</p>
-
-- Beat the dealer and they drink your bet; lose or bust and you drink it. Blackjack makes the dealer drink double.
-- Doubling down doubles the drinks. **ON THE LINE** shows what the dealer is sweating.
-- A House Rule each hand (Double Trouble, Lucky Sevens). The podium ranks who made the most people drink.
-- A classic deck with Goodall court figures, 3D flips and a dealer who wears your avatar and a green visor.
-
-### 🎭 Bluff Battle: lie to your friends
-
-Everyone gets a weird-but-true question and writes a fake answer. Then everyone hunts for the truth among the fakes.
-Fool a friend for points; find the truth for more.
+| Round | How it works |
+| --- | --- |
+| **Quick Draw** | Four answers with a colour *and* a shape (Kahoot-style, readable from the couch). Right answers score 1,000, plus up to 500 for speed. |
+| **Ballpark** | Guess a number on a keypad. Your team's guess is the median of everyone's. Closest team wins; within 1% is a **bullseye**. |
+| **Pick a Side** | Seven rapid calls, five seconds each: *Pokémon or medication? Font or cheese? IKEA or Middle-earth?* |
+| **The Heist** | Right answers win 500. The fastest correct team votes on which team to rob. |
+| **The Gauntlet** | Select every answer that fits. Points only buy a head start in a race to the finish, and last place gets one wrong answer crossed out, so anyone can win. |
 
 <p align="center">
-  <img src="docs/media/bluff-reveal.gif" alt="Fakes get stamped FAKE! with who fell for them, then THE TRUTH lands with confetti" width="49%">
-  <img src="docs/media/bluff-write.png" alt="The question printed on felt, with poker chips lighting up as bluffs come in" width="49%">
+  <img src="docs/media/trivia-teamup.png" alt="Team Up: players tap a team colour and the first teammate to type a name names it" width="49%">
+  <img src="docs/media/trivia-ballpark-reveal.png" alt="Ballpark reveal: team flags on a number line and the answer dropping like an anvil, with a BULLSEYE burst" width="49%">
+  <img src="docs/media/trivia-sides-reveal.png" alt="Pick a Side: a split screen, each item snapping to its side" width="49%">
+  <img src="docs/media/trivia-steal.png" alt="The Heist: a loot sack flies between teams, ROBBED! and a drink call for the victim" width="49%">
+  <img src="docs/media/trivia-gauntlet-reveal.png" alt="The Gauntlet: teams race along a ten-space track as answers are marked" width="49%">
+  <img src="docs/media/trivia-podium.png" alt="The podium: the winning team's faces hop under a crown while confetti falls" width="49%">
 </p>
+
+- **Drink calls** (on by default, **D** turns them off): last place after each round drinks a sip, a Heist victim
+  drinks a sip, and teams that don't escape the Gauntlet drink two. Water counts.
+- Teams carry over to the next show. Late arrivals join the smallest team at the next question.
+- 183 multiple-choice questions, 42 Ballpark numbers, 16 Pick a Side sets and 32 Gauntlet prompts, all original,
+  every one with a fun fact or a checkable answer. That's enough for two full shows without a repeat.
+- A show runs about 15–20 minutes at the default five questions per round.
 
 ## Your phone is the controller
 
 <p align="center">
-  <img src="docs/media/phone-join.gif" alt="Joining from a phone: type a name, pick an avatar, join" width="19%">
-  <img src="docs/media/phone-bluff.png" alt="Writing a fake answer" width="19%">
-  <img src="docs/media/phone-bet.png" alt="Betting one sip, two sips, three sips or a shot" width="19%">
-  <img src="docs/media/phone-hand.png" alt="Your blackjack hand against the dealer's up-card" width="19%">
-  <img src="docs/media/phone-dealer.png" alt="Dealing from your phone: 13 sips riding, stand or push your luck" width="19%">
+  <img src="docs/media/phone-join.png" alt="Joining: type a name and draw your own face with a finger" width="19%">
+  <img src="docs/media/phone-shapes.png" alt="Quick Draw on the phone: four big colour-and-shape buttons under your team's colour band" width="19%">
+  <img src="docs/media/phone-number.png" alt="Ballpark on the phone: a big number keypad" width="19%">
+  <img src="docs/media/phone-sides.png" alt="Pick a Side on the phone: two giant buttons" width="19%">
+  <img src="docs/media/phone-waiting-tone-win.png" alt="Your team's result: Correct! +200" width="19%">
 </p>
 
-Scan, type a name, play. A refreshed or dropped phone rejoins as the same player; latecomers join at the next round.
+Scan, type a name, draw a face, play. Buttons are thumb-sized, every choice is colour **and** shape **and** text,
+teammates' faces show up on the answer they picked, and phones buzz on every tap and on your team's result. A
+refreshed or dropped phone rejoins as the same player.
 
-## The show
+## The other games
 
-It's a late-night game show, not a web page:
+**Bluff Battle.** Everyone gets a weird-but-true question and writes a fake answer. Then everyone hunts for the
+truth among the fakes. Fool a friend for points; find the truth for more.
 
-- **The studio:** velvet curtains, swaying spotlights, a slow sunburst, marquee bulbs that chase, an ON AIR sign, and
-  an APPLAUSE sign that lights up for the truth.
-- **The house band:** every sound is synthesized live in the browser: a lounge band that changes with each phase
-  and hurries in the last 10 seconds, plus chip clacks that climb as bets come in, card flicks, drumrolls, a sad
-  trombone, a studio audience that goes "ooooh", and applause. No audio files.
-- **Motion:** props slam, pop and deal onto the stage; cards fly along arcs and flip in 3D; scores count up.
+**Drunk Blackjack.** The dealer rotates round the room. Everyone else bets sips or a shot against this hand's
+dealer, and the dealer plays their own hand from their phone. If the dealer busts, they drink every bet on the table.
 
 <p align="center">
-  <img src="docs/media/blackjack-table.png" alt="The Drunk Blackjack table mid-hand" width="49%">
-  <img src="docs/media/bluff-truth.png" alt="THE TRUTH revealed with APPLAUSE lit" width="49%">
+  <img src="docs/media/bluff-reveal.png" alt="Bluff Battle: a fake answer stamped FAKE! with who wrote it and who fell for it" width="49%">
+  <img src="docs/media/blackjack-table.png" alt="Drunk Blackjack: the dealer's own face under a green visor, cards at every seat" width="49%">
 </p>
+
+## The look and the sound
+
+- **Saturday Morning:** thick ink outlines, flat loud colour, halftone dots, comic bursts, hand-drawn faces instead
+  of emoji. One token file ([`controller/src/theme/tokens.css`](controller/src/theme/tokens.css)) drives the TV
+  and the phones. Fonts: Rammetto One for display, Figtree for reading.
+- **Music:** a composed cartoon big band score (120 BPM, F major) with a loop per round, a hurry-up bed for the last
+  ten seconds and stingers that duck the music. Generate it once with ElevenLabs:
+
+  ```bash
+  export ELEVENLABS_API_KEY=...                    # ElevenLabs → Developers → API keys
+  node controller/scripts/audio/generate.mjs       # writes controller/public/assets/audio
+  ```
+
+  The cue list lives in [`controller/scripts/audio/cues.json`](controller/scripts/audio/cues.json); re-roll any cue
+  with `--only <id> --force`. Until the score exists, music stays silent and effects fall back to small synthesized
+  versions.
 
 ## How it's built
 
@@ -112,11 +129,11 @@ tv/app         Android TV app (Jetpack Compose) running the same engine on the T
 controller/    React + Vite: the phone controller and the web TV screen (/tv)
 ```
 
-- The web TV (`controller/src/tv/`) draws on a fixed 1920×1080 stage scaled to any screen. It uses
-  [Motion](https://motion.dev) and [GSAP](https://gsap.com) for animation, canvas-confetti, Web Audio for all sound,
-  and [@letele/playing-cards](https://github.com/letele/playing-cards) (Adrian Kennard's CC0 deck) for the cards.
-- Phones and the TV both render snapshots from the engine; the server owns every timer and score.
-- **Android TV:** the same games render natively in `tv/app`. See [`docs/party-os/`](docs/party-os/).
+- Brain Drain is [`tv/engine/.../games/trivia/BrainDrain.kt`](tv/engine/src/main/kotlin/partyos/engine/games/trivia/BrainDrain.kt);
+  its questions are the `trivia-*.json` packs next to it in `src/main/resources/packs`.
+- The web TV draws on a fixed 1920×1080 stage scaled to any screen, with [Motion](https://motion.dev) for animation.
+  Phones and the TV both render snapshots from the engine; the server owns every timer, vote and score.
+- **Android TV:** the same engine runs natively in `tv/app`; its screens still use the 1.0 look.
 
 ### Develop
 
@@ -125,21 +142,22 @@ cd tv && ./gradlew :devserver:installDist && devserver/build/install/devserver/b
 cd controller && npm run dev              # live reload; proxies /api and /ws to the devserver
 ```
 
-Open `http://localhost:5173/tv` for the TV and `/j/ROOM` for a phone. Add `?gallery` to `/tv` to see every card.
+Open `http://localhost:5173/tv` for the TV and `/j/ROOM` for a phone. `/tv?gallery=trivia` renders every Brain Drain
+beat from fixtures, and `node controller/scripts/shots.mjs` screenshots them all at 1920×1080.
 
 ```bash
 cd tv && ./gradlew :engine:test :server:test :app:testDebugUnitTest   # engine, server and TV layout tests
 cd controller && npm test && npm run e2e                                # protocol tests + phone flows in Playwright
 ```
 
-Design notes, the sound palette and every game's beat sheet are in [`docs/party-os/show-bible.md`](docs/party-os/show-bible.md).
+Design notes and every game's beat sheet are in [`docs/party-os/show-bible.md`](docs/party-os/show-bible.md).
 
 ## Credits
 
-Fonts: [Bungee and Bungee Shade](https://github.com/djrrb/Bungee), [Rubik](https://github.com/googlefonts/rubik),
+Fonts: [Rammetto One](https://fonts.google.com/specimen/Rammetto+One), [Figtree](https://github.com/erikdkennedy/figtree),
 [DSEG7](https://github.com/keshikan/DSEG) (all OFL). Cards: [Adrian Kennard](https://www.me.uk/cards/) via
-[@letele/playing-cards](https://github.com/letele/playing-cards) (CC0). Drunk Blackjack's casino energy is a love
-letter to *Gamble With Your Friends*. Launch video made with [/brag](https://github.com/latent-spaces/brag).
+[@letele/playing-cards](https://github.com/letele/playing-cards) (CC0). Round formats nod to *Buzz!*, *You Don't Know
+Jack*, *Wits & Wagers* and *Trivia Murder Party*; the names, art and questions are original.
 
 Please drink responsibly. Sips of water count.
 

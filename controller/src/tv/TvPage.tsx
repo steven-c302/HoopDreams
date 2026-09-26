@@ -219,11 +219,11 @@ function Lobby({ tv, session, games, rounds, setRounds, opts, setOpts, onStart }
             <h1>{online === 0 ? 'WHO’S PLAYING?' : online === 1 ? '1 PLAYER' : `${online} PLAYERS`}</h1>
             {audience > 0 && <span className="aud">+ {audience} watching</span>}
           </div>
-          <div className="cast">
+          <div className={`cast ${gamePlayers.length > 8 ? 'dense' : ''}`}>
             {gamePlayers.length === 0 && (
               <div className="cast-empty"><Brainy size={200} /><Panel fill={C.paper} tilt={-1} style={{ padding: '22px 30px' }}>Scan the code, type your name, draw your face.</Panel></div>
             )}
-            {gamePlayers.map((p, i) => <CastCard key={p.id} p={p} i={i} />)}
+            {gamePlayers.map((p, i) => <CastCard key={p.id} p={p} i={i} small={gamePlayers.length > 8} />)}
           </div>
           {tv.lastResult && <p className="last-game">Last game: {tv.lastResult.title}. {tv.lastResult.highlights[0] ?? `Winner: ${tv.lastResult.standings[0]?.name ?? '-'}`}</p>}
           <div className="controls-row">
@@ -254,11 +254,11 @@ function Lobby({ tv, session, games, rounds, setRounds, opts, setOpts, onStart }
   )
 }
 
-function CastCard({ p, i }: { p: PlayerSummary; i: number }) {
+function CastCard({ p, i, small }: { p: PlayerSummary; i: number; small: boolean }) {
   return (
     <Pop>
       <Panel className={`cast-card ${p.connected ? '' : 'away'}`} fill={C.paper} tilt={[-2, 1.5, -1, 2][i % 4]}>
-        <AvatarFace avatar={p.avatar} size={72} dim={!p.connected} />
+        <AvatarFace avatar={p.avatar} size={small ? 52 : 72} dim={!p.connected} />
         <span>{p.name}</span>
       </Panel>
     </Pop>

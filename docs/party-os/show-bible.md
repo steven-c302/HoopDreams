@@ -1,100 +1,90 @@
 # Party OS show bible
 
-The look, motion and sound of Party OS. Every screen and every sound should trace back to this page.
-Research and reasoning are in the approved plan (late-night game show overhaul, 2026-09-25).
+The look, motion and sound of Party OS 2.0. Every screen and every sound should trace back to this page.
 
 ## The idea
 
-Party OS is a **late-night game show broadcast from your living room**. The TV is the stage and the
-host; phones are the contestants' buzzers. Two rules come straight from Jackbox and the Jack Principles:
+Party OS is a **Saturday-morning cartoon game show** broadcast from your living room. The TV is the stage and the
+host; phones are the contestants' buzzers. Two rules come from Jackbox and the Jack Principles:
 
-1. **Talk to the room.** The show reacts to what just happened (three people fooled, everyone in early,
-   a photo finish) instead of running on a fixed script. Pacing never stalls: one task at a time, and
-   everyone always knows what happens next.
-2. **Every beat lands twice.** Each visual beat has a paired sound, and both are sized to the moment:
-   small for navigation, medium for a submission, big for a reveal.
+1. **Talk to the room.** Brainy, the host, reacts to what just happened ("Only Smarty Pints knew that.", "Not one
+   team. Not one.") instead of reading a script. One task at a time; everyone always knows what happens next.
+2. **Every beat lands twice.** Each visual beat has a paired sound, sized to the moment: small for a tap, medium for
+   a vote, big for a reveal.
 
-## The Studio (shared shell)
+And one rule for the room it's built for: **readable drunk.** Big type, one decision per screen, colour + shape +
+text on every answer, and a result on your own phone.
 
-| Token | Value | Use |
-| --- | --- | --- |
-| Ink | `#0B0716` | Stage floor, text on props |
-| Velvet / VelvetHi | `#3B0A2A` / `#7A1446` | Curtain wall, marquee plates |
-| Cream | `#FFF4D6` | Props: cards, name tags, spotlight light |
-| Gold | `#FFD23F` | Bulbs, marquee lettering, leader |
-| Pink | `#FF4D8D` | Neon accents, APPLAUSE, hot states |
-| Red / Mint | `#FF5A5A` / `#3DDC97` | ON AIR, wrong / right, points gained |
+## Saturday Morning (the shell)
 
-- **Type:** Bungee Shade for the logo, room code and the biggest slams; Bungee for headings and numbers;
-  Rubik (500–900) for everything people read. Nothing under 15sp, most text 18sp+ at 960×540dp.
-- **Props, not panels:** cream cards with a 3–4dp ink outline and a hard offset shadow (no blur), set a
-  degree or two askew. The stage is dark so props pop.
-- **Set pieces** (`ui/components/Studio.kt`): velvet curtain wall, slow sunburst, two swaying spotlights,
-  marquee bulb frame with a chase, ON AIR light, APPLAUSE sign, rubber stamps, confetti cannons.
-- **Games nest inside the studio.** Bluff Battle brings felt green and brass: the question is printed on
-  felt, answers are cream playing cards with a letter pip, submissions are poker chips.
+All values live in [`controller/src/theme/tokens.css`](../../controller/src/theme/tokens.css), in OKLCH.
 
-## Motion vocabulary (`ui/components/Motion.kt`)
+| Token | Use |
+| --- | --- |
+| Ink | outlines, hard shadows, text on props |
+| Paper / Paper-2 | props, bubbles, cards; wrong answers fade to Paper-2 |
+| Sun | the default scene, bursts, the leader |
+| Tomato · Blueberry · Lime · Grape | answers A · B · C · D (triangle · diamond · circle · square) |
+| Bubblegum · Tangerine · Sky | Brainy, Pick a Side, Ballpark, team colours |
+
+- **Type:** Rammetto One for headlines, numbers and bursts (paper fill, thick ink stroke); Figtree for everything
+  people read. Nothing under 22px on the 1920×1080 stage; questions are 66px.
+- **Props, not panels:** 6px ink outlines, 10px hard offset shadows (no blur), a degree or two of tilt.
+- **Scenes:** each screen is one comic panel inside an ink gutter, flat colour with halftone dots at the edges.
+  Brain Drain tints the panel per round: Sun (Quick Draw), Sky (Ballpark), Bubblegum/Blueberry split (Pick a Side),
+  Lime (The Heist), Tomato (The Gauntlet), Paper (standings).
+- **Faces, not emoji:** players draw their own face on the phone (or pick one of 16 drawn presets). The same `<Face>`
+  renders them on the TV, the phones and the blackjack dealer's visor.
+- **Set pieces** (`controller/src/tv/toon.tsx`): starburst bursts, speech bubbles, the alarm-clock timer that rattles
+  in the last five seconds, rubber stamps, the crown, drawn keycaps, confetti in theme colours.
+
+## Motion
 
 | Name | What it does | Used for |
 | --- | --- | --- |
-| Slam | 1.8× and tilted, lands with an overshoot | Headlines, reveal cards, podium names, stamps |
-| Pop | 0.4× bounce to full size | Chips, avatars, name tags, points |
-| Deal | flies up from below, tilt settles | Cards, rows, podium blocks |
-| Stagger | Deal in sequence, 70ms apart | Lists |
-| Wobble | idle ±1.5° sway | Anything waiting on players |
-| CountUp | number ticks to its target in ≤24 steps | Score totals |
+| Slam | lands from 1.8× with an overshoot | bursts, reveal cards, podium |
+| Pop | squash and stretch in | faces, deltas, flags |
+| Deal | flies up from below, tilt settles | answers, cards, rows |
+| Scribble | an ink X wipes across | wrong answers |
+| CountUp | number ticks to its target | scores |
 
-All of it animates in `graphicsLayer` or the draw phase only (spec §9). Nothing recomposes per frame.
+Only transform, opacity and clip-path animate. `prefers-reduced-motion` cuts it all to a blink.
 
 ## The host
 
-A smooth late-night host: velvet baritone, cheeky asides, big "ladies and gentlemen" swells. He
-whispers while people write their lies and shouts on the reveals. Name to be chosen.
+Brainy: a pink brain with googly eyes, sipping through a bendy straw. Happy on a split room, smug on a clean sweep,
+shocked when nobody gets it. Lines are generated by the engine from what happened (`BrainDrain.kt`), never canned
+filler, and every reveal comes with a fun fact.
 
-- Lines never say player names (they are pre-rendered); names appear on screen with a Slam.
-- 4–8 variants per cue in a shuffle bag. Chattiness setting: Off / Light / Full.
-- Speaks at phase starts and big moments only; silent while people type; one line at a time; stale lines
-  are dropped; at least 6s between lines.
-- Voice: ElevenLabs Eleven v3 with a designed voice and audio tags (`[whispers]`, `[excited]`,
-  `[shouts]`, `[laughs]`), stability ~30–45%. Local fallback: Chatterbox (exaggeration ~0.8–1.2,
-  cfg_weight ~0.3). Rendered offline and shipped in the APK.
+## Sound
 
-## Sound palette and mix
+- **Score:** one cartoon big band (120 BPM, F major): brass, xylophone, bongos, slap bass, surf guitar, kazoo and
+  slide-whistle accents. A loop per round, a hurry-up bed for the last ten seconds, stingers that duck the music.
+  Generated with ElevenLabs from [`controller/scripts/audio/cues.json`](../../controller/scripts/audio/cues.json),
+  mastered with ffmpeg (music −20 LUFS with a crossfaded loop seam, effects −16 LUFS / −3 dBTP).
+- **Effects:** sampled, three variants for anything repeated, pitch rising with progress (each vote in is a step up).
+  Any effect without a sample falls back to a small synthesized version.
+- **TV speakers:** keep the character in 300Hz–5kHz. **Phones stay quiet** and buzz instead.
 
-- **Buses:** Music, SFX, Voice under Master. VO −16 LUFS, music −22 LUFS, SFX peaks ≤ −3 dBTP. Music ducks
-  to ~35% under the host (120ms attack, 400ms release).
-- **Music:** a talk-show band (Hammond, brass stabs, walking bass, rimshots). Loops: `lobby_lounge`,
-  `think_bluff` (+ hurry variant and a 1.08× push in the last 10s), `reveal_bed`, `scores_strut`,
-  `podium_outro`. All in one key so stingers land.
-- **SFX tiers:** navigate (focus tick) < select (thunk) < moment (stingers, crowd). Repeated sounds get
-  3–5 variants and ±3–6% pitch. Progress rises in pitch: each join and each submission is a step higher.
-- **TV speakers:** keep the character of every sound in 300Hz–5kHz; never rely on bass.
-- **Phones stay quiet:** the TV is the speaker. Phones get haptics; personal sounds are opt-in.
-
-## Bluff Battle beat sheet
+## Brain Drain beat sheet
 
 | Beat | Visual | Sound / host |
 | --- | --- | --- |
-| Lobby idle | Bulbs chase, spotlights sway | `lobby_lounge`; rare quip |
-| Player joins | Name tag pops on in their colour | Xylophone, one step higher per join |
-| Game start | Curtain wipe, title slam | Band hit; "Welcome to BLUFF BATTLE!" `[booming]` |
-| Tutorial | Cards dealt; ready avatars pop | Soft ding per ready |
-| Write | Prompt slams onto the felt; ON AIR breathes; chips light up | `[whispers]` "Lie to your friends…"; `think_bluff`; chip clink rising per bluff |
-| All in / time up | 150ms hit-stop, then ALL IN! slam or buzzer shake | Music cuts + ding-ding, or buzzer |
-| Last 5 seconds | Clock turns red and throbs | Tick-tock rising at 3-2-1; hurry music |
-| Pick | Answers dealt as playing cards | Card deal, pitch stepping per card |
-| Reveal step | Card slams under the spotlight; FAKE! stamp; fooled avatars pop | Drumroll, womp + crowd "ooooh" scaled by fooled count; laugh on 3+ |
-| Truth | THE TRUTH stamp, APPLAUSE lights, confetti | Fanfare + applause; `[excited]` |
-| Scores | Rows dealt; +points pop; totals count up; leader gets the crown | Count ticks, rank whoosh, `scores_strut` |
-| Final round | DOUBLE POINTS badge | Key-change stinger; `[shouts]` |
-| Podium | Third, second, then first slam onto lit blocks; cannons fire | Drumroll, crash per rank, outro |
-| Pause | Curtains close halfway; PAUSED marquee | Record scratch; music dips |
+| Team Up | team colour columns fill with faces as people tap in; names appear as they're typed | `teamup` bed; boing per join, stamp per name |
+| Round intro | ROUND n OF 5, the round name in a giant burst, Brainy explains the rule | round sting; final round gets the key change |
+| Question | the question in a bubble, four colour-and-shape answers, pips fill as teammates vote | round bed; a clink per vote rising in pitch; ding-ding when everyone's in; hurry bed at 10s, ticks at 5 |
+| Reveal | wrong answers scribbled out, RIGHT! burst, team flags on their picks, +points pop, fun fact | correct or wrong sting, applause or "ooh"; Brainy reacts |
+| Ballpark reveal | team flags drop onto a number line, the answer lands as an anvil | drumroll, stamp; bullseye gets the jackpot |
+| Pick a Side | split screen; each item slams in, then snaps to its side | fast bed; whoosh per call |
+| Heist | the fastest team picks a target; a loot sack flies, coins burst | sneaky bed; slide whistle + cha-ching; drink call |
+| Standings | team bars race to their scores, crown on the leader, last place gets a DRINK! card | strut; glass clink + brass hit |
+| Gauntlet | a ten-space race track with head starts; right picks move teams forward, wrong ones back | chase bed; whoosh per move |
+| Podium | third, second, first slam onto their blocks, the winners' faces hop under a crown | drumroll, crashes, fanfare, applause, confetti |
 
 ## Reviewing the look
 
-`./gradlew :app:testDebugUnitTest --tests '*ShowcaseShots*'` renders every main screen at 1920×1080 into
-`tv/app/build/showcase/`.
+`/tv?gallery=trivia` lists every Brain Drain beat rendered from fixtures, and `node controller/scripts/shots.mjs`
+screenshots them all at 1920×1080. The Android TV app (`tv/app`) still uses the 1.0 studio look.
 
 ## Drunk Blackjack
 
@@ -112,9 +102,9 @@ win and lose stingers (its soundtrack by Karl Flodin has "New Management" for a 
 - **House Rules** for hands after the first: Double Trouble (all drinks ×2), Lucky Sevens (each 7 in your hand costs the
   dealer a sip).
 - **Cards:** Adrian Kennard's classic deck (Goodall & Son court figures, CC0) via `@letele/playing-cards`, with our
-  velvet-and-gold back.
-- **Look:** mahogany-railed felt under neon, the House as a visor-wearing mascot who blinks, sweats and Xes out when
-  he busts, and sleek ivory cards with Bungee Shade face cards and a velvet-and-gold lattice back. Cards fly from
+  tomato-and-sun back.
+- **Look:** mahogany-railed felt in a tangerine scene, the dealer's own drawn face under a green visor that sweats
+  when they bust, and ivory cards with a tomato-and-sun lattice back. Cards fly from
   the shoe in real deal order and land askew, and the hole card flips over in 3D.
 - **Sound:** a lounge-bossa band with vibraphone, clay chip clacks that climb as bets come in, card flicks per
   card, a flip thump for the hole card, a drumroll into the dealer's turn, a bust crash, jackpot bells with a coin
