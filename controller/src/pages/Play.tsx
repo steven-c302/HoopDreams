@@ -1,8 +1,9 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState, type CSSProperties } from 'react'
 import { Connection, browserSocket, browserSocketUrl, type Status } from '../net/connection'
 import { rejectMessage, type ActionPayload, type PhoneState } from '../protocol'
 import type { Session } from '../net/token'
-import { ScreenView } from '../screens/ScreenView'
+import { ScreenView, teamOf } from '../screens/ScreenView'
+import { Face } from '../theme/Face'
 import { useCountdown } from './useCountdown'
 
 const BYE: Record<string, string> = {
@@ -46,21 +47,24 @@ export function Play({ session, onLeave }: { session: Session; onLeave(why: stri
   }, [toast])
 
   const seconds = useCountdown(view?.remainingMs, seq, view?.paused ?? false)
+  const people = useMemo(() => new Map((view?.scores ?? []).map((r) => [r.id, r])), [view?.scores])
   const send = (payload: ActionPayload) => { if (view) conn.current?.act(view.round, payload) }
 
   if (!view) return <main className="page center"><div className="spinner" /><p>Connecting to the TV…</p></main>
+  const team = teamOf(view.screen)
 
   return (
-    <main className="page play">
+    <main className="page play" style={team ? { '--team': team.color } as CSSProperties : undefined}>
       <header className="topbar">
-        <span className="me"><span className="dot-avatar" style={{ background: view.me.avatar.color }}>{view.me.avatar.emoji}</span>{view.me.name}</span>
+        <span className="me"><Face face={view.me.avatar.face} color={view.me.avatar.color} size={40} />{view.me.name}</span>
         <span className="room-chip">{view.gameTitle ?? `Room ${view.roomCode}`}</span>
         {seconds != null && view.gameId && <span className={`timer ${seconds <= 5 ? 'hot' : ''}`}>{seconds}</span>}
       </header>
+      {team && <div className="team-band" style={{ background: team.color }}><span>{team.name}</span></div>}
       {status !== 'online' && <div className="banner warn">Reconnecting…</div>}
       {view.paused && <div className="banner">{view.pauseReason === 'WAITING_FOR_PLAYERS' ? 'Paused: waiting for players' : 'Paused'}</div>}
       <section className="screen" key={`${view.round}-${view.screen.t}`}>
-        <ScreenView screen={view.screen} disabled={view.paused} onAction={send} meId={view.me.id} />
+        <ScreenView screen={view.screen} disabled={view.paused} onAction={send} meId={view.me.id} people={people} />
         {view.me.role === 'SPECTATOR' && !view.gameId && (
           <button className="primary big" onClick={() => void takeSeat(session.token, setToast)}>Join as a player</button>
         )}

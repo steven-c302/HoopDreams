@@ -4,8 +4,9 @@
 const count = Number(process.argv[2] ?? 5)
 const base = process.argv[3] ?? 'http://127.0.0.1:8080'
 const names = ['Ava', 'Ben', 'Cleo', 'Dev', 'Eli', 'Fin', 'Gus', 'Hana', 'Ivy', 'Jay', 'Kai', 'Lu', 'Mo', 'Nia', 'Oz', 'Pip']
-const emojis = ['🦊', '🐸', '🐙', '🦄', '🐼', '🐯', '🦉', '🐝', '🐧', '🦖', '🐨', '🍕', '🌮', '🎸', '🚀', '👾']
-const colors = ['#FF7A00', '#22AA55', '#8E5CFF', '#FF4D8D', '#2EC4F1', '#FFD23F', '#3DDC97', '#FF5A5A']
+const faces = Array.from({ length: 16 }, (_, i) => `p:${String(i).padStart(2, '0')}`)
+const colors = ['#FF4B3E', '#FF8A2B', '#FFD23F', '#2FBF55', '#7FD3FF', '#2F6BFF', '#8B4DFF', '#FF6FB5']
+const teamNames = ['The Quizzards', 'Smarty Pints', 'Brain Freeze', 'Trivia Newton John', 'Les Quizerables', 'Sip Happens']
 const fakes = ['a very old goat', 'the moon', 'spaghetti', 'Belgium', 'four', 'a rubber duck', 'Nicolas Cage', 'soup', 'jazz', 'the year 1812']
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms))
 const pick = (a) => a[Math.floor(Math.random() * a.length)]
@@ -14,7 +15,7 @@ const tv = await fetch(`${base}/api/tv/session`).then((r) => r.json())
 async function bot(i) {
   await sleep(i * 350)
   const r = await fetch(`${base}/api/join`, { method: 'POST', headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ room: tv.room, name: names[i % 16] + (i >= 16 ? i : ''), avatar: { emoji: emojis[i % 16], color: colors[i % 8] }, spectator: false }) })
+    body: JSON.stringify({ room: tv.room, name: names[i % 16] + (i >= 16 ? i : ''), avatar: { face: faces[i % 16], color: colors[i % 8] }, spectator: false }) })
   const { token } = await r.json()
   if (!token) return console.log('join failed', await r.text())
   const ws = new WebSocket(`${base.replace('http', 'ws')}/ws?token=${token}`)
@@ -26,13 +27,28 @@ async function bot(i) {
     const m = JSON.parse(e.data)
     if (m.t !== 'view') return
     const { screen, round, paused } = m.view
-    const key = `${round}:${screen.t}:${screen.kind ?? ''}:${(screen.hand ?? []).length}:${screen.actions?.length ?? ''}:${screen.acknowledged ?? ''}:${screen.value ?? ''}:${screen.selected ?? ''}`
+    const key = `${round}:${screen.t}:${screen.kind ?? ''}:${(screen.hand ?? []).length}:${screen.actions?.length ?? ''}:${screen.acknowledged ?? ''}:${screen.value ?? ''}:${screen.selected ?? ''}:${screen.locked ?? ''}`
     if (paused || key === lastKey) return
     lastKey = key
     await sleep(700 + Math.random() * 2500)
     if (screen.t === 'tutorial' && !screen.acknowledged) act(round, { kind: 'ack' })
-    if (screen.t === 'text' && screen.value == null) act(round, { kind: screen.kind, text: pick(fakes) })
-    if (screen.t === 'choice' && !screen.selected && screen.options.length) act(round, { kind: screen.kind, option: pick(screen.options).id })
+    if (screen.t === 'text' && screen.value == null) act(round, { kind: screen.kind, text: screen.kind === 'teamName' ? pick(teamNames) : pick(fakes) })
+    if (screen.t === 'choice' && screen.options.length) {
+      // Teammates tend to follow whoever voted first, like people do.
+      const votes = Object.entries(screen.votes ?? {}).sort((a, b) => b[1].length - a[1].length)
+      const follow = votes.length && Math.random() < 0.6 ? votes[0][0] : null
+      if (screen.kind === 'team' && screen.selected) { if (screen.prompt.startsWith('Still')) act(round, { kind: 'team', option: screen.selected }) }
+      else if (!screen.selected) act(round, { kind: screen.kind, option: follow ?? pick(screen.options).id })
+    }
+    if (screen.t === 'number' && screen.value == null) {
+      const guesses = (screen.guesses ?? []).map((g) => g.value)
+      const base = guesses.length ? guesses[0] : 10 ** (1 + Math.floor(Math.random() * 3))
+      act(round, { kind: screen.kind, value: Math.max(1, Math.round(base * (0.6 + Math.random() * 0.8))) })
+    }
+    if (screen.t === 'multi' && !screen.locked) {
+      const open = screen.options.filter((o) => !(screen.eliminated ?? []).includes(o.id))
+      act(round, { kind: screen.kind, picks: open.filter(() => Math.random() < 0.6).map((o) => o.id), lock: true })
+    }
     if (screen.t === 'cards' && screen.actions.length) {
       if (screen.kind === 'bet') act(round, { kind: 'bet', option: pick(screen.actions).id })
       else {

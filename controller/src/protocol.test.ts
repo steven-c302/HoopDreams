@@ -14,7 +14,7 @@ describe('protocol fixtures shared with the Kotlin server', () => {
 
   it('covers every screen kind the phone can render', () => {
     const kinds = serverFixtures.flatMap((m) => ('view' in m ? [(m.view as { screen: { t: string } }).screen.t] : []))
-    expect(new Set(kinds)).toEqual(new Set(['waiting', 'tutorial', 'text', 'choice', 'scores']))
+    expect(new Set(kinds)).toEqual(new Set(['waiting', 'tutorial', 'text', 'choice', 'scores', 'number', 'multi']))
   })
 
   it('encodes client messages exactly as the server expects', () => {
@@ -23,7 +23,10 @@ describe('protocol fixtures shared with the Kotlin server', () => {
       { t: 'action', id: 'a-1', round: 3, payload: { kind: 'write', text: 'stars' } },
       { t: 'action', id: 'a-2', round: 4, payload: { kind: 'pick', option: 'o2' } },
       { t: 'action', id: 'a-3', round: 1, payload: { kind: 'ack' } },
-      { t: 'host', id: 'h-1', cmd: { t: 'start', gameId: 'bluff', rounds: 5 } },
+      { t: 'host', id: 'h-1', cmd: { t: 'start', gameId: 'bluff', rounds: 5, options: {} } },
+      { t: 'host', id: 'h-8', cmd: { t: 'start', gameId: 'trivia', rounds: 5, options: { teams: 4, drinks: 1 } } },
+      { t: 'action', id: 'a-4', round: 9, payload: { kind: 'guess', value: 206 } },
+      { t: 'action', id: 'a-5', round: 10, payload: { kind: 'multi', picks: ['a'], lock: true } },
       { t: 'host', id: 'h-2', cmd: { t: 'pause' } },
       { t: 'host', id: 'h-3', cmd: { t: 'resume' } },
       { t: 'host', id: 'h-4', cmd: { t: 'skip' } },

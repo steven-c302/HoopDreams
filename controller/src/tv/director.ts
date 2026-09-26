@@ -1,9 +1,9 @@
 import { useEffect, useRef } from 'react'
 import type { TvState } from '../protocol'
 import { setHurry, setMusic, sfx, type Mode } from './audio'
-import type { BlackjackTv, BluffTv } from './types'
+import type { BlackjackTv, BluffTv, TriviaTv } from './types'
 
-type Game = BluffTv | BlackjackTv | undefined
+type Game = BluffTv | BlackjackTv | TriviaTv | undefined
 
 /** Seconds left on the stage clock, from the snapshot's remaining time anchored when it arrived. */
 export function useDeadline(tv: TvState | null): { deadline: number | null; frozen: number | null } {
@@ -20,13 +20,24 @@ export function useDeadline(tv: TvState | null): { deadline: number | null; froz
 function musicFor(tv: TvState): Mode {
   const s = tv.stage
   if (!s) return 'lobby'
-  if (s.tutorial) return s.gameId === 'blackjack' ? 'casino' : 'lobby'
+  if (s.tutorial) return s.gameId === 'blackjack' ? 'casino' : s.gameId === 'trivia' ? 'teamup' : 'lobby'
   const g = s.game as unknown as Game
   if (!g) return 'lobby'
-  if (g.t === 'blackjack') return g.phase === 'dealer' ? 'reveal' : g.phase === 'podium' ? 'scores' : 'casino'
+  if (g.t === 'blackjack') return g.phase === 'dealer' ? 'reveal' : g.phase === 'podium' ? 'podium' : 'casino'
+  if (g.t === 'trivia') {
+    switch (g.phase) {
+      case 'teamup': return 'teamup'
+      case 'standings': return 'standings'
+      case 'podium': return 'podium'
+      case 'victim': case 'steal': return 'heist'
+      case 'intro': return g.format === 'teamup' ? 'teamup' : (g.format as Mode)
+      default: return g.format === 'teamup' ? 'teamup' : (g.format as Mode)
+    }
+  }
   switch (g.phase) {
-    case 'write': case 'pick': return 'think'
+    case 'write': case 'pick': return 'bluff'
     case 'reveal': return 'reveal'
+    case 'podium': return 'podium'
     default: return 'scores'
   }
 }
@@ -79,6 +90,27 @@ export function useCueDirector(tv: TvState | null, deadline: number | null) {
       } else if (ga && ga.t === 'bluff' && gb.submitted > ga.submitted) {
         sfx.chip(gb.submitted)
         if (gb.submitted >= gb.expected) setTimeout(() => sfx.allIn(), 180)
+      }
+    }
+
+    if (gb.t === 'trivia') {
+      const pa = ga && ga.t === 'trivia' ? ga : null
+      if (newPhase) {
+        if (gb.phase === 'question') sfx.whoosh()
+        if ((gb.phase === 'reveal' || gb.phase === 'victim') && pa?.phase === 'question' && pa.answered < pa.expected) sfx.buzzer()
+        if (gb.phase === 'reveal' && gb.format === 'ballpark') sfx.drumroll(1.1)
+        if (gb.phase === 'standings') sfx.whoosh()
+        if (gb.phase === 'podium') sfx.drumroll(2.4)
+      } else if (pa) {
+        if (gb.phase === 'question' && gb.answered > pa.answered) {
+          sfx.vote(gb.answered)
+          if (gb.answered >= gb.expected) setTimeout(() => sfx.allIn(), 160)
+        }
+        if (gb.phase === 'teamup') {
+          const count = (t: TriviaTv) => t.teams.reduce((n, x) => n + x.members.length, 0)
+          if (count(gb) > count(pa)) sfx.boing()
+          if (gb.teams.some((t, i) => t.name !== pa.teams[i]?.name)) sfx.stamp()
+        }
       }
     }
 

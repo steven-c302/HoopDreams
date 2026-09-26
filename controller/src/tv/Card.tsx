@@ -27,14 +27,10 @@ function Face({ card }: { card: PlayingCard }) {
 function Back() {
   return (
     <svg viewBox="0 0 100 140" className="card-svg" aria-label="face-down card">
-      <rect x="0.6" y="0.6" width="98.8" height="138.8" rx="7.5" fill="#3B0A2A" stroke="#1a0612" strokeWidth="1.2" />
-      <rect x="6" y="6" width="88" height="128" rx="4.5" fill="url(#card-lattice)" />
-      <rect x="6" y="6" width="88" height="128" rx="4.5" fill="none" stroke="#D9A441" strokeWidth="1.4" />
-      <rect x="9" y="9" width="82" height="122" rx="3" fill="none" stroke="#D9A441" strokeOpacity="0.55" strokeWidth="0.6" />
-      <circle cx="50" cy="70" r="17" fill="#3B0A2A" stroke="#FFD23F" strokeWidth="1.6" />
-      <circle cx="50" cy="70" r="13.5" fill="none" stroke="#D9A441" strokeWidth="0.6" />
-      <text x="50" y="78.5" textAnchor="middle" fontSize="22" fill="#FFD23F" fontFamily="'Bungee Shade', sans-serif">P</text>
-      <rect x="0.6" y="0.6" width="98.8" height="138.8" rx="7.5" fill="url(#card-gloss)" opacity="0.6" />
+      <rect x="1" y="1" width="98" height="138" rx="8" fill="var(--tomato)" stroke="var(--ink)" strokeWidth="2.4" />
+      <rect x="7" y="7" width="86" height="126" rx="5" fill="url(#card-lattice)" stroke="var(--ink)" strokeWidth="1.6" />
+      <circle cx="50" cy="70" r="18" fill="var(--sun)" stroke="var(--ink)" strokeWidth="2.4" />
+      <text x="50" y="79" textAnchor="middle" fontSize="24" fill="var(--ink)" fontFamily="Rammetto One">P</text>
     </svg>
   )
 }

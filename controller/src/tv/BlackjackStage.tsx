@@ -5,7 +5,8 @@ import { sfx } from './audio'
 import { Card } from './Card'
 import { CheersIcon, DrinkBet, Led, MugIcon } from './Casino'
 import { GameHeader, Podium, Tutorial } from './Shared'
-import { AvatarDot, C, coinShower, fireConfetti, Neon, Pop, Slam, Stamp } from './Studio'
+import { Face } from '../theme/Face'
+import { AvatarFace, Burst, C, Panel, Pop, Slam, Stamp, coinShower, fireConfetti } from './toon'
 import { sipLabel, type BjSeat, type BlackjackTv } from './types'
 
 const BET_MS = 15_000, PLAY_MS = 25_000, DEALER_MS = 30_000, SETTLE_MS = 10_000, PODIUM_MS = 15_000
@@ -37,8 +38,8 @@ export function BlackjackStage({ stage, players, scores, clock }: { stage: Stage
   if (stage.tutorial) {
     return (
       <div className="stage-pad">
-        <GameHeader title="DRUNK BLACKJACK" titleColor={C.gold} stage={stage} total={30_000} clock={clock} chips={[['HOW TO PLAY', C.cream], ['TAP “GOT IT” ON YOUR PHONE', C.pink]]} />
-        <Tutorial cards={stage.tutorial.cards} acked={stage.tutorial.acked} players={players} accent={C.gold} card={'#5C0F2E'} />
+        <GameHeader title="Drunk Blackjack" stage={stage} total={30_000} clock={clock} chips={[['HOW TO PLAY', C.paper]]} />
+        <Tutorial cards={stage.tutorial.cards} acked={stage.tutorial.acked} players={players} />
       </div>
     )
   }
@@ -46,7 +47,7 @@ export function BlackjackStage({ stage, players, scores, clock }: { stage: Stage
   if (g.phase === 'podium') {
     return (
       <div className="stage-pad">
-        <GameHeader title="DRUNK BLACKJACK" titleColor={C.gold} stage={stage} total={PODIUM_MS} clock={clock} chips={[['MOST SIPS HANDED OUT', C.cream]]} />
+        <GameHeader title="Drunk Blackjack" stage={stage} total={PODIUM_MS} clock={clock} chips={[['MOST SIPS HANDED OUT', C.paper]]} />
         <Podium scores={scores} unit=" sips" />
       </div>
     )
@@ -75,22 +76,20 @@ function Table({ g, stage, clock }: { g: BlackjackTv; stage: StageInfo; clock: {
   const who = g.dealerName.toUpperCase()
   const status = g.phase === 'bet' ? `${g.submitted}/${g.expected} BETS IN` : g.phase === 'play' ? `${g.submitted}/${g.expected} DONE` : null
   const total = { bet: BET_MS, play: PLAY_MS, dealer: DEALER_MS, settle: SETTLE_MS, podium: PODIUM_MS }[g.phase]
-  const chips: [string, string][] = [[`HAND ${g.round} OF ${g.totalRounds}`, C.cream]]
-  if (g.finalRound) chips.push(['LAST DEALER', C.pink])
+  const chips: [string, string][] = [[`HAND ${g.round} OF ${g.totalRounds}`, C.paper]]
+  if (g.finalRound) chips.push(['LAST DEALER', C.sun])
 
   return (
     <>
       <div className="bj-table" />
-      <div className="neon-sign" style={{ '--c': C.gold, left: 560, top: 190, fontSize: 110 } as CSSProperties}>♛</div>
-      <div className="neon-sign" style={{ '--c': C.pink, left: 1330, top: 200, fontSize: 96, animationDelay: '2s' } as CSSProperties}>⚡</div>
       <FeltPrint seats={layout.pos} cardW={layout.card} showText={g.phase === 'play'} />
       <div className="bj-shoe" />
       <div className="stage-pad" style={{ pointerEvents: 'none' }}>
-        <GameHeader title="DRUNK BLACKJACK" titleColor={C.gold} stage={stage} total={total} clock={clock} chips={chips} status={status} />
+        <GameHeader title="Drunk Blackjack" stage={stage} total={total} clock={clock} chips={chips} status={status} />
       </div>
       <RuleCard key={`${g.round}-${g.rule}`} g={g} />
       <div className="bj-dealer" style={{ top: 170 }}>
-        <Dealer key={g.dealerId} mood={dealerBust ? 'bust' : g.phase === 'settle' ? 'smug' : 'idle'} name={who} emoji={g.dealerAvatar?.emoji} color={g.dealerAvatar?.color} />
+        <Dealer key={g.dealerId} mood={dealerBust ? 'bust' : g.phase === 'settle' ? 'smug' : 'idle'} name={who} face={g.dealerAvatar?.face} color={g.dealerAvatar?.color} />
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10 }}>
           <div className="bj-dealer-cards">
             {g.dealer.map((c, i) => (
@@ -100,28 +99,21 @@ function Table({ g, stage, clock }: { g: BlackjackTv; stage: StageInfo; clock: {
           {g.dealer.length > 0 && <Led value={g.dealerTotal ?? dealerTotal} tone={dealerBust ? 'red' : 'gold'} size={46} />}
         </div>
         {g.phase !== 'settle' && (
-          <div className="on-the-line">
+          <Panel className="on-the-line" fill={C.paper} tilt={2}>
             <small>ON THE LINE</small>
             <div className="row" style={{ gap: 10 }}><MugIcon size={40} /><Led value={g.onTheLine} tone="red" size={40} /></div>
-            <small style={{ color: '#fff4d6aa' }}>IF {who} BUSTS</small>
-          </div>
+            <small>IF {who} BUSTS</small>
+          </Panel>
         )}
       </div>
-      {g.phase === 'bet' && <div className="bj-banner" style={{ top: 520 }}><Slam from={2}><Neon text={`BET AGAINST ${who}`} lit color={C.gold} className="breathe" /></Slam></div>}
-      {g.phase === 'dealer' && <div className="bj-banner" style={{ top: 520 }}><Slam key="dealer" from={2}><Neon text={`${who} IS PLAYING`} lit color={C.pink} className="breathe" /></Slam></div>}
+      {g.phase === 'bet' && <div className="bj-banner" style={{ top: 520 }}><Banner text={`BET AGAINST ${who}`} fill={C.sun} /></div>}
+      {g.phase === 'dealer' && <div className="bj-banner" style={{ top: 520 }}><Banner key="dealer" text={`${who} IS PLAYING`} fill={C.bubblegum} /></div>}
       {g.phase === 'settle' && (
         <div className="bj-banner" style={{ top: dealerBust ? 400 : 520 }}>
           {dealerBust ? (
-            <Slam from={3} delay={0.1} tilt={-10}>
-              <div className="dealer-bust">
-                <span className="marquee-font">{who} BUSTS!</span>
-                <b><MugIcon size={64} /> DRINK {sipLabel(g.dealerDrinks)}</b>
-              </div>
-            </Slam>
+            <Burst text={`${who} BUSTS!`} sub={`DRINK ${sipLabel(g.dealerDrinks)}`} width={1100} height={420} size={96} fill={C.tomato} ink={C.white} tilt={-6} delay={0.1} spikes={20} />
           ) : (
-            <Slam from={2.4} delay={0.1}>
-              <Neon text={g.dealerDrinks > 0 ? `${who} HAS ${dealerTotal} · DRINKS ${sipLabel(g.dealerDrinks)}` : `${who} HAS ${dealerTotal}`} lit color={g.dealerDrinks > 0 ? C.mint : C.red} />
-            </Slam>
+            <Banner text={g.dealerDrinks > 0 ? `${who} HAS ${dealerTotal}: DRINKS ${sipLabel(g.dealerDrinks)}` : `${who} HAS ${dealerTotal}`} fill={g.dealerDrinks > 0 ? C.lime : C.paper} />
           )}
         </div>
       )}
@@ -154,7 +146,7 @@ function Seat({ s, phase, pos, cardW, delayFor }: { s: BjSeat; phase: BlackjackT
     <div className="bj-seat" style={{ left: pos.x, top: pos.y }}>
       {settled && (
         <Pop delay={0.9} style={{ position: 'absolute', top: -cardW * 0.58, zIndex: 6 }}>
-          <span className="bj-call" style={{ fontSize: callSize, background: drinks > 0 ? '#FF5A5A' : drinks < 0 ? '#FFD23F' : '#FFF4D6', color: '#0B0716' }}>
+          <span className="bj-call" style={{ fontSize: callSize, background: drinks > 0 ? C.tomato : drinks < 0 ? C.sun : C.paper, color: drinks > 0 ? C.white : C.ink }}>
             {drinks > 0 ? <MugIcon size={callSize * 1.25} /> : drinks < 0 ? <CheersIcon size={callSize * 1.25} /> : null}
             <b>{drinks > 0 ? `DRINK ${sipLabel(drinks)}` : drinks < 0 ? `DEALER +${-drinks}` : 'SAFE'}</b>
           </span>
@@ -168,14 +160,14 @@ function Seat({ s, phase, pos, cardW, delayFor }: { s: BjSeat; phase: BlackjackT
       </div>
       {s.cards.length > 0 && <Led value={s.total} tone={s.total > 21 ? 'red' : s.total === 21 ? 'gold' : 'green'} size={cardW * 0.3} />}
       <div className={`bj-plate ${deciding ? 'turn' : ''}`} style={{ fontSize: cardW * 0.28 }}>
-        <AvatarDot emoji={s.avatar.emoji} color={s.avatar.color} size={cardW * 0.44} dim={phase === 'bet' && s.status === 'betting'} />
+        <AvatarFace avatar={s.avatar} size={cardW * 0.44} dim={phase === 'bet' && s.status === 'betting'} />
         <span style={{ maxWidth: cardW * 1.7, overflow: 'hidden', textOverflow: 'ellipsis' }}>{s.name}</span>
         {(s.status !== 'betting' || phase !== 'bet') && s.bet > 0 && (
           <Pop key={s.bet}><span className="row" style={{ gap: 4 }}><DrinkBet sips={s.bet} size={cardW * 0.38} />{s.doubled && <span className="bet-amt" style={{ fontSize: cardW * 0.22 }}>×2</span>}</span></Pop>
         )}
       </div>
-      {s.status === 'bust' && <div style={{ position: 'absolute', top: cardW * 0.35, zIndex: 4 }}><Stamp text="BUST" color="#FF5A5A" size={cardW * 0.4} delay={0.2} /></div>}
-      {s.status === 'blackjack' && <div style={{ position: 'absolute', top: cardW * 0.35, zIndex: 4 }}><Stamp text="BLACKJACK" color="#FFD23F" size={cardW * 0.32} delay={1.1} tilt={8} /></div>}
+      {s.status === 'bust' && <div style={{ position: 'absolute', top: cardW * 0.35, zIndex: 4 }}><Stamp text="BUST" color={C.tomato} size={cardW * 0.4} delay={0.2} /></div>}
+      {s.status === 'blackjack' && <div style={{ position: 'absolute', top: cardW * 0.35, zIndex: 4 }}><Stamp text="BLACKJACK" color={C.grape} size={cardW * 0.32} delay={1.1} tilt={8} /></div>}
     </div>
   )
 }
@@ -189,15 +181,14 @@ function FeltPrint({ seats, cardW, showText }: { seats: { x: number; y: number }
         <path id="felt-arc2" d="M 560 575 Q 960 800 1360 575" />
       </defs>
       {showText && (
-        <g fontFamily="Bungee" textAnchor="middle">
-          <text fontSize="30" fill="#FFD23F" fillOpacity="0.4" letterSpacing="8"><textPath href="#felt-arc" startOffset="50%">BLACKJACK PAYS 3 TO 2</textPath></text>
-          <text fontSize="19" fill="#FFF4D6" fillOpacity="0.28" letterSpacing="5"><textPath href="#felt-arc2" startOffset="50%">DEALER STANDS ON ALL 17 · INSURANCE IS FOR COWARDS</textPath></text>
+        <g fontFamily="Rammetto One" textAnchor="middle">
+          <text fontSize="30" fill="var(--sun)" fillOpacity="0.6" letterSpacing="6"><textPath href="#felt-arc" startOffset="50%">BLACKJACK PAYS 3 TO 2</textPath></text>
+          <text fontSize="19" fill="var(--paper)" fillOpacity="0.45" letterSpacing="4"><textPath href="#felt-arc2" startOffset="50%">DEALER STANDS ON ALL 17. INSURANCE IS FOR COWARDS</textPath></text>
         </g>
       )}
       {seats.map((p, i) => (
         <g key={i}>
-          <ellipse cx={p.x} cy={p.y - cardW * 0.1} rx={cardW * 1.15} ry={cardW * 0.95} fill="#0006" opacity="0.18" />
-          <ellipse cx={p.x} cy={p.y - cardW * 0.1} rx={cardW * 1.15} ry={cardW * 0.95} fill="none" stroke="#FFD23F" strokeOpacity="0.28" strokeWidth="3" strokeDasharray="10 8" />
+          <ellipse cx={p.x} cy={p.y - cardW * 0.1} rx={cardW * 1.15} ry={cardW * 0.95} fill="none" stroke="var(--paper)" strokeOpacity="0.45" strokeWidth="5" strokeDasharray="14 10" />
         </g>
       ))}
     </svg>
@@ -206,7 +197,7 @@ function FeltPrint({ seats, cardW, showText }: { seats: { x: number; y: number }
 
 function RuleCard({ g }: { g: BlackjackTv }) {
   return (
-    <motion.div className="bj-rule" initial={{ x: -520, rotate: -12 }} animate={{ x: 0, rotate: -3 }} transition={{ type: 'spring', stiffness: 220, damping: 16, delay: 0.3 }}>
+    <motion.div className="bj-rule panel" style={{ background: C.paper, boxShadow: 'var(--shadow-tv) var(--shadow-tv) 0 var(--ink)' }} initial={{ x: -520, rotate: -12 }} animate={{ x: 0, rotate: -3 }} transition={{ type: 'spring', stiffness: 220, damping: 16, delay: 0.3 }}>
       <small>HOUSE RULE</small>
       <h3>{g.ruleName}</h3>
       <p>{g.ruleText}</p>
@@ -214,21 +205,32 @@ function RuleCard({ g }: { g: BlackjackTv }) {
   )
 }
 
-/** This hand's dealer: the player's avatar wearing the green visor and bow tie. Sweats and Xes out on a bust. */
-function Dealer({ mood, name, emoji = '🎩', color = '#FFE7B8' }: { mood: 'idle' | 'bust' | 'smug'; name: string; emoji?: string; color?: string }) {
+/** A cartoon banner that slams onto the felt. */
+function Banner({ text, fill }: { text: string; fill: string }) {
   return (
-    <motion.div className="dealer-badge" initial={{ y: -260, rotate: -20 }} animate={{ y: 0, rotate: 0 }} transition={{ type: 'spring', stiffness: 260, damping: 14 }}>
-      <motion.svg width="200" height="210" viewBox="0 0 200 210" animate={{ y: [0, -6, 0] }} transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut' }}>
-        <path d="M34 210 Q34 150 100 150 Q166 150 166 210 Z" fill="#17121F" />
-        <path d="M83 152 L100 176 L117 152 Z" fill="#FFF4D6" />
-        <path d="M78 160 L100 171 L78 182 Z M122 160 L100 171 L122 182 Z" fill="#FF5A5A" stroke="#0B0716" strokeWidth="2" /><circle cx="100" cy="171" r="5" fill="#b8323f" />
-        <circle cx="100" cy="90" r="66" fill={color} stroke="#0B0716" strokeWidth="5" />
-        <text x="100" y="116" textAnchor="middle" fontSize="74" style={{ filter: mood === 'bust' ? 'grayscale(.4)' : undefined }}>{emoji}</text>
-        <path d="M30 64 Q100 16 170 64 L156 78 Q100 50 44 78 Z" fill="#3DDC97" fillOpacity="0.88" stroke="#0B0716" strokeWidth="4" />
-        <rect x="33" y="70" width="134" height="10" rx="5" fill="#0E5A3A" />
-        {mood === 'bust' && <motion.path d="M168 76 Q177 92 168 100 Q159 92 168 76 Z" fill="#2EC4F1" stroke="#0B0716" strokeWidth="2" animate={{ y: [0, 34], opacity: [1, 0] }} transition={{ duration: 1.1, repeat: Infinity }} />}
-        {mood === 'smug' && <text x="160" y="40" fontSize="34">😏</text>}
-      </motion.svg>
+    <Slam from={2} tilt={-4}>
+      <Panel fill={fill} tilt={-2} style={{ padding: '14px 36px', fontFamily: 'var(--font-display)', fontSize: 52, whiteSpace: 'nowrap' }}>{text}</Panel>
+    </Slam>
+  )
+}
+
+/** This hand's dealer: the player's own face under a green visor, with a bow tie. Sweats on a bust. */
+function Dealer({ mood, name, face = 'p:03', color = 'var(--paper)' }: { mood: 'idle' | 'bust' | 'smug'; name: string; face?: string; color?: string }) {
+  return (
+    <motion.div className="dealer-badge" initial={{ y: -260, rotate: -20 }} animate={{ y: 0, rotate: mood === 'bust' ? -8 : 0 }} transition={{ type: 'spring', stiffness: 260, damping: 14 }}>
+      <motion.div style={{ position: 'relative', width: 200, height: 210 }} animate={{ y: [0, -6, 0] }} transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut' }}>
+        <svg width="200" height="210" viewBox="0 0 200 210" style={{ position: 'absolute', inset: 0 }} aria-hidden="true">
+          <path d="M34 210 Q34 150 100 150 Q166 150 166 210 Z" fill={C.ink} />
+          <path d="M83 152 L100 176 L117 152 Z" fill={C.paper} />
+          <path d="M76 160 L100 171 L76 182 Z M124 160 L100 171 L124 182 Z" fill={C.tomato} stroke={C.ink} strokeWidth="4" strokeLinejoin="round" />
+        </svg>
+        <Face face={face} color={color} size={136} style={{ position: 'absolute', left: 32, top: 18 }} />
+        <svg width="200" height="210" viewBox="0 0 200 210" style={{ position: 'absolute', inset: 0 }} aria-hidden="true">
+          <path d="M30 58 Q100 8 170 58 L158 74 Q100 46 42 74 Z" fill={C.lime} stroke={C.ink} strokeWidth="5" strokeLinejoin="round" />
+          {mood === 'bust' && <motion.path d="M170 80 Q180 96 170 104 Q160 96 170 80 Z" fill={C.sky} stroke={C.ink} strokeWidth="3" animate={{ y: [0, 34], opacity: [1, 0] }} transition={{ duration: 1.1, repeat: Infinity }} />}
+        </svg>
+        {mood === 'smug' && <Pop style={{ position: 'absolute', right: -70, top: 6 }}><span className="bj-call" style={{ position: 'static', fontSize: 30, background: C.paper }}>HA!</span></Pop>}
+      </motion.div>
       <span className="dealer-name">{name} DEALS</span>
     </motion.div>
   )

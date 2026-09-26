@@ -1,11 +1,11 @@
 /* Shared by the TV and the phones. */
-.chip-svg { display: block; filter: drop-shadow(0 3px 0 rgba(0,0,0,.4)); }
+.chip-svg { display: block; filter: drop-shadow(0 3px 0 var(--ink)); }
 .chip-stack { position: relative; display: inline-block; flex: none; }
 .chip-stack .stacked { position: absolute; left: 0; }
 .led7 { position: relative; display: inline-block; font-family: 'DSEG7 Classic', monospace; font-weight: 700; font-style: normal; line-height: 1; padding: .16em .28em .12em;
-  background: linear-gradient(#0d070b, #050204); border: 3px solid #2d1d26; border-radius: .22em; box-shadow: inset 0 2px 6px #000, 0 2px 0 #ffffff14; }
+  background: var(--ink); border: 4px solid var(--ink); border-radius: .22em; box-shadow: 3px 3px 0 color-mix(in oklab, var(--ink) 60%, transparent); }
 .led7 .ghost { color: currentColor; opacity: .09; }
 .led7 .lit { position: absolute; right: .28em; top: .16em; text-shadow: 0 0 .25em currentColor, 0 0 .06em currentColor; }
-.led7.green { color: #3ddc97; } .led7.gold { color: #ffd23f; } .led7.red { color: #ff5a5a; }
-.drink-bet { display: inline-flex; align-items: center; filter: drop-shadow(0 2px 0 #0008); }
-.drink-bet b { font-family: Bungee, sans-serif; font-weight: 400; margin-left: 4px; }
+.led7.green { color: var(--lime); } .led7.gold { color: var(--sun); } .led7.red { color: var(--tomato); }
+.drink-bet { display: inline-flex; align-items: center; }
+.drink-bet b { font-family: var(--font-display); font-weight: 400; margin-left: 4px; }

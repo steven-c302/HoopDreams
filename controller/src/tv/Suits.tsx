@@ -21,9 +21,9 @@ export function SuitSprite() {
           <stop offset="0.85" stopColor="#000" stopOpacity="0" /><stop offset="1" stopColor="#000" stopOpacity="0.07" />
         </linearGradient>
         <pattern id="card-lattice" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
-          <rect width="8" height="8" fill="#5C0F2E" />
-          <path d="M0 4H8M4 0V8" stroke="#D9A441" strokeOpacity="0.5" strokeWidth="0.6" />
-          <circle cx="4" cy="4" r="0.9" fill="#FFD23F" fillOpacity="0.75" />
+          <rect width="8" height="8" fill="var(--tomato)" />
+          <path d="M0 4H8M4 0V8" stroke="var(--paper)" strokeOpacity="0.55" strokeWidth="0.7" />
+          <circle cx="4" cy="4" r="1" fill="var(--sun)" />
         </pattern>
         <pattern id="court-weave" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
           <path d="M0 3H6" stroke="currentColor" strokeOpacity="0.12" strokeWidth="1.4" />

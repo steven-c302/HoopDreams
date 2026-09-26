@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { Connection, browserSocket, browserSocketUrl, type Status } from '../net/connection'
 import { rejectMessage, type GameListing, type HostCommand, type TvState } from '../protocol'
+import { Face } from '../theme/Face'
 
 const KEY = 'partyos.host'
 
@@ -90,7 +91,7 @@ function HostPanel({ token, onLogout }: { token: string; onLogout(): void }) {
             <select value={rounds} onChange={(e) => setRounds(Number(e.target.value))}>{[3, 4, 5, 6, 7, 8].map((n) => <option key={n}>{n}</option>)}</select>
           </label>
           {games.map((g) => (
-            <button key={g.id} className="primary game-btn" onClick={() => cmd({ t: 'start', gameId: g.id, rounds })}>
+            <button key={g.id} className="primary game-btn" onClick={() => cmd({ t: 'start', gameId: g.id, rounds, options: {} })}>
               <b>{g.title}</b><span>{g.tagline} · {g.minPlayers}+ players</span>
             </button>
           ))}
@@ -102,7 +103,7 @@ function HostPanel({ token, onLogout }: { token: string; onLogout(): void }) {
           {tv.players.map((p) => (
             <li key={p.id}>
               <span className={`status ${p.connected ? 'on' : ''}`} />
-              <span className="dot-avatar" style={{ background: p.avatar.color }}>{p.avatar.emoji}</span>
+              <Face face={p.avatar.face} color={p.avatar.color} size={32} />
               <span className="name">{p.name}{p.role === 'SPECTATOR' ? ' (watching)' : ''}</span>
               <button className="ghost small" onClick={() => { if (confirm(`Remove ${p.name}?`)) cmd({ t: 'kick', playerId: p.id }) }}>Remove</button>
             </li>

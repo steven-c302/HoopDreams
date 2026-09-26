@@ -261,12 +261,17 @@ class BrainDrain(private val pack: TriviaPack = TriviaPack.core()) : GameModule<
         val base = s0.copy(q = q, votes = emptyMap(), reveal = null, drink = null, heist = null, hostLine = null, teams = sync(s0.teams, ctx), startedAt = ctx.now)
         return when (s0.format) {
             QUICK, HEIST -> {
-                val item = pack.mc.filter { it.id !in ctx.usedContent }.randomOrNull(ctx.random) ?: return endRound(s0, ctx)
+                // Change the subject every question when the pack allows it.
+                val lastCategory = mcById[s0.itemId]?.category
+                val unused = pack.mc.filter { it.id !in ctx.usedContent }
+                val item = unused.filter { it.category != lastCategory }.ifEmpty { unused }.randomOrNull(ctx.random) ?: return endRound(s0, ctx)
                 val options = (item.wrong + item.answer).shuffled(ctx.random).mapIndexed { i, t -> TOption(LETTERS[i], t, t == item.answer) }
                 question(base.copy(itemId = item.id, options = options, correct = options.filter { it.fit }.map { it.id }), QUICK_MS, item.id)
             }
             BALLPARK -> {
-                val item = pack.ballpark.filter { it.id !in ctx.usedContent }.randomOrNull(ctx.random) ?: return endRound(s0, ctx)
+                val lastCategory = ballparkById[s0.itemId]?.category
+                val unused = pack.ballpark.filter { it.id !in ctx.usedContent }
+                val item = unused.filter { it.category != lastCategory }.ifEmpty { unused }.randomOrNull(ctx.random) ?: return endRound(s0, ctx)
                 question(base.copy(itemId = item.id, options = emptyList(), correct = emptyList()), BALLPARK_MS, item.id)
             }
             SIDES -> {

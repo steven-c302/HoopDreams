@@ -10,10 +10,9 @@
     "e2e": "playwright test"
   },
   "dependencies": {
-    "@fontsource-variable/rubik": "^5.3.0",
-    "@fontsource/bungee": "^5.3.0",
-    "@fontsource/bungee-shade": "^5.3.0",
+    "@fontsource-variable/figtree": "^5.3.0",
     "@fontsource/dseg7-classic": "^5.3.0",
+    "@fontsource/rammetto-one": "^5.3.0",
     "@letele/playing-cards": "^0.1.0",
     "canvas-confetti": "^1.9.4",
     "gsap": "^3.15.0",
