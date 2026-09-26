@@ -1,0 +1,189 @@
+{
+ "sfx": {
+  "allIn": [
+   "sfx/allIn-1.mp3"
+  ],
+  "applause": [
+   "sfx/applause-1.mp3"
+  ],
+  "back": [
+   "sfx/back-1.mp3"
+  ],
+  "boing": [
+   "sfx/boing-1.mp3",
+   "sfx/boing-2.mp3",
+   "sfx/boing-3.mp3"
+  ],
+  "bust": [
+   "sfx/bust-1.mp3"
+  ],
+  "buzzer": [
+   "sfx/buzzer-1.mp3"
+  ],
+  "card": [
+   "sfx/card-1.mp3",
+   "sfx/card-2.mp3",
+   "sfx/card-3.mp3"
+  ],
+  "cardFlip": [
+   "sfx/cardFlip-1.mp3"
+  ],
+  "chipClack": [
+   "sfx/chipClack-1.mp3"
+  ],
+  "correct": [
+   "sfx/correct-1.mp3"
+  ],
+  "countTick": [
+   "sfx/countTick-1.mp3"
+  ],
+  "crash": [
+   "sfx/crash-1.mp3"
+  ],
+  "ding": [
+   "sfx/ding-1.mp3"
+  ],
+  "drinkCall": [
+   "sfx/drinkCall-1.mp3"
+  ],
+  "drumroll": [
+   "sfx/drumroll-1.mp3"
+  ],
+  "fanfare": [
+   "sfx/fanfare-1.mp3"
+  ],
+  "finalRound": [
+   "sfx/finalRound-1.mp3"
+  ],
+  "focus": [
+   "sfx/focus-1.mp3"
+  ],
+  "jackpot": [
+   "sfx/jackpot-1.mp3"
+  ],
+  "join": [
+   "sfx/join-1.mp3"
+  ],
+  "laugh": [
+   "sfx/laugh-1.mp3"
+  ],
+  "leave": [
+   "sfx/leave-1.mp3"
+  ],
+  "loseSting": [
+   "sfx/loseSting-1.mp3"
+  ],
+  "ooh": [
+   "sfx/ooh-1.mp3"
+  ],
+  "payout": [
+   "sfx/payout-1.mp3"
+  ],
+  "pop": [
+   "sfx/pop-1.mp3",
+   "sfx/pop-2.mp3",
+   "sfx/pop-3.mp3"
+  ],
+  "resume": [
+   "sfx/resume-1.mp3"
+  ],
+  "roundStart": [
+   "sfx/roundStart-1.mp3"
+  ],
+  "scratch": [
+   "sfx/scratch-1.mp3"
+  ],
+  "select": [
+   "sfx/select-1.mp3"
+  ],
+  "showOpen": [
+   "sfx/showOpen-1.mp3"
+  ],
+  "stamp": [
+   "sfx/stamp-1.mp3"
+  ],
+  "steal": [
+   "sfx/steal-1.mp3"
+  ],
+  "tick": [
+   "sfx/tick-1.mp3"
+  ],
+  "vote": [
+   "sfx/vote-1.mp3",
+   "sfx/vote-2.mp3",
+   "sfx/vote-3.mp3"
+  ],
+  "whoosh": [
+   "sfx/whoosh-1.mp3",
+   "sfx/whoosh-2.mp3",
+   "sfx/whoosh-3.mp3"
+  ],
+  "winSting": [
+   "sfx/winSting-1.mp3"
+  ],
+  "womp": [
+   "sfx/womp-1.mp3"
+  ],
+  "wrong": [
+   "sfx/wrong-1.mp3"
+  ]
+ },
+ "music": {
+  "ballpark": {
+   "file": "music/ballpark.mp3",
+   "gain": 0.9
+  },
+  "bluff": {
+   "file": "music/bluff.mp3",
+   "gain": 0.9
+  },
+  "casino": {
+   "file": "music/casino.mp3",
+   "gain": 0.9
+  },
+  "gauntlet": {
+   "file": "music/gauntlet.mp3",
+   "gain": 0.9
+  },
+  "heist": {
+   "file": "music/heist.mp3",
+   "gain": 0.9
+  },
+  "hurry": {
+   "file": "music/hurry.mp3",
+   "gain": 0.9
+  },
+  "lobby": {
+   "file": "music/lobby.mp3",
+   "gain": 0.9
+  },
+  "podium": {
+   "file": "music/podium.mp3",
+   "gain": 0.9
+  },
+  "quick": {
+   "file": "music/quick.mp3",
+   "gain": 0.9
+  },
+  "reveal": {
+   "file": "music/reveal.mp3",
+   "gain": 0.9
+  },
+  "sides": {
+   "file": "music/sides.mp3",
+   "gain": 0.9
+  },
+  "standings": {
+   "file": "music/standings.mp3",
+   "gain": 0.9
+  },
+  "teamup": {
+   "file": "music/teamup.mp3",
+   "gain": 0.9
+  },
+  "scores": {
+   "file": "music/standings.mp3",
+   "gain": 0.9
+  }
+ }
+}

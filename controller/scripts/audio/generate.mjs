@@ -21,12 +21,15 @@ const args = process.argv.slice(2)
 const only = args.includes('--only') ? new Set(args[args.indexOf('--only') + 1].split(',')) : null
 const force = args.includes('--force')
 const masterOnly = args.includes('--master-only')
+// The key comes from the environment, or from scripts/audio/.env (git-ignored): ELEVENLABS_API_KEY=...
+const dotenv = join(here, '.env')
 const key = process.env.ELEVENLABS_API_KEY
+  ?? (existsSync(dotenv) ? readFileSync(dotenv, 'utf8').match(/^\s*ELEVENLABS_API_KEY\s*=\s*["']?([^"'\s]+)/m)?.[1] : undefined)
 const LOOP_XFADE = 2 // seconds of the tail crossfaded into the head so loops are seamless
 
 for (const d of [RAW, join(OUT, 'music'), join(OUT, 'sfx')]) mkdirSync(d, { recursive: true })
 if (!masterOnly && !key) {
-  console.error('Set ELEVENLABS_API_KEY (ElevenLabs → Developers → API keys), or pass --master-only to rebuild from raw takes.')
+  console.error('Set ELEVENLABS_API_KEY (ElevenLabs → Developers → API keys) in your environment or in controller/scripts/audio/.env,\nor pass --master-only to rebuild from raw takes.')
   process.exit(1)
 }
 
