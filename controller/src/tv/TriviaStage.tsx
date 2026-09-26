@@ -418,7 +418,7 @@ function Steal({ g, byId }: { g: TriviaTv; byId: ById }) {
         <TeamBadge team={thief} byId={byId} size="lg" score delta={h.amount} tilt={-3} />
       </div>
       <div className="steal-foot">
-        <Burst text={h.amount > 0 ? 'ROBBED!' : 'NOTHING TO TAKE'} width={760} height={300} size={h.amount > 0 ? 110 : 62} fill={C.sun} tilt={-5} delay={0.2} />
+        <Burst text={h.amount > 0 ? 'ROBBED!' : 'NOTHING TO TAKE'} width={900} height={340} size={110} fill={C.sun} tilt={-5} delay={0.2} />
         <HostSays line={g.hostLine} mood="smug" size={140} />
       </div>
       <DrinkCall g={g} style={{ right: 70, top: 40 }} />

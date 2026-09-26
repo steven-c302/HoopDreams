@@ -1,5 +1,5 @@
 import { motion, type HTMLMotionProps } from 'motion/react'
-import { useEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode } from 'react'
+import { useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode } from 'react'
 import confetti from 'canvas-confetti'
 import { Face } from '../theme/Face'
 import type { Avatar, PlayerSummary } from '../protocol'
@@ -83,6 +83,25 @@ export function Burst({ text, sub, fill = C.sun, ink = C.ink, width = 620, heigh
   text: string; sub?: string; fill?: string; ink?: string; width?: number; height?: number; size?: number; tilt?: number; delay?: number; spikes?: number; className?: string; style?: CSSProperties
 }) {
   const points = useMemo(() => burstPoints(text, spikes, width, height), [text, spikes, width, height])
+  // Keep the words inside the spikes: wrap to the burst's middle, then shrink until the text box fits inside the
+  // ellipse traced by the spikes' inner valleys (72% of the radius), with a margin so no letter touches a spike.
+  const words = useRef<HTMLDivElement>(null)
+  const maxW = width * 0.64
+  useLayoutEffect(() => {
+    const el = words.current
+    if (!el) return
+    const a = 0.72 * (width / 2 - 14), b = 0.72 * (height / 2 - 14)
+    const fit = () => {
+      const hw = el.scrollWidth / 2, hh = (el.scrollHeight * 0.82) / 2 // caps sit inside the line box
+      const scale = Math.min(1, 0.9 / Math.sqrt((hw * hw) / (a * a) + (hh * hh) / (b * b)))
+      el.style.transform = `scale(${scale})`
+    }
+    fit()
+    const ro = new ResizeObserver(fit)
+    ro.observe(el)
+    void document.fonts?.ready.then(fit)
+    return () => ro.disconnect()
+  }, [text, sub, size, maxW, width, height])
   return (
     <motion.div className={`burst ${className}`} style={{ width, height, rotate: tilt, ...style }}
       initial={{ scale: 2.2, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ ...SLAM, delay, opacity: { duration: 0.08, delay } }}>
@@ -90,7 +109,7 @@ export function Burst({ text, sub, fill = C.sun, ink = C.ink, width = 620, heigh
         <polygon points={points} fill={C.ink} transform="translate(10 12)" />
         <polygon points={points} fill={fill} stroke={C.ink} strokeWidth="7" strokeLinejoin="round" />
       </svg>
-      <div className="burst-text" style={{ color: ink }}>
+      <div className="burst-text" ref={words} style={{ color: ink, maxWidth: maxW }}>
         <span style={{ fontSize: size }}>{text}</span>
         {sub && <small>{sub}</small>}
       </div>

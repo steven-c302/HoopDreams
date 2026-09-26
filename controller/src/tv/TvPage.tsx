@@ -185,7 +185,7 @@ function Lobby({ tv, session, games, rounds, setRounds, opts, setOpts, onStart }
   const focused = games[focus]
   const trivia = focused?.id === 'trivia'
   useEffect(() => {
-    if (qr.current && session.joinUrl) QRCode.toCanvas(qr.current, session.joinUrl, { width: 330, margin: 0, errorCorrectionLevel: 'M' })
+    if (qr.current && session.joinUrl) QRCode.toCanvas(qr.current, session.joinUrl, { width: 360, margin: 4, errorCorrectionLevel: 'Q' })
   }, [session.joinUrl])
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -209,7 +209,7 @@ function Lobby({ tv, session, games, rounds, setRounds, opts, setOpts, onStart }
           <Panel className="qr-panel" fill={C.white} tilt={-2}>
             {session.joinUrl ? <canvas ref={qr} /> : <p style={{ width: 330, fontSize: 30 }}>Connect this computer to Wi-Fi to show the join code</p>}
             <span className="room-code">{tv.roomCode}</span>
-            <Burst text="SCAN ME" width={250} height={150} size={36} fill={C.tomato} ink={C.white} tilt={14} spikes={12} className="scan" />
+            <Burst text="SCAN ME" width={280} height={112} size={38} fill={C.tomato} ink={C.white} tilt={-3} spikes={14} className="scan" />
           </Panel>
           {session.joinUrl && <p className="join-url">{session.joinUrl.replace('http://', '')}</p>}
           <p className="lobby-help">Same Wi-Fi as this computer. Guest networks often block phones.</p>

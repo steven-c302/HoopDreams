@@ -28,9 +28,10 @@
 .bubble.tail-none::after { display: none; }
 .chip-label { display: inline-flex; align-items: center; gap: 12px; font-family: var(--font-display); font-size: 30px; padding: 10px 26px; border-radius: 999px;
   border: 5px solid var(--ink); white-space: nowrap; }
-.burst { position: relative; display: grid; place-items: center; }
+/* flex: none so a row never squeezes the box out from under its spikes (the text would drift off-centre). */
+.burst { position: relative; display: grid; place-items: center; flex: none; }
 .burst svg { position: absolute; inset: 0; overflow: visible; }
-.burst-text { position: relative; display: flex; flex-direction: column; align-items: center; text-align: center; padding: 0 12%; }
+.burst-text { position: relative; display: flex; flex-direction: column; align-items: center; text-align: center; width: max-content; }
 .burst-text span { font-family: var(--font-display); line-height: 1; }
 .burst-text small { font-size: 34px; font-weight: 900; margin-top: 8px; }
 .stamp { font-family: var(--font-display); border: 7px solid; border-radius: 18px; padding: 4px 22px; white-space: nowrap; background: var(--paper); box-shadow: 6px 6px 0 var(--ink); }
@@ -87,9 +88,10 @@
 .logo b { font-family: var(--font-display); font-weight: 400; font-size: 118px; color: var(--paper);
   -webkit-text-stroke: 12px var(--ink); paint-order: stroke fill; text-shadow: 10px 10px 0 var(--ink); letter-spacing: .02em; }
 .logo b + b { color: var(--tomato); font-size: 150px; margin-top: -12px; }
-.qr-panel { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 26px 30px 22px; }
-.qr-panel canvas { display: block; border: 5px solid var(--ink); border-radius: 18px; padding: 16px; background: var(--white); }
-.qr-panel .scan { position: absolute; right: -58px; top: -64px; }
+.qr-panel { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 44px 30px 22px; }
+/* The canvas carries the QR's own 4-module quiet zone; nothing may overlap it. */
+.qr-panel canvas { display: block; border: 5px solid var(--ink); border-radius: 18px; background: var(--white); }
+.qr-panel .scan { position: absolute !important; left: 50%; top: -62px; margin-left: -140px; }
 .room-code { font-family: var(--font-display); font-size: 70px; line-height: 1; letter-spacing: .08em; }
 .join-url { font-size: 30px; font-weight: 900; }
 .lobby-help { font-size: 24px; text-align: center; color: var(--ink-soft); max-width: 520px; }

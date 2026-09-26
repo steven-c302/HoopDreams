@@ -61,32 +61,44 @@ function masterSfx(raw, out) {
     '-ac', '1', '-ar', '44100', '-codec:a', 'libmp3lame', '-b:a', '128k', out])
 }
 
+/** Runs one cue; a failed cue is reported and skipped so the rest of the score still renders. */
+async function attempt(label, fn) {
+  try { await fn() } catch (e) { failures.push(label); console.log(`FAILED ${label}: ${e.message}`) }
+}
+const failures = []
+
 async function run() {
   let spent = 0
   for (const m of cues.music) {
     if (!want(m.id)) continue
     const raw = join(RAW, `music-${m.id}.mp3`)
     if (!masterOnly && (force || !existsSync(raw))) {
-      process.stdout.write(`music ${m.id} (${m.seconds}s)… `)
-      writeFileSync(raw, await post('/music', { prompt: `${cues.style} ${m.prompt}`, music_length_ms: m.seconds * 1000, force_instrumental: true }))
-      spent += m.seconds; console.log('ok')
+      await attempt(`music ${m.id}`, async () => {
+        process.stdout.write(`music ${m.id} (${m.seconds}s)… `)
+        writeFileSync(raw, await post('/music', { prompt: `${cues.style} ${m.prompt}`, music_length_ms: m.seconds * 1000, force_instrumental: true }))
+        spent += m.seconds; console.log('ok')
+      })
     }
-    if (existsSync(raw)) masterMusic(raw, join(OUT, 'music', `${m.id}.mp3`))
+    if (existsSync(raw)) await attempt(`master ${m.id}`, async () => masterMusic(raw, join(OUT, 'music', `${m.id}.mp3`)))
   }
   for (const s of cues.sfx) {
     if (!want(s.id)) continue
     for (let v = 1; v <= (s.variants ?? 1); v++) {
       const raw = join(RAW, `sfx-${s.id}-${v}.mp3`)
       if (!masterOnly && (force || !existsSync(raw))) {
-        process.stdout.write(`sfx ${s.id} #${v}… `)
-        writeFileSync(raw, await post('/sound-generation', { text: `${s.prompt}. Cartoon game show sound, clean, no music.`, duration_seconds: s.seconds, prompt_influence: 0.6 }))
-        console.log('ok')
+        await attempt(`sfx ${s.id} #${v}`, async () => {
+          process.stdout.write(`sfx ${s.id} #${v}… `)
+          // The API accepts 0.5–30 s; very short cues are trimmed by mastering anyway.
+          const seconds = Math.min(30, Math.max(0.5, s.seconds))
+          writeFileSync(raw, await post('/sound-generation', { text: `${s.prompt}. Cartoon game show sound, clean, no music.`, duration_seconds: seconds, prompt_influence: 0.6 }))
+          console.log('ok')
+        })
       }
-      if (existsSync(raw)) masterSfx(raw, join(OUT, 'sfx', `${s.id}-${v}.mp3`))
+      if (existsSync(raw)) await attempt(`master ${s.id} #${v}`, async () => masterSfx(raw, join(OUT, 'sfx', `${s.id}-${v}.mp3`)))
     }
   }
-  writeManifest()
   if (spent) console.log(`Generated ${Math.round(spent / 6) / 10} min of music.`)
+  if (failures.length) console.log(`${failures.length} cue(s) failed; run again to retry just those: ${failures.join(', ')}`)
 }
 
 function writeManifest() {
@@ -104,4 +116,5 @@ function writeManifest() {
   console.log(`manifest: ${Object.keys(music).length} music beds, ${Object.keys(sfx).length} effects`)
 }
 
-run().catch((e) => { console.error(e.message); process.exit(1) })
+// The manifest is always rewritten, even after failures, so whatever did render starts playing.
+run().catch((e) => console.error(e.message)).finally(() => { writeManifest(); if (failures.length) process.exitCode = 1 })
