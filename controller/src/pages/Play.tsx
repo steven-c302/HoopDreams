@@ -1,9 +1,11 @@
 import { useEffect, useMemo, useRef, useState, type CSSProperties } from 'react'
 import { Connection, browserSocket, browserSocketUrl, type Status } from '../net/connection'
-import { rejectMessage, type ActionPayload, type PhoneState } from '../protocol'
+import { rejectMessage, type ActionPayload, type GameListing, type HostCommand, type PhoneState } from '../protocol'
 import type { Session } from '../net/token'
 import { ScreenView, teamOf } from '../screens/ScreenView'
 import { Face } from '../theme/Face'
+import { Crown } from '../tv/toon'
+import { CaptainControls, CaptainLobby } from './Captain'
 import { useCountdown } from './useCountdown'
 
 const BYE: Record<string, string> = {
@@ -24,7 +26,9 @@ export function Play({ session, onLeave }: { session: Session; onLeave(why: stri
   const [seq, setSeq] = useState(0)
   const [status, setStatus] = useState<Status>('connecting')
   const [toast, setToast] = useState<string | null>(null)
+  const [games, setGames] = useState<GameListing[]>([])
   const conn = useRef<Connection | null>(null)
+  useEffect(() => { fetch('/api/games').then((r) => r.json()).then(setGames).catch(() => setGames([])) }, [])
 
   useEffect(() => {
     const c = new Connection(browserSocketUrl(`token=${encodeURIComponent(session.token)}`), browserSocket, {
@@ -49,6 +53,7 @@ export function Play({ session, onLeave }: { session: Session; onLeave(why: stri
   const seconds = useCountdown(view?.remainingMs, seq, view?.paused ?? false)
   const people = useMemo(() => new Map((view?.scores ?? []).map((r) => [r.id, r])), [view?.scores])
   const send = (payload: ActionPayload) => { if (view) conn.current?.act(view.round, payload) }
+  const host = (c: HostCommand) => { conn.current?.host(c) }
 
   if (!view) return <main className="page center"><div className="spinner" /><p>Connecting to the TV…</p></main>
   const team = teamOf(view.screen)
@@ -56,7 +61,10 @@ export function Play({ session, onLeave }: { session: Session; onLeave(why: stri
   return (
     <main className="page play" style={team ? { '--team': team.color } as CSSProperties : undefined}>
       <header className="topbar">
-        <span className="me"><Face face={view.me.avatar.face} color={view.me.avatar.color} size={40} />{view.me.name}</span>
+        <span className="me">
+          <span className="me-face"><Face face={view.me.avatar.face} color={view.me.avatar.color} size={40} />{view.captain && <Crown size={26} style={{ position: 'absolute', left: 7, top: -15, transform: 'rotate(-12deg)' }} />}</span>
+          {view.me.name}
+        </span>
         <span className="room-chip">{view.gameTitle ?? `Room ${view.roomCode}`}</span>
         {seconds != null && view.gameId && <span className={`timer ${seconds <= 5 ? 'hot' : ''}`}>{seconds}</span>}
       </header>
@@ -64,11 +72,14 @@ export function Play({ session, onLeave }: { session: Session; onLeave(why: stri
       {status !== 'online' && <div className="banner warn">Reconnecting…</div>}
       {view.paused && <div className="banner">{view.pauseReason === 'WAITING_FOR_PLAYERS' ? 'Paused: waiting for players' : 'Paused'}</div>}
       <section className="screen" key={`${view.round}-${view.screen.t}`}>
-        <ScreenView screen={view.screen} disabled={view.paused} onAction={send} meId={view.me.id} people={people} />
+        {view.captain && !view.gameId
+          ? <CaptainLobby view={view} games={games} host={host} />
+          : <ScreenView screen={view.screen} disabled={view.paused} onAction={send} meId={view.me.id} people={people} />}
         {view.me.role === 'SPECTATOR' && !view.gameId && (
           <button className="primary big" onClick={() => void takeSeat(session.token, setToast)}>Join as a player</button>
         )}
       </section>
+      {view.captain && view.gameId && <CaptainControls view={view} host={host} />}
       {toast && <div className="toast" role="status">{toast}</div>}
     </main>
   )

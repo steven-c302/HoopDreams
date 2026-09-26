@@ -13,7 +13,7 @@ import { TriviaStage } from './TriviaStage'
 import { useCueDirector, useDeadline } from './director'
 import { Paused } from './Shared'
 import { SuitSprite } from './Suits'
-import { AvatarFace, Brainy, Burst, C, Keycap, Panel, Pop, Scene, Slam } from './toon'
+import { AvatarFace, Brainy, Burst, C, Crown, Keycap, Panel, Pop, Scene, Slam } from './toon'
 
 interface TvSession { hostToken: string; room: string; joinUrl: string | null }
 
@@ -61,8 +61,13 @@ function TvShow() {
   )
 }
 
-/** Brain Drain options chosen in the lobby. teams 0 = auto. */
-interface ShowOptions { teams: number; drinks: boolean }
+/** Lobby settings live on the server so the TV and the captain's phone always agree. teams 0 = auto. */
+interface Lobby { rounds: number; teams: number; drinks: boolean; game: number; phones: boolean }
+function lobbyOf(tv: TvState | null): Lobby {
+  const s = tv?.settings ?? {}
+  return { rounds: s.rounds ?? 5, teams: s.teams ?? 0, drinks: (s.drinks ?? 1) === 1, game: s.game ?? 0, phones: (s.captain ?? 1) === 1 }
+}
+type SetOption = (key: 'rounds' | 'teams' | 'drinks' | 'game' | 'captain', value: number) => void
 
 function Show({ session }: { session: TvSession }) {
   const [tv, setTv] = useState<TvState | null>(null)
@@ -71,8 +76,6 @@ function Show({ session }: { session: TvSession }) {
   const [toast, setToast] = useState<string | null>(null)
   const [overlay, setOverlay] = useState(false)
   const [live, setLive] = useState(() => unlockAudio())
-  const [rounds, setRounds] = useState(5)
-  const [opts, setOpts] = useState<ShowOptions>({ teams: 0, drinks: true })
   const [mix, setMixState] = useState<Mix>(loadMix)
   const [idle, setIdle] = useState(false)
   const conn = useRef<Connection | null>(null)
@@ -93,6 +96,8 @@ function Show({ session }: { session: TvSession }) {
   useEffect(() => { if (!toast) return; const id = setTimeout(() => setToast(null), 3200); return () => clearTimeout(id) }, [toast])
 
   const cmd = useCallback((c: HostCommand) => conn.current?.host(c), [])
+  const setOption: SetOption = useCallback((key, value) => cmd({ t: 'setOption', key, value }), [cmd])
+  const lobby = lobbyOf(tv)
   const clock = useDeadline(tv)
   useCueDirector(live ? tv : null, clock.deadline)
 
@@ -116,7 +121,7 @@ function Show({ session }: { session: TvSession }) {
   const players = tv?.players ?? []
   const start = (g: GameListing) => {
     sfx.select()
-    cmd({ t: 'start', gameId: g.id, rounds, options: g.id === 'trivia' ? { teams: opts.teams, drinks: opts.drinks ? 1 : 0 } : {} })
+    cmd({ t: 'start', gameId: g.id, options: {} })
   }
 
   useEffect(() => {
@@ -146,7 +151,7 @@ function Show({ session }: { session: TvSession }) {
               {stage.paused && <Paused reason={stage.pauseReason} />}
             </>
           ) : (
-            <Lobby tv={tv} session={session} games={games} rounds={rounds} setRounds={setRounds} opts={opts} setOpts={setOpts} onStart={start} />
+            <LobbyScreen tv={tv} session={session} games={games} lobby={lobby} setOption={setOption} onStart={start} />
           )}
         </motion.div>
       </AnimatePresence>
@@ -161,7 +166,7 @@ function Show({ session }: { session: TvSession }) {
           </button>
         </div>
       )}
-      {overlay && tv && <HostOverlay tv={tv} cmd={cmd} mix={mix} setMix={updateMix} rounds={rounds} setRounds={setRounds} onClose={() => setOverlay(false)} />}
+      {overlay && tv && <HostOverlay tv={tv} cmd={cmd} mix={mix} setMix={updateMix} lobby={lobby} setOption={setOption} onClose={() => setOverlay(false)} />}
       {live && !overlay && <div className="hint"><Keycap label="Esc" /> host <Keycap label="P" /> pause <Keycap label="M" /> mute <Keycap label="F" /> full screen</div>}
     </div>
   )
@@ -173,16 +178,17 @@ function PartyLogo() {
 
 const TEAM_CHOICES = [0, 2, 3, 4, 5, 6]
 
-function Lobby({ tv, session, games, rounds, setRounds, opts, setOpts, onStart }: {
-  tv: TvState; session: TvSession; games: GameListing[]; rounds: number; setRounds(n: number): void
-  opts: ShowOptions; setOpts(o: ShowOptions): void; onStart(g: GameListing): void
+function LobbyScreen({ tv, session, games, lobby, setOption, onStart }: {
+  tv: TvState; session: TvSession; games: GameListing[]; lobby: Lobby; setOption: SetOption; onStart(g: GameListing): void
 }) {
   const gamePlayers = tv.players.filter((p) => p.role === 'PLAYER')
   const online = gamePlayers.filter((p) => p.connected).length
   const audience = tv.players.length - gamePlayers.length
   const qr = useRef<HTMLCanvasElement>(null)
-  const [focus, setFocus] = useState(0)
+  const focus = Math.min(lobby.game, Math.max(0, games.length - 1))
+  const setFocus = (i: number) => { if (i !== focus) setOption('game', i) }
   const focused = games[focus]
+  const captain = tv.players.find((p) => p.id === tv.captain)
   const trivia = focused?.id === 'trivia'
   useEffect(() => {
     if (qr.current && session.joinUrl) QRCode.toCanvas(qr.current, session.joinUrl, { width: 360, margin: 4, errorCorrectionLevel: 'Q' })
@@ -190,12 +196,12 @@ function Lobby({ tv, session, games, rounds, setRounds, opts, setOpts, onStart }
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       const k = e.key.toLowerCase()
-      if (e.key === 'ArrowRight') { setFocus((f) => Math.min(games.length - 1, f + 1)); sfx.focus() }
-      else if (e.key === 'ArrowLeft') { setFocus((f) => Math.max(0, f - 1)); sfx.focus() }
-      else if (e.key === 'ArrowUp') { setRounds(Math.min(8, rounds + 1)); sfx.focus() }
-      else if (e.key === 'ArrowDown') { setRounds(Math.max(3, rounds - 1)); sfx.focus() }
-      else if (k === 't' && trivia) { setOpts({ ...opts, teams: TEAM_CHOICES[(TEAM_CHOICES.indexOf(opts.teams) + 1) % TEAM_CHOICES.length] }); sfx.focus() }
-      else if (k === 'd' && trivia) { setOpts({ ...opts, drinks: !opts.drinks }); sfx.focus() }
+      if (e.key === 'ArrowRight') { setFocus(Math.min(games.length - 1, focus + 1)); sfx.focus() }
+      else if (e.key === 'ArrowLeft') { setFocus(Math.max(0, focus - 1)); sfx.focus() }
+      else if (e.key === 'ArrowUp') { setOption('rounds', Math.min(8, lobby.rounds + 1)); sfx.focus() }
+      else if (e.key === 'ArrowDown') { setOption('rounds', Math.max(3, lobby.rounds - 1)); sfx.focus() }
+      else if (k === 't' && trivia) { setOption('teams', TEAM_CHOICES[(TEAM_CHOICES.indexOf(lobby.teams) + 1) % TEAM_CHOICES.length] ?? 0); sfx.focus() }
+      else if (k === 'd' && trivia) { setOption('drinks', lobby.drinks ? 0 : 1); sfx.focus() }
       else if (e.key === 'Enter' && focused) onStart(focused)
     }
     window.addEventListener('keydown', onKey)
@@ -223,13 +229,14 @@ function Lobby({ tv, session, games, rounds, setRounds, opts, setOpts, onStart }
             {gamePlayers.length === 0 && (
               <div className="cast-empty"><Brainy size={200} /><Panel fill={C.paper} tilt={-1} style={{ padding: '22px 30px' }}>Scan the code, type your name, draw your face.</Panel></div>
             )}
-            {gamePlayers.map((p, i) => <CastCard key={p.id} p={p} i={i} small={gamePlayers.length > 8} />)}
+            {gamePlayers.map((p, i) => <CastCard key={p.id} p={p} i={i} small={gamePlayers.length > 8} captain={p.id === tv.captain} />)}
           </div>
+          {captain && <p className="crown-note"><Crown size={40} /><span><b>{captain.name}</b> has the crown and can run the show from their phone.</span></p>}
           {tv.lastResult && <p className="last-game">Last game: {tv.lastResult.title}. {tv.lastResult.highlights[0] ?? `Winner: ${tv.lastResult.standings[0]?.name ?? '-'}`}</p>}
           <div className="controls-row">
-            <span className="stepper"><Keycap label="↑" /><Keycap label="↓" /> {trivia ? 'Questions per round' : 'Rounds'} <b>{rounds}</b></span>
-            {trivia && <span className="stepper"><Keycap label="T" /> Teams <b>{opts.teams === 0 ? 'AUTO' : opts.teams}</b></span>}
-            {trivia && <span className="stepper"><Keycap label="D" /> Drink calls <b>{opts.drinks ? 'ON' : 'OFF'}</b></span>}
+            <span className="stepper"><Keycap label="↑" /><Keycap label="↓" /> {trivia ? 'Questions per round' : 'Rounds'} <b>{lobby.rounds}</b></span>
+            {trivia && <span className="stepper"><Keycap label="T" /> Teams <b>{lobby.teams === 0 ? 'AUTO' : lobby.teams}</b></span>}
+            {trivia && <span className="stepper"><Keycap label="D" /> Drink calls <b>{lobby.drinks ? 'ON' : 'OFF'}</b></span>}
             <span style={{ flex: 1 }} />
             <span className="stepper"><Keycap label="←" /><Keycap label="→" /> pick <Keycap label="Enter" /> start</span>
           </div>
@@ -237,7 +244,7 @@ function Lobby({ tv, session, games, rounds, setRounds, opts, setOpts, onStart }
             {games.map((g, i) => {
               const enough = online >= g.minPlayers
               return (
-                <button key={g.id} className={`cover ${focus === i ? 'focused' : ''}`} onClick={() => onStart(g)} onMouseEnter={() => setFocus(i)}>
+                <button key={g.id} className={`cover ${focus === i ? 'focused' : ''}`} onClick={() => onStart(g)}>
                   <CoverArt id={g.id} />
                   <span className="issue">No. {i + 1}</span>
                   <div className="title">
@@ -254,10 +261,11 @@ function Lobby({ tv, session, games, rounds, setRounds, opts, setOpts, onStart }
   )
 }
 
-function CastCard({ p, i, small }: { p: PlayerSummary; i: number; small: boolean }) {
+function CastCard({ p, i, small, captain }: { p: PlayerSummary; i: number; small: boolean; captain: boolean }) {
   return (
     <Pop>
-      <Panel className={`cast-card ${p.connected ? '' : 'away'}`} fill={C.paper} tilt={[-2, 1.5, -1, 2][i % 4]}>
+      <Panel className={`cast-card ${p.connected ? '' : 'away'} ${captain ? 'captain' : ''}`} fill={C.paper} tilt={[-2, 1.5, -1, 2][i % 4]}>
+        {captain && <Crown size={small ? 34 : 44} style={{ position: 'absolute', left: small ? 12 : 16, top: small ? -20 : -26, transform: 'rotate(-14deg)' }} />}
         <AvatarFace avatar={p.avatar} size={small ? 52 : 72} dim={!p.connected} />
         <span>{p.name}</span>
       </Panel>
@@ -320,8 +328,8 @@ function BrainyInline() {
   )
 }
 
-function HostOverlay({ tv, cmd, mix, setMix, rounds, setRounds, onClose }: {
-  tv: TvState; cmd(c: HostCommand): void; mix: Mix; setMix(m: Mix): void; rounds: number; setRounds(n: number): void; onClose(): void
+function HostOverlay({ tv, cmd, mix, setMix, lobby, setOption, onClose }: {
+  tv: TvState; cmd(c: HostCommand): void; mix: Mix; setMix(m: Mix): void; lobby: Lobby; setOption: SetOption; onClose(): void
 }) {
   const stage = tv.stage
   const [confirmEnd, setConfirmEnd] = useState(false)
@@ -339,14 +347,20 @@ function HostOverlay({ tv, cmd, mix, setMix, rounds, setRounds, onClose }: {
             </div>
           ) : (
             <div className="row"><span className="stepper" style={{ fontSize: 28 }}>Rounds</span>
-              <button className="tv-btn small quiet" onClick={() => setRounds(Math.max(3, rounds - 1))}>−</button>
-              <b className="display" style={{ fontSize: 40, fontWeight: 400 }}>{rounds}</b>
-              <button className="tv-btn small quiet" onClick={() => setRounds(Math.min(8, rounds + 1))}>+</button></div>
+              <button className="tv-btn small quiet" onClick={() => setOption('rounds', Math.max(3, lobby.rounds - 1))}>−</button>
+              <b className="display" style={{ fontSize: 40, fontWeight: 400 }}>{lobby.rounds}</b>
+              <button className="tv-btn small quiet" onClick={() => setOption('rounds', Math.min(8, lobby.rounds + 1))}>+</button></div>
           )}
           <div className="row" style={{ flexWrap: 'wrap', gap: 30 }}>
             <button className="tv-btn small" onClick={() => setMix({ ...mix, on: !mix.on })}>{mix.on ? 'SOUND ON' : 'SOUND OFF'}</button>
             <label className="slider">Music <input type="range" min={0} max={1} step={0.05} value={mix.music} onChange={(e) => setMix({ ...mix, music: Number(e.target.value) })} /></label>
             <label className="slider">Effects <input type="range" min={0} max={1} step={0.05} value={mix.sfx} onChange={(e) => setMix({ ...mix, sfx: Number(e.target.value) })} /></label>
+          </div>
+          <div className="row" style={{ flexWrap: 'wrap' }}>
+            <h2 style={{ fontSize: 32, flex: 1 }}>PHONE CONTROL</h2>
+            <button className={`tv-btn small ${lobby.phones ? '' : 'quiet'}`} onClick={() => setOption('captain', lobby.phones ? 0 : 1)}>
+              {lobby.phones ? 'CAPTAIN CAN RUN THE SHOW' : 'TV ONLY'}
+            </button>
           </div>
           <h2 style={{ fontSize: 32 }}>PLAYERS</h2>
           <div className="host-players">
@@ -354,6 +368,9 @@ function HostOverlay({ tv, cmd, mix, setMix, rounds, setRounds, onClose }: {
               <div key={p.id}>
                 <AvatarFace avatar={p.avatar} size={48} dim={!p.connected} />
                 <span className="name">{p.name}{p.role === 'SPECTATOR' ? ' (watching)' : ''}</span>
+                {lobby.phones && (p.id === tv.captain
+                  ? <Crown size={40} />
+                  : <button className="tv-btn small quiet" onClick={() => cmd({ t: 'makeCaptain', playerId: p.id })}>CROWN</button>)}
                 <button className="tv-btn small danger" onClick={() => { if (confirm(`Remove ${p.name}?`)) cmd({ t: 'kick', playerId: p.id }) }}>REMOVE</button>
               </div>
             ))}

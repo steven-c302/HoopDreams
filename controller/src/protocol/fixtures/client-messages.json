@@ -53,6 +53,23 @@
         }
     },
     {
+        "t": "host",
+        "id": "h-9",
+        "cmd": {
+            "t": "setOption",
+            "key": "game",
+            "value": 1
+        }
+    },
+    {
+        "t": "host",
+        "id": "h-10",
+        "cmd": {
+            "t": "makeCaptain",
+            "playerId": "p-al"
+        }
+    },
+    {
         "t": "action",
         "id": "a-4",
         "round": 9,

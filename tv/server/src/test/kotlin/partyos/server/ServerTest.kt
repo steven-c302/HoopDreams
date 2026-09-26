@@ -150,13 +150,25 @@ class ServerTest {
         }
     }
 
-    @Test fun playerSocketCannotSendHostCommands() = testApplication {
+    @Test fun onlyTheCaptainsPhoneCanRunTheShowAndNeverKick() = testApplication {
         val host = newHost(); serve(host)
-        val token = tokenOf(client.join(host.tv.value.roomCode, "Sam").second)
-        createClient { install(WebSockets) }.webSocket("/ws?token=$token") {
-            sendMsg(ClientMsg.Host("h", HostCommand.Pause))
-            assertEquals(ServerMsg.Reject("h", "NOT_HOST"), nextOf<ServerMsg.Reject>())
+        val room = host.tv.value.roomCode
+        val captain = tokenOf(client.join(room, "Sam").second)
+        val other = tokenOf(client.join(room, "Al").second)
+        val ws = createClient { install(WebSockets) }
+        ws.webSocket("/ws?token=$captain") {
+            nextOf<ServerMsg.View>() // connected, so Sam holds the crown
+            ws.webSocket("/ws?token=$other") {
+                sendMsg(ClientMsg.Host("h1", HostCommand.SetOption("rounds", 6)))
+                assertEquals(ServerMsg.Reject("h1", "NOT_CAPTAIN"), nextOf<ServerMsg.Reject>())
+            }
+            sendMsg(ClientMsg.Host("h2", HostCommand.SetOption("rounds", 6)))
+            assertEquals(ServerMsg.Ack("h2"), nextOf<ServerMsg.Ack>())
+            val alId = host.read { players.first { it.name == "Al" }.id }
+            sendMsg(ClientMsg.Host("h3", HostCommand.Kick(alId)))
+            assertEquals(ServerMsg.Reject("h3", "HOST_ONLY"), nextOf<ServerMsg.Reject>())
         }
+        assertEquals(6, host.tv.value.settings["rounds"])
     }
 
     @Test fun kickSendsByeAndRevokesToken() = testApplication {

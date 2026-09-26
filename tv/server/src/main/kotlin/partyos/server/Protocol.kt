@@ -55,6 +55,9 @@ sealed interface HostCommand {
     @Serializable @SerialName("end") data object End : HostCommand
     @Serializable @SerialName("kick") data class Kick(val playerId: PlayerId) : HostCommand
     @Serializable @SerialName("setRounds") data class SetRounds(val rounds: Int) : HostCommand
+    /** A shared lobby setting: rounds, teams, drinks, game (index into /api/games), captain (phones allowed, 0/1). */
+    @Serializable @SerialName("setOption") data class SetOption(val key: String, val value: Int) : HostCommand
+    @Serializable @SerialName("makeCaptain") data class MakeCaptain(val playerId: PlayerId) : HostCommand
 
     fun toCmd(): HostCmd = when (this) {
         is Start -> HostCmd.StartGame(
@@ -67,6 +70,8 @@ sealed interface HostCommand {
         End -> HostCmd.EndGame
         is Kick -> HostCmd.Kick(playerId)
         is SetRounds -> HostCmd.SetRounds(rounds)
+        is SetOption -> HostCmd.SetOption(key, value)
+        is MakeCaptain -> HostCmd.MakeCaptain(playerId)
     }
 }
 

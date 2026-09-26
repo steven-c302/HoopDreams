@@ -35,6 +35,12 @@ export interface PhoneState {
   remainingMs?: number
   screen: Screen
   scores: ScoreRow[]
+  /** This phone holds the crown and can run the show. */
+  captain: boolean
+  captainName?: string
+  settings: Record<string, number>
+  /** Everyone at the party; sent to the captain only. */
+  crew: PlayerSummary[]
 }
 
 export interface StageInfo {
@@ -58,6 +64,10 @@ export interface TvState {
   scores: ScoreRow[]
   lastResult?: GameResult
   gamesPlayed: number
+  /** Player id holding the crown (absent when phone control is off). */
+  captain?: string
+  /** Shared lobby settings: rounds, teams, drinks, game (index into /api/games), captain (phones allowed). */
+  settings: Record<string, number>
 }
 
 export type ServerMsg =
@@ -77,6 +87,8 @@ export type HostCommand =
   | { t: 'end' }
   | { t: 'kick'; playerId: string }
   | { t: 'setRounds'; rounds: number }
+  | { t: 'setOption'; key: 'rounds' | 'teams' | 'drinks' | 'game' | 'captain'; value: number }
+  | { t: 'makeCaptain'; playerId: string }
 
 export type ActionPayload = { kind: string; [k: string]: string | number | boolean | string[] }
 
@@ -128,6 +140,10 @@ export function rejectMessage(code: string): string {
     case 'BAD_NUMBER': return 'Type a number.'
     case 'NOT_YOUR_HEIST': return "It's not your heist."
     case 'NOT_NOW': return ''
+    case 'NOT_CAPTAIN': return 'Only the captain can do that.'
+    case 'HOST_ONLY': return 'Only the TV can do that.'
+    case 'NO_GAME': return 'No game is running.'
+    case 'GAME_RUNNING': return 'Finish or end this game first.'
     case 'RATE_LIMIT': return 'Slow down a little!'
     case 'NOT_ENOUGH_PLAYERS': return 'Need more players connected.'
     case 'STALE': return ''

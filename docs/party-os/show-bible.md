@@ -66,6 +66,13 @@ filler, and every reveal comes with a fun fact.
   Any effect without a sample falls back to a small synthesized version.
 - **TV speakers:** keep the character in 300Hz–5kHz. **Phones stay quiet** and buzz instead.
 
+## The captain
+
+The first player to join holds the crown and runs the show from the couch: game, settings, start, pause, skip, end.
+Settings live on the server, so the TV and the captain's phone always show the same thing. The crown follows its
+owner if their phone drops and returns, moves to the next-joined player otherwise, and can be passed on or handed
+out from the TV. Removing players and switching phone control off are TV-only (Jackbox's host override).
+
 ## Brain Drain beat sheet
 
 | Beat | Visual | Sound / host |

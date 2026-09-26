@@ -143,6 +143,10 @@ data class TvState(
     val scores: List<ScoreRow>,
     val lastResult: GameResult?,
     val gamesPlayed: Int,
+    /** The player holding the crown, who can run the show from their phone (null when phone control is off). */
+    val captain: PlayerId? = null,
+    /** Lobby settings shared by the TV and the captain's phone: rounds, teams, drinks, game (index), captain (0/1). */
+    val settings: Map<String, Int> = emptyMap(),
 )
 
 @Serializable
@@ -157,6 +161,12 @@ data class PhoneState(
     val remainingMs: Long?,
     val screen: Screen,
     val scores: List<ScoreRow>,
+    /** True when this phone holds the crown. */
+    val captain: Boolean = false,
+    val captainName: String? = null,
+    val settings: Map<String, Int> = emptyMap(),
+    /** Everyone at the party, sent to the captain only (for passing the crown). */
+    val crew: List<PlayerSummary> = emptyList(),
 )
 
 sealed interface ActionResult {
@@ -172,4 +182,8 @@ sealed interface HostCmd {
     data object EndGame : HostCmd
     data class Kick(val player: PlayerId) : HostCmd
     data class SetRounds(val rounds: Int) : HostCmd
+    /** Sets a shared lobby setting; see [PartyEngine.optionRange]. */
+    data class SetOption(val key: String, val value: Int) : HostCmd
+    /** Hands the crown to [player]. */
+    data class MakeCaptain(val player: PlayerId) : HostCmd
 }

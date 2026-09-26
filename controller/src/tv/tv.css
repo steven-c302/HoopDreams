@@ -105,6 +105,8 @@
 .cast-card { display: flex; align-items: center; gap: 16px; padding: 10px 18px 10px 10px; font-size: 38px; font-weight: 900; overflow: hidden; }
 .cast-card span { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
 .cast-card.away { opacity: .45; }
+.cast-card.captain { overflow: visible; outline: 5px solid var(--tomato); outline-offset: 3px; }
+.crown-note { display: flex; align-items: center; gap: 12px; font-size: 28px; font-weight: 800; }
 .cast-empty { grid-column: 1 / -1; display: flex; align-items: center; gap: 30px; font-size: 40px; font-weight: 900; }
 .controls-row { display: flex; align-items: center; flex-wrap: wrap; gap: 14px 30px; font-size: 26px; font-weight: 900; }
 .stepper { display: inline-flex; align-items: center; gap: 12px; }

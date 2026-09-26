@@ -6,7 +6,8 @@ async function phone(browser: Browser, room: string, name: string): Promise<Page
   await p.goto(`/j/${room}`)
   await p.getByLabel('Your name').fill(name)
   await p.getByRole('button', { name: 'Join the party' }).click()
-  await expect(p.getByRole('heading', { name: /You're in/ })).toBeVisible()
+  // The first phone to join holds the crown and lands on the captain's panel instead.
+  await expect(p.getByRole('heading', { name: /You're in|You have the crown/ })).toBeVisible()
   return p
 }
 
@@ -80,6 +81,28 @@ test('four phones team up and answer a Brain Drain question', async ({ browser }
   for (const p of phones) await p.locator('.choices.shapes button').first().click()
   for (const p of phones) await expect(p.getByRole('heading', { name: /Correct!|Nope/ })).toBeVisible()
   await host.getByRole('button', { name: 'End game' }).click()
+})
+
+test('the first phone to join runs the show from the couch', async ({ browser }) => {
+  const { host, room } = await hostPage(browser)
+  await clearParty(host)
+  const captain = await phone(browser, room, 'Cap')
+  const guest = await phone(browser, room, 'Gus')
+  await expect(captain.getByRole('heading', { name: 'You have the crown' })).toBeVisible()
+  await expect(guest.getByRole('heading', { name: /You're in/ })).toBeVisible()
+  await expect(guest.getByText('Cap has the crown and picks the game')).toBeVisible()
+
+  await captain.getByRole('radio', { name: /Brain Drain/ }).click()
+  await captain.getByRole('button', { name: 'More Questions per round' }).click()
+  await captain.getByRole('button', { name: /Everybody's in! Start Brain Drain/ }).click()
+  for (const p of [captain, guest]) await expect(p.getByRole('button', { name: 'Ready!' })).toBeVisible()
+
+  // Mid-game the crown opens the show controls; the guest never sees them.
+  await expect(guest.getByRole('button', { name: 'Captain controls' })).toHaveCount(0)
+  await captain.getByRole('button', { name: 'Captain controls' }).click()
+  await captain.getByRole('button', { name: 'End game' }).click()
+  await captain.getByRole('button', { name: 'Really end the game?' }).click()
+  await expect(captain.getByRole('heading', { name: 'You have the crown' })).toBeVisible()
 })
 
 test('a refreshed phone rejoins as the same player', async ({ browser }) => {

@@ -130,6 +130,30 @@ h2 { margin: 0; font-size: 1.2rem; }
 @keyframes shake { 0%, 100% { transform: none; } 25% { transform: translateX(-8px); } 75% { transform: translateX(8px); } }
 @keyframes rattle { 0%, 100% { transform: rotate(-6deg); } 50% { transform: rotate(6deg); } }
 
+/* the captain */
+.me-face { position: relative; display: inline-flex; }
+.captain-head { display: flex; align-items: center; gap: 12px; }
+.captain-head h1 { font-size: 1.6rem; }
+.game-picks { display: flex; flex-direction: column; gap: 10px; }
+.game-pick { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; text-align: left; padding: 14px 16px; background: var(--paper); box-shadow: var(--shadow-phone) var(--shadow-phone) 0 var(--ink); }
+.game-pick b { font-family: var(--font-display); font-weight: 400; font-size: 1.25rem; }
+.game-pick span { font-weight: 700; font-size: .9rem; color: var(--ink-soft); }
+.game-pick.on { background: var(--sun); outline: 4px solid var(--ink); outline-offset: 2px; }
+.settings-card { display: flex; flex-direction: column; gap: 10px; background: var(--paper); border: var(--stroke-phone) solid var(--ink); border-radius: 18px; padding: 12px 14px; box-shadow: 4px 4px 0 var(--ink); }
+.setting-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; font-weight: 900; }
+.stepper-btns { display: inline-flex; align-items: center; gap: 10px; }
+.stepper-btns button { width: 44px; height: 44px; padding: 0; font-size: 1.4rem; display: grid; place-items: center; }
+.stepper-btns b { font-family: var(--font-display); font-weight: 400; font-size: 1.2rem; min-width: 52px; text-align: center; }
+.toggle { min-width: 76px; padding: 10px 14px; }
+.toggle.on { background: var(--lime); }
+.pass-crown { display: flex; flex-direction: column; gap: 8px; }
+.crew { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.crew button { display: flex; align-items: center; gap: 8px; padding: 6px 10px; text-align: left; overflow: hidden; }
+.crew button span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.crown-fab { position: fixed; right: 16px; bottom: calc(16px + env(safe-area-inset-bottom)); width: 64px; height: 64px; border-radius: 50%; padding: 0; display: grid; place-items: center; background: var(--paper); z-index: 5; }
+.sheet-scrim { position: fixed; inset: 0; background: color-mix(in oklab, var(--ink) 55%, transparent); display: flex; align-items: flex-end; z-index: 10; }
+.sheet { width: 100%; max-width: 520px; margin: 0 auto; background: var(--sun); border: var(--stroke-phone) solid var(--ink); border-bottom: 0; border-radius: 26px 26px 0 0; padding: 18px 16px calc(20px + env(safe-area-inset-bottom)); display: flex; flex-direction: column; gap: 12px; animation: rise var(--dur-base) var(--ease-out); }
+
 /* Drunk Blackjack */
 .cardtable h1 { font-size: 1.5rem; }
 .dealer-strip { display: flex; align-items: center; gap: 12px; background: var(--felt); border: var(--stroke-phone) solid var(--ink); border-radius: 18px; padding: 10px 14px; box-shadow: 4px 4px 0 var(--ink); }

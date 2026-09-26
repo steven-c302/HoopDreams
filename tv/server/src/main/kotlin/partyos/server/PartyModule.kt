@@ -247,7 +247,12 @@ private class PartySession(
                 else host.mutate { action(pid, msg.id, msg.round, msg.payload) }
             }
             is ClientMsg.Host -> reply(msg.id) {
-                if (!isHost) ActionResult.Rejected("NOT_HOST") else host.hostCommand(msg.id, msg.cmd.toCmd())
+                when {
+                    isHost -> host.hostCommand(msg.id, msg.cmd.toCmd())
+                    // Phones may run the show only while they hold the crown; the engine checks and limits it.
+                    pid != null -> host.captainCommand(msg.id, pid, msg.cmd.toCmd())
+                    else -> ActionResult.Rejected("NOT_HOST")
+                }
             }
         }
     }

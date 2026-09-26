@@ -76,6 +76,18 @@ class PartyHost(
         r
     }
 
+    /** A host command from the captain's phone, deduplicated like [hostCommand]. */
+    suspend fun captainCommand(id: String, player: PlayerId, cmd: HostCmd): ActionResult = mutex.withLock {
+        if (id in recentHostIds) return@withLock ActionResult.Ack
+        val r = engine.captainCommand(player, cmd)
+        if (r == ActionResult.Ack) {
+            recentHostIds.addLast(id)
+            while (recentHostIds.size > MAX_HOST_IDS) recentHostIds.removeFirst()
+        }
+        commit()
+        r
+    }
+
     suspend fun issueHostToken(): String = mutex.withLock {
         entropy.token().also { hostTokenHashes += sha256(it) }
     }

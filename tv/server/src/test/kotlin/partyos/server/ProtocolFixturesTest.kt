@@ -93,6 +93,15 @@ class ProtocolFixturesTest {
                 scores = rows,
                 lastResult = null,
                 gamesPlayed = 1,
+                captain = sam,
+                settings = mapOf("rounds" to 5, "teams" to 0, "drinks" to 1, "game" to 0),
+            ),
+        ),
+        ServerMsg.View(
+            seq = 14,
+            view = PhoneState(
+                me, "KXQT", null, null, 0, false, null, null, Screen.Waiting("You're in!", "You have the crown: pick a game"), emptyList(),
+                captain = true, captainName = "Sam", settings = mapOf("game" to 0), crew = listOf(me),
             ),
         ),
         ServerMsg.Tv(
@@ -127,6 +136,8 @@ class ProtocolFixturesTest {
         ClientMsg.Action("a-3", 1, JsonObject(mapOf("kind" to JsonPrimitive("ack")))),
         ClientMsg.Host("h-1", HostCommand.Start("bluff", 5)),
         ClientMsg.Host("h-8", HostCommand.Start("trivia", 5, mapOf("teams" to 4, "drinks" to 1))),
+        ClientMsg.Host("h-9", HostCommand.SetOption("game", 1)),
+        ClientMsg.Host("h-10", HostCommand.MakeCaptain(PlayerId("p-al"))),
         ClientMsg.Action("a-4", 9, JsonObject(mapOf("kind" to JsonPrimitive("guess"), "value" to JsonPrimitive(206)))),
         ClientMsg.Action(
             "a-5", 10,

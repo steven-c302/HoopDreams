@@ -28,7 +28,8 @@ Then double-click **`Start Party OS.command`** in this folder.
 1. It builds everything, starts the party server and keeps the Mac awake.
 2. The TV screen opens full screen in Chrome. Press **Enter** to go live with sound.
 3. Friends scan the QR code on the TV (same Wi-Fi), type a name and **draw their own face**.
-4. Pick a game with **← →** and press **Enter**.
+4. The first person to join gets the **crown**: they pick the game and start it from their phone, so nobody has to
+   get up. The TV keyboard works too.
 
 No friends yet? Rehearse with bots that join, team up, argue and vote like people do:
 
@@ -41,7 +42,7 @@ node controller/scripts/bots.mjs 12
 | ← → · Enter | pick a game · start it |
 | ↑ ↓ | questions per round (Brain Drain) or rounds (3–8) |
 | T · D | Brain Drain teams (auto, 2–6) · drink calls on/off |
-| Esc | host controls: pause, skip ahead, end, remove players, music and effects volume |
+| Esc | host controls: pause, skip ahead, end, remove players, give the crown, phone control on/off, volume |
 | P · M · F | pause · mute · full screen |
 
 <p align="center"><img src="docs/media/lobby.png" alt="The lobby: QR code, every player's hand-drawn face, and the three games as comic-book covers" width="88%"></p>
@@ -84,6 +85,12 @@ before the buzzer. Five rounds, five different formats, one host: Brainy, a pink
   <img src="docs/media/phone-sides.png" alt="Pick a Side on the phone: two giant buttons" width="19%">
   <img src="docs/media/phone-waiting-tone-win.png" alt="Your team's result: Correct! +200" width="19%">
 </p>
+
+**The captain.** Whoever joins first holds the crown (Jackbox calls this the VIP). Their phone picks the game, sets
+questions per round, teams and drink calls, and starts the show; during a game a crown button opens pause, skip
+ahead and end. The TV mirrors every choice. If their phone drops, the crown moves to the next person who joined and
+comes back when they do; they can pass it on, and the TV's host controls can hand it to anyone or switch phone
+control off. Removing players stays on the TV.
 
 Scan, type a name, draw a face, play. Buttons are thumb-sized, every choice is colour **and** shape **and** text,
 teammates' faces show up on the answer they picked, and phones buzz on every tap and on your team's result. A

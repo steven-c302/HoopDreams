@@ -55,7 +55,10 @@
                     },
                     "score": 500
                 }
-            ]
+            ],
+            "captain": false,
+            "settings": {},
+            "crew": []
         }
     },
     {
@@ -107,7 +110,10 @@
                     },
                     "score": 500
                 }
-            ]
+            ],
+            "captain": false,
+            "settings": {},
+            "crew": []
         }
     },
     {
@@ -156,7 +162,10 @@
                     },
                     "score": 500
                 }
-            ]
+            ],
+            "captain": false,
+            "settings": {},
+            "crew": []
         }
     },
     {
@@ -215,7 +224,10 @@
                     },
                     "score": 500
                 }
-            ]
+            ],
+            "captain": false,
+            "settings": {},
+            "crew": []
         }
     },
     {
@@ -281,7 +293,10 @@
                     },
                     "score": 500
                 }
-            ]
+            ],
+            "captain": false,
+            "settings": {},
+            "crew": []
         }
     },
     {
@@ -350,7 +365,10 @@
                     },
                     "score": 500
                 }
-            ]
+            ],
+            "captain": false,
+            "settings": {},
+            "crew": []
         }
     },
     {
@@ -413,7 +431,10 @@
                     },
                     "score": 500
                 }
-            ]
+            ],
+            "captain": false,
+            "settings": {},
+            "crew": []
         }
     },
     {
@@ -473,7 +494,10 @@
                     },
                     "score": 500
                 }
-            ]
+            ],
+            "captain": false,
+            "settings": {},
+            "crew": []
         }
     },
     {
@@ -551,7 +575,10 @@
                     },
                     "score": 500
                 }
-            ]
+            ],
+            "captain": false,
+            "settings": {},
+            "crew": []
         }
     },
     {
@@ -604,7 +631,10 @@
                     },
                     "score": 500
                 }
-            ]
+            ],
+            "captain": false,
+            "settings": {},
+            "crew": []
         }
     },
     {
@@ -718,7 +748,56 @@
                     "score": 500
                 }
             ],
-            "gamesPlayed": 1
+            "gamesPlayed": 1,
+            "captain": "p-sam",
+            "settings": {
+                "rounds": 5,
+                "teams": 0,
+                "drinks": 1,
+                "game": 0
+            }
+        }
+    },
+    {
+        "t": "view",
+        "seq": 14,
+        "view": {
+            "me": {
+                "id": "p-sam",
+                "name": "Sam",
+                "avatar": {
+                    "face": "p:01",
+                    "color": "#FF7A00"
+                },
+                "role": "PLAYER",
+                "connected": true
+            },
+            "roomCode": "KXQT",
+            "round": 0,
+            "paused": false,
+            "screen": {
+                "t": "waiting",
+                "title": "You're in!",
+                "detail": "You have the crown: pick a game"
+            },
+            "scores": [],
+            "captain": true,
+            "captainName": "Sam",
+            "settings": {
+                "game": 0
+            },
+            "crew": [
+                {
+                    "id": "p-sam",
+                    "name": "Sam",
+                    "avatar": {
+                        "face": "p:01",
+                        "color": "#FF7A00"
+                    },
+                    "role": "PLAYER",
+                    "connected": true
+                }
+            ]
         }
     },
     {
@@ -841,7 +920,8 @@
                     "Al fooled 3 people with “stars”"
                 ]
             },
-            "gamesPlayed": 1
+            "gamesPlayed": 1,
+            "settings": {}
         }
     },
     {

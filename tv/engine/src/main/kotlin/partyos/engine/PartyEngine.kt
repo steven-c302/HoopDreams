@@ -25,6 +25,7 @@ data class PartySnapshot(
     val results: List<GameResult> = emptyList(),
     val game: GameSnapshot? = null,
     val memory: Map<String, String> = emptyMap(),
+    val captain: PlayerId? = null,
 )
 
 /**
@@ -45,10 +46,11 @@ class PartyEngine private constructor(
     usedContent: Collection<String>,
     results: List<GameResult>,
     memory: Map<String, String>,
+    private var captainPick: PlayerId?,
 ) {
     constructor(clock: Clock, entropy: Entropy, games: GameRegistry = GameRegistry(emptyList())) : this(
         clock, entropy, games, newRoomCode(entropy), clock.now(), emptyList(), emptyMap(),
-        null, null, emptyMap(), emptyList(), emptyList(), emptyMap(),
+        null, null, emptyMap(), emptyList(), emptyList(), emptyMap(), null,
     )
 
     private val roster = LinkedHashMap<PlayerId, Player>().apply { players.forEach { put(it.id, it) } }
@@ -82,6 +84,8 @@ class PartyEngine private constructor(
         val token = entropy.token()
         roster[player.id] = player
         tokens[sha256(token)] = player.id
+        // The first to join holds the crown (Jackbox's VIP); it follows them back if their phone drops and returns.
+        if (captainPick == null && role == Role.PLAYER) captainPick = player.id
         return JoinResult.Joined(player, token)
     }
 
@@ -97,6 +101,7 @@ class PartyEngine private constructor(
 
     fun kick(id: PlayerId) {
         val p = roster[id] ?: return
+        if (captainPick == id) captainPick = null
         roster[id] = p.copy(kicked = true, connected = false)
         tokens.values.removeAll { it == id }
         active?.let { if (p.role == Role.PLAYER) presenceChanged(it, id, false) }
@@ -122,6 +127,38 @@ class PartyEngine private constructor(
     fun checkPin(pin: String): Boolean {
         val salt = pinSalt ?: return false
         return sha256(salt + pin) == pinHash
+    }
+
+    // ---- the captain ----------------------------------------------------------------------
+
+    /**
+     * Who holds the crown right now: the chosen captain if their phone is connected, otherwise the earliest-joined
+     * connected player (then spectator). Null when the host has turned phone control off.
+     */
+    fun captain(): PlayerId? {
+        if (settings["captain"] == 0) return null
+        captainPick?.let { id -> if (roster[id]?.let { it.connected && !it.kicked } == true) return id }
+        val here = players.filter { it.connected }.sortedBy { it.joinedAt }
+        return (here.firstOrNull { it.role == Role.PLAYER } ?: here.firstOrNull())?.id
+    }
+
+    /** A host command sent from the captain's phone. The captain runs the show but can't remove people. */
+    fun captainCommand(id: PlayerId, cmd: HostCmd): ActionResult {
+        if (captain() != id) return ActionResult.Rejected("NOT_CAPTAIN")
+        return when {
+            cmd is HostCmd.Kick -> ActionResult.Rejected("HOST_ONLY")
+            cmd is HostCmd.SetOption && cmd.key == "captain" -> ActionResult.Rejected("HOST_ONLY")
+            else -> host(cmd)
+        }
+    }
+
+    /** Allowed values for each shared setting. */
+    fun optionRange(key: String): IntRange? = when (key) {
+        "rounds" -> 3..8
+        "teams" -> 0..6
+        "drinks", "captain" -> 0..1
+        "game" -> 0..(games.all.size - 1).coerceAtLeast(0)
+        else -> null
     }
 
     // ---- game runtime ---------------------------------------------------------------------
@@ -176,6 +213,11 @@ class PartyEngine private constructor(
             HostCmd.EndGame -> active?.let { finish(it) } ?: return ActionResult.Rejected("NO_GAME")
             is HostCmd.Kick -> kick(cmd.player)
             is HostCmd.SetRounds -> settings["rounds"] = cmd.rounds.coerceIn(3, 8)
+            is HostCmd.SetOption -> settings[cmd.key] = cmd.value.coerceIn(optionRange(cmd.key) ?: return ActionResult.Rejected("BAD_OPTION"))
+            is HostCmd.MakeCaptain -> {
+                if (player(cmd.player) == null) return ActionResult.Rejected("UNKNOWN_PLAYER")
+                captainPick = cmd.player
+            }
         }
         settle()
         return ActionResult.Ack
@@ -203,14 +245,18 @@ class PartyEngine private constructor(
             scores = g?.let { scoreRows(it.scores) } ?: emptyList(),
             lastResult = results.lastOrNull(),
             gamesPlayed = results.size,
+            captain = captain(),
+            settings = settings.toMap(),
         )
     }
 
     fun phoneState(id: PlayerId): PhoneState {
         val p = requireNotNull(player(id)) { "unknown player $id" }
         val g = active
+        val captain = captain()
+        val captainName = captain?.let { player(it)?.name }
         val screen = when {
-            g == null -> Screen.Waiting("You're in!", "Waiting for the host to pick a game")
+            g == null -> Screen.Waiting("You're in!", captainName?.let { if (captain == id) "You have the crown: pick a game" else "$it has the crown and picks the game" } ?: "Waiting for the host to pick a game")
             p.role == Role.SPECTATOR -> Screen.Waiting("Watching", g.module.info.title)
             g.tutorialAcks != null -> Screen.Tutorial(g.module.info.tutorial, id in g.tutorialAcks!!)
             else -> playerView(g, id)
@@ -226,12 +272,16 @@ class PartyEngine private constructor(
             remainingMs = g?.remaining(clock.now()),
             screen = screen,
             scores = g?.let { scoreRows(it.scores) } ?: results.lastOrNull()?.standings ?: emptyList(),
+            captain = captain == id,
+            captainName = captainName,
+            settings = settings.toMap(),
+            crew = if (captain == id) players.map { it.summary() } else emptyList(),
         )
     }
 
     fun snapshot() = PartySnapshot(
         roomCode, createdAt, roster.values.toList(), tokens.toMap(), pinSalt, pinHash,
-        settings.toMap(), usedContent.toList(), results.toList(), active?.snapshot(clock.now()), memory.toMap(),
+        settings.toMap(), usedContent.toList(), results.toList(), active?.snapshot(clock.now()), memory.toMap(), captainPick,
     )
 
     // ---- internals ------------------------------------------------------------------------
@@ -379,7 +429,7 @@ class PartyEngine private constructor(
         ): PartyEngine {
             val e = PartyEngine(
                 clock, entropy, games, s.roomCode, s.createdAt, s.players.map { it.copy(connected = false) },
-                s.tokenHashes, s.pinSalt, s.pinHash, s.settings, s.usedContent, s.results, s.memory,
+                s.tokenHashes, s.pinSalt, s.pinHash, s.settings, s.usedContent, s.results, s.memory, s.captain,
             )
             s.game?.let { gs -> games[gs.gameId]?.let { e.active = restoreGame(it, gs) } }
             return e
