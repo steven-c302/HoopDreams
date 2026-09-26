@@ -109,7 +109,7 @@ class HardeningTest {
         val host = newHost()
         val room = host.tv.value.roomCode
         repeat(3) { i ->
-            val j = host.mutate { join(room, "P$i", partyos.engine.Avatar("🙂", "#112233"), partyos.engine.Role.PLAYER) } as partyos.engine.JoinResult.Joined
+            val j = host.mutate { join(room, "P$i", partyos.engine.Avatar("p:00", "#112233"), partyos.engine.Role.PLAYER) } as partyos.engine.JoinResult.Joined
             host.connected(j.player.id)
         }
         host.mutate { host(HostCmd.StartGame("bluff")) }

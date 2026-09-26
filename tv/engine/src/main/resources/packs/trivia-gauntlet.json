@@ -1,0 +1,602 @@
+[
+ {
+  "id": "tga001",
+  "prompt": "Which of these are Great Lakes?",
+  "options": [
+   {
+    "text": "Huron",
+    "fit": true
+   },
+   {
+    "text": "Erie",
+    "fit": true
+   },
+   {
+    "text": "Champlain",
+    "fit": false
+   }
+  ]
+ },
+ {
+  "id": "tga002",
+  "prompt": "Which of these were Beatles?",
+  "options": [
+   {
+    "text": "George Harrison",
+    "fit": true
+   },
+   {
+    "text": "Ringo Starr",
+    "fit": true
+   },
+   {
+    "text": "Mick Jagger",
+    "fit": false
+   }
+  ]
+ },
+ {
+  "id": "tga003",
+  "prompt": "Which of these planets have rings?",
+  "options": [
+   {
+    "text": "Saturn",
+    "fit": true
+   },
+   {
+    "text": "Uranus",
+    "fit": true
+   },
+   {
+    "text": "Mars",
+    "fit": false
+   },
+   {
+    "text": "Venus",
+    "fit": false
+   }
+  ]
+ },
+ {
+  "id": "tga004",
+  "prompt": "Which of these are Pixar movies?",
+  "options": [
+   {
+    "text": "Up",
+    "fit": true
+   },
+   {
+    "text": "Coco",
+    "fit": true
+   },
+   {
+    "text": "Shrek",
+    "fit": false
+   }
+  ]
+ },
+ {
+  "id": "tga005",
+  "prompt": "Which of these countries are in South America?",
+  "options": [
+   {
+    "text": "Peru",
+    "fit": true
+   },
+   {
+    "text": "Chile",
+    "fit": true
+   },
+   {
+    "text": "Panama",
+    "fit": false
+   }
+  ]
+ },
+ {
+  "id": "tga006",
+  "prompt": "Which of these colors are on the Olympic rings?",
+  "options": [
+   {
+    "text": "Green",
+    "fit": true
+   },
+   {
+    "text": "Black",
+    "fit": true
+   },
+   {
+    "text": "Purple",
+    "fit": false
+   },
+   {
+    "text": "Yellow",
+    "fit": true
+   }
+  ]
+ },
+ {
+  "id": "tga007",
+  "prompt": "Which of these are mammals?",
+  "options": [
+   {
+    "text": "Orca",
+    "fit": true
+   },
+   {
+    "text": "Hedgehog",
+    "fit": true
+   },
+   {
+    "text": "Salamander",
+    "fit": false
+   }
+  ]
+ },
+ {
+  "id": "tga008",
+  "prompt": "Which of these are noble gases?",
+  "options": [
+   {
+    "text": "Neon",
+    "fit": true
+   },
+   {
+    "text": "Argon",
+    "fit": true
+   },
+   {
+    "text": "Nitrogen",
+    "fit": false
+   }
+  ]
+ },
+ {
+  "id": "tga009",
+  "prompt": "Which of these were main characters on Friends?",
+  "options": [
+   {
+    "text": "Monica",
+    "fit": true
+   },
+   {
+    "text": "Phoebe",
+    "fit": true
+   },
+   {
+    "text": "Janice",
+    "fit": false
+   }
+  ]
+ },
+ {
+  "id": "tga010",
+  "prompt": "Which of these go in a classic margarita?",
+  "options": [
+   {
+    "text": "Tequila",
+    "fit": true
+   },
+   {
+    "text": "Lime juice",
+    "fit": true
+   },
+   {
+    "text": "Rum",
+    "fit": false
+   },
+   {
+    "text": "Orange liqueur",
+    "fit": true
+   }
+  ]
+ },
+ {
+  "id": "tga011",
+  "prompt": "Which of these are official languages of Switzerland?",
+  "options": [
+   {
+    "text": "German",
+    "fit": true
+   },
+   {
+    "text": "French",
+    "fit": true
+   },
+   {
+    "text": "Italian",
+    "fit": true
+   },
+   {
+    "text": "Dutch",
+    "fit": false
+   }
+  ]
+ },
+ {
+  "id": "tga012",
+  "prompt": "Which of these are Hogwarts houses?",
+  "options": [
+   {
+    "text": "Hufflepuff",
+    "fit": true
+   },
+   {
+    "text": "Ravenclaw",
+    "fit": true
+   },
+   {
+    "text": "Durmstrang",
+    "fit": false
+   }
+  ]
+ },
+ {
+  "id": "tga013",
+  "prompt": "Which of these are chess pieces?",
+  "options": [
+   {
+    "text": "Rook",
+    "fit": true
+   },
+   {
+    "text": "Bishop",
+    "fit": true
+   },
+   {
+    "text": "Duke",
+    "fit": false
+   }
+  ]
+ },
+ {
+  "id": "tga014",
+  "prompt": "Which of these are US states?",
+  "options": [
+   {
+    "text": "Montana",
+    "fit": true
+   },
+   {
+    "text": "Vermont",
+    "fit": true
+   },
+   {
+    "text": "Carolina",
+    "fit": false
+   }
+  ]
+ },
+ {
+  "id": "tga015",
+  "prompt": "Which of these are Taylor Swift albums?",
+  "options": [
+   {
+    "text": "Folklore",
+    "fit": true
+   },
+   {
+    "text": "Evermore",
+    "fit": true
+   },
+   {
+    "text": "Rumours",
+    "fit": false
+   }
+  ]
+ },
+ {
+  "id": "tga016",
+  "prompt": "Which of these are pasta?",
+  "options": [
+   {
+    "text": "Rigatoni",
+    "fit": true
+   },
+   {
+    "text": "Penne",
+    "fit": true
+   },
+   {
+    "text": "Tzatziki",
+    "fit": false
+   }
+  ]
+ },
+ {
+  "id": "tga017",
+  "prompt": "Which of these actors have played James Bond?",
+  "options": [
+   {
+    "text": "Daniel Craig",
+    "fit": true
+   },
+   {
+    "text": "Pierce Brosnan",
+    "fit": true
+   },
+   {
+    "text": "Hugh Jackman",
+    "fit": false
+   },
+   {
+    "text": "Timothy Dalton",
+    "fit": true
+   }
+  ]
+ },
+ {
+  "id": "tga018",
+  "prompt": "Which of these are primary colors on an art-class color wheel?",
+  "options": [
+   {
+    "text": "Red",
+    "fit": true
+   },
+   {
+    "text": "Blue",
+    "fit": true
+   },
+   {
+    "text": "Green",
+    "fit": false
+   }
+  ]
+ },
+ {
+  "id": "tga019",
+  "prompt": "Which of these heroes were in the first Avengers movie (2012)?",
+  "options": [
+   {
+    "text": "Hawkeye",
+    "fit": true
+   },
+   {
+    "text": "Black Widow",
+    "fit": true
+   },
+   {
+    "text": "Spider-Man",
+    "fit": false
+   }
+  ]
+ },
+ {
+  "id": "tga020",
+  "prompt": "Which of these animals are marsupials?",
+  "options": [
+   {
+    "text": "Koala",
+    "fit": true
+   },
+   {
+    "text": "Wombat",
+    "fit": true
+   },
+   {
+    "text": "Panda",
+    "fit": false
+   }
+  ]
+ },
+ {
+  "id": "tga021",
+  "prompt": "Which of these are Grand Slam tennis tournaments?",
+  "options": [
+   {
+    "text": "Wimbledon",
+    "fit": true
+   },
+   {
+    "text": "US Open",
+    "fit": true
+   },
+   {
+    "text": "Indian Wells",
+    "fit": false
+   }
+  ]
+ },
+ {
+  "id": "tga022",
+  "prompt": "Which of these countries are in Europe?",
+  "options": [
+   {
+    "text": "Portugal",
+    "fit": true
+   },
+   {
+    "text": "Estonia",
+    "fit": true
+   },
+   {
+    "text": "Tunisia",
+    "fit": false
+   }
+  ]
+ },
+ {
+  "id": "tga023",
+  "prompt": "Which of these were Spice Girls?",
+  "options": [
+   {
+    "text": "Posh",
+    "fit": true
+   },
+   {
+    "text": "Scary",
+    "fit": true
+   },
+   {
+    "text": "Silly",
+    "fit": false
+   },
+   {
+    "text": "Sporty",
+    "fit": true
+   }
+  ]
+ },
+ {
+  "id": "tga024",
+  "prompt": "Which of these are real blood types?",
+  "options": [
+   {
+    "text": "AB",
+    "fit": true
+   },
+   {
+    "text": "O",
+    "fit": true
+   },
+   {
+    "text": "C",
+    "fit": false
+   }
+  ]
+ },
+ {
+  "id": "tga025",
+  "prompt": "Which of these are Mario Kart items?",
+  "options": [
+   {
+    "text": "Blue Shell",
+    "fit": true
+   },
+   {
+    "text": "Banana",
+    "fit": true
+   },
+   {
+    "text": "Poké Ball",
+    "fit": false
+   }
+  ]
+ },
+ {
+  "id": "tga026",
+  "prompt": "Which of these cocktails are made with vodka?",
+  "options": [
+   {
+    "text": "Moscow Mule",
+    "fit": true
+   },
+   {
+    "text": "Cosmopolitan",
+    "fit": true
+   },
+   {
+    "text": "Mojito",
+    "fit": false
+   }
+  ]
+ },
+ {
+  "id": "tga027",
+  "prompt": "Which of these are official Disney Princesses?",
+  "options": [
+   {
+    "text": "Moana",
+    "fit": true
+   },
+   {
+    "text": "Mulan",
+    "fit": true
+   },
+   {
+    "text": "Elsa",
+    "fit": false
+   }
+  ]
+ },
+ {
+  "id": "tga028",
+  "prompt": "Which of these are on the US $1 bill?",
+  "options": [
+   {
+    "text": "George Washington",
+    "fit": true
+   },
+   {
+    "text": "A pyramid",
+    "fit": true
+   },
+   {
+    "text": "Abraham Lincoln",
+    "fit": false
+   }
+  ]
+ },
+ {
+  "id": "tga029",
+  "prompt": "Which of these are bones?",
+  "options": [
+   {
+    "text": "Femur",
+    "fit": true
+   },
+   {
+    "text": "Tibia",
+    "fit": true
+   },
+   {
+    "text": "Aorta",
+    "fit": false
+   }
+  ]
+ },
+ {
+  "id": "tga030",
+  "prompt": "Which of these are Star Wars planets?",
+  "options": [
+   {
+    "text": "Tatooine",
+    "fit": true
+   },
+   {
+    "text": "Hoth",
+    "fit": true
+   },
+   {
+    "text": "Vulcan",
+    "fit": false
+   }
+  ]
+ },
+ {
+  "id": "tga031",
+  "prompt": "Which of these are Nintendo consoles?",
+  "options": [
+   {
+    "text": "Switch",
+    "fit": true
+   },
+   {
+    "text": "GameCube",
+    "fit": true
+   },
+   {
+    "text": "Dreamcast",
+    "fit": false
+   }
+  ]
+ },
+ {
+  "id": "tga032",
+  "prompt": "Which of these are current NBA teams?",
+  "options": [
+   {
+    "text": "Hornets",
+    "fit": true
+   },
+   {
+    "text": "Grizzlies",
+    "fit": true
+   },
+   {
+    "text": "SuperSonics",
+    "fit": false
+   }
+  ]
+ }
+]

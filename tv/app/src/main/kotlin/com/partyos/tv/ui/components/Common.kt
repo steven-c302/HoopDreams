@@ -34,7 +34,10 @@ fun AvatarDot(avatar: Avatar, size: Dp = 44.dp, dim: Boolean = false) {
     Box(
         Modifier.size(size).graphicsLayer { alpha = if (dim) 0.35f else 1f }.background(avatar.colorValue(), CircleShape),
         contentAlignment = Alignment.Center,
-    ) { Text(avatar.emoji, fontSize = (size.value * 0.5f).sp, textAlign = TextAlign.Center) }
+    ) {
+        // The web TV draws faces; the Android TV shows the preset number until it gets the same renderer.
+        Text(if (avatar.face.startsWith("p:")) avatar.face.drop(2).trimStart('0').ifEmpty { "0" } else "", fontSize = (size.value * 0.4f).sp, textAlign = TextAlign.Center)
+    }
 }
 
 /** Frame clock shared by countdown widgets; read only inside draw lambdas so ticking never recomposes. */

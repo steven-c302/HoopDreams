@@ -30,6 +30,8 @@ sealed interface Effect {
     data class Highlight(val text: String) : Effect
     /** Marks a content item (e.g. a question id) as used for the rest of the party. */
     data class UseContent(val id: String) : Effect
+    /** Stores a small value for the rest of the party (e.g. the last trivia show's teams), read back via [GameContext.memory]. */
+    data class Remember(val key: String, val value: String) : Effect
     data object Finish : Effect
 }
 
@@ -43,6 +45,7 @@ class GameContext(
     val scores: Map<PlayerId, Int>,
     val settings: Map<String, Int>,
     val usedContent: Set<String>,
+    val memory: Map<String, String> = emptyMap(),
 ) {
     fun player(id: PlayerId) = players.firstOrNull { it.id == id }
     fun isConnected(id: PlayerId) = player(id)?.connected == true

@@ -35,7 +35,42 @@
         "cmd": {
             "t": "start",
             "gameId": "bluff",
-            "rounds": 5
+            "rounds": 5,
+            "options": {}
+        }
+    },
+    {
+        "t": "host",
+        "id": "h-8",
+        "cmd": {
+            "t": "start",
+            "gameId": "trivia",
+            "rounds": 5,
+            "options": {
+                "teams": 4,
+                "drinks": 1
+            }
+        }
+    },
+    {
+        "t": "action",
+        "id": "a-4",
+        "round": 9,
+        "payload": {
+            "kind": "guess",
+            "value": 206
+        }
+    },
+    {
+        "t": "action",
+        "id": "a-5",
+        "round": 10,
+        "payload": {
+            "kind": "multi",
+            "picks": [
+                "a"
+            ],
+            "lock": true
         }
     },
     {

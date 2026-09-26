@@ -1,0 +1,578 @@
+[
+ {
+  "id": "tsd-pokemon",
+  "prompt": "Pokémon or medication?",
+  "left": "Pokémon",
+  "right": "Medication",
+  "items": [
+   {
+    "text": "Zubat",
+    "side": "left"
+   },
+   {
+    "text": "Zoloft",
+    "side": "right"
+   },
+   {
+    "text": "Exeggutor",
+    "side": "left"
+   },
+   {
+    "text": "Xeljanz",
+    "side": "right"
+   },
+   {
+    "text": "Klefki",
+    "side": "left"
+   },
+   {
+    "text": "Lyrica",
+    "side": "right"
+   },
+   {
+    "text": "Cyndaquil",
+    "side": "left"
+   }
+  ]
+ },
+ {
+  "id": "tsd-ikea",
+  "prompt": "IKEA product or Lord of the Rings character?",
+  "left": "IKEA",
+  "right": "Middle-earth",
+  "items": [
+   {
+    "text": "Kallax",
+    "side": "left"
+   },
+   {
+    "text": "Faramir",
+    "side": "right"
+   },
+   {
+    "text": "Ektorp",
+    "side": "left"
+   },
+   {
+    "text": "Glorfindel",
+    "side": "right"
+   },
+   {
+    "text": "Hemnes",
+    "side": "left"
+   },
+   {
+    "text": "Gríma",
+    "side": "right"
+   },
+   {
+    "text": "Frosta",
+    "side": "left"
+   }
+  ]
+ },
+ {
+  "id": "tsd-fonts",
+  "prompt": "Font or cheese?",
+  "left": "Font",
+  "right": "Cheese",
+  "items": [
+   {
+    "text": "Havarti",
+    "side": "right"
+   },
+   {
+    "text": "Bodoni",
+    "side": "left"
+   },
+   {
+    "text": "Taleggio",
+    "side": "right"
+   },
+   {
+    "text": "Futura",
+    "side": "left"
+   },
+   {
+    "text": "Comté",
+    "side": "right"
+   },
+   {
+    "text": "Garamond",
+    "side": "left"
+   },
+   {
+    "text": "Emmental",
+    "side": "right"
+   }
+  ]
+ },
+ {
+  "id": "tsd-spells",
+  "prompt": "Harry Potter spell or pasta shape?",
+  "left": "Spell",
+  "right": "Pasta",
+  "items": [
+   {
+    "text": "Orecchiette",
+    "side": "right"
+   },
+   {
+    "text": "Obliviate",
+    "side": "left"
+   },
+   {
+    "text": "Cavatappi",
+    "side": "right"
+   },
+   {
+    "text": "Riddikulus",
+    "side": "left"
+   },
+   {
+    "text": "Strozzapreti",
+    "side": "right"
+   },
+   {
+    "text": "Alohomora",
+    "side": "left"
+   },
+   {
+    "text": "Radiatori",
+    "side": "right"
+   }
+  ]
+ },
+ {
+  "id": "tsd-mammals",
+  "prompt": "Mammal or not?",
+  "left": "Mammal",
+  "right": "Not a mammal",
+  "items": [
+   {
+    "text": "Dolphin",
+    "side": "left"
+   },
+   {
+    "text": "Seahorse",
+    "side": "right"
+   },
+   {
+    "text": "Platypus",
+    "side": "left"
+   },
+   {
+    "text": "Penguin",
+    "side": "right"
+   },
+   {
+    "text": "Pangolin",
+    "side": "left"
+   },
+   {
+    "text": "Whale shark",
+    "side": "right"
+   },
+   {
+    "text": "Bat",
+    "side": "left"
+   }
+  ]
+ },
+ {
+  "id": "tsd-fruit",
+  "prompt": "Botanically speaking: fruit or vegetable?",
+  "left": "Fruit",
+  "right": "Vegetable",
+  "items": [
+   {
+    "text": "Tomato",
+    "side": "left"
+   },
+   {
+    "text": "Carrot",
+    "side": "right"
+   },
+   {
+    "text": "Cucumber",
+    "side": "left"
+   },
+   {
+    "text": "Potato",
+    "side": "right"
+   },
+   {
+    "text": "Pumpkin",
+    "side": "left"
+   },
+   {
+    "text": "Broccoli",
+    "side": "right"
+   },
+   {
+    "text": "Eggplant",
+    "side": "left"
+   }
+  ]
+ },
+ {
+  "id": "tsd-founded",
+  "prompt": "Company founded before 2000, or after?",
+  "left": "Before 2000",
+  "right": "2000 or later",
+  "items": [
+   {
+    "text": "Google",
+    "side": "left"
+   },
+   {
+    "text": "YouTube",
+    "side": "right"
+   },
+   {
+    "text": "Amazon",
+    "side": "left"
+   },
+   {
+    "text": "Spotify",
+    "side": "right"
+   },
+   {
+    "text": "Netflix",
+    "side": "left"
+   },
+   {
+    "text": "Facebook",
+    "side": "right"
+   },
+   {
+    "text": "PayPal",
+    "side": "left"
+   }
+  ]
+ },
+ {
+  "id": "tsd-dogs",
+  "prompt": "Dog breed or Star Wars character?",
+  "left": "Dog breed",
+  "right": "Star Wars",
+  "items": [
+   {
+    "text": "Schipperke",
+    "side": "left"
+   },
+   {
+    "text": "Bossk",
+    "side": "right"
+   },
+   {
+    "text": "Vizsla",
+    "side": "left"
+   },
+   {
+    "text": "Greedo",
+    "side": "right"
+   },
+   {
+    "text": "Borzoi",
+    "side": "left"
+   },
+   {
+    "text": "Dengar",
+    "side": "right"
+   },
+   {
+    "text": "Keeshond",
+    "side": "left"
+   }
+  ]
+ },
+ {
+  "id": "tsd-gods",
+  "prompt": "Greek god or Roman god?",
+  "left": "Greek",
+  "right": "Roman",
+  "items": [
+   {
+    "text": "Zeus",
+    "side": "left"
+   },
+   {
+    "text": "Jupiter",
+    "side": "right"
+   },
+   {
+    "text": "Hermes",
+    "side": "left"
+   },
+   {
+    "text": "Mercury",
+    "side": "right"
+   },
+   {
+    "text": "Aphrodite",
+    "side": "left"
+   },
+   {
+    "text": "Venus",
+    "side": "right"
+   },
+   {
+    "text": "Neptune",
+    "side": "right"
+   }
+  ]
+ },
+ {
+  "id": "tsd-planets",
+  "prompt": "Planet or moon?",
+  "left": "Planet",
+  "right": "Moon",
+  "items": [
+   {
+    "text": "Titan",
+    "side": "right"
+   },
+   {
+    "text": "Neptune",
+    "side": "left"
+   },
+   {
+    "text": "Europa",
+    "side": "right"
+   },
+   {
+    "text": "Mercury",
+    "side": "left"
+   },
+   {
+    "text": "Ganymede",
+    "side": "right"
+   },
+   {
+    "text": "Uranus",
+    "side": "left"
+   },
+   {
+    "text": "Io",
+    "side": "right"
+   }
+  ]
+ },
+ {
+  "id": "tsd-olympics",
+  "prompt": "Summer Olympics or Winter Olympics?",
+  "left": "Summer",
+  "right": "Winter",
+  "items": [
+   {
+    "text": "Curling",
+    "side": "right"
+   },
+   {
+    "text": "Handball",
+    "side": "left"
+   },
+   {
+    "text": "Skeleton",
+    "side": "right"
+   },
+   {
+    "text": "Water polo",
+    "side": "left"
+   },
+   {
+    "text": "Biathlon",
+    "side": "right"
+   },
+   {
+    "text": "Modern pentathlon",
+    "side": "left"
+   },
+   {
+    "text": "Luge",
+    "side": "right"
+   }
+  ]
+ },
+ {
+  "id": "tsd-studio",
+  "prompt": "Pixar or DreamWorks?",
+  "left": "Pixar",
+  "right": "DreamWorks",
+  "items": [
+   {
+    "text": "Shrek",
+    "side": "right"
+   },
+   {
+    "text": "Up",
+    "side": "left"
+   },
+   {
+    "text": "Kung Fu Panda",
+    "side": "right"
+   },
+   {
+    "text": "Cars",
+    "side": "left"
+   },
+   {
+    "text": "Megamind",
+    "side": "right"
+   },
+   {
+    "text": "Luca",
+    "side": "left"
+   },
+   {
+    "text": "Madagascar",
+    "side": "right"
+   }
+  ]
+ },
+ {
+  "id": "tsd-comics",
+  "prompt": "Marvel or DC?",
+  "left": "Marvel",
+  "right": "DC",
+  "items": [
+   {
+    "text": "Aquaman",
+    "side": "right"
+   },
+   {
+    "text": "Black Widow",
+    "side": "left"
+   },
+   {
+    "text": "Green Lantern",
+    "side": "right"
+   },
+   {
+    "text": "Doctor Strange",
+    "side": "left"
+   },
+   {
+    "text": "Cyborg",
+    "side": "right"
+   },
+   {
+    "text": "Ant-Man",
+    "side": "left"
+   },
+   {
+    "text": "The Flash",
+    "side": "right"
+   }
+  ]
+ },
+ {
+  "id": "tsd-songs",
+  "prompt": "Beatles song or Beyoncé song?",
+  "left": "Beatles",
+  "right": "Beyoncé",
+  "items": [
+   {
+    "text": "Halo",
+    "side": "right"
+   },
+   {
+    "text": "Yesterday",
+    "side": "left"
+   },
+   {
+    "text": "Formation",
+    "side": "right"
+   },
+   {
+    "text": "Penny Lane",
+    "side": "left"
+   },
+   {
+    "text": "Irreplaceable",
+    "side": "right"
+   },
+   {
+    "text": "Help!",
+    "side": "left"
+   },
+   {
+    "text": "Single Ladies",
+    "side": "right"
+   }
+  ]
+ },
+ {
+  "id": "tsd-continents",
+  "prompt": "Country in Africa or in Asia?",
+  "left": "Africa",
+  "right": "Asia",
+  "items": [
+   {
+    "text": "Mali",
+    "side": "left"
+   },
+   {
+    "text": "Laos",
+    "side": "right"
+   },
+   {
+    "text": "Chad",
+    "side": "left"
+   },
+   {
+    "text": "Oman",
+    "side": "right"
+   },
+   {
+    "text": "Niger",
+    "side": "left"
+   },
+   {
+    "text": "Nepal",
+    "side": "right"
+   },
+   {
+    "text": "Togo",
+    "side": "left"
+   }
+  ]
+ },
+ {
+  "id": "tsd-capitals",
+  "prompt": "State capital or not?",
+  "left": "State capital",
+  "right": "Not a capital",
+  "items": [
+   {
+    "text": "Albany",
+    "side": "left"
+   },
+   {
+    "text": "Chicago",
+    "side": "right"
+   },
+   {
+    "text": "Sacramento",
+    "side": "left"
+   },
+   {
+    "text": "Los Angeles",
+    "side": "right"
+   },
+   {
+    "text": "Austin",
+    "side": "left"
+   },
+   {
+    "text": "Philadelphia",
+    "side": "right"
+   },
+   {
+    "text": "Tallahassee",
+    "side": "left"
+   }
+  ]
+ }
+]

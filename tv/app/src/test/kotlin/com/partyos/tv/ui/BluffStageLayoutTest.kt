@@ -51,7 +51,7 @@ class BluffStageLayoutTest {
 
     @Test fun sixteenBlackjackSeatsFitOnScreen() {
         val seats = (1..16).map { i ->
-            partyos.engine.BjSeat(partyos.engine.PlayerId("p$i"), "Player$i", partyos.engine.Avatar("🙂", "#123456"),
+            partyos.engine.BjSeat(partyos.engine.PlayerId("p$i"), "Player$i", partyos.engine.Avatar("p:00", "#123456"),
                 listOf(partyos.engine.PlayingCard(10, 0), partyos.engine.PlayingCard(9, 1), partyos.engine.PlayingCard(2, 2)), 21, 2, false, "stood")
         }
         val g = partyos.engine.BlackjackTv("play", 1, 5, false, "classic", "Classic Rules", "No tricks.", null, "Zed", null, listOf(partyos.engine.PlayingCard(10, 0), partyos.engine.PlayingCard(0, 0)), 10, 32, 0, seats, 16, 16)

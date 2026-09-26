@@ -31,6 +31,7 @@ import partyos.engine.SecureEntropy
 import partyos.engine.SystemClock
 import partyos.engine.TvState
 import partyos.engine.games.blackjack.DrunkBlackjack
+import partyos.engine.games.trivia.BrainDrain
 import partyos.engine.games.bluff.BluffBattle
 import partyos.server.PartyHost
 import partyos.server.PartyServer
@@ -50,7 +51,7 @@ class PartyRuntime(private val context: Context) {
     val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default + CoroutineExceptionHandler { _, e -> Log.e(TAG, "party task failed", e) })
     val settings = SettingsRepo(context)
     val network = NetworkAddressMonitor(context)
-    val games = GameRegistry(listOf(BluffBattle(), DrunkBlackjack()))
+    val games = GameRegistry(listOf(BrainDrain(), BluffBattle(), DrunkBlackjack()))
     private val store = PartyStore(Room.databaseBuilder(context, PartyDb::class.java, "partyos.db").build())
     private val lock = Mutex()
 

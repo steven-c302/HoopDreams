@@ -17,6 +17,13 @@ import partyos.engine.Role
 import partyos.engine.ScoreRow
 import partyos.engine.Screen
 import partyos.engine.StageInfo
+import partyos.engine.TeamAnswer
+import partyos.engine.TeamGuess
+import partyos.engine.TeamTag
+import partyos.engine.TriviaReveal
+import partyos.engine.TriviaTeam
+import partyos.engine.TriviaTv
+import partyos.engine.DrinkCall
 import partyos.engine.TutorialCard
 import partyos.engine.TutorialView
 import partyos.engine.TvState
@@ -32,9 +39,11 @@ import kotlin.test.assertEquals
 class ProtocolFixturesTest {
     private val pretty = Json(PartyJson) { prettyPrint = true }
     private val sam = PlayerId("p-sam")
-    private val avatar = Avatar("🦊", "#FF7A00")
+    private val avatar = Avatar("p:01", "#FF7A00")
     private val me = PlayerSummary(sam, "Sam", avatar, Role.PLAYER, true)
-    private val rows = listOf(ScoreRow(sam, "Sam", avatar, 1500), ScoreRow(PlayerId("p-al"), "Al", Avatar("🐸", "#22AA55"), 500))
+    private val rows = listOf(ScoreRow(sam, "Sam", avatar, 1500), ScoreRow(PlayerId("p-al"), "Al", Avatar("p:02", "#22AA55"), 500))
+
+    private val team = TeamTag("T1", "Quizzards", "#FF4B3E")
 
     private fun view(screen: Screen, round: Int = 3) = ServerMsg.View(
         seq = 12, view = PhoneState(me, "KXQT", "bluff", "Bluff Battle", round, false, null, 42_000, screen, rows),
@@ -48,6 +57,44 @@ class ProtocolFixturesTest {
         view(Screen.TextEntry("Wombat poop is shaped like ____.", 60, null, "write", "Write a believable fake answer")),
         view(Screen.ChoiceList("Which one is the truth?", listOf(Choice("o1", "cubes"), Choice("o2", "stars")), "o2", "pick")),
         view(Screen.Scores("Final scores", rows)),
+        view(
+            Screen.ChoiceList(
+                "Which planet has the most known moons?", listOf(Choice("a", "Saturn"), Choice("b", "Jupiter")), "a", "answer",
+                style = "shapes", votes = mapOf("a" to listOf(sam)), team = team,
+            ),
+        ),
+        view(Screen.ChoiceList("Pick a team", listOf(Choice("T1", "Quizzards", "#FF4B3E", "2 in")), "T1", "team", style = "teams", team = team)),
+        view(Screen.NumberEntry("How many bones are in the adult human body?", "bones", 206.0, "guess", listOf(TeamGuess(PlayerId("p-al"), 180.0)), team)),
+        view(
+            Screen.MultiSelect(
+                "Which of these are Great Lakes?", listOf(Choice("a", "Huron"), Choice("b", "Erie"), Choice("c", "Champlain")),
+                listOf("a"), false, "multi", eliminated = listOf("c"), votes = mapOf("a" to listOf(sam)), team = team,
+            ),
+        ),
+        view(Screen.Waiting("Correct!", "+1250", "win", team)),
+        ServerMsg.Tv(
+            13,
+            TvState(
+                roomCode = "KXQT",
+                players = listOf(me),
+                stage = StageInfo(
+                    "trivia", "Brain Drain", 9, 1_700_000_068_000, 8_000, false, null, null,
+                    game = TriviaTv(
+                        phase = "reveal", format = "quick", round = 1, totalRounds = 5, q = 2, qTotal = 5, durationMs = 8_000,
+                        prompt = "Which planet has the most known moons?", category = "Science",
+                        options = listOf(Choice("a", "Saturn"), Choice("b", "Jupiter")),
+                        teams = listOf(TriviaTeam("T1", "Quizzards", "#FF4B3E", listOf(sam), 1250)),
+                        reveal = TriviaReveal(listOf("a"), "Saturn", answers = listOf(TeamAnswer("T1", choice = "a", correct = true, points = 1250, seconds = 3.5))),
+                        drink = DrinkCall(listOf("T2"), 1, "last place"),
+                        hostLine = "Only Quizzards knew that.",
+                        fact = "Saturn's count shot past 200 in 2025.",
+                    ),
+                ),
+                scores = rows,
+                lastResult = null,
+                gamesPlayed = 1,
+            ),
+        ),
         ServerMsg.Tv(
             12,
             TvState(
@@ -79,6 +126,12 @@ class ProtocolFixturesTest {
         ClientMsg.Action("a-2", 4, JsonObject(mapOf("kind" to JsonPrimitive("pick"), "option" to JsonPrimitive("o2")))),
         ClientMsg.Action("a-3", 1, JsonObject(mapOf("kind" to JsonPrimitive("ack")))),
         ClientMsg.Host("h-1", HostCommand.Start("bluff", 5)),
+        ClientMsg.Host("h-8", HostCommand.Start("trivia", 5, mapOf("teams" to 4, "drinks" to 1))),
+        ClientMsg.Action("a-4", 9, JsonObject(mapOf("kind" to JsonPrimitive("guess"), "value" to JsonPrimitive(206)))),
+        ClientMsg.Action(
+            "a-5", 10,
+            JsonObject(mapOf("kind" to JsonPrimitive("multi"), "picks" to kotlinx.serialization.json.JsonArray(listOf(JsonPrimitive("a"))), "lock" to JsonPrimitive(true))),
+        ),
         ClientMsg.Host("h-2", HostCommand.Pause),
         ClientMsg.Host("h-3", HostCommand.Resume),
         ClientMsg.Host("h-4", HostCommand.Skip),

@@ -35,7 +35,7 @@ class PartyStoreTest {
     private fun engineWithGame(): PartyEngine {
         val e = PartyEngine(SystemClock, SecureEntropy(), games)
         listOf("Ava", "Ben", "Cy").forEach {
-            val j = e.join(e.roomCode, it, Avatar("🙂", "#112233"), Role.PLAYER) as JoinResult.Joined
+            val j = e.join(e.roomCode, it, Avatar("p:00", "#112233"), Role.PLAYER) as JoinResult.Joined
             e.setPresence(j.player.id, true)
         }
         assertEquals(ActionResult.Ack, e.host(HostCmd.StartGame("bluff")))

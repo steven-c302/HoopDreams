@@ -1,0 +1,2122 @@
+[
+ {
+  "id": "tmc001",
+  "category": "Screen Time",
+  "prompt": "Which Pixar movie takes place inside an 11-year-old girl's head?",
+  "answer": "Inside Out",
+  "wrong": [
+   "Soul",
+   "Coco",
+   "Luca"
+  ],
+  "fact": "Riley's emotions got a sequel in 2024, and Anxiety joined the crew."
+ },
+ {
+  "id": "tmc002",
+  "category": "Screen Time",
+  "prompt": "In The Office (US), which paper company does Michael Scott work for?",
+  "answer": "Dunder Mifflin",
+  "wrong": [
+   "Wernham Hogg",
+   "Sabre Paper",
+   "Initech"
+  ],
+  "fact": "Wernham Hogg is the company in the British original."
+ },
+ {
+  "id": "tmc003",
+  "category": "Screen Time",
+  "prompt": "What's the name of the town in Gilmore Girls?",
+  "answer": "Stars Hollow",
+  "wrong": [
+   "Pawnee",
+   "Hawkins",
+   "Twin Peaks"
+  ],
+  "fact": "Pawnee is Parks and Rec. Hawkins is Stranger Things."
+ },
+ {
+  "id": "tmc004",
+  "category": "Screen Time",
+  "prompt": "Which show follows a chemistry teacher turned drug kingpin?",
+  "answer": "Breaking Bad",
+  "wrong": [
+   "Ozark",
+   "Narcos",
+   "The Wire"
+  ],
+  "fact": "Walter White's alias, Heisenberg, is borrowed from a real physicist."
+ },
+ {
+  "id": "tmc005",
+  "category": "Screen Time",
+  "prompt": "What does Ross yell while moving a couch up the stairs in Friends?",
+  "answer": "Pivot!",
+  "wrong": [
+   "Lift!",
+   "Push!",
+   "Turn!"
+  ],
+  "fact": "Chandler's answer: \"Shut up, shut up, shut up!\""
+ },
+ {
+  "id": "tmc006",
+  "category": "Screen Time",
+  "prompt": "Shrek says ogres are like what, because they have layers?",
+  "answer": "Onions",
+  "wrong": [
+   "Cakes",
+   "Parfaits",
+   "Lasagna"
+  ],
+  "fact": "Donkey argues for parfaits. Everybody likes parfaits."
+ },
+ {
+  "id": "tmc007",
+  "category": "Screen Time",
+  "prompt": "Which movie has the line \"I'm the king of the world!\"?",
+  "answer": "Titanic",
+  "wrong": [
+   "Avatar",
+   "The Lion King",
+   "Gladiator"
+  ],
+  "fact": "James Cameron shouted it again while accepting his Oscar."
+ },
+ {
+  "id": "tmc008",
+  "category": "Screen Time",
+  "prompt": "What position does Harry play on the Quidditch team?",
+  "answer": "Seeker",
+  "wrong": [
+   "Keeper",
+   "Beater",
+   "Chaser"
+  ],
+  "fact": "He was the youngest house player in a century."
+ },
+ {
+  "id": "tmc009",
+  "category": "Screen Time",
+  "prompt": "What's the fictional African nation in Black Panther?",
+  "answer": "Wakanda",
+  "wrong": [
+   "Zamunda",
+   "Genovia",
+   "Latveria"
+  ],
+  "fact": "Zamunda is from Coming to America. Genovia is The Princess Diaries."
+ },
+ {
+  "id": "tmc010",
+  "category": "Screen Time",
+  "prompt": "Which cartoon family lives at 742 Evergreen Terrace?",
+  "answer": "The Simpsons",
+  "wrong": [
+   "The Griffins",
+   "The Belchers",
+   "The Flintstones"
+  ]
+ },
+ {
+  "id": "tmc011",
+  "category": "Screen Time",
+  "prompt": "In Squid Game, what color tracksuits do the players wear?",
+  "answer": "Green",
+  "wrong": [
+   "Red",
+   "Pink",
+   "Black"
+  ],
+  "fact": "The guards wear pink."
+ },
+ {
+  "id": "tmc012",
+  "category": "Screen Time",
+  "prompt": "What's the hotel called in The Shining?",
+  "answer": "The Overlook",
+  "wrong": [
+   "The Bates",
+   "The Stanley",
+   "The Continental"
+  ],
+  "fact": "The real Stanley Hotel inspired Stephen King, but the book calls it the Overlook."
+ },
+ {
+  "id": "tmc013",
+  "category": "Screen Time",
+  "prompt": "Which Star Wars villain reveals \"I am your father\"?",
+  "answer": "Darth Vader",
+  "wrong": [
+   "Emperor Palpatine",
+   "Boba Fett",
+   "Count Dooku"
+  ],
+  "fact": "Nobody says \"Luke, I am your father.\" The real line is \"No, I am your father.\""
+ },
+ {
+  "id": "tmc014",
+  "category": "Screen Time",
+  "prompt": "What's the name of Barbie's longtime boyfriend?",
+  "answer": "Ken",
+  "wrong": [
+   "Kevin",
+   "Kyle",
+   "Chad"
+  ],
+  "fact": "Barbie and Ken are named after the inventor's kids, Barbara and Kenneth."
+ },
+ {
+  "id": "tmc015",
+  "category": "Screen Time",
+  "prompt": "Which show is set in Hawkins, Indiana?",
+  "answer": "Stranger Things",
+  "wrong": [
+   "Riverdale",
+   "Wednesday",
+   "Outer Banks"
+  ]
+ },
+ {
+  "id": "tmc016",
+  "category": "Screen Time",
+  "prompt": "What breed of dog is Scooby-Doo?",
+  "answer": "Great Dane",
+  "wrong": [
+   "Beagle",
+   "Boxer",
+   "Saint Bernard"
+  ]
+ },
+ {
+  "id": "tmc017",
+  "category": "Screen Time",
+  "prompt": "What does \"Hakuna Matata\" mean?",
+  "answer": "No worries",
+  "wrong": [
+   "Be happy",
+   "Long live the king",
+   "Let it go"
+  ],
+  "fact": "It's a real Swahili phrase."
+ },
+ {
+  "id": "tmc018",
+  "category": "Screen Time",
+  "prompt": "Which movie won the first-ever Oscar for Best Animated Feature?",
+  "answer": "Shrek",
+  "wrong": [
+   "Toy Story",
+   "Monsters, Inc.",
+   "Finding Nemo"
+  ],
+  "fact": "The category started in 2002, and Shrek beat Monsters, Inc."
+ },
+ {
+  "id": "tmc019",
+  "category": "Screen Time",
+  "prompt": "In Ted Lasso, what sport does Ted coach?",
+  "answer": "Soccer",
+  "wrong": [
+   "American football",
+   "Basketball",
+   "Rugby"
+  ],
+  "fact": "Before Richmond, Ted coached American college football."
+ },
+ {
+  "id": "tmc020",
+  "category": "Screen Time",
+  "prompt": "In Mean Girls, on which day do they wear pink?",
+  "answer": "Wednesday",
+  "wrong": [
+   "Monday",
+   "Friday",
+   "Tuesday"
+  ],
+  "fact": "October 3rd has become unofficial Mean Girls Day."
+ },
+ {
+  "id": "tmc021",
+  "category": "Screen Time",
+  "prompt": "What's the highest-grossing film of all time (not adjusted for inflation)?",
+  "answer": "Avatar",
+  "wrong": [
+   "Avengers: Endgame",
+   "Titanic",
+   "The Force Awakens"
+  ],
+  "fact": "Avatar retook the top spot with a 2021 re-release."
+ },
+ {
+  "id": "tmc022",
+  "category": "Screen Time",
+  "prompt": "Who played Captain Jack Sparrow?",
+  "answer": "Johnny Depp",
+  "wrong": [
+   "Orlando Bloom",
+   "Keanu Reeves",
+   "Russell Crowe"
+  ]
+ },
+ {
+  "id": "tmc023",
+  "category": "Screen Time",
+  "prompt": "In Frozen, what's the snowman's name?",
+  "answer": "Olaf",
+  "wrong": [
+   "Sven",
+   "Kristoff",
+   "Hans"
+  ],
+  "fact": "Sven is the reindeer. Hans is the villain."
+ },
+ {
+  "id": "tmc024",
+  "category": "Screen Time",
+  "prompt": "What does Homer Simpson say when he messes up?",
+  "answer": "D'oh!",
+  "wrong": [
+   "Eat my shorts!",
+   "Ay caramba!",
+   "Cowabunga!"
+  ],
+  "fact": "\"Eat my shorts\" and \"Ay caramba\" are Bart's lines."
+ },
+ {
+  "id": "tmc025",
+  "category": "Screen Time",
+  "prompt": "Which Marvel hero's hammer is named Mjolnir?",
+  "answer": "Thor",
+  "wrong": [
+   "Hulk",
+   "Captain America",
+   "Loki"
+  ],
+  "fact": "Captain America lifts it in Endgame, so he's worthy too."
+ },
+ {
+  "id": "tmc026",
+  "category": "Screen Time",
+  "prompt": "What's the motto of House Stark in Game of Thrones?",
+  "answer": "Winter is coming",
+  "wrong": [
+   "Fire and blood",
+   "Hear me roar",
+   "We do not sow"
+  ],
+  "fact": "\"Hear me roar\" is the Lannisters'."
+ },
+ {
+  "id": "tmc027",
+  "category": "Screen Time",
+  "prompt": "Which Pixar film stars a rat who dreams of being a chef?",
+  "answer": "Ratatouille",
+  "wrong": [
+   "Flushed Away",
+   "Chef",
+   "Stuart Little"
+  ],
+  "fact": "The rat's name is Remy."
+ },
+ {
+  "id": "tmc028",
+  "category": "Screen Time",
+  "prompt": "Which reality show has singles in a villa who have to \"couple up\"?",
+  "answer": "Love Island",
+  "wrong": [
+   "The Bachelor",
+   "Big Brother",
+   "Too Hot to Handle"
+  ]
+ },
+ {
+  "id": "tmc029",
+  "category": "Screen Time",
+  "prompt": "Which Nintendo hero is a pink puffball who swallows enemies whole?",
+  "answer": "Kirby",
+  "wrong": [
+   "Jigglypuff",
+   "Yoshi",
+   "Toad"
+  ],
+  "fact": "Jigglypuff is pink and round too, but it sings people to sleep."
+ },
+ {
+  "id": "tmc030",
+  "category": "Screen Time",
+  "prompt": "What's the pig's name in Charlotte's Web?",
+  "answer": "Wilbur",
+  "wrong": [
+   "Babe",
+   "Napoleon",
+   "Porky"
+  ]
+ },
+ {
+  "id": "tmc031",
+  "category": "Screen Time",
+  "prompt": "Who is Sherlock Holmes's sidekick?",
+  "answer": "Dr. Watson",
+  "wrong": [
+   "Moriarty",
+   "Lestrade",
+   "Mycroft"
+  ],
+  "fact": "Moriarty is his nemesis. Mycroft is his brother."
+ },
+ {
+  "id": "tmc032",
+  "category": "Screen Time",
+  "prompt": "In Grey's Anatomy, which city is the hospital in?",
+  "answer": "Seattle",
+  "wrong": [
+   "Chicago",
+   "Boston",
+   "Portland"
+  ]
+ },
+ {
+  "id": "tmc033",
+  "category": "Screen Time",
+  "prompt": "In Shrek, what is Donkey's love interest?",
+  "answer": "A dragon",
+  "wrong": [
+   "An ogre",
+   "A unicorn",
+   "A fairy"
+  ],
+  "fact": "Their kids are flying donkey-dragons called Dronkeys."
+ },
+ {
+  "id": "tmc034",
+  "category": "Screen Time",
+  "prompt": "What's the name of the cowboy in Toy Story?",
+  "answer": "Woody",
+  "wrong": [
+   "Buzz",
+   "Andy",
+   "Rex"
+  ]
+ },
+ {
+  "id": "tmc035",
+  "category": "Screen Time",
+  "prompt": "What's the coffee shop called in Friends?",
+  "answer": "Central Perk",
+  "wrong": [
+   "The Daily Grind",
+   "Central Park",
+   "Bean There"
+  ]
+ },
+ {
+  "id": "tmc036",
+  "category": "Screen Time",
+  "prompt": "In The Matrix, which color pill does Neo take?",
+  "answer": "Red",
+  "wrong": [
+   "Blue",
+   "Green",
+   "White"
+  ],
+  "fact": "The blue pill would have sent him back to bed."
+ },
+ {
+  "id": "tmc037",
+  "category": "Screen Time",
+  "prompt": "What's Batman's home city?",
+  "answer": "Gotham",
+  "wrong": [
+   "Metropolis",
+   "Star City",
+   "Smallville"
+  ],
+  "fact": "Metropolis is Superman's."
+ },
+ {
+  "id": "tmc038",
+  "category": "Screen Time",
+  "prompt": "In Finding Nemo, what kind of fish is Nemo?",
+  "answer": "Clownfish",
+  "wrong": [
+   "Goldfish",
+   "Angelfish",
+   "Swordfish"
+  ]
+ },
+ {
+  "id": "tmc039",
+  "category": "Screen Time",
+  "prompt": "Which movie gave us the song \"Let It Go\"?",
+  "answer": "Frozen",
+  "wrong": [
+   "Tangled",
+   "Moana",
+   "Brave"
+  ]
+ },
+ {
+  "id": "tmc040",
+  "category": "Music",
+  "prompt": "The Eras Tour became the highest-grossing tour ever. Roughly how much did it gross?",
+  "answer": "Over $2 billion",
+  "wrong": [
+   "About $500 million",
+   "About $900 million",
+   "About $1.2 billion"
+  ],
+  "fact": "It passed $2 billion across 149 shows."
+ },
+ {
+  "id": "tmc041",
+  "category": "Music",
+  "prompt": "Who was the Beatles' drummer?",
+  "answer": "Ringo Starr",
+  "wrong": [
+   "John Lennon",
+   "Paul McCartney",
+   "George Harrison"
+  ],
+  "fact": "Ringo replaced Pete Best in 1962, just before the band blew up."
+ },
+ {
+  "id": "tmc042",
+  "category": "Music",
+  "prompt": "Which rapper's real name is Marshall Mathers?",
+  "answer": "Eminem",
+  "wrong": [
+   "Drake",
+   "Macklemore",
+   "Post Malone"
+  ],
+  "fact": "Slim Shady was his alter ego."
+ },
+ {
+  "id": "tmc043",
+  "category": "Music",
+  "prompt": "Who is known as the Queen of Pop?",
+  "answer": "Madonna",
+  "wrong": [
+   "Britney Spears",
+   "Lady Gaga",
+   "Whitney Houston"
+  ]
+ },
+ {
+  "id": "tmc044",
+  "category": "Music",
+  "prompt": "Which Disney movie has the song \"We Don't Talk About Bruno\"?",
+  "answer": "Encanto",
+  "wrong": [
+   "Coco",
+   "Moana",
+   "Luca"
+  ],
+  "fact": "It hit No. 1 on the Billboard Hot 100. \"Let It Go\" never did."
+ },
+ {
+  "id": "tmc045",
+  "category": "Music",
+  "prompt": "Who released the album Thriller?",
+  "answer": "Michael Jackson",
+  "wrong": [
+   "Prince",
+   "Stevie Wonder",
+   "Lionel Richie"
+  ],
+  "fact": "It's still the best-selling album of all time."
+ },
+ {
+  "id": "tmc046",
+  "category": "Music",
+  "prompt": "Who sang \"Call Me Maybe\"?",
+  "answer": "Carly Rae Jepsen",
+  "wrong": [
+   "Katy Perry",
+   "Kesha",
+   "Avril Lavigne"
+  ]
+ },
+ {
+  "id": "tmc047",
+  "category": "Music",
+  "prompt": "Whose 2011 album is titled 21?",
+  "answer": "Adele",
+  "wrong": [
+   "Rihanna",
+   "Lorde",
+   "Amy Winehouse"
+  ],
+  "fact": "Adele names her albums after her age: 19, 21, 25 and 30."
+ },
+ {
+  "id": "tmc048",
+  "category": "Music",
+  "prompt": "Which K-pop group had a hit with \"Dynamite\"?",
+  "answer": "BTS",
+  "wrong": [
+   "BLACKPINK",
+   "EXO",
+   "TWICE"
+  ],
+  "fact": "It was their first all-English single and first Hot 100 No. 1."
+ },
+ {
+  "id": "tmc049",
+  "category": "Music",
+  "prompt": "Which band sings \"Mr. Brightside\"?",
+  "answer": "The Killers",
+  "wrong": [
+   "The Strokes",
+   "Arctic Monkeys",
+   "Franz Ferdinand"
+  ],
+  "fact": "It has spent years on the UK charts, long after its release."
+ },
+ {
+  "id": "tmc050",
+  "category": "Music",
+  "prompt": "Who recorded \"Old Town Road\" with Billy Ray Cyrus?",
+  "answer": "Lil Nas X",
+  "wrong": [
+   "Lil Uzi Vert",
+   "Lil Wayne",
+   "Lil Baby"
+  ],
+  "fact": "It spent 19 weeks at No. 1, a record at the time."
+ },
+ {
+  "id": "tmc051",
+  "category": "Music",
+  "prompt": "Which band released \"Dancing Queen\"?",
+  "answer": "ABBA",
+  "wrong": [
+   "Queen",
+   "Fleetwood Mac",
+   "Blondie"
+  ]
+ },
+ {
+  "id": "tmc052",
+  "category": "Music",
+  "prompt": "Who released the album Lemonade in 2016?",
+  "answer": "Beyoncé",
+  "wrong": [
+   "Rihanna",
+   "Adele",
+   "Lady Gaga"
+  ]
+ },
+ {
+  "id": "tmc053",
+  "category": "Music",
+  "prompt": "Which instrument usually has 88 keys?",
+  "answer": "Piano",
+  "wrong": [
+   "Accordion",
+   "Organ",
+   "Harpsichord"
+  ]
+ },
+ {
+  "id": "tmc054",
+  "category": "Music",
+  "prompt": "Which singer is known as the \"Rocket Man\"?",
+  "answer": "Elton John",
+  "wrong": [
+   "David Bowie",
+   "Billy Joel",
+   "Sting"
+  ]
+ },
+ {
+  "id": "tmc055",
+  "category": "Music",
+  "prompt": "Which group sang \"Wannabe\" in 1996?",
+  "answer": "Spice Girls",
+  "wrong": [
+   "TLC",
+   "Destiny's Child",
+   "All Saints"
+  ]
+ },
+ {
+  "id": "tmc056",
+  "category": "Music",
+  "prompt": "Which band was fronted by Freddie Mercury?",
+  "answer": "Queen",
+  "wrong": [
+   "The Beatles",
+   "Oasis",
+   "The Police"
+  ]
+ },
+ {
+  "id": "tmc057",
+  "category": "Music",
+  "prompt": "Which rapper founded the fashion label Yeezy?",
+  "answer": "Kanye West",
+  "wrong": [
+   "Jay-Z",
+   "Pharrell",
+   "Travis Scott"
+  ]
+ },
+ {
+  "id": "tmc058",
+  "category": "Food & Drink",
+  "prompt": "Miso is a fermented paste made mainly from what?",
+  "answer": "Soybeans",
+  "wrong": [
+   "Rice flour",
+   "Seaweed",
+   "Fish"
+  ]
+ },
+ {
+  "id": "tmc059",
+  "category": "Food & Drink",
+  "prompt": "Which nut is ground up to make marzipan?",
+  "answer": "Almonds",
+  "wrong": [
+   "Cashews",
+   "Hazelnuts",
+   "Pistachios"
+  ]
+ },
+ {
+  "id": "tmc060",
+  "category": "Food & Drink",
+  "prompt": "Tequila is made from which plant?",
+  "answer": "Blue agave",
+  "wrong": [
+   "Cactus",
+   "Sugarcane",
+   "Aloe"
+  ],
+  "fact": "Agave is a succulent, not a cactus."
+ },
+ {
+  "id": "tmc061",
+  "category": "Food & Drink",
+  "prompt": "What gives beer its bitterness?",
+  "answer": "Hops",
+  "wrong": [
+   "Yeast",
+   "Barley",
+   "Carbonation"
+  ],
+  "fact": "Hops are flowers, and cousins of cannabis."
+ },
+ {
+  "id": "tmc062",
+  "category": "Food & Drink",
+  "prompt": "Which country drinks the most coffee per person?",
+  "answer": "Finland",
+  "wrong": [
+   "Italy",
+   "USA",
+   "Colombia"
+  ],
+  "fact": "Finns get through about 12 kg of coffee each per year."
+ },
+ {
+  "id": "tmc063",
+  "category": "Food & Drink",
+  "prompt": "Which spirit goes in a Moscow Mule?",
+  "answer": "Vodka",
+  "wrong": [
+   "Gin",
+   "Rum",
+   "Whiskey"
+  ],
+  "fact": "The copper mug started as a 1940s marketing stunt."
+ },
+ {
+  "id": "tmc064",
+  "category": "Food & Drink",
+  "prompt": "Which spirit goes in a classic mojito?",
+  "answer": "White rum",
+  "wrong": [
+   "Vodka",
+   "Gin",
+   "Tequila"
+  ]
+ },
+ {
+  "id": "tmc065",
+  "category": "Food & Drink",
+  "prompt": "A prune is a dried what?",
+  "answer": "Plum",
+  "wrong": [
+   "Grape",
+   "Fig",
+   "Date"
+  ],
+  "fact": "Dried grapes are raisins."
+ },
+ {
+  "id": "tmc066",
+  "category": "Food & Drink",
+  "prompt": "Which pasta's name means \"little tongues\"?",
+  "answer": "Linguine",
+  "wrong": [
+   "Penne",
+   "Fusilli",
+   "Orzo"
+  ],
+  "fact": "Spaghetti means \"little strings\" and vermicelli means \"little worms\"."
+ },
+ {
+  "id": "tmc067",
+  "category": "Food & Drink",
+  "prompt": "What's the hottest part of a chili pepper?",
+  "answer": "The white pith",
+  "wrong": [
+   "The seeds",
+   "The tip",
+   "The skin"
+  ],
+  "fact": "The seeds get the blame, but the heat lives in the pale membrane around them."
+ },
+ {
+  "id": "tmc068",
+  "category": "Food & Drink",
+  "prompt": "Pizza Margherita's colors are said to match which flag?",
+  "answer": "Italy's",
+  "wrong": [
+   "Mexico's",
+   "Ireland's",
+   "Hungary's"
+  ],
+  "fact": "Legend says it was named for Queen Margherita in 1889."
+ },
+ {
+  "id": "tmc069",
+  "category": "Food & Drink",
+  "prompt": "What does IPA stand for?",
+  "answer": "India Pale Ale",
+  "wrong": [
+   "Imperial Pale Ale",
+   "Irish Pale Ale",
+   "Indie Pilsner Ale"
+  ],
+  "fact": "The style traces back to British beer shipped to India in the 1800s."
+ },
+ {
+  "id": "tmc070",
+  "category": "Food & Drink",
+  "prompt": "Sauerkraut is made from which vegetable?",
+  "answer": "Cabbage",
+  "wrong": [
+   "Cucumber",
+   "Turnip",
+   "Onion"
+  ]
+ },
+ {
+  "id": "tmc071",
+  "category": "Food & Drink",
+  "prompt": "Which chain's secret menu has \"Animal Style\"?",
+  "answer": "In-N-Out",
+  "wrong": [
+   "Five Guys",
+   "Shake Shack",
+   "Whataburger"
+  ]
+ },
+ {
+  "id": "tmc072",
+  "category": "Food & Drink",
+  "prompt": "Besides vodka, what's the main ingredient in a Bloody Mary?",
+  "answer": "Tomato juice",
+  "wrong": [
+   "Orange juice",
+   "Cranberry juice",
+   "Pickle brine"
+  ]
+ },
+ {
+  "id": "tmc073",
+  "category": "Food & Drink",
+  "prompt": "Real Champagne can only come from which country?",
+  "answer": "France",
+  "wrong": [
+   "Italy",
+   "Spain",
+   "Portugal"
+  ],
+  "fact": "Italy makes prosecco. Spain makes cava."
+ },
+ {
+  "id": "tmc074",
+  "category": "Food & Drink",
+  "prompt": "Which drink is made by fermenting honey?",
+  "answer": "Mead",
+  "wrong": [
+   "Cider",
+   "Sake",
+   "Kombucha"
+  ]
+ },
+ {
+  "id": "tmc075",
+  "category": "Food & Drink",
+  "prompt": "Sake is brewed from what?",
+  "answer": "Rice",
+  "wrong": [
+   "Barley",
+   "Plums",
+   "Potatoes"
+  ]
+ },
+ {
+  "id": "tmc076",
+  "category": "Food & Drink",
+  "prompt": "Which liquor gets its flavor from juniper berries?",
+  "answer": "Gin",
+  "wrong": [
+   "Vodka",
+   "Rum",
+   "Brandy"
+  ],
+  "fact": "The name comes from genever, the Dutch word for juniper."
+ },
+ {
+  "id": "tmc077",
+  "category": "Food & Drink",
+  "prompt": "In beer pong, how many cups does each side usually start with?",
+  "answer": "Ten",
+  "wrong": [
+   "Six",
+   "Twelve",
+   "Eight"
+  ],
+  "fact": "Arranged 4-3-2-1. You knew that."
+ },
+ {
+  "id": "tmc078",
+  "category": "Food & Drink",
+  "prompt": "Which cheese is traditional in a Greek salad?",
+  "answer": "Feta",
+  "wrong": [
+   "Brie",
+   "Cheddar",
+   "Gouda"
+  ]
+ },
+ {
+  "id": "tmc079",
+  "category": "Food & Drink",
+  "prompt": "Which fruit makes guacamole green?",
+  "answer": "Avocado",
+  "wrong": [
+   "Lime",
+   "Kiwi",
+   "Green tomato"
+  ]
+ },
+ {
+  "id": "tmc080",
+  "category": "Food & Drink",
+  "prompt": "Which pasta is shaped like little bow ties?",
+  "answer": "Farfalle",
+  "wrong": [
+   "Penne",
+   "Fusilli",
+   "Linguine"
+  ],
+  "fact": "Farfalle means \"butterflies\"."
+ },
+ {
+  "id": "tmc081",
+  "category": "Food & Drink",
+  "prompt": "What's the main ingredient in hummus?",
+  "answer": "Chickpeas",
+  "wrong": [
+   "Lentils",
+   "Potatoes",
+   "White beans"
+  ]
+ },
+ {
+  "id": "tmc082",
+  "category": "Food & Drink",
+  "prompt": "Sushi rice is seasoned with what?",
+  "answer": "Rice vinegar",
+  "wrong": [
+   "Soy sauce",
+   "Sesame oil",
+   "Coconut milk"
+  ]
+ },
+ {
+  "id": "tmc083",
+  "category": "Food & Drink",
+  "prompt": "Which country does paella come from?",
+  "answer": "Spain",
+  "wrong": [
+   "Italy",
+   "Mexico",
+   "Greece"
+  ],
+  "fact": "It started in Valencia."
+ },
+ {
+  "id": "tmc084",
+  "category": "Science",
+  "prompt": "What's the most common gas in Earth's atmosphere?",
+  "answer": "Nitrogen",
+  "wrong": [
+   "Oxygen",
+   "Carbon dioxide",
+   "Argon"
+  ],
+  "fact": "About 78% nitrogen. Oxygen is only about 21%."
+ },
+ {
+  "id": "tmc085",
+  "category": "Science",
+  "prompt": "H2O2 is better known as what?",
+  "answer": "Hydrogen peroxide",
+  "wrong": [
+   "Water",
+   "Bleach",
+   "Baking soda"
+  ]
+ },
+ {
+  "id": "tmc086",
+  "category": "Science",
+  "prompt": "Which organ does most of the work clearing alcohol from your blood?",
+  "answer": "Liver",
+  "wrong": [
+   "Kidneys",
+   "Stomach",
+   "Pancreas"
+  ],
+  "fact": "It handles roughly one standard drink an hour. Pace yourselves."
+ },
+ {
+  "id": "tmc087",
+  "category": "Science",
+  "prompt": "What's the chemical symbol for sodium?",
+  "answer": "Na",
+  "wrong": [
+   "So",
+   "Sd",
+   "Nm"
+  ],
+  "fact": "It comes from natrium, its Latin name."
+ },
+ {
+  "id": "tmc088",
+  "category": "Science",
+  "prompt": "What's the smallest bone in the human body?",
+  "answer": "The stapes, in the ear",
+  "wrong": [
+   "A pinky toe bone",
+   "The tailbone",
+   "The hyoid, in the neck"
+  ],
+  "fact": "It's about the size of a grain of rice."
+ },
+ {
+  "id": "tmc089",
+  "category": "Science",
+  "prompt": "At what temperature are Celsius and Fahrenheit the same?",
+  "answer": "-40",
+  "wrong": [
+   "0",
+   "-32",
+   "100"
+  ]
+ },
+ {
+  "id": "tmc090",
+  "category": "Science",
+  "prompt": "Sunlight takes about how long to reach Earth?",
+  "answer": "About 8 minutes",
+  "wrong": [
+   "About 8 seconds",
+   "About 8 hours",
+   "About 1 second"
+  ],
+  "fact": "8 minutes and 20 seconds, on average."
+ },
+ {
+  "id": "tmc091",
+  "category": "Science",
+  "prompt": "Which planet has the most known moons?",
+  "answer": "Saturn",
+  "wrong": [
+   "Jupiter",
+   "Uranus",
+   "Neptune"
+  ],
+  "fact": "Saturn's count shot past 200 after a batch of discoveries in 2025."
+ },
+ {
+  "id": "tmc092",
+  "category": "Science",
+  "prompt": "What's the closest star to Earth?",
+  "answer": "The Sun",
+  "wrong": [
+   "Proxima Centauri",
+   "Sirius",
+   "Polaris"
+  ],
+  "fact": "Next closest is Proxima Centauri, about 4.2 light-years away."
+ },
+ {
+  "id": "tmc093",
+  "category": "Science",
+  "prompt": "What color is a polar bear's skin?",
+  "answer": "Black",
+  "wrong": [
+   "White",
+   "Pink",
+   "Gray"
+  ],
+  "fact": "The fur isn't white either. Each hair is clear and hollow."
+ },
+ {
+  "id": "tmc094",
+  "category": "Science",
+  "prompt": "Which blood type can donate red cells to anyone?",
+  "answer": "O negative",
+  "wrong": [
+   "AB positive",
+   "A negative",
+   "B positive"
+  ],
+  "fact": "AB positive people can receive from anyone."
+ },
+ {
+  "id": "tmc095",
+  "category": "Science",
+  "prompt": "Which planet spins on its side?",
+  "answer": "Uranus",
+  "wrong": [
+   "Neptune",
+   "Saturn",
+   "Mars"
+  ],
+  "fact": "Its axis is tipped about 98 degrees."
+ },
+ {
+  "id": "tmc096",
+  "category": "Science",
+  "prompt": "What's the hottest planet in the solar system?",
+  "answer": "Venus",
+  "wrong": [
+   "Mercury",
+   "Mars",
+   "Jupiter"
+  ],
+  "fact": "Mercury is closer to the Sun, but Venus's thick clouds trap the heat."
+ },
+ {
+  "id": "tmc097",
+  "category": "Science",
+  "prompt": "In 2006 Pluto was reclassified as what?",
+  "answer": "A dwarf planet",
+  "wrong": [
+   "An asteroid",
+   "A moon",
+   "A comet"
+  ]
+ },
+ {
+  "id": "tmc098",
+  "category": "Science",
+  "prompt": "Who was the first animal to orbit the Earth?",
+  "answer": "Laika, a dog",
+  "wrong": [
+   "Ham, a chimp",
+   "Félicette, a cat",
+   "Albert, a monkey"
+  ],
+  "fact": "She flew aboard Sputnik 2 in 1957."
+ },
+ {
+  "id": "tmc099",
+  "category": "Science",
+  "prompt": "What does a Geiger counter measure?",
+  "answer": "Radiation",
+  "wrong": [
+   "Earthquakes",
+   "Wind speed",
+   "Humidity"
+  ]
+ },
+ {
+  "id": "tmc100",
+  "category": "Science",
+  "prompt": "Bananas are slightly radioactive because of which element?",
+  "answer": "Potassium",
+  "wrong": [
+   "Uranium",
+   "Iron",
+   "Calcium"
+  ],
+  "fact": "You'd need millions at once for it to matter."
+ },
+ {
+  "id": "tmc101",
+  "category": "Science",
+  "prompt": "Which vitamin does your skin make in sunlight?",
+  "answer": "Vitamin D",
+  "wrong": [
+   "Vitamin C",
+   "Vitamin A",
+   "Vitamin B12"
+  ]
+ },
+ {
+  "id": "tmc102",
+  "category": "Science",
+  "prompt": "Which organ can regrow even after most of it is removed?",
+  "answer": "Liver",
+  "wrong": [
+   "Heart",
+   "Lungs",
+   "Kidney"
+  ]
+ },
+ {
+  "id": "tmc103",
+  "category": "Science",
+  "prompt": "How many teeth does an adult usually have, wisdom teeth included?",
+  "answer": "32",
+  "wrong": [
+   "28",
+   "30",
+   "36"
+  ]
+ },
+ {
+  "id": "tmc104",
+  "category": "Science",
+  "prompt": "What's the largest organ of the human body?",
+  "answer": "Skin",
+  "wrong": [
+   "Liver",
+   "Brain",
+   "Lungs"
+  ]
+ },
+ {
+  "id": "tmc105",
+  "category": "Science",
+  "prompt": "Goosebumps come from tiny muscles attached to what?",
+  "answer": "Hair follicles",
+  "wrong": [
+   "Sweat glands",
+   "Nerve endings",
+   "Blood vessels"
+  ]
+ },
+ {
+  "id": "tmc106",
+  "category": "Science",
+  "prompt": "What's the medical term for a hangover?",
+  "answer": "Veisalgia",
+  "wrong": [
+   "Hypoglycemia",
+   "Dysgeusia",
+   "Vertigo"
+  ],
+  "fact": "It mixes Norwegian for \"uneasiness after debauchery\" with Greek for \"pain\"."
+ },
+ {
+  "id": "tmc107",
+  "category": "Science",
+  "prompt": "Which planet is famous for its huge rings?",
+  "answer": "Saturn",
+  "wrong": [
+   "Mars",
+   "Venus",
+   "Mercury"
+  ],
+  "fact": "Jupiter, Uranus and Neptune have faint rings too."
+ },
+ {
+  "id": "tmc108",
+  "category": "Science",
+  "prompt": "Which gas do plants take in during photosynthesis?",
+  "answer": "Carbon dioxide",
+  "wrong": [
+   "Oxygen",
+   "Helium",
+   "Hydrogen"
+  ]
+ },
+ {
+  "id": "tmc109",
+  "category": "Science",
+  "prompt": "What's the chemical symbol for gold?",
+  "answer": "Au",
+  "wrong": [
+   "Ag",
+   "Go",
+   "Gd"
+  ],
+  "fact": "From aurum, Latin for gold. Ag is silver."
+ },
+ {
+  "id": "tmc110",
+  "category": "Science",
+  "prompt": "How many sides does a hexagon have?",
+  "answer": "Six",
+  "wrong": [
+   "Five",
+   "Seven",
+   "Eight"
+  ]
+ },
+ {
+  "id": "tmc111",
+  "category": "Geography",
+  "prompt": "What's the capital of Australia?",
+  "answer": "Canberra",
+  "wrong": [
+   "Sydney",
+   "Melbourne",
+   "Perth"
+  ],
+  "fact": "It was built as a compromise because Sydney and Melbourne both wanted the job."
+ },
+ {
+  "id": "tmc112",
+  "category": "Geography",
+  "prompt": "Counting overseas territories, which country has the most time zones?",
+  "answer": "France",
+  "wrong": [
+   "Russia",
+   "USA",
+   "China"
+  ],
+  "fact": "Thanks to its territories, France covers 12."
+ },
+ {
+  "id": "tmc113",
+  "category": "Geography",
+  "prompt": "What's the smallest country in the world?",
+  "answer": "Vatican City",
+  "wrong": [
+   "Monaco",
+   "San Marino",
+   "Liechtenstein"
+  ]
+ },
+ {
+  "id": "tmc114",
+  "category": "Geography",
+  "prompt": "Where is the world's largest desert?",
+  "answer": "Antarctica",
+  "wrong": [
+   "Africa",
+   "Asia",
+   "Australia"
+  ],
+  "fact": "A desert is about low rain, not heat. The Sahara is the biggest hot one."
+ },
+ {
+  "id": "tmc115",
+  "category": "Geography",
+  "prompt": "Which river runs through Paris?",
+  "answer": "The Seine",
+  "wrong": [
+   "The Rhine",
+   "The Loire",
+   "The Thames"
+  ]
+ },
+ {
+  "id": "tmc116",
+  "category": "Geography",
+  "prompt": "Mount Everest sits on the border of Nepal and which country?",
+  "answer": "China",
+  "wrong": [
+   "India",
+   "Bhutan",
+   "Pakistan"
+  ],
+  "fact": "The border runs right over the summit."
+ },
+ {
+  "id": "tmc117",
+  "category": "Geography",
+  "prompt": "Which US state has the most coastline?",
+  "answer": "Alaska",
+  "wrong": [
+   "Florida",
+   "California",
+   "Hawaii"
+  ],
+  "fact": "More than all the other states combined."
+ },
+ {
+  "id": "tmc118",
+  "category": "Geography",
+  "prompt": "What's the capital of Canada?",
+  "answer": "Ottawa",
+  "wrong": [
+   "Toronto",
+   "Montreal",
+   "Vancouver"
+  ]
+ },
+ {
+  "id": "tmc119",
+  "category": "Geography",
+  "prompt": "Which country has the most pyramids?",
+  "answer": "Sudan",
+  "wrong": [
+   "Egypt",
+   "Mexico",
+   "Peru"
+  ],
+  "fact": "Ancient Nubian kings built around 200 of them, far more than Egypt."
+ },
+ {
+  "id": "tmc120",
+  "category": "Geography",
+  "prompt": "Which country's flag isn't a rectangle or a square?",
+  "answer": "Nepal",
+  "wrong": [
+   "Bhutan",
+   "Qatar",
+   "Switzerland"
+  ],
+  "fact": "Switzerland's is square. Nepal's is two stacked triangles."
+ },
+ {
+  "id": "tmc121",
+  "category": "Geography",
+  "prompt": "Istanbul sits on which two continents?",
+  "answer": "Europe and Asia",
+  "wrong": [
+   "Europe and Africa",
+   "Asia and Africa",
+   "Asia and Oceania"
+  ]
+ },
+ {
+  "id": "tmc122",
+  "category": "Geography",
+  "prompt": "What's Africa's largest country by area?",
+  "answer": "Algeria",
+  "wrong": [
+   "Nigeria",
+   "Egypt",
+   "DR Congo"
+  ],
+  "fact": "Sudan held the title until South Sudan split off in 2011."
+ },
+ {
+  "id": "tmc123",
+  "category": "Geography",
+  "prompt": "Which state is the Tar Heel State?",
+  "answer": "North Carolina",
+  "wrong": [
+   "South Carolina",
+   "Virginia",
+   "Tennessee"
+  ],
+  "fact": "The nickname goes back to the state's old pine tar industry. Go Heels."
+ },
+ {
+  "id": "tmc124",
+  "category": "Geography",
+  "prompt": "What's the largest ocean on Earth?",
+  "answer": "Pacific",
+  "wrong": [
+   "Atlantic",
+   "Indian",
+   "Arctic"
+  ]
+ },
+ {
+  "id": "tmc125",
+  "category": "Geography",
+  "prompt": "What's the longest river in South America?",
+  "answer": "The Amazon",
+  "wrong": [
+   "The Paraná",
+   "The Orinoco",
+   "The Magdalena"
+  ]
+ },
+ {
+  "id": "tmc126",
+  "category": "History",
+  "prompt": "In what year did humans first land on the Moon?",
+  "answer": "1969",
+  "wrong": [
+   "1965",
+   "1972",
+   "1959"
+  ]
+ },
+ {
+  "id": "tmc127",
+  "category": "History",
+  "prompt": "Which of the Seven Wonders of the Ancient World still stands?",
+  "answer": "Great Pyramid of Giza",
+  "wrong": [
+   "Hanging Gardens",
+   "Colossus of Rhodes",
+   "Lighthouse of Alexandria"
+  ],
+  "fact": "It's the oldest of the seven, and the only survivor."
+ },
+ {
+  "id": "tmc128",
+  "category": "History",
+  "prompt": "Which empire built Machu Picchu?",
+  "answer": "The Inca",
+  "wrong": [
+   "The Aztecs",
+   "The Maya",
+   "The Olmecs"
+  ]
+ },
+ {
+  "id": "tmc129",
+  "category": "History",
+  "prompt": "In what year did the Berlin Wall fall?",
+  "answer": "1989",
+  "wrong": [
+   "1991",
+   "1985",
+   "1979"
+  ]
+ },
+ {
+  "id": "tmc130",
+  "category": "History",
+  "prompt": "Who painted the Sistine Chapel ceiling?",
+  "answer": "Michelangelo",
+  "wrong": [
+   "Leonardo da Vinci",
+   "Raphael",
+   "Donatello"
+  ],
+  "fact": "He painted mostly standing up, not lying on his back."
+ },
+ {
+  "id": "tmc131",
+  "category": "History",
+  "prompt": "Which country gave the Statue of Liberty to the US?",
+  "answer": "France",
+  "wrong": [
+   "England",
+   "Spain",
+   "Italy"
+  ],
+  "fact": "It crossed the Atlantic in 350 pieces, packed in more than 200 crates."
+ },
+ {
+  "id": "tmc132",
+  "category": "History",
+  "prompt": "Napoleon is remembered as tiny. How tall was he really?",
+  "answer": "About average",
+  "wrong": [
+   "Under 5 feet",
+   "Over 6 feet",
+   "Exactly 5 feet"
+  ],
+  "fact": "About 5'7\", roughly average. British cartoonists spread the short jokes."
+ },
+ {
+  "id": "tmc133",
+  "category": "History",
+  "prompt": "Where was paper invented?",
+  "answer": "China",
+  "wrong": [
+   "Egypt",
+   "Greece",
+   "Rome"
+  ],
+  "fact": "Egypt had papyrus first, but true paper came from China."
+ },
+ {
+  "id": "tmc134",
+  "category": "History",
+  "prompt": "What did the 19th Amendment guarantee?",
+  "answer": "Women's right to vote",
+  "wrong": [
+   "End of slavery",
+   "Free speech",
+   "Prohibition"
+  ]
+ },
+ {
+  "id": "tmc135",
+  "category": "History",
+  "prompt": "In what year did US Prohibition end?",
+  "answer": "1933",
+  "wrong": [
+   "1920",
+   "1945",
+   "1929"
+  ],
+  "fact": "The 21st Amendment is the only one that cancels another."
+ },
+ {
+  "id": "tmc136",
+  "category": "Sports",
+  "prompt": "How many players does a soccer team have on the field?",
+  "answer": "11",
+  "wrong": [
+   "9",
+   "10",
+   "12"
+  ]
+ },
+ {
+  "id": "tmc137",
+  "category": "Sports",
+  "prompt": "Which country has won the most men's World Cups?",
+  "answer": "Brazil",
+  "wrong": [
+   "Germany",
+   "Italy",
+   "Argentina"
+  ],
+  "fact": "Five titles."
+ },
+ {
+  "id": "tmc138",
+  "category": "Sports",
+  "prompt": "In golf, what's one stroke under par called?",
+  "answer": "Birdie",
+  "wrong": [
+   "Eagle",
+   "Bogey",
+   "Albatross"
+  ]
+ },
+ {
+  "id": "tmc139",
+  "category": "Sports",
+  "prompt": "How long is a marathon?",
+  "answer": "26.2 miles",
+  "wrong": [
+   "24 miles",
+   "30 miles",
+   "13.1 miles"
+  ],
+  "fact": "13.1 is a half marathon. Still impressive."
+ },
+ {
+  "id": "tmc140",
+  "category": "Sports",
+  "prompt": "Michael Jordan won six NBA titles with which team?",
+  "answer": "Chicago Bulls",
+  "wrong": [
+   "LA Lakers",
+   "Boston Celtics",
+   "Washington Wizards"
+  ],
+  "fact": "Before the NBA, he hit the title-winning shot for UNC in 1982."
+ },
+ {
+  "id": "tmc141",
+  "category": "Sports",
+  "prompt": "In which event would you do a Fosbury Flop?",
+  "answer": "High jump",
+  "wrong": [
+   "Diving",
+   "Gymnastics",
+   "Pole vault"
+  ]
+ },
+ {
+  "id": "tmc142",
+  "category": "Sports",
+  "prompt": "How many rings are on the Olympic flag?",
+  "answer": "Five",
+  "wrong": [
+   "Four",
+   "Six",
+   "Seven"
+  ]
+ },
+ {
+  "id": "tmc143",
+  "category": "Sports",
+  "prompt": "Which Grand Slam tennis tournament is played on grass?",
+  "answer": "Wimbledon",
+  "wrong": [
+   "French Open",
+   "US Open",
+   "Australian Open"
+  ],
+  "fact": "Players there have to wear almost all white."
+ },
+ {
+  "id": "tmc144",
+  "category": "Sports",
+  "prompt": "What's a perfect score in ten-pin bowling?",
+  "answer": "300",
+  "wrong": [
+   "200",
+   "250",
+   "350"
+  ],
+  "fact": "Twelve strikes in a row."
+ },
+ {
+  "id": "tmc145",
+  "category": "Sports",
+  "prompt": "How many points is an NFL touchdown worth?",
+  "answer": "Six",
+  "wrong": [
+   "Seven",
+   "Three",
+   "Five"
+  ]
+ },
+ {
+  "id": "tmc146",
+  "category": "Sports",
+  "prompt": "Basketball's inventor, James Naismith, came from which country?",
+  "answer": "Canada",
+  "wrong": [
+   "USA",
+   "Scotland",
+   "Ireland"
+  ],
+  "fact": "He invented the game in Massachusetts in 1891, using peach baskets."
+ },
+ {
+  "id": "tmc147",
+  "category": "Sports",
+  "prompt": "How many points is a basketball free throw worth?",
+  "answer": "One",
+  "wrong": [
+   "Two",
+   "Three",
+   "Half a point"
+  ]
+ },
+ {
+  "id": "tmc148",
+  "category": "Sports",
+  "prompt": "Which chess piece moves in an L shape?",
+  "answer": "Knight",
+  "wrong": [
+   "Bishop",
+   "Rook",
+   "Queen"
+  ]
+ },
+ {
+  "id": "tmc149",
+  "category": "Sports",
+  "prompt": "What's three strikes in a row called in bowling?",
+  "answer": "A turkey",
+  "wrong": [
+   "An eagle",
+   "A hat trick",
+   "A triple double"
+  ]
+ },
+ {
+  "id": "tmc150",
+  "category": "Sports",
+  "prompt": "In tennis, what does \"love\" mean?",
+  "answer": "Zero",
+  "wrong": [
+   "A tie",
+   "Match point",
+   "An ace"
+  ]
+ },
+ {
+  "id": "tmc151",
+  "category": "Sports",
+  "prompt": "How many players per side are on court in indoor volleyball?",
+  "answer": "Six",
+  "wrong": [
+   "Five",
+   "Seven",
+   "Eight"
+  ]
+ },
+ {
+  "id": "tmc152",
+  "category": "Sports",
+  "prompt": "What color jersey does the Tour de France leader wear?",
+  "answer": "Yellow",
+  "wrong": [
+   "Red",
+   "Blue",
+   "Green"
+  ],
+  "fact": "Green goes to the best sprinter."
+ },
+ {
+  "id": "tmc153",
+  "category": "Animals",
+  "prompt": "What's a baby kangaroo called?",
+  "answer": "A joey",
+  "wrong": [
+   "A kit",
+   "A cub",
+   "A pup"
+  ]
+ },
+ {
+  "id": "tmc154",
+  "category": "Animals",
+  "prompt": "Which bird is the fastest animal on Earth in a dive?",
+  "answer": "Peregrine falcon",
+  "wrong": [
+   "Bald eagle",
+   "Golden eagle",
+   "Swift"
+  ],
+  "fact": "It can top 200 mph in a dive."
+ },
+ {
+  "id": "tmc155",
+  "category": "Animals",
+  "prompt": "What's the only mammal that can truly fly?",
+  "answer": "The bat",
+  "wrong": [
+   "The flying squirrel",
+   "The sugar glider",
+   "The colugo"
+  ],
+  "fact": "Flying squirrels just glide."
+ },
+ {
+  "id": "tmc156",
+  "category": "Animals",
+  "prompt": "Which animal has fingerprints almost identical to a human's?",
+  "answer": "Koala",
+  "wrong": [
+   "Chimpanzee",
+   "Gorilla",
+   "Orangutan"
+  ],
+  "fact": "They're close enough to confuse a crime lab."
+ },
+ {
+  "id": "tmc157",
+  "category": "Animals",
+  "prompt": "What's a group of lions called?",
+  "answer": "A pride",
+  "wrong": [
+   "A pack",
+   "A herd",
+   "A troop"
+  ]
+ },
+ {
+  "id": "tmc158",
+  "category": "Animals",
+  "prompt": "Which animal has rectangular pupils?",
+  "answer": "Goat",
+  "wrong": [
+   "Cat",
+   "Owl",
+   "Snake"
+  ],
+  "fact": "Wide pupils help grazers spot predators across the horizon."
+ },
+ {
+  "id": "tmc159",
+  "category": "Animals",
+  "prompt": "What's a male bee called?",
+  "answer": "A drone",
+  "wrong": [
+   "A worker",
+   "A king",
+   "A jack"
+  ]
+ },
+ {
+  "id": "tmc160",
+  "category": "Animals",
+  "prompt": "What's the largest species of shark?",
+  "answer": "Whale shark",
+  "wrong": [
+   "Great white",
+   "Hammerhead",
+   "Tiger shark"
+  ],
+  "fact": "It eats plankton and is harmless to people."
+ },
+ {
+  "id": "tmc161",
+  "category": "Animals",
+  "prompt": "Which of these animals can't jump?",
+  "answer": "Elephant",
+  "wrong": [
+   "Kangaroo",
+   "Cat",
+   "Frog"
+  ],
+  "fact": "One of its feet always stays on the ground."
+ },
+ {
+  "id": "tmc162",
+  "category": "Animals",
+  "prompt": "What grows in a sloth's fur?",
+  "answer": "Algae",
+  "wrong": [
+   "Grass",
+   "Tiny flowers",
+   "Mushrooms"
+  ],
+  "fact": "The green tint is decent camouflage."
+ },
+ {
+  "id": "tmc163",
+  "category": "Animals",
+  "prompt": "What's the tallest land animal?",
+  "answer": "Giraffe",
+  "wrong": [
+   "Elephant",
+   "Ostrich",
+   "Camel"
+  ]
+ },
+ {
+  "id": "tmc164",
+  "category": "Tech",
+  "prompt": "What was the first video ever uploaded to YouTube?",
+  "answer": "A trip to the zoo",
+  "wrong": [
+   "A cat playing piano",
+   "A skateboard trick",
+   "A music video"
+  ],
+  "fact": "\"Me at the zoo\", posted in 2005 by co-founder Jawed Karim."
+ },
+ {
+  "id": "tmc165",
+  "category": "Tech",
+  "prompt": "What was Twitter's bird logo named?",
+  "answer": "Larry",
+  "wrong": [
+   "Tweety",
+   "Robin",
+   "Jack"
+  ],
+  "fact": "After Celtics legend Larry Bird."
+ },
+ {
+  "id": "tmc166",
+  "category": "Tech",
+  "prompt": "Which company makes the PlayStation?",
+  "answer": "Sony",
+  "wrong": [
+   "Nintendo",
+   "Microsoft",
+   "Sega"
+  ]
+ },
+ {
+  "id": "tmc167",
+  "category": "Tech",
+  "prompt": "What does GPT stand for in ChatGPT?",
+  "answer": "Generative Pre-trained Transformer",
+  "wrong": [
+   "General Purpose Technology",
+   "Global Processing Tool",
+   "Generated Program Text"
+  ]
+ },
+ {
+  "id": "tmc168",
+  "category": "Tech",
+  "prompt": "In what year did the first iPhone come out?",
+  "answer": "2007",
+  "wrong": [
+   "2005",
+   "2009",
+   "2010"
+  ]
+ },
+ {
+  "id": "tmc169",
+  "category": "Tech",
+  "prompt": "Which video game hero is a plumber?",
+  "answer": "Mario",
+  "wrong": [
+   "Link",
+   "Sonic",
+   "Kirby"
+  ]
+ },
+ {
+  "id": "tmc170",
+  "category": "Tech",
+  "prompt": "In Minecraft, which green mob sneaks up on you and explodes?",
+  "answer": "A Creeper",
+  "wrong": [
+   "An Enderman",
+   "A Slime",
+   "A Zombie"
+  ],
+  "fact": "Creepers started as a bug in a pig model."
+ },
+ {
+  "id": "tmc171",
+  "category": "Tech",
+  "prompt": "Which app's logo is a white ghost on yellow?",
+  "answer": "Snapchat",
+  "wrong": [
+   "Bumble",
+   "Ghostery",
+   "Yik Yak"
+  ]
+ },
+ {
+  "id": "tmc172",
+  "category": "Tech",
+  "prompt": "What did Amazon sell when it started?",
+  "answer": "Books",
+  "wrong": [
+   "CDs",
+   "Electronics",
+   "Toys"
+  ],
+  "fact": "Jeff Bezos started it in his garage in 1994."
+ },
+ {
+  "id": "tmc173",
+  "category": "Tech",
+  "prompt": "What does Wi-Fi stand for?",
+  "answer": "Nothing, it's a brand name",
+  "wrong": [
+   "Wireless Fidelity",
+   "Wide Frequency",
+   "Wireless Finder"
+  ],
+  "fact": "\"Wireless Fidelity\" was invented after the fact."
+ },
+ {
+  "id": "tmc174",
+  "category": "Brands",
+  "prompt": "What color are the soles of Christian Louboutin shoes?",
+  "answer": "Red",
+  "wrong": [
+   "Gold",
+   "Black",
+   "Pink"
+  ]
+ },
+ {
+  "id": "tmc175",
+  "category": "Brands",
+  "prompt": "Which coffee chain's logo is a two-tailed mermaid?",
+  "answer": "Starbucks",
+  "wrong": [
+   "Dunkin'",
+   "Costa Coffee",
+   "Tim Hortons"
+  ]
+ },
+ {
+  "id": "tmc176",
+  "category": "Brands",
+  "prompt": "What do the two M's in M&M's stand for?",
+  "answer": "Mars and Murrie",
+  "wrong": [
+   "Milk and Mint",
+   "Mars and More",
+   "Melt and Munch"
+  ],
+  "fact": "Founders Forrest Mars and Bruce Murrie."
+ },
+ {
+  "id": "tmc177",
+  "category": "Brands",
+  "prompt": "Which toy company makes Barbie?",
+  "answer": "Mattel",
+  "wrong": [
+   "Hasbro",
+   "Lego",
+   "Fisher-Price"
+  ],
+  "fact": "Mattel owns Fisher-Price too."
+ },
+ {
+  "id": "tmc178",
+  "category": "Brands",
+  "prompt": "Which country is LEGO from?",
+  "answer": "Denmark",
+  "wrong": [
+   "Sweden",
+   "Germany",
+   "Netherlands"
+  ],
+  "fact": "The name comes from the Danish \"leg godt\", meaning \"play well\"."
+ },
+ {
+  "id": "tmc179",
+  "category": "Brands",
+  "prompt": "Which country is IKEA from?",
+  "answer": "Sweden",
+  "wrong": [
+   "Denmark",
+   "Norway",
+   "Finland"
+  ],
+  "fact": "The name is the founder's initials plus his farm and his village."
+ },
+ {
+  "id": "tmc180",
+  "category": "Words",
+  "prompt": "What's a word that reads the same backward, like \"racecar\"?",
+  "answer": "Palindrome",
+  "wrong": [
+   "Anagram",
+   "Homonym",
+   "Acronym"
+  ]
+ },
+ {
+  "id": "tmc181",
+  "category": "Words",
+  "prompt": "What does the \"e\" in e.g. stand for?",
+  "answer": "Exempli",
+  "wrong": [
+   "Example",
+   "Et",
+   "Est"
+  ],
+  "fact": "e.g. is short for exempli gratia, \"for the sake of example\"."
+ },
+ {
+  "id": "tmc182",
+  "category": "Words",
+  "prompt": "Which letter is used most in English?",
+  "answer": "E",
+  "wrong": [
+   "A",
+   "T",
+   "S"
+  ]
+ },
+ {
+  "id": "tmc183",
+  "category": "Words",
+  "prompt": "In the NATO alphabet, which word stands for W?",
+  "answer": "Whiskey",
+  "wrong": [
+   "Water",
+   "Wolf",
+   "Winter"
+  ],
+  "fact": "Alfa, Bravo, Charlie... and a drink for W."
+ }
+]

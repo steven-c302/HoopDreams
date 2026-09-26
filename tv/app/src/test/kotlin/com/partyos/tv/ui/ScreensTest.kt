@@ -40,8 +40,8 @@ class ScreensTest {
 
     @Test fun lobbyShowsQrRoomCodeAndPlayers() {
         val players = listOf(
-            PlayerSummary(PlayerId("a"), "Ava", Avatar("🦊", "#FF7A00"), Role.PLAYER, true),
-            PlayerSummary(PlayerId("b"), "Ben", Avatar("🐸", "#22AA55"), Role.PLAYER, false),
+            PlayerSummary(PlayerId("a"), "Ava", Avatar("p:01", "#FF7A00"), Role.PLAYER, true),
+            PlayerSummary(PlayerId("b"), "Ben", Avatar("p:02", "#22AA55"), Role.PLAYER, false),
         )
         rule.setContent {
             PartyTheme { LobbyScreen("KXQT", "http://192.168.1.20:8080/j/KXQT", players, listOf(BluffBattle().info), null) {} }

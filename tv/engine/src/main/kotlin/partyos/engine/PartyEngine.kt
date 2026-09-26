@@ -24,6 +24,7 @@ data class PartySnapshot(
     val usedContent: List<String> = emptyList(),
     val results: List<GameResult> = emptyList(),
     val game: GameSnapshot? = null,
+    val memory: Map<String, String> = emptyMap(),
 )
 
 /**
@@ -43,10 +44,11 @@ class PartyEngine private constructor(
     settings: Map<String, Int>,
     usedContent: Collection<String>,
     results: List<GameResult>,
+    memory: Map<String, String>,
 ) {
     constructor(clock: Clock, entropy: Entropy, games: GameRegistry = GameRegistry(emptyList())) : this(
         clock, entropy, games, newRoomCode(entropy), clock.now(), emptyList(), emptyMap(),
-        null, null, emptyMap(), emptyList(), emptyList(),
+        null, null, emptyMap(), emptyList(), emptyList(), emptyMap(),
     )
 
     private val roster = LinkedHashMap<PlayerId, Player>().apply { players.forEach { put(it.id, it) } }
@@ -54,6 +56,7 @@ class PartyEngine private constructor(
     private val settings = HashMap(settings)
     private val usedContent = LinkedHashSet(usedContent)
     private val results = ArrayList(results)
+    private val memory = LinkedHashMap(memory)
     private var active: ActiveGame<*>? = null
 
     /** Games this party can start, in registry order. */
@@ -228,7 +231,7 @@ class PartyEngine private constructor(
 
     fun snapshot() = PartySnapshot(
         roomCode, createdAt, roster.values.toList(), tokens.toMap(), pinSalt, pinHash,
-        settings.toMap(), usedContent.toList(), results.toList(), active?.snapshot(clock.now()),
+        settings.toMap(), usedContent.toList(), results.toList(), active?.snapshot(clock.now()), memory.toMap(),
     )
 
     // ---- internals ------------------------------------------------------------------------
@@ -247,6 +250,7 @@ class PartyEngine private constructor(
         scores = g.scores.toMap(),
         settings = g.settings,
         usedContent = usedContent.toSet(),
+        memory = memory.toMap(),
     )
 
     private fun <S : Any> beginGame(g: ActiveGame<S>) {
@@ -293,6 +297,7 @@ class PartyEngine private constructor(
             is Effect.Award -> if (roster.containsKey(e.player)) g.scores.merge(e.player, e.points, Int::plus)
             is Effect.Highlight -> g.highlights += e.text
             is Effect.UseContent -> usedContent += e.id
+            is Effect.Remember -> if (e.key.length <= MAX_MEMORY_KEY && e.value.length <= MAX_MEMORY_VALUE) memory[e.key] = e.value
             Effect.Finish -> g.finishPending = true
         }
     }
@@ -350,6 +355,8 @@ class PartyEngine private constructor(
         const val MAX_NAME = 16
         const val MAX_PER_ROLE = 16
         const val TUTORIAL_MS = 30_000L
+        private const val MAX_MEMORY_KEY = 64
+        private const val MAX_MEMORY_VALUE = 8_192
         private const val MAX_SETTLE = 16
         private const val ROOM_ALPHABET = "ABCDEFGHJKMNPQRSTUVWXYZ"
 
@@ -372,7 +379,7 @@ class PartyEngine private constructor(
         ): PartyEngine {
             val e = PartyEngine(
                 clock, entropy, games, s.roomCode, s.createdAt, s.players.map { it.copy(connected = false) },
-                s.tokenHashes, s.pinSalt, s.pinHash, s.settings, s.usedContent, s.results,
+                s.tokenHashes, s.pinSalt, s.pinHash, s.settings, s.usedContent, s.results, s.memory,
             )
             s.game?.let { gs -> games[gs.gameId]?.let { e.active = restoreGame(it, gs) } }
             return e
@@ -381,8 +388,17 @@ class PartyEngine private constructor(
 }
 
 private val HEX_COLOR = Regex("#[0-9A-Fa-f]{6}")
+private val PRESET_FACE = Regex("p:(0[0-9]|1[0-5])")
+private val DRAWN_FACE = Regex("d:(?:[ML]\\d{1,2},\\d{1,2})+")
+const val MAX_FACE = 1_600
+const val PRESET_FACES = 16
 
-private fun Avatar.sanitized() = Avatar(
-    emoji = emoji.take(8).filterNot { Character.isISOControl(it) }.ifEmpty { "🙂" },
-    color = color.takeIf { HEX_COLOR.matches(it) } ?: "#8A5CF6",
+/** Presets pass through; doodles must be well-formed and small; anything else becomes a stable preset. */
+internal fun Avatar.sanitized() = Avatar(
+    face = when {
+        PRESET_FACE.matches(face) -> face
+        face.length <= MAX_FACE && DRAWN_FACE.matches(face) -> face
+        else -> "p:%02d".format(Math.floorMod(face.hashCode(), PRESET_FACES))
+    },
+    color = color.takeIf { HEX_COLOR.matches(it) } ?: "#8B4DFF",
 )

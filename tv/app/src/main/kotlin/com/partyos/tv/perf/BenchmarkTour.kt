@@ -17,7 +17,7 @@ import partyos.engine.Screen
  * with 16 in-process bot players, recording frame timing the whole way. Bots are removed afterwards.
  */
 class BenchmarkTour(private val runtime: PartyRuntime, private val perf: PerfMonitor) {
-    private val emoji = listOf("🦊", "🐸", "🐙", "🦄", "🐯", "🐼", "🦖", "🐝", "👽", "🤖", "🎃", "🍕", "🌮", "🚀", "🎸", "💎")
+    private val faces = (0 until 16).map { "p:%02d".format(it) }
     private val colors = listOf("#FF4D8D", "#FF7A00", "#FFD23F", "#3DDC97", "#2EC4F1", "#6C63FF", "#B15CFF", "#F5F5F5")
 
     suspend fun run(): PerfReport? {
@@ -29,7 +29,7 @@ class BenchmarkTour(private val runtime: PartyRuntime, private val perf: PerfMon
         try {
             val room = host.tv.value.roomCode
             for (i in 0 until 16) {
-                val r = host.mutate { join(room, "Bot ${i + 1}", Avatar(emoji[i], colors[i % colors.size]), Role.PLAYER) }
+                val r = host.mutate { join(room, "Bot ${i + 1}", Avatar(faces[i], colors[i % colors.size]), Role.PLAYER) }
                 if (r is JoinResult.Joined) {
                     bots += r.player.id
                     host.mutate { setPresence(r.player.id, true) }

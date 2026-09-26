@@ -43,10 +43,10 @@ class ShowcaseShots {
     @get:Rule val rule = createComposeRule()
 
     private val names = listOf("Ava", "Ben", "Cleo", "Dev", "Eli", "Fin", "Gus", "Hana", "Ivy", "Jay", "Kai", "Lu")
-    private val emojis = listOf("🦊", "🐸", "🐙", "🦄", "🐼", "🐯", "🦉", "🐝", "🐧", "🦖", "🐨", "🍕")
+    private val faces = (0 until 12).map { "p:%02d".format(it) }
     private val colors = listOf("#FF7A00", "#22AA55", "#8E5CFF", "#FF4D8D", "#2EC4F1", "#FFD23F", "#3DDC97", "#FF5A5A")
     private val players = names.mapIndexed { i, n ->
-        PlayerSummary(PlayerId("p$i"), n, Avatar(emojis[i], colors[i % colors.size]), Role.PLAYER, i != 7)
+        PlayerSummary(PlayerId("p$i"), n, Avatar(faces[i], colors[i % colors.size]), Role.PLAYER, i != 7)
     }
     private val scores = players.take(8).mapIndexed { i, p -> ScoreRow(p.id, p.name, p.avatar, 4200 - i * 450) }
     private val prompt = "Cleopatra lived closer in time to the Moon landing than to the building of ____."

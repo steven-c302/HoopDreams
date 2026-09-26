@@ -13,6 +13,9 @@ import partyos.engine.TvState
 
 const val PROTOCOL_VERSION = 1
 
+/** Game settings a host may pass when starting a game. */
+private val START_OPTIONS = setOf("teams", "drinks")
+
 /** One JSON configuration for every wire message; sealed types carry their tag in "t". */
 val PartyJson = Json {
     classDiscriminator = "t"
@@ -43,7 +46,9 @@ sealed interface ServerMsg {
 
 @Serializable
 sealed interface HostCommand {
-    @Serializable @SerialName("start") data class Start(val gameId: String, val rounds: Int? = null) : HostCommand
+    /** [options] are game settings, e.g. `teams` (0 = auto) and `drinks` (0/1) for Brain Drain. */
+    @Serializable @SerialName("start")
+    data class Start(val gameId: String, val rounds: Int? = null, val options: Map<String, Int> = emptyMap()) : HostCommand
     @Serializable @SerialName("pause") data object Pause : HostCommand
     @Serializable @SerialName("resume") data object Resume : HostCommand
     @Serializable @SerialName("skip") data object Skip : HostCommand
@@ -52,7 +57,10 @@ sealed interface HostCommand {
     @Serializable @SerialName("setRounds") data class SetRounds(val rounds: Int) : HostCommand
 
     fun toCmd(): HostCmd = when (this) {
-        is Start -> HostCmd.StartGame(gameId, rounds?.let { mapOf("rounds" to it) } ?: emptyMap())
+        is Start -> HostCmd.StartGame(
+            gameId,
+            options.filterKeys { it in START_OPTIONS }.mapValues { (_, v) -> v.coerceIn(0, 16) } + (rounds?.let { mapOf("rounds" to it) } ?: emptyMap()),
+        )
         Pause -> HostCmd.Pause
         Resume -> HostCmd.Resume
         Skip -> HostCmd.SkipPhase

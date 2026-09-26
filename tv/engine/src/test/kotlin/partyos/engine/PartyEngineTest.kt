@@ -10,7 +10,7 @@ import kotlin.test.assertTrue
 
 class PartyEngineTest {
     private val clock = FakeClock(1_000)
-    private val avatar = Avatar("🦊", "#FF7A00")
+    private val avatar = Avatar("p:01", "#FF7A00")
     private fun engine() = PartyEngine(clock, SecureEntropy())
 
     private fun PartyEngine.joinOk(name: String, role: Role = Role.PLAYER): JoinResult.Joined =

@@ -8,6 +8,7 @@ import partyos.engine.PartyEngine
 import partyos.engine.SecureEntropy
 import partyos.engine.SystemClock
 import partyos.engine.games.blackjack.DrunkBlackjack
+import partyos.engine.games.trivia.BrainDrain
 import partyos.engine.games.bluff.BluffBattle
 import partyos.server.DirectoryStaticFiles
 import partyos.server.PartyHost
@@ -26,7 +27,7 @@ fun main(args: Array<String>) {
     val staticDir = File(opts["static"] ?: "../controller/dist")
     val bind = opts["bind"] ?: "0.0.0.0"
 
-    val engine = PartyEngine(SystemClock, SecureEntropy(), GameRegistry(listOf(BluffBattle(), DrunkBlackjack())))
+    val engine = PartyEngine(SystemClock, SecureEntropy(), GameRegistry(listOf(BrainDrain(), BluffBattle(), DrunkBlackjack())))
     engine.setPin(pin)
     val host = PartyHost(engine, SystemClock, CoroutineScope(SupervisorJob() + Dispatchers.Default))
     val server = PartyServer.start(host, DirectoryStaticFiles(staticDir), ports = port..port, bindHost = bind)

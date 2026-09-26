@@ -19,7 +19,7 @@
                 "id": "p-sam",
                 "name": "Sam",
                 "avatar": {
-                    "emoji": "🦊",
+                    "face": "p:01",
                     "color": "#FF7A00"
                 },
                 "role": "PLAYER",
@@ -41,7 +41,7 @@
                     "id": "p-sam",
                     "name": "Sam",
                     "avatar": {
-                        "emoji": "🦊",
+                        "face": "p:01",
                         "color": "#FF7A00"
                     },
                     "score": 1500
@@ -50,7 +50,7 @@
                     "id": "p-al",
                     "name": "Al",
                     "avatar": {
-                        "emoji": "🐸",
+                        "face": "p:02",
                         "color": "#22AA55"
                     },
                     "score": 500
@@ -66,7 +66,7 @@
                 "id": "p-sam",
                 "name": "Sam",
                 "avatar": {
-                    "emoji": "🦊",
+                    "face": "p:01",
                     "color": "#FF7A00"
                 },
                 "role": "PLAYER",
@@ -93,7 +93,7 @@
                     "id": "p-sam",
                     "name": "Sam",
                     "avatar": {
-                        "emoji": "🦊",
+                        "face": "p:01",
                         "color": "#FF7A00"
                     },
                     "score": 1500
@@ -102,7 +102,7 @@
                     "id": "p-al",
                     "name": "Al",
                     "avatar": {
-                        "emoji": "🐸",
+                        "face": "p:02",
                         "color": "#22AA55"
                     },
                     "score": 500
@@ -118,7 +118,7 @@
                 "id": "p-sam",
                 "name": "Sam",
                 "avatar": {
-                    "emoji": "🦊",
+                    "face": "p:01",
                     "color": "#FF7A00"
                 },
                 "role": "PLAYER",
@@ -142,7 +142,7 @@
                     "id": "p-sam",
                     "name": "Sam",
                     "avatar": {
-                        "emoji": "🦊",
+                        "face": "p:01",
                         "color": "#FF7A00"
                     },
                     "score": 1500
@@ -151,7 +151,7 @@
                     "id": "p-al",
                     "name": "Al",
                     "avatar": {
-                        "emoji": "🐸",
+                        "face": "p:02",
                         "color": "#22AA55"
                     },
                     "score": 500
@@ -167,7 +167,7 @@
                 "id": "p-sam",
                 "name": "Sam",
                 "avatar": {
-                    "emoji": "🦊",
+                    "face": "p:01",
                     "color": "#FF7A00"
                 },
                 "role": "PLAYER",
@@ -193,14 +193,15 @@
                     }
                 ],
                 "selected": "o2",
-                "kind": "pick"
+                "kind": "pick",
+                "votes": {}
             },
             "scores": [
                 {
                     "id": "p-sam",
                     "name": "Sam",
                     "avatar": {
-                        "emoji": "🦊",
+                        "face": "p:01",
                         "color": "#FF7A00"
                     },
                     "score": 1500
@@ -209,7 +210,7 @@
                     "id": "p-al",
                     "name": "Al",
                     "avatar": {
-                        "emoji": "🐸",
+                        "face": "p:02",
                         "color": "#22AA55"
                     },
                     "score": 500
@@ -225,7 +226,7 @@
                 "id": "p-sam",
                 "name": "Sam",
                 "avatar": {
-                    "emoji": "🦊",
+                    "face": "p:01",
                     "color": "#FF7A00"
                 },
                 "role": "PLAYER",
@@ -245,7 +246,7 @@
                         "id": "p-sam",
                         "name": "Sam",
                         "avatar": {
-                            "emoji": "🦊",
+                            "face": "p:01",
                             "color": "#FF7A00"
                         },
                         "score": 1500
@@ -254,7 +255,7 @@
                         "id": "p-al",
                         "name": "Al",
                         "avatar": {
-                            "emoji": "🐸",
+                            "face": "p:02",
                             "color": "#22AA55"
                         },
                         "score": 500
@@ -266,7 +267,7 @@
                     "id": "p-sam",
                     "name": "Sam",
                     "avatar": {
-                        "emoji": "🦊",
+                        "face": "p:01",
                         "color": "#FF7A00"
                     },
                     "score": 1500
@@ -275,12 +276,449 @@
                     "id": "p-al",
                     "name": "Al",
                     "avatar": {
-                        "emoji": "🐸",
+                        "face": "p:02",
                         "color": "#22AA55"
                     },
                     "score": 500
                 }
             ]
+        }
+    },
+    {
+        "t": "view",
+        "seq": 12,
+        "view": {
+            "me": {
+                "id": "p-sam",
+                "name": "Sam",
+                "avatar": {
+                    "face": "p:01",
+                    "color": "#FF7A00"
+                },
+                "role": "PLAYER",
+                "connected": true
+            },
+            "roomCode": "KXQT",
+            "gameId": "bluff",
+            "gameTitle": "Bluff Battle",
+            "round": 3,
+            "paused": false,
+            "remainingMs": 42000,
+            "screen": {
+                "t": "choice",
+                "prompt": "Which planet has the most known moons?",
+                "options": [
+                    {
+                        "id": "a",
+                        "text": "Saturn"
+                    },
+                    {
+                        "id": "b",
+                        "text": "Jupiter"
+                    }
+                ],
+                "selected": "a",
+                "kind": "answer",
+                "style": "shapes",
+                "votes": {
+                    "a": [
+                        "p-sam"
+                    ]
+                },
+                "team": {
+                    "id": "T1",
+                    "name": "Quizzards",
+                    "color": "#FF4B3E"
+                }
+            },
+            "scores": [
+                {
+                    "id": "p-sam",
+                    "name": "Sam",
+                    "avatar": {
+                        "face": "p:01",
+                        "color": "#FF7A00"
+                    },
+                    "score": 1500
+                },
+                {
+                    "id": "p-al",
+                    "name": "Al",
+                    "avatar": {
+                        "face": "p:02",
+                        "color": "#22AA55"
+                    },
+                    "score": 500
+                }
+            ]
+        }
+    },
+    {
+        "t": "view",
+        "seq": 12,
+        "view": {
+            "me": {
+                "id": "p-sam",
+                "name": "Sam",
+                "avatar": {
+                    "face": "p:01",
+                    "color": "#FF7A00"
+                },
+                "role": "PLAYER",
+                "connected": true
+            },
+            "roomCode": "KXQT",
+            "gameId": "bluff",
+            "gameTitle": "Bluff Battle",
+            "round": 3,
+            "paused": false,
+            "remainingMs": 42000,
+            "screen": {
+                "t": "choice",
+                "prompt": "Pick a team",
+                "options": [
+                    {
+                        "id": "T1",
+                        "text": "Quizzards",
+                        "color": "#FF4B3E",
+                        "detail": "2 in"
+                    }
+                ],
+                "selected": "T1",
+                "kind": "team",
+                "style": "teams",
+                "votes": {},
+                "team": {
+                    "id": "T1",
+                    "name": "Quizzards",
+                    "color": "#FF4B3E"
+                }
+            },
+            "scores": [
+                {
+                    "id": "p-sam",
+                    "name": "Sam",
+                    "avatar": {
+                        "face": "p:01",
+                        "color": "#FF7A00"
+                    },
+                    "score": 1500
+                },
+                {
+                    "id": "p-al",
+                    "name": "Al",
+                    "avatar": {
+                        "face": "p:02",
+                        "color": "#22AA55"
+                    },
+                    "score": 500
+                }
+            ]
+        }
+    },
+    {
+        "t": "view",
+        "seq": 12,
+        "view": {
+            "me": {
+                "id": "p-sam",
+                "name": "Sam",
+                "avatar": {
+                    "face": "p:01",
+                    "color": "#FF7A00"
+                },
+                "role": "PLAYER",
+                "connected": true
+            },
+            "roomCode": "KXQT",
+            "gameId": "bluff",
+            "gameTitle": "Bluff Battle",
+            "round": 3,
+            "paused": false,
+            "remainingMs": 42000,
+            "screen": {
+                "t": "number",
+                "prompt": "How many bones are in the adult human body?",
+                "unit": "bones",
+                "value": 206.0,
+                "kind": "guess",
+                "guesses": [
+                    {
+                        "id": "p-al",
+                        "value": 180.0
+                    }
+                ],
+                "team": {
+                    "id": "T1",
+                    "name": "Quizzards",
+                    "color": "#FF4B3E"
+                }
+            },
+            "scores": [
+                {
+                    "id": "p-sam",
+                    "name": "Sam",
+                    "avatar": {
+                        "face": "p:01",
+                        "color": "#FF7A00"
+                    },
+                    "score": 1500
+                },
+                {
+                    "id": "p-al",
+                    "name": "Al",
+                    "avatar": {
+                        "face": "p:02",
+                        "color": "#22AA55"
+                    },
+                    "score": 500
+                }
+            ]
+        }
+    },
+    {
+        "t": "view",
+        "seq": 12,
+        "view": {
+            "me": {
+                "id": "p-sam",
+                "name": "Sam",
+                "avatar": {
+                    "face": "p:01",
+                    "color": "#FF7A00"
+                },
+                "role": "PLAYER",
+                "connected": true
+            },
+            "roomCode": "KXQT",
+            "gameId": "bluff",
+            "gameTitle": "Bluff Battle",
+            "round": 3,
+            "paused": false,
+            "remainingMs": 42000,
+            "screen": {
+                "t": "multi",
+                "prompt": "Which of these are Great Lakes?",
+                "options": [
+                    {
+                        "id": "a",
+                        "text": "Huron"
+                    },
+                    {
+                        "id": "b",
+                        "text": "Erie"
+                    },
+                    {
+                        "id": "c",
+                        "text": "Champlain"
+                    }
+                ],
+                "selected": [
+                    "a"
+                ],
+                "locked": false,
+                "kind": "multi",
+                "eliminated": [
+                    "c"
+                ],
+                "votes": {
+                    "a": [
+                        "p-sam"
+                    ]
+                },
+                "team": {
+                    "id": "T1",
+                    "name": "Quizzards",
+                    "color": "#FF4B3E"
+                }
+            },
+            "scores": [
+                {
+                    "id": "p-sam",
+                    "name": "Sam",
+                    "avatar": {
+                        "face": "p:01",
+                        "color": "#FF7A00"
+                    },
+                    "score": 1500
+                },
+                {
+                    "id": "p-al",
+                    "name": "Al",
+                    "avatar": {
+                        "face": "p:02",
+                        "color": "#22AA55"
+                    },
+                    "score": 500
+                }
+            ]
+        }
+    },
+    {
+        "t": "view",
+        "seq": 12,
+        "view": {
+            "me": {
+                "id": "p-sam",
+                "name": "Sam",
+                "avatar": {
+                    "face": "p:01",
+                    "color": "#FF7A00"
+                },
+                "role": "PLAYER",
+                "connected": true
+            },
+            "roomCode": "KXQT",
+            "gameId": "bluff",
+            "gameTitle": "Bluff Battle",
+            "round": 3,
+            "paused": false,
+            "remainingMs": 42000,
+            "screen": {
+                "t": "waiting",
+                "title": "Correct!",
+                "detail": "+1250",
+                "tone": "win",
+                "team": {
+                    "id": "T1",
+                    "name": "Quizzards",
+                    "color": "#FF4B3E"
+                }
+            },
+            "scores": [
+                {
+                    "id": "p-sam",
+                    "name": "Sam",
+                    "avatar": {
+                        "face": "p:01",
+                        "color": "#FF7A00"
+                    },
+                    "score": 1500
+                },
+                {
+                    "id": "p-al",
+                    "name": "Al",
+                    "avatar": {
+                        "face": "p:02",
+                        "color": "#22AA55"
+                    },
+                    "score": 500
+                }
+            ]
+        }
+    },
+    {
+        "t": "tv",
+        "seq": 13,
+        "tv": {
+            "roomCode": "KXQT",
+            "players": [
+                {
+                    "id": "p-sam",
+                    "name": "Sam",
+                    "avatar": {
+                        "face": "p:01",
+                        "color": "#FF7A00"
+                    },
+                    "role": "PLAYER",
+                    "connected": true
+                }
+            ],
+            "stage": {
+                "gameId": "trivia",
+                "title": "Brain Drain",
+                "phaseSeq": 9,
+                "deadlineAt": 1700000068000,
+                "remainingMs": 8000,
+                "paused": false,
+                "game": {
+                    "t": "trivia",
+                    "phase": "reveal",
+                    "format": "quick",
+                    "round": 1,
+                    "totalRounds": 5,
+                    "q": 2,
+                    "qTotal": 5,
+                    "durationMs": 8000,
+                    "prompt": "Which planet has the most known moons?",
+                    "category": "Science",
+                    "options": [
+                        {
+                            "id": "a",
+                            "text": "Saturn"
+                        },
+                        {
+                            "id": "b",
+                            "text": "Jupiter"
+                        }
+                    ],
+                    "teams": [
+                        {
+                            "id": "T1",
+                            "name": "Quizzards",
+                            "color": "#FF4B3E",
+                            "members": [
+                                "p-sam"
+                            ],
+                            "score": 1250,
+                            "answered": 0,
+                            "position": 0,
+                            "headStart": 0
+                        }
+                    ],
+                    "answered": 0,
+                    "expected": 0,
+                    "reveal": {
+                        "correct": [
+                            "a"
+                        ],
+                        "answerText": "Saturn",
+                        "answers": [
+                            {
+                                "team": "T1",
+                                "choice": "a",
+                                "picks": [],
+                                "correct": true,
+                                "points": 1250,
+                                "bullseye": false,
+                                "seconds": 3.5
+                            }
+                        ]
+                    },
+                    "drink": {
+                        "teams": [
+                            "T2"
+                        ],
+                        "sips": 1,
+                        "reason": "last place"
+                    },
+                    "hostLine": "Only Quizzards knew that.",
+                    "fact": "Saturn's count shot past 200 in 2025.",
+                    "finishLine": 10,
+                    "podium": []
+                }
+            },
+            "scores": [
+                {
+                    "id": "p-sam",
+                    "name": "Sam",
+                    "avatar": {
+                        "face": "p:01",
+                        "color": "#FF7A00"
+                    },
+                    "score": 1500
+                },
+                {
+                    "id": "p-al",
+                    "name": "Al",
+                    "avatar": {
+                        "face": "p:02",
+                        "color": "#22AA55"
+                    },
+                    "score": 500
+                }
+            ],
+            "gamesPlayed": 1
         }
     },
     {
@@ -293,7 +731,7 @@
                     "id": "p-sam",
                     "name": "Sam",
                     "avatar": {
-                        "emoji": "🦊",
+                        "face": "p:01",
                         "color": "#FF7A00"
                     },
                     "role": "PLAYER",
@@ -360,7 +798,7 @@
                     "id": "p-sam",
                     "name": "Sam",
                     "avatar": {
-                        "emoji": "🦊",
+                        "face": "p:01",
                         "color": "#FF7A00"
                     },
                     "score": 1500
@@ -369,7 +807,7 @@
                     "id": "p-al",
                     "name": "Al",
                     "avatar": {
-                        "emoji": "🐸",
+                        "face": "p:02",
                         "color": "#22AA55"
                     },
                     "score": 500
@@ -384,7 +822,7 @@
                         "id": "p-sam",
                         "name": "Sam",
                         "avatar": {
-                            "emoji": "🦊",
+                            "face": "p:01",
                             "color": "#FF7A00"
                         },
                         "score": 1500
@@ -393,7 +831,7 @@
                         "id": "p-al",
                         "name": "Al",
                         "avatar": {
-                            "emoji": "🐸",
+                            "face": "p:02",
                             "color": "#22AA55"
                         },
                         "score": 500

@@ -50,7 +50,7 @@ val tap: JsonObject = buildJsonObject { put("kind", JsonPrimitive("tap")) }
 val ack: JsonObject = buildJsonObject { put("kind", JsonPrimitive("ack")) }
 
 fun PartyEngine.add(name: String, role: Role = Role.PLAYER, connected: Boolean = true): PlayerId {
-    val j = assertIs<JoinResult.Joined>(join(roomCode, name, Avatar("🙂", "#123456"), role))
+    val j = assertIs<JoinResult.Joined>(join(roomCode, name, Avatar("p:00", "#123456"), role))
     if (connected) setPresence(j.player.id, true)
     return j.player.id
 }
