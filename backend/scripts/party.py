@@ -11,6 +11,8 @@ import os
 import re
 import secrets
 import signal
+import socket
+import tempfile
 import subprocess
 import sys
 import threading
@@ -132,7 +134,7 @@ def print_banner(url, pin):
     qr.make(fit=True)
     qr.print_ascii(invert=True)
     print(f"\n  Phones:   {url}\n  TV:       http://localhost:{PORT}/tv\n  Host:     http://localhost:{PORT}/host   PIN {pin}\n")
-    print("  Tip: mirror the Mac onto the TV (Control Center → Screen Mirroring), then click TIP OFF.\n", flush=True)
+    print("  Tip: mirror the Mac onto the TV (Control Center → Screen Mirroring), then choose Full screen. Start games from the host panel.\n", flush=True)
 
 
 def _interrupt(*_):
@@ -143,16 +145,23 @@ def main():
     signal.signal(signal.SIGTERM, _interrupt)  # `kill` shuts down as cleanly as Ctrl+C
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--tunnel", action="store_true", help="also expose a public link for guests on cell data")
-    parser.add_argument("--demo", action="store_true", help="add 8 simulated guests (rehearsal)")
+    parser.add_argument("--demo", action="store_true", help="add 16 simulated guests in a temporary rehearsal night")
     parser.add_argument("--no-build", action="store_true", help="reuse the existing frontend/dist build")
     parser.add_argument("--no-open", action="store_true", help="don't open the TV page in Chrome")
     args = parser.parse_args()
 
+    with socket.socket() as probe:
+        if probe.connect_ex(("127.0.0.1", PORT)) == 0:
+            raise SystemExit(f"Port {PORT} is already in use. Stop the existing server before launching game night.")
+    rehearsal = tempfile.TemporaryDirectory(prefix="hoop-rehearsal-") if args.demo else None
     pin = os.environ.get("HOOP_HOST_PIN") or f"{secrets.randbelow(10_000):04d}"
     if not args.no_build:
         subprocess.run(["npm", "run", "build"], cwd=FRONTEND, check=True)
 
     env = {**os.environ, "HOOP_PARTY": "1", "HOOP_HOST_PIN": pin, "HOOP_PUBLIC_PORT": str(PORT)}
+    if rehearsal:
+        env["HOOP_DB"] = str(Path(rehearsal.name) / "party.db")
+        env["HOOP_MEDIA_DIR"] = str(Path(rehearsal.name) / "media")
     children = []
     caffeinate = None
     try:
@@ -167,7 +176,7 @@ def main():
             children.append(start_tunnel(pin))
         if args.demo:
             children.append(Supervisor("demo", [sys.executable, str(BACKEND / "scripts" / "demo.py"),
-                                                "--url", f"http://127.0.0.1:{PORT}"]).start())
+                                                "--url", f"http://127.0.0.1:{PORT}"], env=env).start())
         if not args.no_open:
             open_tv()
 
@@ -180,6 +189,8 @@ def main():
             child.stop()
         if caffeinate:
             caffeinate.terminate()
+        if rehearsal:
+            rehearsal.cleanup()
 
 
 if __name__ == "__main__":

@@ -77,6 +77,10 @@ data class RoleRequest(val token: String, val role: Role)
 @Serializable
 data class HostLoginResponse(val hostToken: String)
 
+/** For a browser TV on the host machine itself: host rights plus the address phones should scan. */
+@Serializable
+data class TvSessionResponse(val hostToken: String, val room: String, val joinUrl: String?)
+
 @Serializable
 data class ErrorResponse(val error: String, val retryAfterSec: Int? = null)
 

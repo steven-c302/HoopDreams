@@ -8,9 +8,11 @@ import { SettingsPanel } from "./SettingsPanel";
 import { ShotsPanel } from "./ShotsPanel";
 import { TeamsPanel } from "./TeamsPanel";
 import "./host.css";
+import { GamesPanel } from "../gamenight/GamesPanel";
 
-type Tab = "shots" | "players" | "teams" | "settings";
+type Tab = "games" | "shots" | "players" | "teams" | "settings";
 const TABS: [Tab, string][] = [
+  ["games", "GAMES"],
   ["shots", "SHOTS"],
   ["players", "PLAYERS"],
   ["teams", "TEAMS"],
@@ -22,7 +24,7 @@ export default function HostPage() {
   const hostState = useHostState();
   const connected = useConnected();
   const [authed, setAuthed] = useState(false);
-  const [tab, setTab] = useState<Tab>("shots");
+  const [tab, setTab] = useState<Tab>("games");
   const [message, setMessage] = useState<string | null>(null);
 
   // Re-authenticate on every (re)connect with the PIN remembered for this tab.
@@ -66,6 +68,7 @@ export default function HostPage() {
             {message}
           </p>
         )}
+        {tab === "games" && <GamesPanel />}
         {tab === "shots" && <ShotsPanel state={state} hostState={hostState} run={run} />}
         {tab === "players" && <PlayersPanel state={state} run={run} />}
         {tab === "teams" && <TeamsPanel state={state} run={run} />}
@@ -74,7 +77,7 @@ export default function HostPage() {
     );
 
   return (
-    <ArcadeSurface>
+    <ArcadeSurface modern>
       {!connected && <div className="banner">Reconnecting…</div>}
       {body}
     </ArcadeSurface>

@@ -116,6 +116,17 @@ fun Application.partyModule(host: PartyHost, static: StaticFiles, cfg: ServerCon
             }
         }
 
+        // A browser TV running on the host machine (the Mac mirrored to a TV) gets host rights without a PIN.
+        // Only loopback callers qualify, so phones on the Wi-Fi can never use it.
+        get("/api/tv/session") {
+            val remote = call.request.origin.remoteAddress
+            val loopback = remote == "localhost" || runCatching { java.net.InetAddress.getByName(remote).isLoopbackAddress }.getOrDefault(false)
+            if (!loopback) return@get call.respond(HttpStatusCode.Forbidden, ErrorResponse("LOCAL_ONLY"))
+            val room = host.tv.value.roomCode
+            val joinUrl = lanAddresses().firstOrNull()?.let { "http://$it:${call.request.local.localPort}/j/$room" }
+            call.respond(TvSessionResponse(host.issueHostToken(), room, joinUrl))
+        }
+
         webSocket("/ws") {
             val pid = call.request.queryParameters["token"]?.let { t -> host.read { resolve(t) } }
             val isHost = call.request.queryParameters["host"]?.let { host.isHostToken(it) } == true
@@ -251,3 +262,14 @@ private class PartySession(
         )
     }
 }
+
+/** This machine's private IPv4 addresses, most likely Wi-Fi first. */
+fun lanAddresses(): List<String> = runCatching {
+    java.net.NetworkInterface.getNetworkInterfaces().toList()
+        .filter { it.isUp && !it.isLoopback && !it.isVirtual }
+        .sortedBy { if (it.name.startsWith("en") || it.name.startsWith("wlan")) 0 else 1 }
+        .flatMap { it.inetAddresses.toList() }
+        .filterIsInstance<java.net.Inet4Address>()
+        .filter { it.isSiteLocalAddress }
+        .map { it.hostAddress }
+}.getOrDefault(emptyList())

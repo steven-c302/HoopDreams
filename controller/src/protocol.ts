@@ -9,6 +9,8 @@ export interface PlayerSummary { id: string; name: string; avatar: Avatar; role:
 export interface ScoreRow { id: string; name: string; avatar: Avatar; score: number }
 export interface Choice { id: string; text: string }
 export interface TutorialCard { title: string; body: string }
+/** rank 1 (ace)..13 (king), suit 0..3 = spades, hearts, diamonds, clubs; rank 0 = face down. */
+export interface PlayingCard { rank: number; suit: number }
 
 export type Screen =
   | { t: 'waiting'; title: string; detail?: string }
@@ -16,6 +18,7 @@ export type Screen =
   | { t: 'choice'; prompt: string; options: Choice[]; selected?: string; kind: string }
   | { t: 'tutorial'; cards: TutorialCard[]; acknowledged: boolean }
   | { t: 'scores'; title: string; rows: ScoreRow[] }
+  | { t: 'cards'; title: string; hand: PlayingCard[]; total?: number; dealer: PlayingCard[]; actions: Choice[]; kind: string; note?: string; tone?: string; stack?: number }
 
 export interface PhoneState {
   me: PlayerSummary
@@ -81,7 +84,7 @@ export type ClientMsg =
 
 export interface GameListing { id: string; title: string; tagline: string; minPlayers: number; maxPlayers: number }
 
-const SCREENS = new Set(['waiting', 'text', 'choice', 'tutorial', 'scores'])
+const SCREENS = new Set(['waiting', 'text', 'choice', 'tutorial', 'scores', 'cards'])
 const isObj = (v: unknown): v is Record<string, unknown> => typeof v === 'object' && v !== null
 
 /** Parses one server frame; returns null for anything malformed or unknown instead of throwing. */

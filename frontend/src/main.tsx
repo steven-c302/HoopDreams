@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client'
 import { BrowserRouter, Route, Routes } from 'react-router'
 import './index.css'
 import App from './App.tsx'
+import NightScreen from './gamenight/NightScreen'
 
 const PlayPage = lazy(() => import('./play/PlayPage.tsx'))
 const TvPage = lazy(() => import('./tv/TvPage.tsx'))
@@ -13,9 +14,11 @@ createRoot(document.getElementById('root')!).render(
     <BrowserRouter>
       <Suspense fallback={null}>
         <Routes>
-          <Route path="/" element={<App />} />
+          <Route path="/" element={<NightScreen />} />
+          <Route path="/hat" element={<App />} />
           <Route path="/play" element={<PlayPage />} />
-          <Route path="/tv" element={<TvPage />} />
+          <Route path="/tv" element={<NightScreen />} />
+          <Route path="/tracker" element={<TvPage />} />
           <Route path="/host" element={<HostPage />} />
         </Routes>
       </Suspense>

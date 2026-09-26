@@ -1,10 +1,12 @@
-import { useState } from 'react'
+import { lazy, Suspense, useState } from 'react'
 import { browserTokenStore, type Session } from './net/token'
 import { Join } from './pages/Join'
 import { Play } from './pages/Play'
 import { Host } from './pages/Host'
+import { SuitSprite } from './tv/Suits'
 
 const store = browserTokenStore()
+const TvPage = lazy(() => import('./tv/TvPage').then((m) => ({ default: m.TvPage })))
 
 function roomFromPath(path: string): string | null {
   const m = path.match(/^\/j\/([A-Za-z]{4})\/?$/)
@@ -20,6 +22,7 @@ export function App() {
   })
   const [notice, setNotice] = useState<string | null>(null)
 
+  if (path.startsWith('/tv')) return <Suspense fallback={null}><TvPage /></Suspense>
   if (path.startsWith('/host')) return <Host />
 
   if (!session) {
@@ -32,9 +35,12 @@ export function App() {
     )
   }
   return (
+    <>
+    <SuitSprite />
     <Play
       session={session}
       onLeave={(why) => { store.clear(); setNotice(why); setSession(null) }}
     />
+    </>
   )
 }

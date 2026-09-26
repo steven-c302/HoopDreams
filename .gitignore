@@ -31,3 +31,5 @@ controller/dist/
 controller/test-results/
 controller/playwright-report/
 controller/tsconfig.tsbuildinfo
+.playwright-mcp/
+brag-output/work/

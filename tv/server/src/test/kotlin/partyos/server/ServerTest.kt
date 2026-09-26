@@ -49,6 +49,13 @@ class ServerTest {
         assertEquals("ok", client.get("/healthz").bodyAsText())
     }
 
+    @Test fun localTvSessionGetsAWorkingHostToken() = testApplication {
+        val host = newHost(); serve(host)
+        val body = PartyJson.decodeFromString<TvSessionResponse>(client.get("/api/tv/session").bodyAsText())
+        assertEquals(host.tv.value.roomCode, body.room)
+        assertTrue(host.isHostToken(body.hostToken))
+    }
+
     @Test fun socketGetsWelcomeThenView() = testApplication {
         val host = newHost(); serve(host)
         val token = tokenOf(client.join(host.tv.value.roomCode, "Sam").second)

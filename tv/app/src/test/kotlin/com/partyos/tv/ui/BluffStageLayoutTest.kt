@@ -45,7 +45,20 @@ class BluffStageLayoutTest {
         rule.setContent { PartyTheme { GameStage(stage(g), emptyList(), emptyList()) } }
         rule.mainClock.advanceTimeBy(BluffBattle.REVEAL_STEP_MS * reveal.size + 1_000)
         rule.onNodeWithText("the Great Pyramid").assertIsDisplayed()
-        rule.onNodeWithText("THE TRUTH · Found by Ava").assertIsDisplayed()
+        rule.onNodeWithText("THE TRUTH").assertIsDisplayed()
+        rule.onNodeWithText("Ava").assertIsDisplayed()
+    }
+
+    @Test fun sixteenBlackjackSeatsFitOnScreen() {
+        val seats = (1..16).map { i ->
+            partyos.engine.BjSeat(partyos.engine.PlayerId("p$i"), "Player$i", partyos.engine.Avatar("🙂", "#123456"),
+                listOf(partyos.engine.PlayingCard(10, 0), partyos.engine.PlayingCard(9, 1), partyos.engine.PlayingCard(2, 2)), 21, 2, false, "stood")
+        }
+        val g = partyos.engine.BlackjackTv("play", 1, 5, false, "classic", "Classic Rules", "No tricks.", null, "Zed", null, listOf(partyos.engine.PlayingCard(10, 0), partyos.engine.PlayingCard(0, 0)), 10, 32, 0, seats, 16, 16)
+        rule.mainClock.autoAdvance = false
+        rule.setContent { PartyTheme { GameStage(StageInfo("blackjack", "Drunk Blackjack", 3, null, 20_000, false, null, null, g), emptyList(), emptyList()) } }
+        rule.mainClock.advanceTimeBy(3_000)
+        (1..16).forEach { rule.onNodeWithText("Player$it").assertIsDisplayed() }
     }
 
     @Test fun tutorialCardsShowTheirWholeText() {

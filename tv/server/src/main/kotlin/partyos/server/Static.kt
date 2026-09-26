@@ -26,6 +26,12 @@ internal fun contentTypeFor(path: String): ContentType = when (path.substringAft
     "png" -> ContentType.Image.PNG
     "json", "webmanifest" -> ContentType.Application.Json
     "woff2" -> ContentType("font", "woff2")
+    "woff" -> ContentType("font", "woff")
+    "ttf" -> ContentType("font", "ttf")
+    "mp3" -> ContentType("audio", "mpeg")
+    "ogg" -> ContentType("audio", "ogg")
+    "wav" -> ContentType("audio", "wav")
+    "webp" -> ContentType("image", "webp")
     "ico" -> ContentType("image", "x-icon")
     else -> ContentType.Application.OctetStream
 }

@@ -34,7 +34,7 @@ import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Text
 import com.partyos.tv.settings.Settings
 import com.partyos.tv.ui.TvController
-import com.partyos.tv.ui.components.Backdrop
+import com.partyos.tv.ui.components.StudioBackdrop
 import com.partyos.tv.ui.theme.Party
 
 @Composable
@@ -42,7 +42,7 @@ fun SettingsScreen(settings: Settings, ip: String?, port: Int?, joinUrl: String?
     val first = remember { FocusRequester() }
     LaunchedEffect(Unit) { runCatching { first.requestFocus() } }
     var confirmNew by remember { mutableStateOf(false) }
-    Backdrop {
+    StudioBackdrop {
         Row(Modifier.fillMaxSize().padding(48.dp), horizontalArrangement = Arrangement.spacedBy(48.dp)) {
             Column(Modifier.width(460.dp).verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(14.dp)) {
                 Text("Settings", style = MaterialTheme.typography.displayMedium, color = Party.Text)

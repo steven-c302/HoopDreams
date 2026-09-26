@@ -23,7 +23,26 @@ sealed interface Screen {
 
     @Serializable @SerialName("scores")
     data class Scores(val title: String, val rows: List<ScoreRow>) : Screen
+
+    /** A card table: your hand, the dealer's visible cards, and the moves you can make ([kind] names the action). */
+    @Serializable @SerialName("cards")
+    data class Cards(
+        val title: String,
+        val hand: List<PlayingCard>,
+        val total: Int?,
+        val dealer: List<PlayingCard>,
+        val actions: List<Choice>,
+        val kind: String,
+        val note: String? = null,
+        /** win | lose | push | neutral: colours the note */
+        val tone: String? = null,
+        val stack: Int? = null,
+    ) : Screen
 }
+
+/** One playing card. rank 1 (ace) to 13 (king), suit 0..3 = spades, hearts, diamonds, clubs. rank 0 = face down. */
+@Serializable
+data class PlayingCard(val rank: Int, val suit: Int)
 
 /** Game-specific TV payloads. Every game adds its variant here so the TV and fixtures stay typed. */
 @Serializable

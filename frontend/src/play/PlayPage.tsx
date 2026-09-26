@@ -13,6 +13,7 @@ import { Toasts, type UndoToast } from "./Toasts";
 import { useOutbox } from "./useOutbox";
 import { usePlayer } from "./usePlayer";
 import "./play.css";
+import { GameController } from "../gamenight/GameController";
 
 export default function PlayPage() {
   const state = usePartyState();
@@ -27,7 +28,7 @@ export default function PlayPage() {
   else body = <Gone onRejoin={player.forget} />;
 
   return (
-    <ArcadeSurface>
+    <ArcadeSurface modern>
       {!connected && <div className="banner">Reconnecting…</div>}
       <div className="play">{body}</div>
     </ArcadeSurface>
@@ -134,9 +135,11 @@ function PlayScreen({ state, me, resumed, token }: { state: PublicState; me: Pla
         </div>
         <div className="me__score">
           <span className="display me__count">{me.count + mine}</span>
-          <span className="pixel">#{me.rank}</span>
+          <span className="pixel">SHOTS</span>
         </div>
       </header>
+      <GameController me={me} resumed={resumed} />
+      <details className="gn-shot-drawer"><summary>Shot tally · Log a shot or check the squad</summary>
       {me.streak && <p className={`streak streak--${me.streak} pixel`}>{me.streak === "fire" ? "🔥 ON FIRE 🔥" : "HEATING UP"}</p>}
 
       <button className="shot-button display" disabled={locked} onClick={() => void log([me.id])}>
@@ -174,6 +177,7 @@ function PlayScreen({ state, me, resumed, token }: { state: PublicState; me: Pla
         </div>
       )}
 
+      </details>
       <Toasts
         undo={undo && Date.now() < undo.until ? undo : null}
         onUndo={() => void doUndo()}

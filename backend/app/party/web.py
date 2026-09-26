@@ -14,6 +14,8 @@ from pydantic import BaseModel
 from starlette.exceptions import HTTPException as StarletteHTTPException
 from starlette.staticfiles import StaticFiles
 
+from ..gamenight.engine import GameNight, HostIntent, PlayIntent
+from .realtime import handler
 from . import net
 from .admin import PartyAdmin
 from .media import MEDIA_DIR, MediaProcessor, media_router
@@ -27,6 +29,20 @@ sio = socketio.AsyncServer(async_mode="asgi", cors_allowed_origins="*")
 service = PartyService(SioEmitter(sio), lan_url=net.join_url)
 admin = PartyAdmin(service)
 sessions = register_handlers(sio, service, host_pin=HOST_PIN, admin=admin)
+game_night = GameNight(service, sio)
+
+@handler(sio, sessions, service, "game:sync")
+async def game_sync(sid, session, payload):
+    return {"state": game_night.public(), **game_night.private(session.player_id)}
+
+@handler(sio, sessions, service, "game:host", HostIntent, host=True)
+async def game_host(sid, session, payload):
+    await game_night.host(payload)
+
+@handler(sio, sessions, service, "game:play", PlayIntent, player=True)
+async def game_play(sid, session, payload):
+    return await game_night.play(session.player_id, payload)
+
 processor = MediaProcessor(MEDIA_DIR, service.media_done)
 party_router = APIRouter(prefix="/api/party")
 
@@ -68,10 +84,13 @@ async def party_lifespan(_app: FastAPI):
     processor.start()
     print(f"🏀 HoopDreams party is live — phones: {service.lan_url} · host PIN: {HOST_PIN}", flush=True)
     ticker = asyncio.create_task(service.run_ticker())
+    games_ticker = asyncio.create_task(game_night.run())
     try:
         yield
     finally:
         ticker.cancel()
+        games_ticker.cancel()
+        await asyncio.gather(ticker, games_ticker, return_exceptions=True)
         await processor.stop()
 
 

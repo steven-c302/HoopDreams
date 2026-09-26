@@ -21,7 +21,7 @@ import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Text
 import com.partyos.tv.PartyRuntime
 import com.partyos.tv.ui.bluff.GameStage
-import com.partyos.tv.ui.components.Backdrop
+import com.partyos.tv.ui.components.StudioBackdrop
 import com.partyos.tv.ui.home.HomeScreen
 import com.partyos.tv.ui.host.HostOverlay
 import com.partyos.tv.ui.lobby.LobbyScreen
@@ -69,7 +69,7 @@ fun TvApp(runtime: PartyRuntime, menuPresses: Flow<Unit>, onBenchmark: () -> Uni
 
     Box(Modifier.fillMaxSize()) {
         when {
-            state == null || settings == null -> Backdrop { Text("Starting PARTY OS…", style = MaterialTheme.typography.headlineLarge, color = Party.Text, modifier = Modifier.align(Alignment.Center)) }
+            state == null || settings == null -> StudioBackdrop { Text("Starting PARTY OS…", style = MaterialTheme.typography.headlineLarge, color = Party.Text, modifier = Modifier.align(Alignment.Center)) }
             stage != null -> GameStage(stage, state.players.filter { it.role == Role.PLAYER }, state.scores)
             route == Route.Lobby -> LobbyScreen(state.roomCode, joinUrl, state.players, runtime.games.all.map { it.info }, state.lastResult) { g ->
                 controller.start(g.id, settings!!.rounds)

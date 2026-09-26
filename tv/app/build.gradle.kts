@@ -46,7 +46,11 @@ android {
     packaging {
         resources.excludes += setOf("META-INF/INDEX.LIST", "META-INF/io.netty.versions.properties", "META-INF/DEPENDENCIES")
     }
-    testOptions { unitTests.isIncludeAndroidResources = true }
+    testOptions {
+        unitTests.isIncludeAndroidResources = true
+        // Robolectric records every trace section; long simulated reveals need more than the default heap.
+        unitTests.all { it.maxHeapSize = "2g" }
+    }
 }
 
 ksp { arg("room.schemaLocation", "$projectDir/schemas") }
