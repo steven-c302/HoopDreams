@@ -35,6 +35,8 @@ data class TriviaTv(
     val drink: DrinkCall? = null,
     val hostLine: String? = null,
     val fact: String? = null,
+    /** Where a live question came from ("Open Trivia DB"), shown with it; null for the bundled packs. */
+    val credit: String? = null,
     val finishLine: Int = 10,
     /** Podium order, winners first (team ids). */
     val podium: List<String> = emptyList(),

@@ -37,6 +37,8 @@ export interface TriviaTv {
   heist?: { thief: string; victim?: string; amount: number }
   drink?: { teams: string[]; sips: number; reason: string }
   hostLine?: string; fact?: string; finishLine: number; podium: string[]
+  /** Where a live question came from ("Open Trivia DB"); absent for the bundled packs. */
+  credit?: string
 }
 
 export const ROUND_TITLES: Record<string, string> = { teamup: 'Team Up', quick: 'Quick Draw', ballpark: 'Ballpark', sides: 'Pick a Side', heist: 'The Heist', gauntlet: 'The Gauntlet' }

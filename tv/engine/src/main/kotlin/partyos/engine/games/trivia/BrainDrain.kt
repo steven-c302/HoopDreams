@@ -72,6 +72,8 @@ data class TriviaState(
     val confirmed: List<PlayerId> = emptyList(),
     /** Content item in play (a set id for Pick a Side). */
     val itemId: String? = null,
+    /** The question in play when it came from the live feed, kept here so a restored show doesn't need the feed. */
+    val live: McItem? = null,
     val options: List<TOption> = emptyList(),
     val correct: List<String> = emptyList(),
     /** player id → vote, for the current question (or the Heist victim vote). */
@@ -93,7 +95,11 @@ data class TriviaState(
  * plurality (numbers: the median). Quick Draw, Ballpark, Pick a Side and The Heist build a lead; The Gauntlet
  * turns that lead into a head start in a race, so a trailing team can still win the night.
  */
-class BrainDrain(private val pack: TriviaPack = TriviaPack.core()) : GameModule<TriviaState> {
+class BrainDrain(
+    private val pack: TriviaPack = TriviaPack.core(),
+    /** Live multiple-choice questions for when the bundled ones run out; null keeps the show fully offline. */
+    private val feed: TriviaFeed? = null,
+) : GameModule<TriviaState> {
     override val info = GameInfo(
         id = "trivia",
         title = "Brain Drain",
@@ -113,6 +119,9 @@ class BrainDrain(private val pack: TriviaPack = TriviaPack.core()) : GameModule<
     private val ballparkById = pack.ballpark.associateBy { it.id }
     private val sidesById = pack.sides.associateBy { it.id }
     private val gauntletById = pack.gauntlet.associateBy { it.id }
+
+    /** The multiple-choice question in play, bundled or live. */
+    private fun mcOf(s: TriviaState): McItem? = mcById[s.itemId] ?: s.live?.takeIf { it.id == s.itemId }
 
     // ---- flow -----------------------------------------------------------------------------------
 
@@ -258,15 +267,20 @@ class BrainDrain(private val pack: TriviaPack = TriviaPack.core()) : GameModule<
     private fun nextQuestion(s0: TriviaState, ctx: GameContext): Step<TriviaState> {
         val q = s0.q + 1
         if (q > s0.qTotal) return endRound(s0, ctx)
-        val base = s0.copy(q = q, votes = emptyMap(), reveal = null, drink = null, heist = null, hostLine = null, teams = sync(s0.teams, ctx), startedAt = ctx.now)
+        val base = s0.copy(q = q, votes = emptyMap(), reveal = null, drink = null, heist = null, hostLine = null, live = null, teams = sync(s0.teams, ctx), startedAt = ctx.now)
         return when (s0.format) {
             QUICK, HEIST -> {
                 // Change the subject every question when the pack allows it.
-                val lastCategory = mcById[s0.itemId]?.category
+                val lastCategory = mcOf(s0)?.category
                 val unused = pack.mc.filter { it.id !in ctx.usedContent }
-                val item = unused.filter { it.category != lastCategory }.ifEmpty { unused }.randomOrNull(ctx.random) ?: return endRound(s0, ctx)
+                if (unused.size <= WARM_FEED_AT) feed?.warm()
+                // The bundled pack first; once it's used up, a live question if the feed has one ready.
+                val item = unused.filter { it.category != lastCategory }.ifEmpty { unused }.randomOrNull(ctx.random)
+                    ?: feed?.take(ctx.usedContent, lastCategory)?.takeIf { it.id !in mcById && TriviaPack.mcProblem(it) == null }
+                    ?: return endRound(s0, ctx)
                 val options = (item.wrong + item.answer).shuffled(ctx.random).mapIndexed { i, t -> TOption(LETTERS[i], t, t == item.answer) }
-                question(base.copy(itemId = item.id, options = options, correct = options.filter { it.fit }.map { it.id }), QUICK_MS, item.id)
+                val live = item.takeIf { it.id !in mcById }
+                question(base.copy(itemId = item.id, live = live, options = options, correct = options.filter { it.fit }.map { it.id }), QUICK_MS, item.id)
             }
             BALLPARK -> {
                 val lastCategory = ballparkById[s0.itemId]?.category
@@ -506,7 +520,7 @@ class BrainDrain(private val pack: TriviaPack = TriviaPack.core()) : GameModule<
     }
 
     override fun restorable(s: TriviaState) = s.itemId == null ||
-        s.itemId in mcById || s.itemId in ballparkById || s.itemId in sidesById || s.itemId in gauntletById
+        mcOf(s) != null || s.itemId in ballparkById || s.itemId in sidesById || s.itemId in gauntletById
 
     override fun tvView(s: TriviaState, ctx: GameContext): TriviaTv {
         val showAnswer = s.phase in setOf(REVEAL, VICTIM, STEAL)
@@ -515,7 +529,7 @@ class BrainDrain(private val pack: TriviaPack = TriviaPack.core()) : GameModule<
         val prompt = when {
             s.phase == TEAMUP -> "Team up!"
             live -> when (s.format) {
-                QUICK, HEIST -> mcById[s.itemId]?.prompt
+                QUICK, HEIST -> mcOf(s)?.prompt
                 BALLPARK -> ballparkById[s.itemId]?.prompt
                 SIDES -> sides?.items?.getOrNull(s.q - 1)?.text
                 GAUNTLET -> gauntletById[s.itemId]?.prompt
@@ -533,7 +547,7 @@ class BrainDrain(private val pack: TriviaPack = TriviaPack.core()) : GameModule<
             durationMs = s.durationMs,
             prompt = prompt,
             category = when (s.format) {
-                QUICK, HEIST -> mcById[s.itemId]?.category
+                QUICK, HEIST -> mcOf(s)?.category
                 BALLPARK -> ballparkById[s.itemId]?.category
                 SIDES -> sides?.prompt
                 else -> null
@@ -555,13 +569,14 @@ class BrainDrain(private val pack: TriviaPack = TriviaPack.core()) : GameModule<
             drink = s.drink,
             hostLine = s.hostLine,
             fact = if (showAnswer) factFor(s) else null,
+            credit = if (live && (s.format == QUICK || s.format == HEIST)) mcOf(s)?.source else null,
             finishLine = FINISH,
             podium = s.podium,
         )
     }
 
     private fun factFor(s: TriviaState): String? = when (s.format) {
-        QUICK, HEIST -> mcById[s.itemId]?.fact
+        QUICK, HEIST -> mcOf(s)?.fact
         BALLPARK -> ballparkById[s.itemId]?.fact
         else -> null
     }
@@ -598,7 +613,7 @@ class BrainDrain(private val pack: TriviaPack = TriviaPack.core()) : GameModule<
                 val votes = teamVotes(team, s)
                 when (s.format) {
                     QUICK, HEIST -> Screen.ChoiceList(
-                        mcById[s.itemId]?.prompt ?: "", s.options.map { Choice(it.id, it.text) }, mine?.choice, "answer",
+                        mcOf(s)?.prompt ?: "", s.options.map { Choice(it.id, it.text) }, mine?.choice, "answer",
                         style = "shapes", votes = votes, team = tag,
                     )
                     SIDES -> {
@@ -826,6 +841,8 @@ class BrainDrain(private val pack: TriviaPack = TriviaPack.core()) : GameModule<
         val PODIUM_BONUS = listOf(3000, 1500, 500)
         const val SIDES_ITEMS = 7
         const val GAUNTLET_PROMPTS = 8
+        /** Unused bundled multiple-choice questions left (about two long shows) when the live feed starts filling. */
+        const val WARM_FEED_AT = 24
 
         const val TEAMUP_MS = 45_000L
         const val INTRO_MS = 7_000L

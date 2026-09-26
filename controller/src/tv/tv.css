@@ -28,6 +28,8 @@
 .bubble.tail-none::after { display: none; }
 .chip-label { display: inline-flex; align-items: center; gap: 12px; font-family: var(--font-display); font-size: 30px; padding: 10px 26px; border-radius: 999px;
   border: 5px solid var(--ink); white-space: nowrap; }
+/* Attribution for a live (Open Trivia DB) question: present but quiet. */
+.credit { font-size: 24px; font-weight: 800; color: var(--ink-soft); white-space: nowrap; }
 /* flex: none so a row never squeezes the box out from under its spikes (the text would drift off-centre). */
 .burst { position: relative; display: grid; place-items: center; flex: none; }
 .burst svg { position: absolute; inset: 0; overflow: visible; }

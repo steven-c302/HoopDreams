@@ -49,6 +49,9 @@ const BEATS: Record<string, TriviaTv> = {
     teams: [team(0, 'Team Tomato', '#FF4B3E', 0, { members: ['p0', 'p1', 'p2'] }), team(1, 'Brain Freeze', '#2F6BFF', 0, { members: ['p4', 'p5'] }), team(2, 'Team Lime', '#2FBF55', 0, { members: ['p8', 'p9', 'p10'] })] },
   intro: { ...base, phase: 'intro', format: 'ballpark', q: 0, prompt: '', options: [] },
   'quick-question': base,
+  // A sample question as the live feed would deliver it once the bundled pack runs out (with its credit).
+  'live-question': { ...base, format: 'heist', q: 1, qTotal: 3, prompt: 'Who directed the 1975 film Jaws?', category: 'Film', credit: 'Open Trivia DB',
+    options: [{ id: 'a', text: 'George Lucas' }, { id: 'b', text: 'Steven Spielberg' }, { id: 'c', text: 'James Cameron' }, { id: 'd', text: 'Ridley Scott' }] },
   'quick-reveal': { ...base, phase: 'reveal', reveal: { correct: ['b'], answerText: 'Finland', answers: [
     { team: 'T1', choice: 'a', picks: [], correct: false, points: 0, bullseye: false }, { team: 'T2', choice: 'b', picks: [], correct: true, points: 1380, bullseye: false, seconds: 3.1 },
     { team: 'T3', choice: 'b', picks: [], correct: true, points: 1120, bullseye: false, seconds: 9.4 }] },

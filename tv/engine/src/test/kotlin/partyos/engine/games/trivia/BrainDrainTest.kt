@@ -35,7 +35,7 @@ class BrainDrainTest {
     private lateinit var e: PartyEngine
     private var n = 0
 
-    private fun engine() = PartyEngine(clock, SeededEntropy(3), GameRegistry(listOf(BrainDrain(pack)))).also { e = it }
+    private fun engine(game: BrainDrain = BrainDrain(pack)) = PartyEngine(clock, SeededEntropy(3), GameRegistry(listOf(game))).also { e = it }
 
     private fun startShow(teams: Int = 2, rounds: Int = 3) {
         assertEquals(ActionResult.Ack, e.host(HostCmd.StartGame("trivia", mapOf("rounds" to rounds, "teams" to teams, "drinks" to 1))))
@@ -74,8 +74,8 @@ class BrainDrainTest {
     private fun waiting(who: PlayerId) = assertIs<Screen.Waiting>(e.phoneState(who).screen)
 
     /** Four players, two named teams (A,B on T1; C,D on T2), now at the Quick Draw intro. */
-    private fun fourInTwoTeams(): List<PlayerId> {
-        engine()
+    private fun fourInTwoTeams(game: BrainDrain = BrainDrain(pack)): List<PlayerId> {
+        engine(game)
         val ids = listOf("A", "B", "C", "D").map { e.add(it) }
         startShow()
         join(ids[0], "T1"); join(ids[1], "T1"); join(ids[2], "T2"); join(ids[3], "T2")
@@ -301,6 +301,76 @@ class BrainDrainTest {
         val game = restored.tvState().stage!!.game as TriviaTv
         assertEquals("question", game.phase)
         assertEquals(1, game.answered)
+    }
+
+    /** Behaves like the server's feed: hands over what it holds, skipping anything already used. */
+    private class FakeFeed(items: List<McItem>) : TriviaFeed {
+        val held = items.toMutableList()
+        var warmed = 0
+        override fun take(used: Set<String>, avoidCategory: String?): McItem? =
+            (held.firstOrNull { it.id !in used && it.category != avoidCategory } ?: held.firstOrNull { it.id !in used })?.also { held.remove(it) }
+        override fun warm() { warmed++ }
+    }
+
+    private fun liveItem(i: Int) =
+        McItem("tlive-$i", "Film", "Live question $i?", "Live right $i", listOf("Live wrong A$i", "Live wrong B$i", "Live wrong C$i"), source = "Open Trivia DB")
+
+    private fun toNextQuestion() {
+        e.host(HostCmd.SkipPhase)
+        while (tv.phase != "question" && tv.phase != "standings") e.host(HostCmd.SkipPhase)
+    }
+
+    @Test fun liveQuestionsTakeOverOnceTheBundledOnesRunOutAndSurviveARestore() {
+        val feed = FakeFeed((1..3).map(::liveItem))
+        val ids = fourInTwoTeams(BrainDrain(pack.copy(mc = pack.mc.take(1)), feed))
+        e.host(HostCmd.SkipPhase) // intro → the one bundled question
+        assertEquals("Question 1?", tv.prompt)
+        assertNull(tv.credit)
+        assertTrue(feed.warmed > 0) // the pack is nearly empty, so the feed starts filling
+        ids.forEach { answer(it, "Right 1") }
+
+        toNextQuestion()
+        assertEquals("Live question 1?", tv.prompt)
+        assertEquals("Film", tv.category)
+        assertEquals("Open Trivia DB", tv.credit)
+        assertEquals("Live question 1?", (e.phoneState(ids[0]).screen as Screen.ChoiceList).prompt)
+        assertTrue("tlive-1" in e.snapshot().usedContent)
+
+        // A restored show carries its live question with it: no feed needed.
+        val restored = PartyEngine.restore(e.snapshot(), clock, SeededEntropy(9), GameRegistry(listOf(BrainDrain(pack.copy(mc = pack.mc.take(1))))))
+        assertEquals("Live question 1?", (restored.tvState().stage!!.game as TriviaTv).prompt)
+
+        ids.forEach { answer(it, "Live right 1") }
+        val r = assertNotNull(tv.reveal)
+        assertEquals("Live right 1", r.answerText)
+        assertTrue(r.answers.all { it.correct })
+        assertNull(tv.fact) // live questions have no fun fact
+        assertEquals("Open Trivia DB", tv.credit)
+        toNextQuestion()
+        assertEquals("Live question 2?", tv.prompt)
+    }
+
+    @Test fun withNoLiveQuestionReadyTheRoundJustEndsEarly() {
+        val broken = liveItem(1).copy(wrong = listOf("Only one wrong answer"))
+        for (feed in listOf(null, FakeFeed(emptyList()), FakeFeed(listOf(broken)))) {
+            val ids = fourInTwoTeams(BrainDrain(pack.copy(mc = pack.mc.take(1)), feed))
+            e.host(HostCmd.SkipPhase)
+            ids.forEach { answer(it, "Right 1") }
+            toNextQuestion()
+            assertEquals("standings", tv.phase, "feed $feed")
+            assertEquals("quick", tv.format)
+        }
+    }
+
+    @Test fun theBundledPackComesFirstAndTheFeedStaysColdWhileThereArePlenty() {
+        val feed = FakeFeed((1..3).map(::liveItem))
+        val big = pack.copy(mc = (1..40).map { McItem("tm$it", "Test", "Question $it?", "Right $it", listOf("Wrong A$it", "Wrong B$it", "Wrong C$it")) })
+        fourInTwoTeams(BrainDrain(big, feed))
+        e.host(HostCmd.SkipPhase)
+        assertTrue(tv.prompt.startsWith("Question "))
+        assertNull(tv.credit)
+        assertEquals(0, feed.warmed)
+        assertEquals(3, feed.held.size)
     }
 
     @Test fun theCorePackIsValidAndBigEnoughForTwoShows() {

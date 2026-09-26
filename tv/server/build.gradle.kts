@@ -24,4 +24,6 @@ tasks.test {
     useJUnitPlatform()
     systemProperty("fixturesDir", rootProject.file("../controller/src/protocol/fixtures").absolutePath)
     systemProperty("updateFixtures", project.hasProperty("updateFixtures").toString())
+    // -PliveTrivia runs the one test that calls the real Open Trivia DB.
+    systemProperty("liveTrivia", project.hasProperty("liveTrivia").toString())
 }

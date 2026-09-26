@@ -74,6 +74,11 @@ before the buzzer. Five rounds, five different formats, one host: Brainy, a pink
 - Teams carry over to the next show. Late arrivals join the smallest team at the next question.
 - 183 multiple-choice questions, 42 Ballpark numbers, 16 Pick a Side sets and 32 Gauntlet prompts, all original,
   every one with a fun fact or a checkable answer. That's enough for two full shows without a repeat.
+- **Live fallback:** once the bundled multiple-choice questions run low, the server quietly fetches more from
+  [Open Trivia DB](https://opentdb.com) (easy and medium only, anything too long for the TV dropped) and uses them
+  for Quick Draw and The Heist after the bundled ones are gone. Live questions have no fun fact and show a small
+  "from Open Trivia DB · CC BY-SA 4.0" credit. With no internet the round just ends early; `--live-trivia off` on
+  the devserver keeps a show fully offline.
 - A show runs about 15–20 minutes at the default five questions per round.
 
 ## Your phone is the controller

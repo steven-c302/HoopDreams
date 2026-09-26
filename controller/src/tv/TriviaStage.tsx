@@ -74,6 +74,7 @@ function Header({ g, clock, extra }: { g: TriviaTv; clock: Clock; extra?: ReactN
         <Chip>{ROUND_TITLES[g.format]?.toUpperCase()}</Chip>
         {g.qTotal > 0 && g.q > 0 && <Chip fill={C.paper} ink={C.ink}>{g.format === 'sides' ? `CALL ${g.q} / ${g.qTotal}` : `Q ${g.q} / ${g.qTotal}`}</Chip>}
         {g.category && g.format !== 'sides' && <Chip fill={C.white} ink={C.ink}>{g.category}</Chip>}
+        {g.credit && <span className="credit">from {g.credit} · CC BY-SA 4.0</span>}
         {extra}
       </div>
       {g.phase === 'question' && g.expected > 0 && <span className="answered"><b>{g.answered}</b>/{g.expected} in</span>}

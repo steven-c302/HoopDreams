@@ -6,7 +6,16 @@ import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.json.Json
 
 @Serializable
-data class McItem(val id: String, val category: String, val prompt: String, val answer: String, val wrong: List<String>, val fact: String? = null)
+data class McItem(
+    val id: String,
+    val category: String,
+    val prompt: String,
+    val answer: String,
+    val wrong: List<String>,
+    val fact: String? = null,
+    /** Where a live question came from (credited on the TV); null for the bundled packs. */
+    val source: String? = null,
+)
 
 @Serializable
 data class BallparkItem(
@@ -60,13 +69,7 @@ data class TriviaPack(
             val ids = p.mc.map { it.id } + p.ballpark.map { it.id } + p.sides.map { it.id } + p.gauntlet.map { it.id }
             require(ids.toSet().size == ids.size) { "duplicate trivia ids: ${ids.groupBy { it }.filter { it.value.size > 1 }.keys}" }
             require(ids.all { it.startsWith("t") }) { "trivia ids must start with t" }
-            for (q in p.mc) {
-                require(q.prompt.isNotBlank() && q.prompt.length <= MAX_PROMPT) { "${q.id}: prompt blank or over $MAX_PROMPT" }
-                require(q.wrong.size == 3) { "${q.id}: needs exactly 3 wrong answers" }
-                val all = (q.wrong + q.answer).map { it.trim().lowercase() }
-                require(all.toSet().size == 4 && all.none { it.isEmpty() }) { "${q.id}: answers must be 4 distinct, non-blank" }
-                require((q.wrong + q.answer).all { it.length <= MAX_OPTION }) { "${q.id}: an answer is over $MAX_OPTION chars" }
-            }
+            for (q in p.mc) mcProblem(q)?.let { throw IllegalArgumentException("${q.id}: $it") }
             for (q in p.ballpark) {
                 require(q.prompt.isNotBlank() && q.prompt.length <= MAX_PROMPT) { "${q.id}: prompt blank or over $MAX_PROMPT" }
                 require(q.answer.isFinite()) { "${q.id}: answer must be a number" }
@@ -84,6 +87,19 @@ data class TriviaPack(
                 require(g.options.all { it.text.length <= MAX_OPTION }) { "${g.id}: an option is over $MAX_OPTION chars" }
             }
             return p
+        }
+
+        /** Why a multiple-choice question can't be shown (it wouldn't fit or can't be scored), or null if it's fine. */
+        fun mcProblem(q: McItem): String? {
+            val all = (q.wrong + q.answer).map { it.trim().lowercase() }
+            return when {
+                !q.id.startsWith("t") -> "id must start with t"
+                q.prompt.isBlank() || q.prompt.length > MAX_PROMPT -> "prompt blank or over $MAX_PROMPT"
+                q.wrong.size != 3 -> "needs exactly 3 wrong answers"
+                all.toSet().size != 4 || all.any { it.isEmpty() } -> "answers must be 4 distinct, non-blank"
+                (q.wrong + q.answer).any { it.length > MAX_OPTION } -> "an answer is over $MAX_OPTION chars"
+                else -> null
+            }
         }
 
         const val LEFT = "left"
