@@ -295,7 +295,8 @@ function TurnCard({ g, people, stage, clock }: { g: SprawlTv; people: Map<string
       {g.dice.length > 0 && g.phase !== 'setup' && (
         <div className="dice">
           {g.dice.map((d, k) => (
-            <motion.div key={`${k}-${d}-${g.dice.join()}`} initial={{ rotate: -200, y: -60, opacity: 0 }} animate={{ rotate: k % 2 ? 6 : -6, y: 0, opacity: 1 }} transition={{ type: 'spring', stiffness: 260, damping: 14, delay: k * 0.06 }}>
+            // Keyed on whose roll it is too, so the next player rolling the same numbers still tumbles.
+            <motion.div key={`${k}-${g.turn}-${d}`} initial={{ rotate: -200, y: -60, opacity: 0 }} animate={{ rotate: k % 2 ? 6 : -6, y: 0, opacity: 1 }} transition={{ type: 'spring', stiffness: 260, damping: 14, delay: k * 0.06 }}>
               <Die value={d} size={70} />
             </motion.div>
           ))}

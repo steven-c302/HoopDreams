@@ -129,13 +129,15 @@ class Sprawl(private val names: SprawlNames = SprawlSetup.loadNames()) : GameMod
             "peek" -> peek(s, me, payload)
             else -> {
                 if (s.trade != null) throw Reject("TRADE_OPEN")
-                if (s.phase == SETUP) {
+                // A real move ends the eyeing: the TV stops ringing the spot.
+                val moved = s.copy(peek = -1, peekKind = null)
+                if (moved.phase == SETUP) {
                     if (kind != "place") throw Reject("NOT_NOW")
-                    if (me != setupSeat(s)) throw Reject("NOT_YOUR_TURN")
-                    return setupPlace(s, payload.int("target"), ctx)
+                    if (me != setupSeat(moved)) throw Reject("NOT_YOUR_TURN")
+                    return setupPlace(moved, payload.int("target"), ctx)
                 }
-                if (me != s.turn) throw Reject("NOT_YOUR_TURN")
-                turnAction(s, me, kind, payload, ctx)
+                if (me != moved.turn) throw Reject("NOT_YOUR_TURN")
+                turnAction(moved, me, kind, payload, ctx)
             }
         }
     }
@@ -149,7 +151,7 @@ class Sprawl(private val names: SprawlNames = SprawlSetup.loadNames()) : GameMod
             DISCARD -> {
                 var n = s
                 n.discards.forEachIndexed { i, owed -> if (owed > 0) n = applyDiscard(n, i, SprawlRules.autoDiscard(n.seats[i].hand, owed)) }
-                go(n, ROBBER, ctx)
+                afterDiscards(n, ctx)
             }
             ROBBER -> moveRobber(s, SprawlRules.autoRobber(s.board, s.turn), ctx)
             STEAL -> {
@@ -161,7 +163,7 @@ class Sprawl(private val names: SprawlNames = SprawlSetup.loadNames()) : GameMod
                 val spot = SprawlRules.roadSpots(s.board, s.turn).firstOrNull()
                 if (spot == null) back(s.copy(freeRoads = 0), ctx) else freeRoad(s, spot, ctx)
             }
-            PICK -> pick(s, autoPick(s), ctx)
+            PICK -> if (s.pick == PLENTY && s.bank.all { it == 0 }) back(s, ctx) else pick(s, autoPick(s), ctx)
             TRADE -> closeTrade(s, "expired", ctx)
             TALLY -> go(s, PODIUM, ctx)
             else -> SStep(s, listOf(Effect.Finish))
@@ -253,7 +255,9 @@ class Sprawl(private val names: SprawlNames = SprawlSetup.loadNames()) : GameMod
             s = s.copy(discards = owed, resume = MAIN, resumeMs = null).log("${s.seats[s.turn].name} rolled a 7! ${names.landlord} is coming")
             return go(s, if (owed.any { it > 0 }) DISCARD else ROBBER, ctx)
         }
-        val gains = SprawlRules.production(s.board, sum, s.bank, s.seats.size).mapIndexed { i, g -> if (s.seats[i].gone) List(5) { 0 } else g }
+        // Seats that left keep their pieces as blockers but collect nothing, so they don't count toward a shortage either.
+        val paying = s.board.copy(vOwner = s.board.vOwner.map { if (it >= 0 && s.seats[it].gone) SprawlRules.NOBODY else it })
+        val gains = SprawlRules.production(paying, sum, s.bank, s.seats.size)
         gains.forEachIndexed { i, g -> if (g.any { it > 0 }) s = s.pay(i, g) }
         val hexes = s.board.numbers.indices.filter { s.board.numbers[it] == sum && it != s.board.robber }
         s = s.beat("harvest", seat = s.turn, amount = sum, targets = hexes, gains = gains)
@@ -365,6 +369,7 @@ class Sprawl(private val names: SprawlNames = SprawlSetup.loadNames()) : GameMod
 
     private fun play(s0: SprawlState, me: Int, card: String, ctx: GameContext): SStep {
         if (card !in PLAYABLE) throw Reject("BAD_ACTION")
+        if (card == PLENTY && s0.bank.all { it == 0 }) throw Reject("BANK_EMPTY")
         if (s0.devPlayed) throw Reject("ONE_CARD")
         if (s0.phase !in PLAY_PHASES) throw Reject("NOT_NOW")
         val seat = s0.seats[me]
@@ -435,8 +440,11 @@ class Sprawl(private val names: SprawlNames = SprawlSetup.loadNames()) : GameMod
         if (owed == 0) throw Reject("NOTHING_OWED")
         if (cards.size != 5 || cards.any { it < 0 } || cards.sum() != owed || !SprawlRules.affords(s0.seats[me].hand, cards)) throw Reject("BAD_DISCARD")
         val s = applyDiscard(s0, me, cards)
-        return if (s.discards.all { it == 0 }) go(s, ROBBER, ctx) else SStep(s)
+        return if (s.discards.all { it == 0 }) afterDiscards(s, ctx) else SStep(s)
     }
+
+    /** Everyone has discarded: the roller moves the Landlord, unless they've left the island (then their turn ends). */
+    private fun afterDiscards(s: SprawlState, ctx: GameContext): SStep = if (s.seats[s.turn].gone) endTurn(s, ctx) else go(s, ROBBER, ctx)
 
     private fun applyDiscard(s: SprawlState, me: Int, cards: List<Int>): SprawlState =
         s.spend(me, cards).copy(discards = s.discards.toMutableList().also { it[me] = 0 })
@@ -575,13 +583,14 @@ class Sprawl(private val names: SprawlNames = SprawlSetup.loadNames()) : GameMod
         s = awards(s)
         if (active(s).size < 2) return tally(s, ctx)
         val t = s.trade
-        if (t != null && (t.from == seat || t.to == seat)) {
-            val closed = closeTrade(s, "cancelled", ctx)
+        val nobodyLeft = t != null && t.to == ANYONE && active(s).none { canAccept(s, t, it) }
+        if (t != null && (t.from == seat || t.to == seat || nobodyLeft)) {
+            val closed = closeTrade(s, if (nobodyLeft && t.from != seat) "rejected" else "cancelled", ctx)
             return if (s.turn == seat) endTurn(closed.state, ctx) else closed
         }
         return when {
             s.phase == SETUP -> if (setupSeat(s) == seat) setupPlace(s, autoSetup(s), ctx) else SStep(s)
-            s.phase == DISCARD && s.discards.all { it == 0 } -> go(s, ROBBER, ctx)
+            s.phase == DISCARD && s.discards.all { it == 0 } -> afterDiscards(s, ctx)
             s.turn == seat && s.phase != DISCARD && s.phase != TRADE -> endTurn(s, ctx)
             else -> SStep(s)
         }

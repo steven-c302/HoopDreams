@@ -400,4 +400,87 @@ class SprawlTest {
         act(seat(0), "peek", "what" to "vertex", "target" to scr.spots.first())
         assertEquals(scr.spots.first(), tv.peek)
     }
+
+    // ---- fixes from review ------------------------------------------------------------------
+
+    @Test fun aWindfallNeedsSomethingInTheBankAndItsTimeoutNeverJams() {
+        start(3)
+        finishSetup()
+        rig { it.dev(0, "plenty").copy(bank = List(5) { 0 }) }
+        assertEquals(ActionResult.Rejected("BANK_EMPTY"), act(seat(0), "play", "card" to "plenty"))
+        // The bank runs dry after the first pick: the timeout goes back to the roll instead of throwing.
+        rig { it.copy(bank = listOf(1, 0, 0, 0, 0)) }
+        act(seat(0), "play", "card" to "plenty")
+        act(seat(0), "pick", "res" to 0)
+        assertEquals("roll", tv.phase)
+        rig { it.copy(bank = List(5) { 0 }, phase = "pick", pick = "plenty", picked = -1, resume = "roll") }
+        passTime(Sprawl.ROLL_MS)
+        assertEquals("roll", tv.phase)
+    }
+
+    @Test fun buildingClearsTheSpotTheTvIsRinging() {
+        start(3)
+        finishSetup()
+        rigDice(12)
+        rig { it.hand(0, 1, 1, 0, 0, 0) }
+        act(seat(0), "roll")
+        val spot = phone(seat(0)).build.roads.first()
+        act(seat(0), "peek", "what" to "edge", "target" to spot)
+        assertEquals(spot, tv.peek)
+        act(seat(0), "build", "what" to "road", "target" to spot)
+        assertEquals(-1, tv.peek)
+        // And a phone backing out of build mode clears it too.
+        act(seat(0), "peek", "what" to "edge", "target" to 0)
+        act(seat(0), "peek")
+        assertEquals(-1, tv.peek)
+    }
+
+    @Test fun seatsThatLeftDontCountTowardAShortage() {
+        start(3)
+        finishSetup()
+        e.kick(seat(1))
+        // Seat 0 and the departed seat 1 share the only ore hex; the bank has one ore left.
+        rig { s ->
+            val b = s.board
+            val g = b.geo
+            val h = b.terrain.indexOfFirst { it == 4 }
+            val (v0, v1) = g.hexVertices[h][0] to g.hexVertices[h][3]
+            val vOwner = List(g.vertices.size) { when (it) { v0 -> 0; v1 -> 1; else -> -1 } }
+            s.copy(
+                board = b.copy(numbers = b.numbers.mapIndexed { i, n -> if (i == h) 5 else if (n == 5) 0 else n }, robber = b.terrain.indexOf(5),
+                    vOwner = vOwner, vLevel = vOwner.map { if (it >= 0) 1 else 0 }),
+                bank = listOf(19, 19, 19, 19, 1), seats = s.seats.map { it.copy(hand = List(5) { 0 }) },
+            )
+        }
+        rigDice(5)
+        act(seat(0), "roll")
+        assertEquals(1, state.seats[0].hand[4])
+    }
+
+    @Test fun aKickLeavingNobodyToAnswerAnOfferClosesIt() {
+        start(3)
+        finishSetup()
+        rigDice(12)
+        act(seat(0), "roll")
+        rig { it.hand(0, 1, 0, 0, 0, 0).hand(1, 0, 1, 0, 0, 0).hand(2, 0, 1, 0, 0, 0) }
+        act(seat(0), "trade", "to" to ANYONE, "give" to listOf(1, 0, 0, 0, 0), "get" to listOf(0, 1, 0, 0, 0))
+        act(seat(1), "tradeReply", "trade" to state.trade!!.id, "option" to "reject")
+        e.kick(seat(2))
+        assertEquals("main", tv.phase)
+        assertEquals(null, state.trade)
+    }
+
+    @Test fun aRollerWhoLeavesDuringTheDiscardDoesntRobAnyone() {
+        start(4)
+        finishSetup()
+        rigDice(7)
+        rig { it.hand(1, 4, 4, 0, 0, 0) }
+        act(seat(0), "roll")
+        assertEquals("discard", tv.phase)
+        e.kick(seat(0))
+        act(seat(1), "discard", "cards" to listOf(2, 2, 0, 0, 0))
+        assertEquals("roll", tv.phase)
+        assertEquals(1, tv.turn)
+        assertFalse(tv.beats.any { it.kind == "steal" })
+    }
 }

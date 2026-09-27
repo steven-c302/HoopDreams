@@ -67,11 +67,16 @@ const pips = (n: number) => (n === 0 ? 0 : 6 - Math.abs(7 - n))
 /** The island as an SVG: terrain, numbers, harbours, roads, buildings, The Landlord, and glowing spots to tap. */
 export function SprawlMap({ map, robber, vOwner, vLevel, eOwner, colors, spots = [], spotKind, selected, onPick, peek = -1, peekKind, hot = [], names = false, className = '', style }: Props) {
   const svg = useRef<SVGSVGElement>(null)
+  const down = useRef<{ x: number; y: number } | null>(null)
   const box = useMemo(() => mapBox(map), [map])
   const spotAt = (kind: SpotKind, id: number) => spotPoint(map, kind, id)
 
   const pick = (e: PointerEvent<SVGSVGElement>) => {
     if (!onPick || !spotKind || !spots.length || !svg.current) return
+    // The end of a drag (scrolling the zoomed map) isn't a tap.
+    const from = down.current
+    down.current = null
+    if (from && Math.hypot(e.clientX - from.x, e.clientY - from.y) > 12) return
     const ctm = svg.current.getScreenCTM()
     if (!ctm) return
     const p = new DOMPoint(e.clientX, e.clientY).matrixTransform(ctm.inverse())
@@ -88,7 +93,7 @@ export function SprawlMap({ map, robber, vOwner, vLevel, eOwner, colors, spots =
   const hotSet = new Set(hot)
 
   return (
-    <svg ref={svg} className={`sp-map ${onPick ? 'interactive' : ''} ${className}`} style={style} viewBox={`${box.x} ${box.y} ${box.w} ${box.h}`} onPointerUp={pick} role="img" aria-label="The island">
+    <svg ref={svg} className={`sp-map ${onPick ? 'interactive' : ''} ${className}`} style={style} viewBox={`${box.x} ${box.y} ${box.w} ${box.h}`} onPointerDown={(e) => { down.current = { x: e.clientX, y: e.clientY } }} onPointerUp={pick} role="img" aria-label="The island">
       {/* the island's shadow */}
       <g transform="translate(10 12)">{map.hexes.map((h, i) => <polygon key={i} points={hexPoints(h.x, h.y)} fill={INK} />)}</g>
 

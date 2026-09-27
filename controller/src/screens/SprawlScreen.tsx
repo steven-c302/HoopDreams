@@ -30,7 +30,13 @@ interface Props { screen: SprawlView; disabled: boolean; onAction(p: ActionPaylo
 const zero = () => [0, 0, 0, 0, 0]
 const sum = (xs: number[]) => xs.reduce((a, b) => a + b, 0)
 
-export function SprawlScreen({ screen, disabled, onAction }: Props) {
+/** A new game (a new island) starts with a fresh screen: no leftover tab, build mode or trade draft from the last one. */
+export function SprawlScreen(props: Props) {
+  const island = props.screen.map.hexes.map((h) => `${h.terrain}${h.number}${h.name}`).join()
+  return <SprawlPhone key={island} {...props} />
+}
+
+function SprawlPhone({ screen, disabled, onAction }: Props) {
   const [tab, setTab] = useState<Tab>('now')
   const [draft, setDraft] = useState<Draft | null>(null)
   const [building, setBuilding] = useState<Build | null>(null)
@@ -139,7 +145,9 @@ function Placer({ screen, spots, kind, title, detail, confirm, onConfirm, onCanc
     const cx = pts.reduce((a, p) => a + p[0], 0) / pts.length, cy = pts.reduce((a, p) => a + p[1], 0) / pts.length
     const svg = el.querySelector('svg')
     if (!svg) return
-    el.scrollTo({ left: ((cx - b.x) / b.w) * svg.clientWidth - el.clientWidth / 2, top: ((cy - b.y) / b.h) * svg.clientHeight - el.clientHeight / 2 })
+    // getBoundingClientRect, not clientWidth: WebKit reports 0 for an SVG's clientWidth.
+    const { width, height } = svg.getBoundingClientRect()
+    el.scrollTo({ left: ((cx - b.x) / b.w) * width - el.clientWidth / 2, top: ((cy - b.y) / b.h) * height - el.clientHeight / 2 })
   }, [zoom, spotKey]) // eslint-disable-line react-hooks/exhaustive-deps
   const pick = (spot: number) => { buzz(15); setPicked(spot); onAction({ kind: 'peek', what: kind, target: spot }) }
   return (
@@ -154,7 +162,7 @@ function Placer({ screen, spots, kind, title, detail, confirm, onConfirm, onCanc
         <button className="sp-key go" disabled={disabled || picked == null} onClick={() => { if (picked != null) { buzz(30); onConfirm(picked) } }}>
           {picked == null ? 'TAP A SPOT' : confirm}
         </button>
-        {onCancel && <button className="sp-key small pass" onClick={onCancel}>BACK</button>}
+        {onCancel && <button className="sp-key small pass" onClick={() => { onAction({ kind: 'peek' }); onCancel() }}>BACK</button>}
       </div>
     </div>
   )
