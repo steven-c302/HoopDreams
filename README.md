@@ -54,7 +54,7 @@ Then double-click **`Start Party OS.command`** in this folder.
 1. It builds everything, starts the party server and keeps the Mac awake.
 2. The TV screen opens full screen in Chrome on the Mac's main display (so mirror the TV). If it shows **GO LIVE**,
    press **Enter** for sound.
-3. Friends scan the QR code on the TV (same Wi-Fi), type a name and **draw their own face**.
+3. Friends scan the QR code on the TV (same Wi-Fi), type a name and **draw their own face** (or snap a selfie).
 4. The first person to join gets the **crown**: they pick the game and start it from their phone, so nobody has to
    get up. The TV keyboard works too.
 5. To stop: press **Ctrl+C** in the Terminal window (or close it), and **Cmd+Q** closes the TV window.

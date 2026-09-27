@@ -496,13 +496,15 @@ class PartyEngine private constructor(
 private val HEX_COLOR = Regex("#[0-9A-Fa-f]{6}")
 private val PRESET_FACE = Regex("p:(0[0-9]|1[0-5])")
 private val DRAWN_FACE = Regex("d:(?:[ML]\\d{1,2},\\d{1,2})+")
+/** A selfie or photo the phone uploaded to the server (PhotoStore); the id is the first 8 bytes of its SHA-256, in hex. */
+private val PHOTO_FACE = Regex("i:[0-9a-f]{16}")
 const val MAX_FACE = 1_600
 const val PRESET_FACES = 16
 
-/** Presets pass through; doodles must be well-formed and small; anything else becomes a stable preset. */
+/** Presets and photo ids pass through; doodles must be well-formed and small; anything else becomes a stable preset. */
 internal fun Avatar.sanitized() = Avatar(
     face = when {
-        PRESET_FACE.matches(face) -> face
+        PRESET_FACE.matches(face) || PHOTO_FACE.matches(face) -> face
         face.length <= MAX_FACE && DRAWN_FACE.matches(face) -> face
         else -> "p:%02d".format(Math.floorMod(face.hashCode(), PRESET_FACES))
     },

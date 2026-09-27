@@ -86,6 +86,9 @@ data class JoinRequest(val room: String, val name: String, val avatar: Avatar, v
 data class JoinResponse(val playerId: PlayerId, val token: String)
 
 @Serializable
+data class PhotoResponse(val id: String)
+
+@Serializable
 data class PinRequest(val pin: String)
 
 @Serializable

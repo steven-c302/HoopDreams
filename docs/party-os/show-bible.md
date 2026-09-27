@@ -36,8 +36,10 @@ Scoped board-game overrides live in [`controller/src/theme/games.css`](../../con
 - **Scenes:** each screen is one comic panel inside an ink gutter, flat colour with halftone dots at the edges.
   Brain Drain tints the panel per round: Sun (Quick Draw), Sky (Ballpark), Bubblegum/Blueberry split (Pick a Side),
   Lime (The Heist), Tomato (The Gauntlet), Paper (standings).
-- **Faces, not emoji:** players draw their own face on the phone (or pick one of 16 drawn presets). The same `<Face>`
-  renders them on the TV, the phones and the blackjack dealer's visor.
+- **Faces, not emoji:** players draw their own face on the phone, pick one of 16 drawn presets, or use a selfie or
+  photo. The same `<Face>` renders them on the TV, the phones and the blackjack dealer's visor. A photo is cropped
+  square to 256 px on the phone, uploaded to the party server (`POST /api/avatar`, kept in memory, LAN only) and shown
+  inside a ring of the player's colour, over a drawn preset that shows through if the picture ever can't load.
 - **Set pieces** (`controller/src/tv/toon.tsx`): starburst bursts, speech bubbles, the alarm-clock timer that rattles
   in the last five seconds, rubber stamps, the crown, drawn keycaps, confetti in theme colours.
 

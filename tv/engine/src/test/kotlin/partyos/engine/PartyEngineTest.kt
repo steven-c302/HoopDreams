@@ -16,6 +16,16 @@ class PartyEngineTest {
     private fun PartyEngine.joinOk(name: String, role: Role = Role.PLAYER): JoinResult.Joined =
         assertIs<JoinResult.Joined>(join(roomCode, name, avatar, role))
 
+    @Test fun photoFacesPassThroughButMalformedOnesBecomePresets() {
+        val e = engine()
+        fun faceOf(name: String, face: String) =
+            assertIs<JoinResult.Joined>(e.join(e.roomCode, name, Avatar(face, "#FF7A00"), Role.PLAYER)).player.avatar.face
+        assertEquals("i:0123456789abcdef", faceOf("Photo", "i:0123456789abcdef"))
+        for ((i, bad) in listOf("i:0123456789ABCDEF", "i:0123", "i:0123456789abcdef0", "i:../../etc/passwd", "i:").withIndex()) {
+            assertTrue(Regex("p:\\d{2}").matches(faceOf("Bad$i", bad)), bad)
+        }
+    }
+
     @Test fun roomCodeIsFourUnambiguousLetters() {
         repeat(50) {
             val code = engine().roomCode

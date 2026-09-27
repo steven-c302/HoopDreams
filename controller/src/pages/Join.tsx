@@ -1,6 +1,7 @@
-import { useRef, useState, type FormEvent, type PointerEvent } from 'react'
+import { useRef, useState, type ChangeEvent, type FormEvent, type PointerEvent } from 'react'
 import type { Session } from '../net/token'
 import { Face, PRESET_FACES } from '../theme/Face'
+import { squareJpeg, uploadPhoto } from './photo'
 
 /** Player colours, as hex because the server validates #RRGGBB. They match the theme's crayons. */
 const COLORS = ['#FF4B3E', '#FF8A2B', '#FFD23F', '#2FBF55', '#7FD3FF', '#2F6BFF', '#8B4DFF', '#FF6FB5']
@@ -22,12 +23,26 @@ export function Join({ room, notice, onJoined }: { room: string | null; notice: 
   const [color, setColor] = useState(() => COLORS[Math.floor(Math.random() * COLORS.length)])
   const [strokes, setStrokes] = useState<string[]>([])
   const [preset, setPreset] = useState(() => PRESETS[Math.floor(Math.random() * PRESETS.length)])
-  const [mode, setMode] = useState<'draw' | 'pick'>('draw')
+  const [mode, setMode] = useState<'draw' | 'pick' | 'photo'>('draw')
+  const [photo, setPhoto] = useState<string | null>(null)
+  const [uploading, setUploading] = useState(false)
   const [error, setError] = useState<string | null>(notice)
   const [busy, setBusy] = useState(false)
 
   const drawn = strokes.join('')
-  const face = mode === 'draw' && drawn ? `d:${drawn}` : preset
+  const face = mode === 'photo' && photo ? `i:${photo}` : mode === 'draw' && drawn ? `d:${drawn}` : preset
+
+  async function takePhoto(file: File) {
+    setUploading(true)
+    setError(null)
+    try {
+      setPhoto(await uploadPhoto(await squareJpeg(file)))
+    } catch {
+      setError("Couldn't use that photo. Try another, or draw your face.")
+    } finally {
+      setUploading(false)
+    }
+  }
 
   async function join(spectator: boolean, e?: FormEvent) {
     e?.preventDefault()
@@ -49,7 +64,7 @@ export function Join({ room, notice, onJoined }: { room: string | null; notice: 
     }
   }
 
-  const ready = code.trim().length === 4 && name.trim().length > 0 && !busy
+  const ready = code.trim().length === 4 && name.trim().length > 0 && !busy && !uploading
 
   return (
     <main className="page join">
@@ -72,10 +87,13 @@ export function Join({ room, notice, onJoined }: { room: string | null; notice: 
 
         <div className="face-maker">
           <div className="tabs" role="tablist">
-            <button type="button" role="tab" aria-selected={mode === 'draw'} className={mode === 'draw' ? 'on' : ''} onClick={() => setMode('draw')}>Draw your face</button>
+            <button type="button" role="tab" aria-selected={mode === 'draw'} className={mode === 'draw' ? 'on' : ''} onClick={() => setMode('draw')}>Draw it</button>
             <button type="button" role="tab" aria-selected={mode === 'pick'} className={mode === 'pick' ? 'on' : ''} onClick={() => setMode('pick')}>Pick one</button>
+            <button type="button" role="tab" aria-selected={mode === 'photo'} className={mode === 'photo' ? 'on' : ''} onClick={() => setMode('photo')}>Photo</button>
           </div>
-          {mode === 'draw' ? (
+          {mode === 'photo' ? (
+            <PhotoPicker color={color} photo={photo} uploading={uploading} onFile={(f) => void takePhoto(f)} onClear={() => setPhoto(null)} />
+          ) : mode === 'draw' ? (
             <>
               <DrawPad color={color} strokes={strokes} setStrokes={setStrokes} />
               <div className="row between">
@@ -108,6 +126,33 @@ export function Join({ room, notice, onJoined }: { room: string | null; notice: 
         <button type="button" className="ghost" disabled={!ready} onClick={() => join(true)}>Just watch</button>
       </form>
     </main>
+  )
+}
+
+/** A selfie from the front camera, or any photo from the library, cropped square into the player's colour ring. */
+function PhotoPicker({ color, photo, uploading, onFile, onClear }: {
+  color: string; photo: string | null; uploading: boolean; onFile(f: File): void; onClear(): void
+}) {
+  const selfie = useRef<HTMLInputElement>(null)
+  const library = useRef<HTMLInputElement>(null)
+  const picked = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    e.target.value = ''
+    if (file) onFile(file)
+  }
+  return (
+    <div className="photo-pick">
+      {photo ? <Face face={`i:${photo}`} color={color} size={200} /> : <div className="photo-empty" style={{ borderColor: color }}>{uploading ? 'Uploading…' : 'Your photo here'}</div>}
+      <input ref={selfie} type="file" accept="image/*" capture="user" hidden onChange={picked} aria-label="Take a selfie" />
+      <input ref={library} type="file" accept="image/*" hidden onChange={picked} aria-label="Choose a photo" />
+      <div className="row">
+        <button type="button" disabled={uploading} onClick={() => selfie.current?.click()}>Take a selfie</button>
+        <button type="button" disabled={uploading} onClick={() => library.current?.click()}>Choose a photo</button>
+      </div>
+      <span className="muted">
+        {uploading ? 'Uploading…' : photo ? <>Looking good. <button type="button" className="small ghost" onClick={onClear}>Remove</button></> : 'Close-up works best. Only this party sees it.'}
+      </span>
+    </div>
   )
 }
 

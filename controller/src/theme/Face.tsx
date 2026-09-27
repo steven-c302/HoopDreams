@@ -1,4 +1,4 @@
-import type { CSSProperties, ReactNode } from 'react'
+import { useId, type CSSProperties, type ReactNode } from 'react'
 
 /** How many preset faces exist (`p:00`..`p:15`); keep in step with PRESET_FACES in PartyEngine.kt. */
 export const PRESET_FACES = 16
@@ -60,17 +60,34 @@ export function presetIndex(face: string): number | null {
   return m ? Number(m[1]) % PRESET_FACES : null
 }
 
-/** A player's face: a filled circle in their colour, ink outline, with a preset cartoon face or their own doodle. */
+/** The id of a selfie or photo face (`i:` + 16 hex, see PhotoStore.kt), or null. */
+export function photoId(face: string): string | null {
+  return /^i:([0-9a-f]{16})$/.exec(face)?.[1] ?? null
+}
+
+/** Where a photo face's picture lives on the party server. */
+export const photoUrl = (id: string) => `/api/avatar/${id}.jpg`
+
+/**
+ * A player's face: a filled circle in their colour, ink outline, with a preset cartoon face, their own doodle, or their
+ * photo. A photo sits inside a ring of their colour, over a preset that shows through if the picture can't load.
+ */
 export function Face({ face, color, size = 56, dim = false, className = '', style }: {
   face: string; color: string; size?: number; dim?: boolean; className?: string; style?: CSSProperties
 }) {
+  const clip = useId()
   const drawn = face.startsWith('d:') ? face.slice(2) : null
-  const [e, m, x] = PRESETS[presetIndex(face) ?? 0]
+  const photo = photoId(face)
+  const [e, m, x] = PRESETS[photo ? parseInt(photo.slice(0, 2), 16) % PRESET_FACES : presetIndex(face) ?? 0]
   return (
     <svg className={`face ${className}`} viewBox="-4 -4 108 108" width={size} height={size} aria-hidden="true"
       style={{ flex: 'none', opacity: dim ? 0.35 : 1, overflow: 'visible', ...style }}>
       <circle cx="50" cy="50" r="48" fill={color} stroke="var(--ink)" strokeWidth="6" />
       {drawn ? <path d={drawn} {...line} strokeWidth={4.5} /> : <>{extra(x)}{eyes(e)}{mouth(m)}</>}
+      {photo && <>
+        <clipPath id={clip}><circle cx="50" cy="50" r="41" /></clipPath>
+        <image href={photoUrl(photo)} x="9" y="9" width="82" height="82" preserveAspectRatio="xMidYMid slice" clipPath={`url(#${clip})`} />
+      </>}
     </svg>
   )
 }

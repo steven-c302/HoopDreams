@@ -1,5 +1,6 @@
 package partyos.server
 
+import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.application.Application
@@ -12,6 +13,7 @@ import io.ktor.server.request.receiveChannel
 import io.ktor.utils.io.readRemaining
 import kotlinx.io.readByteArray
 import kotlinx.coroutines.flow.first
+import io.ktor.server.response.header
 import io.ktor.server.response.respond
 import io.ktor.server.response.respondBytes
 import io.ktor.server.response.respondText
@@ -49,6 +51,8 @@ data class ServerConfig(
     val pinLockMs: Long = 60_000,
     /** A music app the TV can steer (Spotify on the Mac running the show); null where there isn't one. */
     val music: MusicPlayer? = null,
+    /** Selfies and photos players picked as their face. */
+    val photos: PhotoStore = PhotoStore(),
 )
 
 /** The caller is this machine (the browser TV), never a phone on the Wi-Fi. */
@@ -95,6 +99,28 @@ fun Application.partyModule(host: PartyHost, static: StaticFiles, cfg: ServerCon
                     ErrorResponse(r.error.name),
                 )
             }
+        }
+
+        // A selfie or photo for a face, uploaded before joining: the phone gets an id and joins with face "i:<id>".
+        post("/api/avatar") {
+            if ((call.request.contentLength() ?: 0) > PhotoStore.MAX_BYTES) {
+                return@post call.respond(HttpStatusCode.PayloadTooLarge, ErrorResponse("PHOTO_TOO_BIG"))
+            }
+            val bytes = call.receiveChannel().readRemaining(PhotoStore.MAX_BYTES + 1L).readByteArray()
+            when {
+                bytes.size > PhotoStore.MAX_BYTES -> call.respond(HttpStatusCode.PayloadTooLarge, ErrorResponse("PHOTO_TOO_BIG"))
+                !PhotoStore.looksLikeJpeg(bytes) -> call.respond(HttpStatusCode.BadRequest, ErrorResponse("NOT_A_PHOTO"))
+                else -> call.respond(PhotoResponse(cfg.photos.put(bytes)))
+            }
+        }
+
+        get("/api/avatar/{file}") {
+            val id = call.parameters["file"]?.removeSuffix(".jpg")?.takeIf { PhotoStore.ID.matches(it) }
+            val bytes = id?.let { cfg.photos.get(it) } ?: return@get call.respond(HttpStatusCode.NotFound)
+            // Content-addressed, so a URL's bytes never change.
+            call.response.header("Cache-Control", "public, max-age=31536000, immutable")
+            call.response.header("X-Content-Type-Options", "nosniff")
+            call.respondBytes(bytes, ContentType.Image.JPEG)
         }
 
         post("/api/role") {
