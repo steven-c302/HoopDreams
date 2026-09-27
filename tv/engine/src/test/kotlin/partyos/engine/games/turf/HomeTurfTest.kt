@@ -26,6 +26,8 @@ import kotlin.test.assertNotEquals
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
+private const val ROLL_MS_FOR_TEST = HomeTurf.ROLL_MS + 10_000
+
 class HomeTurfTest {
     private val clock = FakeClock(0)
     private val registry = GameRegistry(listOf(HomeTurf()))
@@ -555,6 +557,27 @@ class HomeTurfTest {
         assertEquals(32, tv.housesLeft)
         assertNotEquals(t, tv.turn, "their turn ended")
         assertEquals("roll", tv.phase)
+    }
+
+    @Test fun aKickDuringSomeoneElsesTradeEndsTheRetiredTokensTurn() {
+        start(listOf("Ava", "Ben", "Cleo", "Dev")); skipSetup()
+        rig { s -> s.clean().owning(1 to (s.turn + 1) % 4, 3 to (s.turn + 2) % 4) }
+        val t = state.turn
+        val (b, c) = (t + 1) % 4 to (t + 2) % 4
+        assertEquals("roll", tv.phase)
+        // Two other tokens trade while it's t's roll; then t's only player is kicked.
+        assertEquals(ActionResult.Ack, act(seatOf(b), "trade", "to" to c, "give" to listOf(1), "get" to listOf(3)))
+        assertEquals("trade", tv.phase)
+        e.kick(seatOf(t))
+        assertTrue(tv.tokens[t].bankrupt)
+        assertEquals("trade", tv.phase, "the other two can still finish their deal")
+        act(seatOf(c), "tradeReply", "trade" to tv.trade!!.id, "option" to "reject")
+        assertNotEquals(t, tv.turn, "the retired token doesn't get its roll back")
+        assertEquals("roll", tv.phase)
+        val before = tv.tokens[t].pos
+        passTime(ROLL_MS_FOR_TEST)
+        assertEquals(before, tv.tokens[t].pos, "and never moves again")
+        assertEquals(1, tv.tokens.count { it.bankrupt })
     }
 
     @Test fun whenTheClockRunsOutEveryoneFinishesTheLap() {

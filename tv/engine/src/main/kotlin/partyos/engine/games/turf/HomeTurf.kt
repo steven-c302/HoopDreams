@@ -787,10 +787,14 @@ class HomeTurf(private val names: BoardNames = TurfBoard.loadNames()) : GameModu
         return homeTurf(s0, homeTurf(s0, s, t.from), t.to)
     }
 
-    /** Closes the open trade and gives the frozen turn its time back (at least a few seconds). */
+    /**
+     * Closes the open trade and gives the frozen turn its time back (at least a few seconds). If the turn's token
+     * retired while two others were trading, its turn ends instead: a token that's out never rolls again.
+     */
     private fun closeTrade(s0: TurfState, how: String, ctx: GameContext): Step<TurfState> {
         val t = s0.trade ?: return Step(s0)
         val s = s0.copy(trade = null).let { if (how == "accepted") it else it.beat(how, token = t.from, other = t.to) }
+        if (s.tokens[s.turn].bankrupt && t.frozenPhase in TURN_PHASES) return endTurn(s, ctx)
         return go(s, t.frozenPhase, ctx, maxOf(t.frozenMs ?: TRADE_RESUME_MS, TRADE_RESUME_MS))
     }
 
@@ -1015,6 +1019,8 @@ class HomeTurf(private val names: BoardNames = TurfBoard.loadNames()) : GameModu
         val MANAGE_PHASES = setOf(ROLL, JAIL, BUY, MANAGE)
         /** When a trade can be offered (the turn freezes while it's open). */
         val TRADE_PHASES = setOf(ROLL, JAIL, MANAGE, DEBT)
+        /** Trade phases that belong to the turn's token itself (DEBT resolves the debtor's side and ends it there). */
+        val TURN_PHASES = setOf(ROLL, JAIL, MANAGE)
         /** Phases whose clock is a decision timer, not an animation. */
         val TIMED = setOf(ROLL, JAIL, BUY, AUCTION, CHOOSE, MANAGE, DEBT, TRADE, PIECES, TEAMUP)
         val PHASE_FREE = setOf("trade", "tradeReply", "tradeCancel")
