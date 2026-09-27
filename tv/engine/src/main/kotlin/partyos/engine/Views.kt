@@ -186,4 +186,6 @@ sealed interface HostCmd {
     data class SetOption(val key: String, val value: Int) : HostCmd
     /** Hands the crown to [player]. */
     data class MakeCaptain(val player: PlayerId) : HostCmd
+    /** A show control the running game defines, e.g. Brain Drain's "shuffle" during Team Up. */
+    data class GameAction(val action: String) : HostCmd
 }

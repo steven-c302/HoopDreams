@@ -218,6 +218,16 @@ class PartyEngine private constructor(
                 if (player(cmd.player) == null) return ActionResult.Rejected("UNKNOWN_PLAYER")
                 captainPick = cmd.player
             }
+            is HostCmd.GameAction -> {
+                val g = active ?: return ActionResult.Rejected("NO_GAME")
+                if (g.tutorialAcks != null || g.state == null) return ActionResult.Rejected("NOT_NOW")
+                if (g.paused) return ActionResult.Rejected("PAUSED")
+                try {
+                    hostAction(g, cmd.action)
+                } catch (r: Reject) {
+                    return ActionResult.Rejected(r.code)
+                }
+            }
         }
         settle()
         return ActionResult.Ack
@@ -313,6 +323,8 @@ class PartyEngine private constructor(
 
     private fun <S : Any> gameAction(g: ActiveGame<S>, id: PlayerId, payload: JsonObject) =
         apply(g, g.module.onAction(g.state!!, id, payload, ctx(g)))
+
+    private fun <S : Any> hostAction(g: ActiveGame<S>, action: String) = apply(g, g.module.onHost(g.state!!, action, ctx(g)))
 
     private fun <S : Any> presenceChanged(g: ActiveGame<S>, id: PlayerId, present: Boolean) {
         g.state?.let { apply(g, g.module.onPresence(it, id, present, ctx(g))) }

@@ -26,8 +26,10 @@ export function sipLabel(n: number): string {
 }
 
 export type TriviaFormat = 'teamup' | 'quick' | 'ballpark' | 'sides' | 'heist' | 'gauntlet'
-export type TriviaPhase = 'teamup' | 'intro' | 'question' | 'reveal' | 'victim' | 'steal' | 'standings' | 'podium'
+export type TriviaPhase = 'teamup' | 'intro' | 'question' | 'reveal' | 'victim' | 'steal' | 'standings' | 'podium' | 'awards'
 export interface TriviaTeam { id: string; name: string; color: string; members: string[]; score: number; answered: number; position: number; headStart: number }
+/** One end-of-show award. `line` never names the player; the TV shows their face and name. */
+export interface TriviaAward { title: string; player: string; line: string; roast?: boolean }
 export interface TeamAnswer { team: string; choice?: string; number?: number; picks: string[]; correct: boolean; points: number; rank?: number; moved?: number; bullseye: boolean; seconds?: number }
 export interface TriviaTv {
   t: 'trivia'; phase: TriviaPhase; format: TriviaFormat; round: number; totalRounds: number; q: number; qTotal: number; durationMs?: number
@@ -39,6 +41,8 @@ export interface TriviaTv {
   hostLine?: string; fact?: string; finishLine: number; podium: string[]
   /** Where a live question came from ("Open Trivia DB"); absent for the bundled packs. */
   credit?: string
+  /** End-of-show shout-outs, on the awards screen only. */
+  awards?: TriviaAward[]
 }
 
 export const ROUND_TITLES: Record<string, string> = { teamup: 'Team Up', quick: 'Quick Draw', ballpark: 'Ballpark', sides: 'Pick a Side', heist: 'The Heist', gauntlet: 'The Gauntlet' }

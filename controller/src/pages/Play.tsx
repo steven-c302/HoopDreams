@@ -5,7 +5,7 @@ import type { Session } from '../net/token'
 import { ScreenView, teamOf } from '../screens/ScreenView'
 import { Face } from '../theme/Face'
 import { Crown } from '../tv/toon'
-import { CaptainControls, CaptainLobby } from './Captain'
+import { CaptainControls, CaptainLobby, ShuffleTeams, inTeamUp } from './Captain'
 import { useCountdown } from './useCountdown'
 
 const BYE: Record<string, string> = {
@@ -75,6 +75,7 @@ export function Play({ session, onLeave }: { session: Session; onLeave(why: stri
         {view.captain && !view.gameId
           ? <CaptainLobby view={view} games={games} host={host} />
           : <ScreenView screen={view.screen} disabled={view.paused} onAction={send} meId={view.me.id} people={people} />}
+        {view.captain && inTeamUp(view) && <ShuffleTeams host={host} />}
         {view.me.role === 'SPECTATOR' && !view.gameId && (
           <button className="primary big" onClick={() => void takeSeat(session.token, setToast)}>Join as a player</button>
         )}

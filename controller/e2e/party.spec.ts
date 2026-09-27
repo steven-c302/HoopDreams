@@ -97,9 +97,19 @@ test('the first phone to join runs the show from the couch', async ({ browser })
   await captain.getByRole('button', { name: /Everybody's in! Start Brain Drain/ }).click()
   for (const p of [captain, guest]) await expect(p.getByRole('button', { name: 'Ready!' })).toBeVisible()
 
+  // Team Up: the captain can deal everyone evenly; the guest never gets that button.
+  for (const p of [captain, guest]) await p.getByRole('button', { name: 'Ready!' }).click()
+  await captain.locator('.choices.teams button').first().click()
+  await expect(guest.getByRole('button', { name: /Shuffle evenly/ })).toHaveCount(0)
+  await captain.getByRole('button', { name: /Shuffle evenly/ }).click()
+  // The guest never picked a team; after the shuffle they're each on a different one.
+  const band = async (p: Page) => ((await p.locator('.team-band').count()) ? (await p.locator('.team-band').textContent()) ?? '' : '')
+  await expect.poll(async () => { const [a, b] = [await band(captain), await band(guest)]; return a !== '' && b !== '' && a !== b }).toBe(true)
+
   // Mid-game the crown opens the show controls; the guest never sees them.
   await expect(guest.getByRole('button', { name: 'Captain controls' })).toHaveCount(0)
   await captain.getByRole('button', { name: 'Captain controls' }).click()
+  await expect(captain.getByRole('button', { name: 'Shuffle teams evenly' })).toBeVisible()
   await captain.getByRole('button', { name: 'End game' }).click()
   await captain.getByRole('button', { name: 'Really end the game?' }).click()
   await expect(captain.getByRole('heading', { name: 'You have the crown' })).toBeVisible()

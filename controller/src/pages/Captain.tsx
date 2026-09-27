@@ -88,6 +88,17 @@ function PassCrown({ view, host }: { view: PhoneState; host(c: HostCommand): voi
   )
 }
 
+/** Brain Drain's Team Up is on this phone: it's picking or naming a team. */
+export const inTeamUp = (view: PhoneState) =>
+  (view.screen.t === 'choice' && view.screen.kind === 'team') || (view.screen.t === 'text' && view.screen.kind === 'teamName')
+
+const shuffle = (host: (c: HostCommand) => void) => { buzz([20, 40, 20]); host({ t: 'gameAction', action: 'shuffle' }) }
+
+/** Team Up, captain only: deal everyone evenly across the teams (friends always pile onto one). */
+export function ShuffleTeams({ host }: { host(c: HostCommand): void }) {
+  return <button className="ghost shuffle-teams" onClick={() => shuffle(host)}>Uneven teams? Shuffle evenly</button>
+}
+
 /** During a game: a crown button that opens the show controls (pause, skip ahead, end). */
 export function CaptainControls({ view, host }: { view: PhoneState; host(c: HostCommand): void }) {
   const [open, setOpen] = useState(false)
@@ -100,6 +111,7 @@ export function CaptainControls({ view, host }: { view: PhoneState; host(c: Host
         <div className="sheet-scrim" onClick={close}>
           <div className="sheet" role="dialog" aria-label="Captain controls" onClick={(e) => e.stopPropagation()}>
             <div className="captain-head"><Crown size={44} /><h2>Captain controls</h2></div>
+            {inTeamUp(view) && <button className="big" onClick={() => { shuffle(host); close() }}>Shuffle teams evenly</button>}
             {view.paused
               ? <button className="primary big" onClick={() => { host({ t: 'resume' }); close() }}>Resume</button>
               : <button className="big" onClick={() => { host({ t: 'pause' }); close() }}>Pause</button>}

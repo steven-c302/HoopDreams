@@ -15,6 +15,7 @@ const val PROTOCOL_VERSION = 1
 
 /** Game settings a host may pass when starting a game. */
 private val START_OPTIONS = setOf("teams", "drinks")
+private const val MAX_GAME_ACTION = 32
 
 /** One JSON configuration for every wire message; sealed types carry their tag in "t". */
 val PartyJson = Json {
@@ -58,6 +59,8 @@ sealed interface HostCommand {
     /** A shared lobby setting: rounds, teams, drinks, game (index into /api/games), captain (phones allowed, 0/1). */
     @Serializable @SerialName("setOption") data class SetOption(val key: String, val value: Int) : HostCommand
     @Serializable @SerialName("makeCaptain") data class MakeCaptain(val playerId: PlayerId) : HostCommand
+    /** A game's own show control, e.g. `shuffle` during Brain Drain's Team Up. */
+    @Serializable @SerialName("gameAction") data class GameAction(val action: String) : HostCommand
 
     fun toCmd(): HostCmd = when (this) {
         is Start -> HostCmd.StartGame(
@@ -72,6 +75,7 @@ sealed interface HostCommand {
         is SetRounds -> HostCmd.SetRounds(rounds)
         is SetOption -> HostCmd.SetOption(key, value)
         is MakeCaptain -> HostCmd.MakeCaptain(playerId)
+        is GameAction -> HostCmd.GameAction(action.take(MAX_GAME_ACTION))
     }
 }
 

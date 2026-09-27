@@ -131,6 +131,7 @@ function Show({ session }: { session: TvSession }) {
       else if (e.key.toLowerCase() === 'f') document.documentElement.requestFullscreen?.().catch(() => undefined)
       else if (e.key.toLowerCase() === 'm') { const m = { ...mix, on: !mix.on }; setMix(m); setMixState(m) }
       else if (e.key.toLowerCase() === 'p' && stage) cmd({ t: stage.paused ? 'resume' : 'pause' })
+      else if (e.key.toLowerCase() === 's' && (stage?.game as { phase?: string } | undefined)?.phase === 'teamup') { cmd({ t: 'gameAction', action: 'shuffle' }); sfx.select() }
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)

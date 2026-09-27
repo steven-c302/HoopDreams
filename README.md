@@ -72,6 +72,11 @@ before the buzzer. Five rounds, five different formats, one host: Brainy, a pink
 - **Drink calls** (on by default, **D** turns them off): last place after each round drinks a sip, a Heist victim
   drinks a sip, and teams that don't escape the Gauntlet drink two. Water counts.
 - Teams carry over to the next show. Late arrivals join the smallest team at the next question.
+- **Shuffle:** friends always pile onto one team. During Team Up, press **S** on the TV (or tap "Shuffle evenly"
+  on the captain's phone) to deal everyone evenly across the teams; names stay, everyone checks their new team.
+- **Awards:** after the podium, up to four shout-outs from how each person actually played: Big Brain, Fastest
+  Thumb, Lone Wolf (went against their team and was right), Human Calculator, and roasts like Contrarian, Dead
+  Weight and Ghost. Winners see theirs on their phone.
 - 183 multiple-choice questions, 42 Ballpark numbers, 16 Pick a Side sets and 32 Gauntlet prompts, all original,
   every one with a fun fact or a checkable answer. That's enough for two full shows without a repeat.
 - **Live fallback:** once the bundled multiple-choice questions run low, the server quietly fetches more from

@@ -106,6 +106,68 @@ class BrainDrainTest {
         assertEquals("intro", tv.phase)
     }
 
+    @Test fun shuffleDealsEveryoneEvenlyKeepsTheNamesAndGivesTimeToCheck() {
+        engine()
+        val ids = (1..6).map { e.add("P$it") }
+        startShow(teams = 3)
+        ids.take(5).forEach { join(it, "T1") }
+        join(ids[5], "T2")
+        assertEquals(ActionResult.Ack, name(ids[0], "Quizzards"))
+        clock.advance(40_000) // 5 seconds of Team Up left
+
+        assertEquals(ActionResult.Ack, e.host(HostCmd.GameAction(BrainDrain.SHUFFLE)))
+        assertEquals("teamup", tv.phase)
+        assertEquals(listOf(2, 2, 2), tv.teams.map { it.members.size })
+        assertEquals(ids.toSet(), tv.teams.flatMap { it.members }.toSet())
+        assertEquals("Quizzards", tv.teams.single { it.id == "T1" }.name)
+        assertTrue((tv.durationMs ?: 0) >= BrainDrain.SHUFFLE_GRACE_MS)
+        // Everyone looks at their new team again before the show moves on.
+        val onT1 = tv.teams.single { it.id == "T1" }.members.first()
+        assertEquals("Still Quizzards? Tap to confirm", assertIs<Screen.ChoiceList>(e.phoneState(onT1).screen).prompt)
+
+        // The captain (first to join) can shuffle from their phone; nobody else can.
+        assertEquals(ActionResult.Rejected("NOT_CAPTAIN"), e.captainCommand(ids[1], HostCmd.GameAction(BrainDrain.SHUFFLE)))
+        assertEquals(ActionResult.Ack, e.captainCommand(ids[0], HostCmd.GameAction(BrainDrain.SHUFFLE)))
+        assertEquals(ActionResult.Rejected("UNSUPPORTED"), e.host(HostCmd.GameAction("dance")))
+
+        e.host(HostCmd.SkipPhase) // Team Up over
+        assertEquals(ActionResult.Rejected("NOT_NOW"), e.host(HostCmd.GameAction(BrainDrain.SHUFFLE)))
+    }
+
+    @Test fun theShowEndsWithAwardsForWhoCarriedWhoRebelledAndWhoSatOut() {
+        val (a, b, c, d) = fourInTwoTeams()
+        e.host(HostCmd.SkipPhase)
+        repeat(3) {
+            val right = currentRight()
+            val wrong = options(a).first { it.text != right }.text
+            // A is first and right for T1. On T2, C is first and wrong, so the tie goes C's way; D was right alone.
+            answer(a, right); clock.advance(500)
+            answer(c, wrong); clock.advance(500)
+            answer(b, right); clock.advance(500)
+            answer(d, right)
+            assertEquals("reveal", tv.phase)
+            toNextQuestion()
+        }
+        while (tv.phase != "podium") e.host(HostCmd.SkipPhase) // nobody answers the rest of the show
+        assertTrue(tv.awards.isEmpty()) // saved for their own screen
+
+        e.host(HostCmd.SkipPhase)
+        assertEquals("awards", tv.phase)
+        assertEquals(
+            listOf("Big Brain" to a, "Fastest Thumb" to c, "Lone Wolf" to d, "Ghost" to b),
+            tv.awards.map { it.title to it.player },
+        )
+        assertEquals("3 of 3 right", tv.awards[0].line)
+        assertEquals("Went against their team and was right 3 times", tv.awards[2].line)
+        assertTrue(tv.awards[3].roast && tv.awards[3].line.startsWith("Sat out "))
+        assertEquals("You got Lone Wolf", waiting(d).title)
+        assertEquals("win", waiting(d).tone)
+        assertEquals("lose", waiting(b).tone)
+
+        e.host(HostCmd.SkipPhase)
+        assertNull(e.tvState().stage)
+    }
+
     @Test fun theFirstNameWinsAndDuplicateNamesAreRefused() {
         engine()
         val ids = listOf("A", "B", "C").map { e.add(it) }

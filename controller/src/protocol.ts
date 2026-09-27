@@ -89,6 +89,8 @@ export type HostCommand =
   | { t: 'setRounds'; rounds: number }
   | { t: 'setOption'; key: 'rounds' | 'teams' | 'drinks' | 'game' | 'captain'; value: number }
   | { t: 'makeCaptain'; playerId: string }
+  /** A game's own show control, e.g. 'shuffle' during Brain Drain's Team Up. */
+  | { t: 'gameAction'; action: string }
 
 export type ActionPayload = { kind: string; [k: string]: string | number | boolean | string[] }
 

@@ -58,6 +58,8 @@ interface GameModule<S : Any> {
     fun onAction(s: S, who: PlayerId, payload: JsonObject, ctx: GameContext): Step<S>
     fun onDeadline(s: S, ctx: GameContext): Step<S>
     fun onPresence(s: S, who: PlayerId, present: Boolean, ctx: GameContext): Step<S> = Step(s)
+    /** A host or captain show control ([HostCmd.GameAction]); throw [Reject] if it doesn't apply right now. */
+    fun onHost(s: S, action: String, ctx: GameContext): Step<S> = throw Reject("UNSUPPORTED")
     /** Players still expected to act in the current phase, or null when the phase takes no input. */
     fun waitingOn(s: S): Set<PlayerId>?
     fun tvView(s: S, ctx: GameContext): TvGame

@@ -5,7 +5,7 @@ import type { PlayerSummary, ScoreRow, StageInfo } from '../protocol'
 import { sfx } from './audio'
 import { Tutorial, useLater } from './Shared'
 import {
-  ANSWER_COLOR, AvatarFace, Brainy, Bubble, Burst, C, Chip, CountUp, Crown, Deal, FaceRow, HostSays, Panel, Pop, Scene, Shape, Slam, Timer,
+  ANSWER_COLOR, AvatarFace, Brainy, Bubble, Burst, C, Chip, CountUp, Crown, Deal, FaceRow, HostSays, Keycap, Panel, Pop, Scene, Shape, Slam, Timer,
   coinShower, fireConfetti, inkOn, type Mood,
 } from './toon'
 import { ROUND_RULES, ROUND_TITLES, type TriviaTeam, type TriviaTv } from './types'
@@ -31,7 +31,7 @@ export function TriviaStage({ stage, players, clock }: Props) {
       </Scene>
     )
   }
-  const color = g.phase === 'standings' ? C.paper : g.phase === 'podium' ? C.sun : SCENE[g.format] ?? C.sun
+  const color = g.phase === 'standings' ? C.paper : g.phase === 'podium' ? C.sun : g.phase === 'awards' ? C.grape : SCENE[g.format] ?? C.sun
   const split: [string, string] | undefined = g.format === 'sides' && (g.phase === 'question' || g.phase === 'reveal') ? [C.bubblegum, C.blueberry] : undefined
   return (
     <Scene color={color} split={split}>
@@ -48,6 +48,7 @@ function Beat({ g, byId, clock }: { g: TriviaTv; byId: ById; clock: Clock }) {
     case 'intro': return <Intro g={g} byId={byId} />
     case 'standings': return <Standings g={g} byId={byId} />
     case 'podium': return <TeamPodium g={g} byId={byId} />
+    case 'awards': return <Awards g={g} byId={byId} />
     case 'victim': return <Victim g={g} byId={byId} clock={clock} />
     case 'steal': return <Steal g={g} byId={byId} />
     default:
@@ -187,6 +188,7 @@ function TeamUp({ g, byId, clock }: { g: TriviaTv; byId: ById; clock: Clock }) {
         {unplaced.length > 0
           ? <><span>Still picking</span><FaceRow players={unplaced} size={56} max={10} dimIds={NO_DIM} /></>
           : <span>Everyone has a team. First teammate to type a name names it.</span>}
+        <span className="shuffle-hint"><Keycap label="S" /> or the captain&rsquo;s phone shuffles teams evenly</span>
       </div>
     </>
   )
@@ -557,6 +559,43 @@ function TeamPodium({ g, byId }: { g: TriviaTv; byId: ById }) {
         })}
       </div>
       <DrinkCall g={g} style={{ right: 60, top: 230 }} />
+    </>
+  )
+}
+
+// ---------- awards ----------
+
+const AWARD_GAP = 1.2
+
+/** The end-of-show shout-outs, one card at a time: the drawn face, the title in a burst, the damning number. */
+function Awards({ g, byId }: { g: TriviaTv; byId: ById }) {
+  const awards = g.awards ?? []
+  useEffect(() => {
+    sfx.drumroll(0.9)
+    const ids = awards.map((a, i) => setTimeout(() => (a.roast ? sfx.womp() : sfx.stamp()), (0.9 + i * AWARD_GAP) * 1000))
+    ids.push(setTimeout(() => { sfx.applause(3); fireConfetti() }, (0.9 + awards.length * AWARD_GAP) * 1000))
+    return () => ids.forEach(clearTimeout)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+  return (
+    <>
+      <div className="trivia-header"><ShowTitle /><div style={{ flex: 1, paddingLeft: 20 }}><HostSays line={g.hostLine} mood="smug" size={150} /></div></div>
+      <div className="awards" style={{ gridTemplateColumns: `repeat(${Math.max(1, awards.length)}, minmax(0, 1fr))` }}>
+        {awards.map((a, i) => {
+          const p = byId.get(a.player)
+          const at = 0.9 + i * AWARD_GAP
+          return (
+            <Slam key={a.title} delay={at} from={2.1} tilt={i % 2 ? 7 : -7}>
+              <Panel className={`award ${a.roast ? 'roast' : ''}`} fill={a.roast ? C.tomato : C.white} tilt={[-2, 1.5, -1, 2][i % 4]}>
+                <Burst text={a.title.toUpperCase()} width={400} height={180} size={48} fill={a.roast ? C.white : C.sun} tilt={i % 2 ? 4 : -4} spikes={14} delay={at + 0.15} />
+                {p ? <AvatarFace avatar={p.avatar} size={170} /> : <Brainy mood="shocked" size={170} />}
+                <b className="award-name">{p?.name ?? 'Someone who left'}</b>
+                <p>{a.line}</p>
+              </Panel>
+            </Slam>
+          )
+        })}
+      </div>
     </>
   )
 }

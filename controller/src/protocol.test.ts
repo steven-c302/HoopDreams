@@ -27,6 +27,7 @@ describe('protocol fixtures shared with the Kotlin server', () => {
       { t: 'host', id: 'h-8', cmd: { t: 'start', gameId: 'trivia', rounds: 5, options: { teams: 4, drinks: 1 } } },
       { t: 'host', id: 'h-9', cmd: { t: 'setOption', key: 'game', value: 1 } },
       { t: 'host', id: 'h-10', cmd: { t: 'makeCaptain', playerId: 'p-al' } },
+      { t: 'host', id: 'h-11', cmd: { t: 'gameAction', action: 'shuffle' } },
       { t: 'action', id: 'a-4', round: 9, payload: { kind: 'guess', value: 206 } },
       { t: 'action', id: 'a-5', round: 10, payload: { kind: 'multi', picks: ['a'], lock: true } },
       { t: 'host', id: 'h-2', cmd: { t: 'pause' } },

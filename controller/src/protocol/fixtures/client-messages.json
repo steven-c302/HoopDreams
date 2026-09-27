@@ -70,6 +70,14 @@
         }
     },
     {
+        "t": "host",
+        "id": "h-11",
+        "cmd": {
+            "t": "gameAction",
+            "action": "shuffle"
+        }
+    },
+    {
         "t": "action",
         "id": "a-4",
         "round": 9,

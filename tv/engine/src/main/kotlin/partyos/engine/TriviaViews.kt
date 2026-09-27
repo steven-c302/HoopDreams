@@ -40,7 +40,13 @@ data class TriviaTv(
     val finishLine: Int = 10,
     /** Podium order, winners first (team ids). */
     val podium: List<String> = emptyList(),
+    /** End-of-show shout-outs, on the awards screen only. */
+    val awards: List<TriviaAward> = emptyList(),
 ) : TvGame
+
+/** One end-of-show award: brags ("Big Brain") and roasts ("Dead Weight") alike. [line] never names the player. */
+@Serializable
+data class TriviaAward(val title: String, val player: PlayerId, val line: String, val roast: Boolean = false)
 
 @Serializable
 data class TriviaTeam(

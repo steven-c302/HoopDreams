@@ -80,6 +80,12 @@ const BEATS: Record<string, TriviaTv> = {
     teams: [team(0, 'Smarty Pints', '#FF4B3E', 4200, { position: 7 }), team(1, 'Les Quizerables', '#2F6BFF', 5400, { position: 7 }), team(2, 'Sip Happens', '#2FBF55', 3100, { position: 4 })],
     hostLine: 'Smarty Pints can smell the finish.' },
   podium: { ...base, phase: 'podium', podium: ['T2', 'T1', 'T3'], drink: { teams: ['T3'], sips: 2, reason: "didn't escape" }, hostLine: 'Les Quizerables win Brain Drain!' },
+  awards: { ...base, phase: 'awards', hostLine: 'And now, the awards.', awards: [
+    { title: 'Big Brain', player: 'p4', line: '11 of 13 right' },
+    { title: 'Fastest Thumb', player: 'p0', line: 'First on their team to answer 9 times' },
+    { title: 'Lone Wolf', player: 'p8', line: 'Went against their team and was right 2 times' },
+    { title: 'Dead Weight', player: 'p5', line: '2 of 12 right. The team carried them.', roast: true },
+  ] },
 }
 
 function TriviaGallery({ beat }: { beat: string | null }) {

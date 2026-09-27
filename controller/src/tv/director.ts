@@ -27,7 +27,7 @@ function musicFor(tv: TvState): Mode {
   if (g.t === 'trivia') {
     switch (g.phase) {
       case 'teamup': return 'teamup'
-      case 'standings': return 'standings'
+      case 'standings': case 'awards': return 'standings'
       case 'podium': return 'podium'
       case 'victim': case 'steal': return 'heist'
       case 'intro': return g.format === 'teamup' ? 'teamup' : (g.format as Mode)

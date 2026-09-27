@@ -25,6 +25,7 @@ import partyos.engine.Step
 import partyos.engine.TeamAnswer
 import partyos.engine.TeamGuess
 import partyos.engine.TeamTag
+import partyos.engine.TriviaAward
 import partyos.engine.TriviaReveal
 import partyos.engine.TriviaTeam
 import partyos.engine.TriviaTv
@@ -88,6 +89,25 @@ data class TriviaState(
     val eliminated: Map<String, String> = emptyMap(),
     val sidesHistory: List<SidesCall> = emptyList(),
     val podium: List<String> = emptyList(),
+    /** player id → running tally for the end-of-show awards. */
+    val stats: Map<String, PStats> = emptyMap(),
+    val awards: List<TriviaAward> = emptyList(),
+)
+
+/** One player's show so far, for the awards. "Right" is their own pick, whatever their team went with. */
+@Serializable
+data class PStats(
+    /** Questions they were on a team for. */
+    val asked: Int = 0,
+    val answered: Int = 0,
+    val right: Int = 0,
+    /** Times they were first on their team to answer (teams of two or more). */
+    val first: Int = 0,
+    /** Picks that went against their team's answer, and how many of those were right while the team was wrong. */
+    val rebel: Int = 0,
+    val rebelRight: Int = 0,
+    /** Their closest Ballpark guess, as a fraction of the answer (0.02 = within 2%). */
+    val bestMiss: Double? = null,
 )
 
 /**
@@ -207,7 +227,35 @@ class BrainDrain(
         VICTIM -> steal(s, ctx)
         STEAL -> nextOrStandings(s, ctx)
         STANDINGS -> startRound(s, s.round + 1, ctx)
+        PODIUM -> if (s.awards.isNotEmpty()) {
+            Step(s.copy(phase = AWARDS, drink = null, hostLine = "And now, the awards.", startedAt = ctx.now, durationMs = AWARDS_MS), listOf(Effect.Phase(AWARDS_MS)))
+        } else {
+            Step(s, listOf(Effect.Finish))
+        }
         else -> Step(s, listOf(Effect.Finish))
+    }
+
+    override fun onHost(s: TriviaState, action: String, ctx: GameContext): Step<TriviaState> = when (action) {
+        SHUFFLE -> shuffle(s, ctx)
+        else -> throw Reject("UNSUPPORTED")
+    }
+
+    /** Team Up: deal everyone evenly across the teams at random. Names stay; everyone checks their new team. */
+    private fun shuffle(s: TriviaState, ctx: GameContext): Step<TriviaState> {
+        if (s.phase != TEAMUP) throw Reject("NOT_NOW")
+        val people = ctx.players.map { it.id }.shuffled(ctx.random)
+        if (people.size < 2) throw Reject("NOT_ENOUGH_PLAYERS")
+        val slots = s.teams.size
+        val teams = s.teams.mapIndexed { i, t -> t.copy(members = people.filterIndexed { j, _ -> j % slots == i }) }
+        val left = (s.startedAt + (s.durationMs ?: TEAMUP_MS) - ctx.now).coerceAtLeast(0)
+        val duration = maxOf(left, SHUFFLE_GRACE_MS)
+        return Step(
+            s.copy(
+                teams = teams, confirmed = emptyList(), roster = (s.roster + people).distinct(), startedAt = ctx.now, durationMs = duration,
+                hostLine = pick(ctx, "Shuffled! Check your phone for your new team.", "New teams. No complaining."),
+            ),
+            listOf(Effect.Phase(duration)),
+        )
     }
 
     private fun finishTeamUp(s: TriviaState, ctx: GameContext): Step<TriviaState> {
@@ -403,9 +451,78 @@ class BrainDrain(
         val revealMs = when (s.format) { SIDES -> SIDES_REVEAL_MS; BALLPARK -> BALLPARK_REVEAL_MS; else -> REVEAL_MS }
         val next = s.copy(
             phase = REVEAL, teams = teams, reveal = TriviaReveal(s.correct, answerText, number, answers), heist = heist,
-            sidesHistory = history, hostLine = line, drink = null, startedAt = ctx.now, durationMs = revealMs,
+            sidesHistory = history, hostLine = line, drink = null, startedAt = ctx.now, durationMs = revealMs, stats = tally(s, number),
         )
         return Step(next, effects + Effect.Phase(revealMs))
+    }
+
+    /** Adds this question to every teammate's running tally (see [PStats]). [answer] is the Ballpark number. */
+    private fun tally(s: TriviaState, answer: Double?): Map<String, PStats> {
+        val stats = s.stats.toMutableMap()
+        for (t in s.teams.filter { it.members.isNotEmpty() }) {
+            val teamPick = if (s.format in setOf(QUICK, HEIST, SIDES)) plurality(t, s.votes)?.first else null
+            val teamRight = teamPick != null && teamPick in s.correct
+            val voters = t.members.filter { s.votes[it.v] != null }
+            val first = voters.minByOrNull { s.votes.getValue(it.v).at }?.takeIf { t.members.size >= 2 }
+            for (m in t.members) {
+                val v = s.votes[m.v]
+                val was = stats[m.v] ?: PStats()
+                stats[m.v] = if (v == null) was.copy(asked = was.asked + 1) else when (s.format) {
+                    QUICK, HEIST, SIDES -> {
+                        val right = v.choice in s.correct
+                        val rebel = v.choice != teamPick
+                        was.copy(
+                            asked = was.asked + 1, answered = was.answered + 1, right = was.right + if (right) 1 else 0,
+                            first = was.first + if (m == first) 1 else 0, rebel = was.rebel + if (rebel) 1 else 0,
+                            rebelRight = was.rebelRight + if (rebel && right && !teamRight) 1 else 0,
+                        )
+                    }
+                    BALLPARK -> {
+                        val miss = if (v.number != null && answer != null) abs(v.number - answer) / maxOf(abs(answer), 1.0) else null
+                        was.copy(
+                            asked = was.asked + 1, answered = was.answered + 1, right = was.right + if (miss != null && miss <= SHARP_GUESS) 1 else 0,
+                            bestMiss = listOfNotNull(was.bestMiss, miss).minOrNull(),
+                        )
+                    }
+                    GAUNTLET -> {
+                        val net = v.picks.count { it in s.correct } - v.picks.count { it !in s.correct }
+                        was.copy(asked = was.asked + 1, answered = was.answered + 1, right = was.right + if (net > 0) 1 else 0)
+                    }
+                    else -> was
+                }
+            }
+        }
+        return stats
+    }
+
+    /**
+     * Up to four shout-outs, each to a different player who's still here, brags first, then a roast. Every award has
+     * a floor so a short show never hands out something silly; ties go to whoever joined the show first.
+     */
+    private fun awardsFor(s: TriviaState, ctx: GameContext): List<TriviaAward> {
+        val here = ctx.players.map { it.id }.toSet()
+        val people = (s.roster + s.teams.flatMap { it.members }).distinct().filter { it in here && it.v in s.stats }
+        val out = mutableListOf<TriviaAward>()
+        fun give(title: String, roast: Boolean, score: (PStats) -> Double?, line: (PStats) -> String): Boolean {
+            if (out.size >= MAX_AWARDS) return false
+            val taken = out.map { it.player }.toSet()
+            val best = people.filter { it !in taken }.mapNotNull { p -> score(s.stats.getValue(p.v))?.let { p to it } }.maxByOrNull { it.second } ?: return false
+            out += TriviaAward(title, best.first, line(s.stats.getValue(best.first.v)), roast)
+            return true
+        }
+        fun times(n: Int) = if (n == 1) "once" else "$n times"
+        give("Big Brain", false, { p -> p.right.takeIf { it >= 3 }?.let { it + p.right / maxOf(1.0, p.answered.toDouble()) } }) { "${it.right} of ${it.answered} right" }
+        give("Fastest Thumb", false, { p -> p.first.takeIf { it >= 3 }?.toDouble() }) { "First on their team to answer ${times(it.first)}" }
+        give("Lone Wolf", false, { p -> p.rebelRight.takeIf { it >= 1 }?.toDouble() }) { "Went against their team and was right ${times(it.rebelRight)}" } ||
+            give("Contrarian", true, { p -> p.rebel.takeIf { it >= 3 && p.rebelRight == 0 }?.toDouble() }) { "Went against their team ${times(it.rebel)}. Wrong every time." }
+        give("Dead Weight", true, { p -> p.takeIf { it.answered >= 4 && it.right * 3 < it.answered }?.let { 1.0 - it.right / it.answered.toDouble() } }) {
+            "${it.right} of ${it.answered} right. The team carried them."
+        } || give("Ghost", true, { p -> (p.asked - p.answered).takeIf { it >= 3 }?.toDouble() }) { "Sat out ${it.asked - it.answered} questions" }
+        give("Human Calculator", false, { p -> p.bestMiss?.takeIf { it <= 0.05 }?.let { 1.0 - it } }) {
+            val m = it.bestMiss ?: 0.0
+            if (m < 0.0005) "Nailed a Ballpark number dead on" else "Ballpark guess within ${formatNumber((m * 1000).roundToInt() / 10.0)}%"
+        }
+        return out
     }
 
     private fun afterReveal(s: TriviaState, ctx: GameContext): Step<TriviaState> {
@@ -500,7 +617,7 @@ class BrainDrain(
         return Step(
             s.copy(
                 phase = PODIUM, teams = teams, podium = order.map { it.id }, drink = drink, reveal = null, heist = null,
-                hostLine = winner?.let { "${it.name} win Brain Drain!" }, startedAt = ctx.now, durationMs = PODIUM_MS,
+                hostLine = winner?.let { "${it.name} win Brain Drain!" }, startedAt = ctx.now, durationMs = PODIUM_MS, awards = awardsFor(s, ctx),
             ),
             effects + Effect.Phase(PODIUM_MS),
         )
@@ -572,6 +689,7 @@ class BrainDrain(
             credit = if (live && (s.format == QUICK || s.format == HEIST)) mcOf(s)?.source else null,
             finishLine = FINISH,
             podium = s.podium,
+            awards = if (s.phase == AWARDS) s.awards else emptyList(),
         )
     }
 
@@ -667,6 +785,9 @@ class BrainDrain(
                     team = tag,
                 )
             }
+            AWARDS -> s.awards.firstOrNull { it.player == who }
+                ?.let { Screen.Waiting("You got ${it.title}", it.line, if (it.roast) "lose" else "win", tag) }
+                ?: Screen.Waiting("The awards", "Eyes on the TV", team = tag)
             else -> Screen.Waiting("Eyes on the TV", team = tag)
         }
     }
@@ -794,6 +915,16 @@ class BrainDrain(
         const val STEAL = "steal"
         const val STANDINGS = "standings"
         const val PODIUM = "podium"
+        const val AWARDS = "awards"
+
+        /** [HostCmd.GameAction] during Team Up: deal everyone evenly across the teams. */
+        const val SHUFFLE = "shuffle"
+        /** After a shuffle, Team Up lasts at least this long so people can find their new team. */
+        const val SHUFFLE_GRACE_MS = 20_000L
+        const val AWARDS_MS = 14_000L
+        const val MAX_AWARDS = 4
+        /** A Ballpark guess within 10% counts as right for the awards. */
+        const val SHARP_GUESS = 0.10
 
         const val QUICK = "quick"
         const val BALLPARK = "ballpark"
