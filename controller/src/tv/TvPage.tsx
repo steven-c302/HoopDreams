@@ -10,6 +10,8 @@ import { BlackjackStage } from './BlackjackStage'
 import { BluffStage } from './BluffStage'
 import { Gallery } from './Gallery'
 import { TriviaStage } from './TriviaStage'
+import { SprawlCover } from './SprawlArt'
+import { SprawlStage } from './SprawlStage'
 import { TurfCover } from './TurfArt'
 import { TurfStage } from './TurfStage'
 import { useCueDirector, useDeadline } from './director'
@@ -69,12 +71,12 @@ function TvShow() {
  * Lobby settings live on the server so the TV and the captain's phone always agree. teams 0 = auto. Home Turf:
  * turfMode 0 auto / 1 solo / 2 teams, minutes = its game clock (0 = no limit).
  */
-interface Lobby { rounds: number; teams: number; drinks: boolean; game: number; phones: boolean; turfMode: number; minutes: number }
+interface Lobby { rounds: number; teams: number; drinks: boolean; game: number; phones: boolean; turfMode: number; minutes: number; vp: number }
 function lobbyOf(tv: TvState | null): Lobby {
   const s = tv?.settings ?? {}
   return {
     rounds: s.rounds ?? 5, teams: s.teams ?? 0, drinks: (s.drinks ?? 1) === 1, game: s.game ?? 0, phones: (s.captain ?? 1) === 1,
-    turfMode: s.turfMode ?? 0, minutes: s.minutes ?? 45,
+    turfMode: s.turfMode ?? 0, minutes: s.minutes ?? 45, vp: s.vp ?? 8,
   }
 }
 type SetOption = (key: OptionKey, value: number) => void
@@ -119,7 +121,7 @@ function Show({ session }: { session: TvSession }) {
   const lobby = lobbyOf(tv)
   const clock = useDeadline(tv)
   // Home Turf only counts down real decisions: a hop or a card reveal shouldn't tick.
-  const untimed = tv?.stage?.gameId === 'turf' && !(tv.stage.game as { timed?: boolean } | undefined)?.timed
+  const untimed = (tv?.stage?.gameId === 'turf' || tv?.stage?.gameId === 'sprawl') && !(tv.stage.game as { timed?: boolean } | undefined)?.timed
   useCueDirector(live ? tv : null, untimed ? null : clock.deadline)
 
   // Hide the mouse when it stops moving: this is a TV.
@@ -179,6 +181,7 @@ function Show({ session }: { session: TvSession }) {
               {isTrivia(stage.gameId) ? <TriviaStage stage={stage} players={players} scores={tv.scores} clock={clock} />
                 : stage.gameId === 'blackjack' ? <Scene color={C.tangerine}><BlackjackStage stage={stage} players={players} scores={tv.scores} clock={clock} /></Scene>
                 : stage.gameId === 'turf' ? <Scene color={C.lime}><TurfStage stage={stage} players={players} scores={tv.scores} clock={clock} /></Scene>
+                : stage.gameId === 'sprawl' ? <Scene color={C.tangerine}><SprawlStage stage={stage} players={players} scores={tv.scores} clock={clock} /></Scene>
                 : <Scene color={C.bubblegum}><BluffStage stage={stage} players={players} scores={tv.scores} clock={clock} /></Scene>}
               {stage.paused && <Paused reason={stage.pauseReason} />}
             </>
@@ -232,6 +235,7 @@ function LobbyScreen({ tv, session, games, lobby, setOption, onStart, keys }: {
   const captain = tv.players.find((p) => p.id === tv.captain)
   const trivia = isTrivia(focused?.id)
   const turf = focused?.id === 'turf'
+  const sprawl = focused?.id === 'sprawl'
   useEffect(() => {
     if (qr.current && session.joinUrl) QRCode.toCanvas(qr.current, session.joinUrl, { width: 360, margin: 4, errorCorrectionLevel: 'Q' })
   }, [session.joinUrl])
@@ -241,7 +245,7 @@ function LobbyScreen({ tv, session, games, lobby, setOption, onStart, keys }: {
       const k = e.key.toLowerCase()
       if (e.key === 'ArrowRight') { setFocus(Math.min(games.length - 1, focus + 1)); sfx.focus() }
       else if (e.key === 'ArrowLeft') { setFocus(Math.max(0, focus - 1)); sfx.focus() }
-      else if ((e.key === 'ArrowUp' || e.key === 'ArrowDown') && turf) {
+      else if ((e.key === 'ArrowUp' || e.key === 'ArrowDown') && (turf || sprawl)) {
         const at = Math.max(0, TURF_MINUTES.indexOf(lobby.minutes))
         setOption('minutes', TURF_MINUTES[Math.min(TURF_MINUTES.length - 1, Math.max(0, at + (e.key === 'ArrowUp' ? 1 : -1)))]); sfx.focus()
       }
@@ -252,8 +256,9 @@ function LobbyScreen({ tv, session, games, lobby, setOption, onStart, keys }: {
         const [mode, teams] = TURF_MODES[(at + 1) % TURF_MODES.length]
         setOption('turfMode', mode); if (mode === 2) setOption('teams', teams); sfx.focus()
       }
+      else if (k === 'v' && sprawl) { setOption('vp', lobby.vp === 10 ? 8 : 10); sfx.focus() }
       else if (k === 't' && trivia) { setOption('teams', TEAM_CHOICES[(TEAM_CHOICES.indexOf(lobby.teams) + 1) % TEAM_CHOICES.length] ?? 0); sfx.focus() }
-      else if (k === 'd' && (trivia || turf)) { setOption('drinks', lobby.drinks ? 0 : 1); sfx.focus() }
+      else if (k === 'd' && (trivia || turf || sprawl)) { setOption('drinks', lobby.drinks ? 0 : 1); sfx.focus() }
       else if (e.key === 'Enter' && focused) onStart(focused)
     }
     window.addEventListener('keydown', onKey)
@@ -288,15 +293,18 @@ function LobbyScreen({ tv, session, games, lobby, setOption, onStart, keys }: {
           <div className="controls-row">
             {focused?.id === 'blackjack'
               ? <span className="stepper">Everyone deals once: <b>one hand per player</b></span>
-              : turf ? <span className="stepper"><Keycap label="↑" /><Keycap label="↓" /> Game clock <b>{turfMinutesText(lobby.minutes)}</b></span>
+              : turf || sprawl ? <span className="stepper"><Keycap label="↑" /><Keycap label="↓" /> Game clock <b>{turfMinutesText(lobby.minutes)}</b></span>
               : <span className="stepper"><Keycap label="↑" /><Keycap label="↓" /> {trivia ? 'Questions per round' : 'Rounds'} <b>{lobby.rounds}</b></span>}
             {trivia && <span className="stepper"><Keycap label="T" /> Teams <b>{lobby.teams === 0 ? 'AUTO' : lobby.teams}</b></span>}
             {turf && <span className="stepper"><Keycap label="T" /> Play <b>{turfModeText(lobby)}</b></span>}
-            {(trivia || turf) && <span className="stepper"><Keycap label="D" /> Drink calls <b>{lobby.drinks ? 'ON' : 'OFF'}</b></span>}
+            {sprawl && <span className="stepper"><Keycap label="V" /> First to <b>{lobby.vp} POINTS</b></span>}
+            {(trivia || turf || sprawl) && <span className="stepper"><Keycap label="D" /> Drink calls <b>{lobby.drinks ? 'ON' : 'OFF'}</b></span>}
             <span style={{ flex: 1 }} />
             <span className="stepper"><Keycap label="←" /><Keycap label="→" /> pick <Keycap label="Enter" /> start</span>
           </div>
-          <div className={`picker ${games.length > 3 ? 'four' : ''} ${games.length > 4 ? 'five' : ''}`} style={{ gridTemplateColumns: `repeat(${Math.max(1, games.length)}, minmax(0, 1fr))` }}>
+          {/* Up to five games side by side; six or more go into rows of three. */}
+          <div className={`picker ${games.length > 3 ? 'four' : ''} ${games.length === 5 ? 'five' : ''} ${games.length > 5 ? 'six' : ''}`}
+            style={{ gridTemplateColumns: `repeat(${games.length > 5 ? 3 : Math.max(1, games.length)}, minmax(0, 1fr))` }}>
             {games.map((g, i) => {
               const enough = online >= g.minPlayers
               return (
@@ -354,6 +362,7 @@ function CoverArt({ id }: { id: string }) {
     )
   }
   if (id === 'turf') return <TurfCover />
+  if (id === 'sprawl') return <SprawlCover />
   if (id === 'trivia') {
     return (
       <svg className="art" viewBox="0 0 560 330" preserveAspectRatio="xMidYMid slice" aria-hidden="true">

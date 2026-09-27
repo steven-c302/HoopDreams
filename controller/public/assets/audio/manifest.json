@@ -12,6 +12,9 @@
   "bankruptSting": [
    "sfx/bankruptSting-1.mp3"
   ],
+  "bigCrew": [
+   "sfx/bigCrew-1.mp3"
+  ],
   "boing": [
    "sfx/boing-1.mp3",
    "sfx/boing-2.mp3",
@@ -40,6 +43,9 @@
   ],
   "chipClack": [
    "sfx/chipClack-1.mp3"
+  ],
+  "cityUp": [
+   "sfx/cityUp-1.mp3"
   ],
   "correct": [
    "sfx/correct-1.mp3"
@@ -90,6 +96,11 @@
    "sfx/hammer-2.mp3",
    "sfx/hammer-3.mp3"
   ],
+  "harvest": [
+   "sfx/harvest-1.mp3",
+   "sfx/harvest-2.mp3",
+   "sfx/harvest-3.mp3"
+  ],
   "homeTurf": [
    "sfx/homeTurf-1.mp3"
   ],
@@ -109,6 +120,9 @@
   "join": [
    "sfx/join-1.mp3"
   ],
+  "landlord": [
+   "sfx/landlord-1.mp3"
+  ],
   "lastLap": [
    "sfx/lastLap-1.mp3"
   ],
@@ -117,6 +131,9 @@
   ],
   "leave": [
    "sfx/leave-1.mp3"
+  ],
+  "longRoad": [
+   "sfx/longRoad-1.mp3"
   ],
   "loseSting": [
    "sfx/loseSting-1.mp3"
@@ -157,11 +174,18 @@
   "select": [
    "sfx/select-1.mp3"
   ],
+  "settle": [
+   "sfx/settle-1.mp3",
+   "sfx/settle-2.mp3"
+  ],
   "showOpen": [
    "sfx/showOpen-1.mp3"
   ],
   "soldTag": [
    "sfx/soldTag-1.mp3"
+  ],
+  "sprawlWin": [
+   "sfx/sprawlWin-1.mp3"
   ],
   "stamp": [
    "sfx/stamp-1.mp3"
@@ -243,6 +267,10 @@
   },
   "sides": {
    "file": "music/sides.mp3",
+   "gain": 0.9
+  },
+  "sprawl": {
+   "file": "music/sprawl.mp3",
    "gain": 0.9
   },
   "standings": {

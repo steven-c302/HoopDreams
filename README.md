@@ -32,6 +32,7 @@ Made with [brag](https://github.com/latent-spaces/brag)'s lightweight `brag-slim
 
 | Change | What it means on game night |
 | --- | --- |
+| **Sprawl** | The island-settling game on hexes named after the crew's places. Place settlements and roads on a mini-map on your phone, trade with anyone, and race to 8 points before the game clock runs out. |
 | **Home Turf** | The property game on the crew's own places. Buy, auction, build and trade from your phone. A game clock ends it in 30 to 90 minutes, and the richest wins. |
 | **Write It Down** | Type your team's answer with no multiple-choice hints. Close spelling counts. Play it inside Brain Drain or as its own pub quiz. |
 | **A bigger question bank** | 302 multiple-choice questions, 62 Ballpark numbers and 23 Pick a Side sets. |
@@ -187,6 +188,31 @@ The spaces are named after the crew's places. To rename them, edit
   rename can't break the economy.
 - **Applying edits:** the launcher rebuilds on every start. A test checks the file (40 spaces, lengths,
   placeholders) if you run `./gradlew :engine:test`.
+
+**Sprawl.** The island-settling classic at party speed, on hexes named after the crew's places:
+
+- **The island:** a new balanced layout every game (no 6s or 8s side by side). It has 19 hexes for 3–4 players and
+  30 for 5–6, with harbours round the coast.
+- **Your phone:** your hand as five big tiles. Place settlements, roads and cities by tapping a glowing spot on the
+  mini-map, then confirm; the TV rings the spot you're eyeing so the room can heckle.
+- **Rolls:** a 7 means big hands discard half, then The Landlord moves in and robs someone. Development cards are
+  Bouncers (move The Landlord), Road Trip, Windfall, Shakedown and secret points.
+- **Trades:** offer a deal to one player or to anyone; they accept, reject or counter on their phones. Trade with the
+  bank at 4:1, or better at your harbours.
+- **The clock:** first to 8 points wins on their turn (the lobby can switch it to 10). When the game clock runs out,
+  everyone gets one last turn and the most points wins.
+- **Drinks:** getting robbed, discarding, losing Longest Road or Most Bouncers, and someone else's city come with
+  drink calls.
+- **Controls:** on the TV lobby, ↑/↓ sets the game clock, V switches between 8 and 10 points, and D turns drink calls
+  on or off.
+
+<p align="center">
+  <img src="docs/media/sprawl-board.png" alt="Sprawl: the island of the crew's places with settlements and roads, players' points on the side rails" width="80%">
+</p>
+
+To rename the island, edit [`tv/engine/src/main/resources/sprawl/board.json`](tv/engine/src/main/resources/sprawl/board.json):
+the place names (dealt onto the hexes at random), the two desert names, The Landlord, the resources and the card and
+award names. A test checks it when you run `./gradlew :engine:test`.
 
 <p align="center">
   <img src="docs/media/bluff-reveal.png" alt="Bluff Battle: a fake answer stamped FAKE! with who wrote it and who fell for it" width="49%">

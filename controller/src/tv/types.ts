@@ -1,4 +1,4 @@
-import type { Avatar, PlayingCard } from '../protocol'
+import type { Avatar, PlayingCard, SprawlMap } from '../protocol'
 
 export interface BluffReveal { text: string; kind: 'fake' | 'decoy' | 'truth'; authors: string[]; fooled: string[] }
 export interface BluffTv {
@@ -113,3 +113,47 @@ export interface TurfTv {
 export const SPEED_BUS = 4
 export const SPEED_SCOUT = 5
 export const TURF_HOTEL = 4
+
+// ---- Sprawl (tv/engine/.../SprawlViews.kt) -------------------------------------------------
+
+export interface SprawlBeat {
+  seq: number; kind: string; seat: number; other: number; target: number; amount: number
+  dice: number[]; seats: number[]; targets: number[]; gains: number[][]; sips: number; text?: string
+}
+/** vp leaves out hidden VP cards until the tally; discard = cards still owed on a 7. */
+export interface SprawlSeat {
+  name: string; color: string; player: string; cards: number; dev: number; vp: number; knights: number; road: number
+  longest: boolean; army: boolean; gone: boolean; discard: number
+}
+export type SprawlPhase = 'setup' | 'roll' | 'discard' | 'robber' | 'steal' | 'main' | 'road2' | 'pick' | 'trade' | 'tally' | 'podium'
+export interface SprawlTv {
+  t: 'sprawl'
+  phase: SprawlPhase
+  map: SprawlMap
+  robber: number
+  vOwner: number[]
+  vLevel: number[]
+  eOwner: number[]
+  seats: SprawlSeat[]
+  turn: number
+  setupPiece?: 'settlement' | 'road'
+  setupRound: number
+  dice: number[]
+  trade?: { id: number; from: number; to: number; give: number[]; get: number[]; counters: number; passed: number[] }
+  peek: number
+  peekKind?: 'vertex' | 'edge' | 'hex'
+  pick?: string
+  bank: number[]
+  deckLeft: number
+  clockLeftMs?: number
+  phaseMs?: number
+  lastRound: boolean
+  timed: boolean
+  vpTarget: number
+  drinks: boolean
+  beats: SprawlBeat[]
+  ticker: string[]
+  winner: number
+  tally: { seat: number; vp: number; vpCards: number; rank: number }[]
+}
+

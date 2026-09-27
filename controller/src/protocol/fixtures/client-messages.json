@@ -197,6 +197,48 @@
         }
     },
     {
+        "t": "host",
+        "id": "h-14",
+        "cmd": {
+            "t": "setOption",
+            "key": "vp",
+            "value": 10
+        }
+    },
+    {
+        "t": "action",
+        "id": "a-9",
+        "round": 30,
+        "payload": {
+            "kind": "build",
+            "what": "road",
+            "target": 12
+        }
+    },
+    {
+        "t": "action",
+        "id": "a-10",
+        "round": 30,
+        "payload": {
+            "kind": "trade",
+            "to": -2,
+            "give": [
+                1,
+                0,
+                0,
+                0,
+                0
+            ],
+            "get": [
+                0,
+                0,
+                0,
+                1,
+                0
+            ]
+        }
+    },
+    {
         "t": "ping"
     }
 ]

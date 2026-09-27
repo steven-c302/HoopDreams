@@ -348,6 +348,15 @@ export const sfx = {
   offerPing: () => play('offerPing', {}, () => play('ding', {}, synth.ding)),
   soldTag: () => play('soldTag', {}, () => play('stamp', {}, synth.stamp)),
   cardDraw: () => play('cardDraw', {}, () => play('cardFlip', {}, synth.cardFlip)),
+  // ---- Sprawl (each falls back to an existing sample until its own cue is generated) ----
+  landlord: () => { duck(0.3, 1.6); play('landlord', {}, () => play('steal', {}, () => { synth.whoosh(); synth.payout(14) })) },
+  /** Resources pour in after a roll: brighter the more that arrived. */
+  harvest: (n = 1) => play('harvest', { rate: semis(Math.min(n, 8)) }, () => play('payday', { gain: 0.7 }, () => synth.payout(4 + n))),
+  settle: () => play('settle', {}, () => play('hammer', { rate: semis(-3) }, synth.stamp)),
+  cityUp: () => { duck(0.3, 1.4); play('cityUp', {}, () => play('fanfare', {}, synth.fanfare)) },
+  longRoad: () => { duck(0.3, 1.8); play('longRoad', {}, () => play('homeTurf', {}, () => play('jackpot', {}, synth.jackpot))) },
+  bigCrew: () => { duck(0.3, 1.8); play('bigCrew', {}, () => play('homeTurf', {}, () => play('jackpot', {}, synth.jackpot))) },
+  sprawlWin: () => { duck(0.2, 3); play('sprawlWin', {}, () => play('fanfare', {}, synth.fanfare)) },
 }
 
 const PENTA_SEMIS = [0, 2, 4, 7, 9, 12, 14, 16, 19, 21]
@@ -355,9 +364,9 @@ const PENTA_SEMIS = [0, 2, 4, 7, 9, 12, 14, 16, 19, 21]
 // ---------- music ----------
 
 export type Mode = 'off' | 'lobby' | 'teamup' | 'quick' | 'ballpark' | 'sides' | 'heist' | 'gauntlet' | 'standings' | 'podium'
-  | 'bluff' | 'reveal' | 'scores' | 'casino' | 'turf' | 'auction' | 'lastlap'
+  | 'bluff' | 'reveal' | 'scores' | 'casino' | 'turf' | 'auction' | 'lastlap' | 'sprawl'
 /** Modes whose own loop may not be generated yet borrow another one meanwhile. */
-const MUSIC_FALLBACK: Partial<Record<Mode, Mode>> = { turf: 'lobby', auction: 'heist', lastlap: 'gauntlet' }
+const MUSIC_FALLBACK: Partial<Record<Mode, Mode>> = { turf: 'lobby', auction: 'heist', lastlap: 'gauntlet', sprawl: 'turf' }
 let want: Mode = 'off'
 let hurry = false
 let current: { mode: string; src: AudioBufferSourceNode; gain: GainNode } | null = null

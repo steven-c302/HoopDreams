@@ -1240,6 +1240,484 @@
         }
     },
     {
+        "t": "view",
+        "seq": 17,
+        "view": {
+            "me": {
+                "id": "p-sam",
+                "name": "Sam",
+                "avatar": {
+                    "face": "p:01",
+                    "color": "#FF7A00"
+                },
+                "role": "PLAYER",
+                "connected": true
+            },
+            "roomCode": "KXQT",
+            "gameId": "sprawl",
+            "gameTitle": "Sprawl",
+            "round": 30,
+            "paused": false,
+            "remainingMs": 52000,
+            "screen": {
+                "t": "sprawl",
+                "me": {
+                    "index": 0,
+                    "name": "Sam",
+                    "color": "#FF4B3E",
+                    "hand": [
+                        1,
+                        1,
+                        0,
+                        2,
+                        0
+                    ],
+                    "vp": 3,
+                    "dev": [
+                        {
+                            "kind": "knight",
+                            "name": "Bouncer",
+                            "count": 1,
+                            "playable": true,
+                            "fresh": 0
+                        }
+                    ],
+                    "pieces": [
+                        13,
+                        3,
+                        4
+                    ],
+                    "ratios": [
+                        4,
+                        4,
+                        3,
+                        4,
+                        4
+                    ],
+                    "mine": true
+                },
+                "prompt": {
+                    "kind": "main",
+                    "title": "Build, trade, or end your turn",
+                    "detail": "You rolled 8.",
+                    "actions": [
+                        {
+                            "id": "end",
+                            "text": "END TURN"
+                        }
+                    ],
+                    "timed": true
+                },
+                "map": {
+                    "size": 0,
+                    "hexes": [
+                        {
+                            "x": 0,
+                            "y": 0,
+                            "terrain": 3,
+                            "number": 8,
+                            "name": "Izzy's Rooftop"
+                        }
+                    ],
+                    "vertices": [
+                        [
+                            0,
+                            -100
+                        ],
+                        [
+                            87,
+                            -50
+                        ],
+                        [
+                            87,
+                            50
+                        ],
+                        [
+                            0,
+                            100
+                        ],
+                        [
+                            -87,
+                            50
+                        ],
+                        [
+                            -87,
+                            -50
+                        ]
+                    ],
+                    "edges": [
+                        [
+                            0,
+                            1
+                        ],
+                        [
+                            1,
+                            2
+                        ]
+                    ],
+                    "harbours": [
+                        {
+                            "edge": 0,
+                            "kind": -1
+                        }
+                    ],
+                    "resources": [
+                        "Brick",
+                        "Wood",
+                        "Sheep",
+                        "Wheat",
+                        "Ore"
+                    ],
+                    "landlord": "The Landlord",
+                    "dev": {
+                        "knight": "Bouncer"
+                    },
+                    "awards": {
+                        "road": "Longest Road",
+                        "army": "Most Bouncers"
+                    }
+                },
+                "robber": 0,
+                "vOwner": [
+                    0,
+                    -1,
+                    -1,
+                    1,
+                    -1,
+                    -1
+                ],
+                "vLevel": [
+                    1,
+                    0,
+                    0,
+                    2,
+                    0,
+                    0
+                ],
+                "eOwner": [
+                    0,
+                    -1
+                ],
+                "colors": [
+                    "#FF4B3E",
+                    "#2F6BFF"
+                ],
+                "spots": [],
+                "build": {
+                    "roads": [
+                        1
+                    ],
+                    "settlements": [],
+                    "cities": [],
+                    "dev": false
+                },
+                "victims": [],
+                "partners": [
+                    {
+                        "index": 1,
+                        "name": "Al",
+                        "color": "#2F6BFF",
+                        "cards": 4
+                    }
+                ],
+                "trade": {
+                    "id": 5,
+                    "from": 1,
+                    "to": 0,
+                    "fromName": "Al",
+                    "toName": "Sam",
+                    "give": [
+                        0,
+                        0,
+                        0,
+                        1,
+                        0
+                    ],
+                    "get": [
+                        1,
+                        0,
+                        0,
+                        0,
+                        0
+                    ],
+                    "role": "to",
+                    "canAccept": true,
+                    "canCounter": true
+                },
+                "canTrade": false,
+                "bank": [
+                    18,
+                    18,
+                    19,
+                    17,
+                    19
+                ],
+                "discard": 0,
+                "drink": "Drink 1 sip: got robbed",
+                "drinks": true
+            },
+            "scores": [
+                {
+                    "id": "p-sam",
+                    "name": "Sam",
+                    "avatar": {
+                        "face": "p:01",
+                        "color": "#FF7A00"
+                    },
+                    "score": 1500
+                },
+                {
+                    "id": "p-al",
+                    "name": "Al",
+                    "avatar": {
+                        "face": "p:02",
+                        "color": "#22AA55"
+                    },
+                    "score": 500
+                }
+            ],
+            "captain": false,
+            "settings": {},
+            "crew": []
+        }
+    },
+    {
+        "t": "tv",
+        "seq": 18,
+        "tv": {
+            "roomCode": "KXQT",
+            "players": [
+                {
+                    "id": "p-sam",
+                    "name": "Sam",
+                    "avatar": {
+                        "face": "p:01",
+                        "color": "#FF7A00"
+                    },
+                    "role": "PLAYER",
+                    "connected": true
+                }
+            ],
+            "stage": {
+                "gameId": "sprawl",
+                "title": "Sprawl",
+                "phaseSeq": 30,
+                "deadlineAt": 1700000090000,
+                "remainingMs": 52000,
+                "paused": false,
+                "game": {
+                    "t": "sprawl",
+                    "phase": "trade",
+                    "map": {
+                        "size": 0,
+                        "hexes": [
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "terrain": 3,
+                                "number": 8,
+                                "name": "Izzy's Rooftop"
+                            }
+                        ],
+                        "vertices": [
+                            [
+                                0,
+                                -100
+                            ],
+                            [
+                                87,
+                                -50
+                            ],
+                            [
+                                87,
+                                50
+                            ],
+                            [
+                                0,
+                                100
+                            ],
+                            [
+                                -87,
+                                50
+                            ],
+                            [
+                                -87,
+                                -50
+                            ]
+                        ],
+                        "edges": [
+                            [
+                                0,
+                                1
+                            ],
+                            [
+                                1,
+                                2
+                            ]
+                        ],
+                        "harbours": [
+                            {
+                                "edge": 0,
+                                "kind": -1
+                            }
+                        ],
+                        "resources": [
+                            "Brick",
+                            "Wood",
+                            "Sheep",
+                            "Wheat",
+                            "Ore"
+                        ],
+                        "landlord": "The Landlord",
+                        "dev": {
+                            "knight": "Bouncer"
+                        },
+                        "awards": {
+                            "road": "Longest Road",
+                            "army": "Most Bouncers"
+                        }
+                    },
+                    "robber": 0,
+                    "vOwner": [
+                        0,
+                        -1,
+                        -1,
+                        1,
+                        -1,
+                        -1
+                    ],
+                    "vLevel": [
+                        1,
+                        0,
+                        0,
+                        2,
+                        0,
+                        0
+                    ],
+                    "eOwner": [
+                        0,
+                        -1
+                    ],
+                    "seats": [
+                        {
+                            "name": "Sam",
+                            "color": "#FF4B3E",
+                            "player": "p-sam",
+                            "cards": 4,
+                            "dev": 1,
+                            "vp": 3,
+                            "knights": 1,
+                            "road": 1,
+                            "longest": false,
+                            "army": false,
+                            "gone": false,
+                            "discard": 0
+                        }
+                    ],
+                    "turn": 0,
+                    "setupRound": 0,
+                    "dice": [
+                        3,
+                        5
+                    ],
+                    "trade": {
+                        "id": 5,
+                        "from": 1,
+                        "to": 0,
+                        "give": [
+                            0,
+                            0,
+                            0,
+                            1,
+                            0
+                        ],
+                        "get": [
+                            1,
+                            0,
+                            0,
+                            0,
+                            0
+                        ],
+                        "counters": 1,
+                        "passed": []
+                    },
+                    "peek": -1,
+                    "bank": [
+                        18,
+                        18,
+                        19,
+                        17,
+                        19
+                    ],
+                    "deckLeft": 20,
+                    "clockLeftMs": 2000000,
+                    "phaseMs": 30000,
+                    "lastRound": false,
+                    "timed": true,
+                    "vpTarget": 8,
+                    "drinks": true,
+                    "beats": [
+                        {
+                            "seq": 12,
+                            "kind": "harvest",
+                            "seat": 0,
+                            "other": -1,
+                            "target": -1,
+                            "amount": 8,
+                            "dice": [],
+                            "seats": [],
+                            "targets": [
+                                0
+                            ],
+                            "gains": [
+                                [
+                                    0,
+                                    0,
+                                    0,
+                                    1,
+                                    0
+                                ]
+                            ],
+                            "sips": 0
+                        }
+                    ],
+                    "ticker": [
+                        "Al countered"
+                    ],
+                    "winner": -1,
+                    "tally": []
+                }
+            },
+            "scores": [
+                {
+                    "id": "p-sam",
+                    "name": "Sam",
+                    "avatar": {
+                        "face": "p:01",
+                        "color": "#FF7A00"
+                    },
+                    "score": 1500
+                },
+                {
+                    "id": "p-al",
+                    "name": "Al",
+                    "avatar": {
+                        "face": "p:02",
+                        "color": "#22AA55"
+                    },
+                    "score": 500
+                }
+            ],
+            "gamesPlayed": 3,
+            "settings": {
+                "game": 5,
+                "vp": 8,
+                "minutes": 45,
+                "drinks": 1
+            }
+        }
+    },
+    {
         "t": "ack",
         "id": "a-1"
     },

@@ -28,6 +28,7 @@ async function bot(i) {
     if (m.t !== 'view') return
     const { screen, round, paused } = m.view
     if (screen.t === 'turf') return turf(screen, round)
+    if (screen.t === 'sprawl') return sprawl(screen, round)
     const key = `${round}:${screen.t}:${screen.kind ?? ''}:${(screen.hand ?? []).length}:${screen.actions?.length ?? ''}:${screen.acknowledged ?? ''}:${screen.value ?? ''}:${screen.selected ?? ''}:${screen.locked ?? ''}`
     if (paused || key === lastKey) return
     lastKey = key
@@ -104,6 +105,42 @@ async function bot(i) {
       }
       case 'trade':
         if (screen.trade) act(round, { kind: 'tradeReply', trade: screen.trade.id, option: Math.random() < 0.5 ? 'accept' : 'reject' })
+        break
+    }
+  }
+
+  // Sprawl: the prompt is the act-once key too (a trade or a Windfall pick keeps the round).
+  let sprawlKey = ''
+  async function sprawl(screen, round) {
+    const p = screen.prompt, me = screen.me
+    const key = `${round}:${p.kind}:${p.title}:${screen.trade?.id ?? ''}:${me?.hand?.join() ?? ''}:${screen.discard}`
+    if (key === sprawlKey || !me) return
+    sprawlKey = key
+    await sleep(700 + Math.random() * 2000)
+    switch (p.kind) {
+      case 'setup': case 'road2': if (screen.spots.length) act(round, { kind: 'place', target: pick(screen.spots) }); break
+      case 'robber': if (screen.spots.length) act(round, { kind: 'robber', target: pick(screen.spots) }); break
+      case 'roll': act(round, { kind: 'roll' }); break
+      case 'steal': if (screen.victims.length) act(round, { kind: 'steal', victim: Number(pick(screen.victims).id) }); break
+      case 'pick': act(round, { kind: 'pick', res: Math.floor(Math.random() * 5) }); break
+      case 'discard': {
+        // Drop from the biggest piles.
+        const left = [...me.hand], cards = [0, 0, 0, 0, 0]
+        for (let k = 0; k < screen.discard; k++) { const r = left.indexOf(Math.max(...left)); left[r]--; cards[r]++ }
+        act(round, { kind: 'discard', cards })
+        break
+      }
+      case 'main': {
+        const b = screen.build
+        if (b.cities.length) act(round, { kind: 'build', what: 'city', target: b.cities[0] })
+        else if (b.settlements.length) act(round, { kind: 'build', what: 'settlement', target: pick(b.settlements) })
+        else if (b.dev && Math.random() < 0.5) act(round, { kind: 'buyDev' })
+        else if (b.roads.length && Math.random() < 0.5) act(round, { kind: 'build', what: 'road', target: pick(b.roads) })
+        else act(round, { kind: 'end' })
+        break
+      }
+      case 'trade':
+        if (screen.trade) act(round, { kind: 'tradeReply', trade: screen.trade.id, option: screen.trade.canAccept && Math.random() < 0.5 ? 'accept' : 'reject' })
         break
     }
   }

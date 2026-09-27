@@ -38,6 +38,19 @@ import partyos.engine.TurfTv
 import partyos.engine.TutorialCard
 import partyos.engine.TutorialView
 import partyos.engine.TvState
+import partyos.engine.SprawlBuild
+import partyos.engine.SprawlCard
+import partyos.engine.SprawlHarbourTv
+import partyos.engine.SprawlHexTv
+import partyos.engine.SprawlMapTv
+import partyos.engine.SprawlMe
+import partyos.engine.SprawlPartner
+import partyos.engine.SprawlPrompt
+import partyos.engine.SprawlSeatTv
+import partyos.engine.SprawlTradeTv
+import partyos.engine.SprawlTradeView
+import partyos.engine.SprawlTv
+import partyos.engine.games.sprawl.SBeat
 import partyos.engine.games.turf.TBeat
 import java.io.File
 import kotlin.test.Test
@@ -59,6 +72,15 @@ class ProtocolFixturesTest {
 
     private fun view(screen: Screen, round: Int = 3) = ServerMsg.View(
         seq = 12, view = PhoneState(me, "KXQT", "bluff", "Bluff Battle", round, false, null, 42_000, screen, rows),
+    )
+
+    /** A one-hex island, enough to pin the wire shape. */
+    private val island = SprawlMapTv(
+        size = 0, hexes = listOf(SprawlHexTv(0, 0, 3, 8, "Izzy's Rooftop")),
+        vertices = listOf(listOf(0, -100), listOf(87, -50), listOf(87, 50), listOf(0, 100), listOf(-87, 50), listOf(-87, -50)),
+        edges = listOf(listOf(0, 1), listOf(1, 2)), harbours = listOf(SprawlHarbourTv(0, -1)),
+        resources = listOf("Brick", "Wood", "Sheep", "Wheat", "Ore"), landlord = "The Landlord",
+        dev = mapOf("knight" to "Bouncer"), awards = mapOf("road" to "Longest Road", "army" to "Most Bouncers"),
     )
 
     private val serverMessages: List<ServerMsg> = listOf(
@@ -180,6 +202,46 @@ class ProtocolFixturesTest {
                 settings = mapOf("game" to 4, "turfMode" to 0, "minutes" to 45, "drinks" to 1),
             ),
         ),
+        ServerMsg.View(
+            seq = 17,
+            view = PhoneState(
+                me, "KXQT", "sprawl", "Sprawl", 30, false, null, 52_000,
+                Screen.Sprawl(
+                    me = SprawlMe(0, "Sam", "#FF4B3E", listOf(1, 1, 0, 2, 0), 3, listOf(SprawlCard("knight", "Bouncer", 1, true)), listOf(13, 3, 4), listOf(4, 4, 3, 4, 4), true),
+                    prompt = SprawlPrompt("main", "Build, trade, or end your turn", "You rolled 8.", listOf(Choice("end", "END TURN")), timed = true),
+                    map = island, robber = 0, vOwner = listOf(0, -1, -1, 1, -1, -1), vLevel = listOf(1, 0, 0, 2, 0, 0), eOwner = listOf(0, -1),
+                    colors = listOf("#FF4B3E", "#2F6BFF"),
+                    build = SprawlBuild(roads = listOf(1), dev = false),
+                    partners = listOf(SprawlPartner(1, "Al", "#2F6BFF", 4)),
+                    trade = SprawlTradeView(5, 1, 0, "Al", "Sam", listOf(0, 0, 0, 1, 0), listOf(1, 0, 0, 0, 0), "to", true, true),
+                    canTrade = false, bank = listOf(18, 18, 19, 17, 19),
+                    drink = "Drink 1 sip: got robbed",
+                ),
+                rows,
+            ),
+        ),
+        ServerMsg.Tv(
+            18,
+            TvState(
+                roomCode = "KXQT",
+                players = listOf(me),
+                stage = StageInfo(
+                    "sprawl", "Sprawl", 30, 1_700_000_090_000, 52_000, false, null, null,
+                    game = SprawlTv(
+                        phase = "trade", map = island, robber = 0, vOwner = listOf(0, -1, -1, 1, -1, -1), vLevel = listOf(1, 0, 0, 2, 0, 0), eOwner = listOf(0, -1),
+                        seats = listOf(SprawlSeatTv("Sam", "#FF4B3E", sam, 4, 1, 3, 1, 1, false, false, false)),
+                        turn = 0, dice = listOf(3, 5), trade = SprawlTradeTv(5, 1, 0, listOf(0, 0, 0, 1, 0), listOf(1, 0, 0, 0, 0), 1),
+                        bank = listOf(18, 18, 19, 17, 19), deckLeft = 20, clockLeftMs = 2_000_000, phaseMs = 30_000, timed = true, vpTarget = 8,
+                        beats = listOf(SBeat(12, "harvest", seat = 0, amount = 8, targets = listOf(0), gains = listOf(listOf(0, 0, 0, 1, 0)))),
+                        ticker = listOf("Al countered"),
+                    ),
+                ),
+                scores = rows,
+                lastResult = null,
+                gamesPlayed = 3,
+                settings = mapOf("game" to 5, "vp" to 8, "minutes" to 45, "drinks" to 1),
+            ),
+        ),
         ServerMsg.Ack("a-1"),
         ServerMsg.Reject("a-2", "TOO_TRUE"),
         ServerMsg.Pong,
@@ -218,6 +280,18 @@ class ProtocolFixturesTest {
                     "kind" to JsonPrimitive("trade"), "to" to JsonPrimitive(1),
                     "give" to kotlinx.serialization.json.JsonArray(listOf(JsonPrimitive("1"))), "get" to kotlinx.serialization.json.JsonArray(listOf(JsonPrimitive("5"))),
                     "giveCash" to JsonPrimitive(50), "getCash" to JsonPrimitive(0),
+                ),
+            ),
+        ),
+        ClientMsg.Host("h-14", HostCommand.SetOption("vp", 10)),
+        ClientMsg.Action("a-9", 30, JsonObject(mapOf("kind" to JsonPrimitive("build"), "what" to JsonPrimitive("road"), "target" to JsonPrimitive(12)))),
+        ClientMsg.Action(
+            "a-10", 30,
+            JsonObject(
+                mapOf(
+                    "kind" to JsonPrimitive("trade"), "to" to JsonPrimitive(-2),
+                    "give" to kotlinx.serialization.json.JsonArray(listOf(1, 0, 0, 0, 0).map { JsonPrimitive(it) }),
+                    "get" to kotlinx.serialization.json.JsonArray(listOf(0, 0, 0, 1, 0).map { JsonPrimitive(it) }),
                 ),
             ),
         ),

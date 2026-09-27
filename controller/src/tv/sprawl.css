@@ -1,0 +1,74 @@
+/* Sprawl on the TV: the island centred, players on the rails, the call and the dice above it. Values from theme/tokens.css. */
+
+.sp-stage { position: absolute; inset: 0; display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); gap: 20px; padding: 18px 20px; align-items: center; }
+.sp-rail { display: flex; flex-direction: column; gap: 16px; justify-content: center; height: 100%; min-width: 0; }
+
+.sp-turn { background: var(--paper); border: var(--stroke-tv) solid var(--ink); border-top: 16px solid var(--seat); border-radius: 20px; box-shadow: 8px 8px 0 var(--ink);
+  padding: 10px 14px; display: flex; flex-direction: column; gap: 8px; }
+.sp-turn .who { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.sp-turn .who b { flex: 1; min-width: 0; font-family: var(--font-display); font-weight: 400; font-size: 28px; line-height: 1.08; }
+.sp-turn .dice { display: flex; gap: 10px; align-items: center; justify-content: center; }
+.sp-turn .sum { font-family: var(--font-display); font-size: 48px; color: var(--paper); -webkit-text-stroke: 8px var(--ink); paint-order: stroke fill; min-width: 64px; text-align: center; }
+.sp-turn .sum.seven { color: var(--tomato); }
+.sp-clockcard { display: flex; align-items: center; justify-content: space-between; gap: 12px; background: var(--paper); border: var(--stroke-tv) solid var(--ink); border-radius: 20px;
+  box-shadow: 8px 8px 0 var(--ink); padding: 8px 14px; min-height: 76px; }
+.sp-clockcard .goal { font-family: var(--font-display); font-size: 22px; background: var(--ink); color: var(--sun); border-radius: 10px; padding: 4px 10px; white-space: nowrap; }
+.sp-clock .led7 { background: var(--ink); border-radius: 12px; }
+.sp-lastround { font-family: var(--font-display); font-size: 26px; color: var(--white); background: var(--tomato); border: 5px solid var(--ink); border-radius: 14px; padding: 6px 12px; transform: rotate(-3deg); white-space: nowrap; }
+.sp-clock-label { font-family: var(--font-display); font-size: 20px; white-space: nowrap; }
+
+.sp-board { position: relative; height: 100%; max-width: 1180px; background-color: var(--sky); border: var(--stroke-tv) solid var(--ink); border-radius: 26px; box-shadow: 12px 14px 0 var(--ink);
+  background-image: radial-gradient(color-mix(in oklch, var(--white) 40%, transparent) 2.6px, transparent 3.2px); background-size: 26px 26px; overflow: hidden; }
+.sp-board .sp-map { position: absolute; inset: 0; width: 100%; height: 100%; }
+
+.sp-ticker { background: var(--paper); border: 4px solid var(--ink); border-radius: 16px; padding: 8px 12px; }
+.sp-ticker p { font-size: 20px; font-weight: 750; line-height: 1.3; color: var(--ink); opacity: .65; }
+.sp-ticker p.latest { opacity: 1; font-weight: 900; font-size: 22px; }
+
+/* ---- rails ---- */
+.sp-seat { position: relative; padding: 14px 16px 12px; display: flex; flex-direction: column; gap: 10px; min-width: 0; border-top: 14px solid var(--seat) !important; }
+.sp-seat .top { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.sp-seat .who { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.sp-seat h3 { font-family: var(--font-display); font-weight: 400; font-size: 30px; line-height: 1.05; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sp-seat .now { font-size: 18px; font-weight: 900; letter-spacing: .06em; }
+.sp-seat .vp { display: flex; flex-direction: column; align-items: center; font-family: var(--font-display); font-size: 56px; line-height: .95; }
+.sp-seat .vp small { font-size: 16px; }
+.sp-seat .stats { display: flex; gap: 14px; flex-wrap: wrap; }
+.sp-seat .stat { display: inline-flex; align-items: center; gap: 4px; font-family: var(--font-display); font-size: 26px; }
+.sp-seat .stat.hot { color: var(--tomato); }
+.sp-seat .ribbons { display: flex; gap: 6px; flex-wrap: wrap; }
+.sp-seat .ribbon { font-size: 18px; font-weight: 900; background: var(--lime); border: 3px solid var(--ink); border-radius: 999px; padding: 1px 10px; }
+.sp-seat .owes { align-self: flex-start; font-family: var(--font-display); font-size: 22px; color: var(--white); background: var(--tomato); border: 4px solid var(--ink); border-radius: 10px; padding: 2px 10px; }
+.sp-seat.out { filter: grayscale(.8); opacity: .7; }
+.sp-seat .corner-stamp { position: absolute; right: 12px; top: 10px; }
+.sp-seat .dot { width: 64px; height: 64px; border-radius: 50%; background: var(--seat); border: 4px solid var(--ink); }
+.sp-gain { position: absolute; left: 10px; right: 10px; bottom: -26px; display: flex; flex-wrap: wrap; justify-content: center; gap: 2px; background: var(--paper); border: 4px solid var(--ink);
+  border-radius: 14px; padding: 2px 6px; box-shadow: 4px 4px 0 var(--ink); z-index: 4; }
+
+/* ---- overlays ---- */
+.sp-overlay { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; pointer-events: none; z-index: 5; }
+.sp-overlay.tally { background: color-mix(in oklch, var(--ink) 25%, transparent); }
+.sp-overlay .call { font-family: var(--font-display); font-size: 44px; line-height: 1.05; color: var(--paper); -webkit-text-stroke: 9px var(--ink); paint-order: stroke fill; text-align: center; }
+.sp-overlay .hint { font-size: 24px; font-weight: 800; color: var(--ink-soft); text-align: center; }
+.sp-trade-panel { padding: 22px 28px; display: flex; flex-direction: column; gap: 14px; align-items: center; max-width: 980px; }
+.sp-trade-panel .cols { display: grid; grid-template-columns: minmax(0, 1fr) 80px minmax(0, 1fr); gap: 14px; align-items: center; }
+.sp-trade-panel .side { display: flex; flex-direction: column; gap: 10px; align-items: center; border-top: 12px solid var(--seat); padding-top: 8px; }
+.sp-trade-panel .side > b { font-size: 28px; font-weight: 900; }
+.sp-tiles { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+.sp-tv-tile { display: flex; flex-direction: column; align-items: center; background: color-mix(in oklch, var(--res) 40%, var(--white)); border: 4px solid var(--ink); border-radius: 14px; padding: 4px 10px; }
+.sp-tv-tile b { font-family: var(--font-display); font-weight: 400; font-size: 30px; line-height: 1; }
+.sp-tv-tile small { font-size: 16px; font-weight: 900; text-transform: uppercase; }
+.sp-small-panel { padding: 20px 30px; display: flex; flex-direction: column; gap: 12px; align-items: center; }
+.sp-small-panel .call.white { color: var(--white); }
+.sp-small-panel .owing { display: flex; gap: 22px; flex-wrap: wrap; justify-content: center; }
+.sp-small-panel .owing span { display: flex; align-items: center; gap: 8px; font-size: 26px; color: var(--white); }
+.sp-small-panel .owing em { font-style: normal; font-family: var(--font-display); background: var(--ink); color: var(--sun); border-radius: 10px; padding: 0 10px; }
+.sp-tally { padding: 20px 26px; display: flex; flex-direction: column; gap: 8px; width: 920px; }
+.sp-tally .row { display: grid; grid-template-columns: 56px 240px 1fr 70px auto; gap: 14px; align-items: center; font-size: 26px; min-height: 56px; }
+.sp-tally .name { display: flex; align-items: center; gap: 8px; font-weight: 900; white-space: nowrap; overflow: hidden; }
+.sp-tally .bar { height: 30px; border: 4px solid var(--ink); border-radius: 10px; background: var(--paper-2); overflow: hidden; }
+.sp-tally .bar span { display: block; height: 100%; }
+.sp-tally b { font-family: var(--font-display); font-weight: 400; font-size: 34px; text-align: right; }
+.sp-tally .cards { font-size: 18px; font-weight: 900; background: var(--sun); border: 3px solid var(--ink); border-radius: 999px; padding: 1px 10px; white-space: nowrap; }
+
+.sp-flash { position: absolute; left: 50%; top: 50%; translate: -50% -50%; z-index: 30; pointer-events: none; }

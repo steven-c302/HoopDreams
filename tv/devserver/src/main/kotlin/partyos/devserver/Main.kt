@@ -11,6 +11,7 @@ import partyos.engine.SystemClock
 import partyos.engine.games.blackjack.DrunkBlackjack
 import partyos.engine.games.trivia.BrainDrain
 import partyos.engine.games.bluff.BluffBattle
+import partyos.engine.games.sprawl.Sprawl
 import partyos.engine.games.turf.HomeTurf
 import partyos.server.DirectoryStaticFiles
 import partyos.server.OpenTriviaFeed
@@ -41,7 +42,7 @@ fun main(args: Array<String>) {
     } else {
         null
     }
-    val engine = PartyEngine(SystemClock, SecureEntropy(), GameRegistry(listOf(BrainDrain(feed = feed), BrainDrain(feed = feed, mode = BrainDrain.Mode.WRITE), BluffBattle(), DrunkBlackjack(), HomeTurf())))
+    val engine = PartyEngine(SystemClock, SecureEntropy(), GameRegistry(listOf(BrainDrain(feed = feed), BrainDrain(feed = feed, mode = BrainDrain.Mode.WRITE), BluffBattle(), DrunkBlackjack(), HomeTurf(), Sprawl())))
     engine.setPin(pin)
     // Played questions survive restarts when --played names a file: games skip them on later nights too.
     val played = opts["played"]?.let { PlayedStore(File(it), onError = { msg -> System.err.println("played questions: $msg") }) }

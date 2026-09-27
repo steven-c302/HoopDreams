@@ -24,6 +24,7 @@ export type Screen =
   | { t: 'scores'; title: string; rows: ScoreRow[] }
   | { t: 'cards'; title: string; hand: PlayingCard[]; total?: number; dealer: PlayingCard[]; actions: Choice[]; kind: string; note?: string; tone?: string; stack?: number }
   | TurfScreen
+  | SprawlScreen
 
 // ---- Home Turf (tv/engine/.../TurfViews.kt) -------------------------------------------------
 
@@ -61,6 +62,59 @@ export interface TurfScreen {
   canTrade: boolean
   auction?: TurfBidPad
   pieces: Choice[]
+  drink?: string
+  drinks: boolean
+}
+
+// ---- Sprawl (tv/engine/.../SprawlViews.kt) ------------------------------------------------
+
+/**
+ * The island, the same all game. Board units: a hex is 174 wide and 200 tall. terrain 0 hills (brick), 1 forest (wood),
+ * 2 pasture (sheep), 3 fields (wheat), 4 mountains (ore), 5 desert. Harbour kind -1 = any 3:1, 0..4 = that resource 2:1.
+ */
+export interface SprawlMap {
+  size: number
+  hexes: { x: number; y: number; terrain: number; number: number; name: string }[]
+  vertices: [number, number][]
+  edges: [number, number][]
+  harbours: { edge: number; kind: number }[]
+  resources: string[]
+  landlord: string
+  dev: Record<string, string>
+  awards: Record<string, string>
+}
+/** A development card kind in your hand: knight | road | plenty | mono | vp. */
+export interface SprawlCard { kind: string; name: string; count: number; playable: boolean; fresh: number }
+/** pieces: roads, settlements, cities left; ratios: your bank rate per resource. */
+export interface SprawlMe {
+  index: number; name: string; color: string; hand: number[]; vp: number; dev: SprawlCard[]; pieces: number[]; ratios: number[]; mine: boolean
+}
+/** kind: watch | wait | setup | roll | main | discard | robber | steal | road2 | pick | trade | over | out */
+export interface SprawlPrompt { kind: string; title: string; detail?: string; actions: Choice[]; timed: boolean; tone?: 'win' | 'lose' | 'neutral' }
+export interface SprawlBuild { roads: number[]; settlements: number[]; cities: number[]; dev: boolean }
+export interface SprawlTradeView {
+  id: number; from: number; to: number; fromName: string; toName: string; give: number[]; get: number[]
+  role: 'from' | 'to' | 'watch'; canAccept: boolean; canCounter: boolean
+}
+export interface SprawlScreen {
+  t: 'sprawl'
+  me?: SprawlMe
+  prompt: SprawlPrompt
+  map: SprawlMap
+  robber: number
+  vOwner: number[]
+  vLevel: number[]
+  eOwner: number[]
+  colors: string[]
+  spots: number[]
+  spotKind?: 'vertex' | 'edge' | 'hex'
+  build: SprawlBuild
+  victims: Choice[]
+  partners: { index: number; name: string; color: string; cards: number }[]
+  trade?: SprawlTradeView
+  canTrade: boolean
+  bank: number[]
+  discard: number
   drink?: string
   drinks: boolean
 }
@@ -133,10 +187,13 @@ export type HostCommand =
   /** A game's own show control, e.g. 'shuffle' during Brain Drain's Team Up. */
   | { t: 'gameAction'; action: string }
 
-/** Shared lobby settings. turfMode: Home Turf 0 auto, 1 solo, 2 teams; minutes: Home Turf's game clock (0 = no limit). */
-export type OptionKey = 'rounds' | 'teams' | 'drinks' | 'game' | 'captain' | 'turfMode' | 'minutes'
+/**
+ * Shared lobby settings. turfMode: Home Turf 0 auto, 1 solo, 2 teams; minutes: Home Turf's and Sprawl's game clock
+ * (0 = no limit); vp: Sprawl's points to win (8 or 10).
+ */
+export type OptionKey = 'rounds' | 'teams' | 'drinks' | 'game' | 'captain' | 'turfMode' | 'minutes' | 'vp'
 
-export type ActionPayload = { kind: string; [k: string]: string | number | boolean | string[] }
+export type ActionPayload = { kind: string; [k: string]: string | number | boolean | string[] | number[] }
 
 export type ClientMsg =
   | { t: 'hello'; protocol: number }
@@ -146,7 +203,7 @@ export type ClientMsg =
 
 export interface GameListing { id: string; title: string; tagline: string; minPlayers: number; maxPlayers: number }
 
-const SCREENS = new Set(['waiting', 'text', 'choice', 'number', 'multi', 'tutorial', 'scores', 'cards', 'turf'])
+const SCREENS = new Set(['waiting', 'text', 'choice', 'number', 'multi', 'tutorial', 'scores', 'cards', 'turf', 'sprawl'])
 const isObj = (v: unknown): v is Record<string, unknown> => typeof v === 'object' && v !== null
 
 /** Parses one server frame; returns null for anything malformed or unknown instead of throwing. */
@@ -223,6 +280,20 @@ export function rejectMessage(code: string): string {
     case 'NO_MORE_COUNTERS': return 'No more counters: accept or reject.'
     case 'EMPTY_TRADE': return 'Add something to the deal first.'
     case 'BAD_TRADE': return "That deal doesn't work."
+    // Sprawl
+    case 'BAD_SPOT': return "You can't build there."
+    case 'ROLL_FIRST': return 'Roll first.'
+    case 'NO_PIECES': return "You're out of those pieces."
+    case 'DECK_EMPTY': return 'No cards left in the deck.'
+    case 'ONE_CARD': return 'One card per turn.'
+    case 'NEW_CARD': return "You can't play a card the turn you buy it."
+    case 'BANK_EMPTY': return 'The bank is out of that.'
+    case 'BAD_DISCARD': return 'Pick exactly the right number of cards.'
+    case 'NOTHING_OWED': return ''
+    case 'NO_GIFTS': return 'A trade needs something on both sides.'
+    case 'TOO_MANY_OFFERS': return "That's enough offers for one turn."
+    case 'NOT_YOUR_TRADE': return "That offer isn't for you."
+    case 'THEY_CANT_AFFORD': return "They don't have those cards any more."
     default: return `Couldn't do that (${code}).`
   }
 }

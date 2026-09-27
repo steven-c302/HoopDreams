@@ -111,6 +111,38 @@ sealed interface Screen {
         val drink: String? = null,
         val drinks: Boolean = true,
     ) : Screen
+
+    /**
+     * Sprawl: your hand and cards, the one thing to do now, the island (static [map] plus live pieces), where you're
+     * placing ([spots] of [spotKind]: vertex | edge | hex), where you could build, and any open trade.
+     */
+    @Serializable @SerialName("sprawl")
+    data class Sprawl(
+        val me: SprawlMe?,
+        val prompt: SprawlPrompt,
+        val map: SprawlMapTv,
+        val robber: Int,
+        val vOwner: List<Int>,
+        val vLevel: List<Int>,
+        val eOwner: List<Int>,
+        /** Each seat's colour, by seat index. */
+        val colors: List<String>,
+        val spots: List<Int> = emptyList(),
+        val spotKind: String? = null,
+        val build: SprawlBuild = SprawlBuild(),
+        /** Who you can steal from (steal phase). */
+        val victims: List<Choice> = emptyList(),
+        val partners: List<SprawlPartner> = emptyList(),
+        val trade: SprawlTradeView? = null,
+        /** It's your main phase and no trade is open: you can offer one or trade with the bank. */
+        val canTrade: Boolean = false,
+        val bank: List<Int> = emptyList(),
+        /** Cards you must discard now. */
+        val discard: Int = 0,
+        /** Your latest drink call this turn, if any. */
+        val drink: String? = null,
+        val drinks: Boolean = true,
+    ) : Screen
 }
 
 /** One playing card. rank 1 (ace) to 13 (king), suit 0..3 = spades, hearts, diamonds, clubs. rank 0 = face down. */

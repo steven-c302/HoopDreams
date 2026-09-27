@@ -16,7 +16,8 @@
     { "id": "casino", "seconds": 90, "prompt": "Cartoon casino lounge bossa nova. Vibraphone, brushed drums, walking bass, muted horns, relaxed but playful. Seamless loop." },
     { "id": "turf", "seconds": 150, "prompt": "Strolling big-band groove for a cartoon property board game: walking upright bass, muted trumpet melody, brushed snare, xylophone answers, a sly confident swagger. Seamless loop." },
     { "id": "auction", "seconds": 60, "prompt": "Fast frantic auction music: rapid xylophone runs, stabbing brass hits, galloping bongos, rising tension that never resolves. Seamless loop." },
-    { "id": "lastlap", "seconds": 60, "prompt": "The strolling property-game groove pushed into overdrive for the final lap: double-time walking bass, urgent muted trumpets, ticking woodblock clock, rising brass stabs. Tense but fun. Seamless loop." }
+    { "id": "lastlap", "seconds": 60, "prompt": "The strolling property-game groove pushed into overdrive for the final lap: double-time walking bass, urgent muted trumpets, ticking woodblock clock, rising brass stabs. Tense but fun. Seamless loop." },
+    { "id": "sprawl", "seconds": 150, "prompt": "Sunny, scheming big-band groove for a cartoon island-building board game: marimba and steel drum melody over slap bass, bongos, muted trumpet answers and sly trombone slides. Busy and bouncy, like a crew racing to build. Seamless loop." }
   ],
   "sfx": [
     { "id": "focus", "seconds": 0.5, "prompt": "Soft short wooden tick, UI navigation, cartoon" },
@@ -73,6 +74,13 @@
     { "id": "dealDone", "seconds": 1.5, "prompt": "Firm handshake slap followed by a bright cha-ching and a short brass hit, deal done, cartoon" },
     { "id": "offerPing", "seconds": 0.6, "variants": 2, "prompt": "Playful phone notification double ping, incoming offer, cartoon" },
     { "id": "soldTag", "seconds": 1, "prompt": "Rubber stamp thump on paper followed by a tiny bell ding, property sold, cartoon" },
-    { "id": "cardDraw", "seconds": 0.8, "variants": 2, "prompt": "Card slid out of a deck and flipped over with a snappy swish, cartoon" }
+    { "id": "cardDraw", "seconds": 0.8, "variants": 2, "prompt": "Card slid out of a deck and flipped over with a snappy swish, cartoon" },
+    { "id": "landlord", "seconds": 2, "prompt": "Sneaky cartoon villain arrives: tiptoe pizzicato, a sly low trombone slide down and a dramatic minor piano stab, no voice" },
+    { "id": "harvest", "seconds": 1, "variants": 3, "prompt": "Bright quick marimba pluck run with a soft sparkly chime, collecting crops, cheerful" },
+    { "id": "settle", "seconds": 1, "variants": 2, "prompt": "Small wooden house piece plonked onto a wooden game board with a hollow knock and a tiny hammer tap" },
+    { "id": "cityUp", "seconds": 1.5, "prompt": "A building shooting up: quick rising brass swell with construction clanks, ending in a bright bell ding" },
+    { "id": "longRoad", "seconds": 2, "prompt": "Short triumphant brass fanfare that ends with a cheeky double car horn toot, award won" },
+    { "id": "bigCrew", "seconds": 2, "prompt": "Short triumphant brass fanfare with big stomping drums and a loud whistle, tough crew award won, no voice" },
+    { "id": "sprawlWin", "seconds": 3, "prompt": "Big victory brass fanfare with cymbal crash, timpani roll and a cheering crowd, board game won" }
   ]
 }

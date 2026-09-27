@@ -1,9 +1,9 @@
 import { useEffect, useRef } from 'react'
 import type { TvState } from '../protocol'
 import { setHurry, setMusic, sfx, type Mode } from './audio'
-import { isTrivia, type BlackjackTv, type BluffTv, type TriviaTv, type TurfTv } from './types'
+import { isTrivia, type BlackjackTv, type BluffTv, type SprawlTv, type TriviaTv, type TurfTv } from './types'
 
-type Game = BluffTv | BlackjackTv | TriviaTv | TurfTv | undefined
+type Game = BluffTv | BlackjackTv | TriviaTv | TurfTv | SprawlTv | undefined
 
 /** Seconds left on the stage clock, from the snapshot's remaining time anchored when it arrived. */
 export function useDeadline(tv: TvState | null): { deadline: number | null; frozen: number | null } {
@@ -27,6 +27,7 @@ function musicFor(tv: TvState): Mode {
   const g = s.game as unknown as Game
   if (!g) return 'lobby'
   if (g.t === 'blackjack') return g.phase === 'dealer' ? 'reveal' : g.phase === 'podium' ? 'podium' : 'casino'
+  if (g.t === 'sprawl') return g.phase === 'tally' ? 'standings' : g.phase === 'podium' ? 'podium' : g.lastRound ? 'lastlap' : 'sprawl'
   if (g.t === 'turf') return g.phase === 'auction' ? 'auction' : g.phase === 'tally' ? 'standings' : g.phase === 'podium' ? 'podium' : g.lastLap ? 'lastlap' : 'turf'
   if (g.t === 'trivia') {
     switch (g.phase) {

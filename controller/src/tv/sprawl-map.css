@@ -1,0 +1,38 @@
+/* Sprawl's island (phones and TV). Muted terrain so the players' loud pieces read from the couch. */
+
+:root {
+  --sp-hills: #D98A5F;
+  --sp-forest: #5F9B5A;
+  --sp-pasture: #B9DE7E;
+  --sp-fields: #F2CF5B;
+  --sp-mountains: #A2A7B8;
+  --sp-desert: #EBDDB2;
+  --sp-brick: #C8573A;
+  --sp-wood: #9A6236;
+  --sp-sheep: #F4F1E6;
+  --sp-wheat: #F5C83A;
+  --sp-ore: #8D93A6;
+  --sp-jetty: #8A5A32;
+}
+
+.sp-map { display: block; width: 100%; height: auto; user-select: none; -webkit-user-select: none; }
+.sp-map.interactive { touch-action: manipulation; cursor: pointer; }
+.sp-num { font-family: var(--font-display); font-size: 32px; fill: var(--ink); }
+.sp-num.red { fill: var(--tomato); }
+.sp-ratio { font-family: var(--font-display); font-size: 26px; fill: var(--ink); }
+.sp-ratio.small { font-size: 18px; }
+.sp-place { font-family: var(--font-body); font-weight: 900; font-size: 22px; letter-spacing: -.02em; fill: var(--ink); paint-order: stroke fill; stroke: var(--paper); stroke-width: 5px; stroke-linejoin: round; }
+
+.sp-spot { fill: var(--white); stroke: var(--ink); stroke-width: 6; animation: sp-glow 1.1s ease-in-out infinite; }
+.sp-spot.hex { fill: color-mix(in oklch, var(--sun) 35%, transparent); stroke: var(--ink); stroke-width: 7; stroke-dasharray: 16 10; }
+.sp-spot.on { fill: var(--sun); stroke-width: 8; animation: none; }
+.sp-spot.hex.on { fill: color-mix(in oklch, var(--sun) 70%, transparent); stroke-dasharray: none; }
+@keyframes sp-glow { 50% { fill: var(--sun); } }
+.sp-peek { fill: none; stroke: var(--sun); stroke-width: 12; animation: sp-peek 0.9s ease-in-out infinite; }
+@keyframes sp-peek { 50% { stroke-width: 20; stroke: var(--tomato); } }
+.sp-hex.hot polygon { stroke: var(--sun); stroke-width: 16; animation: sp-hot 0.5s ease-in-out 3 alternate; }
+@keyframes sp-hot { to { stroke-width: 6; stroke: var(--ink); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .sp-spot, .sp-peek, .sp-hex.hot polygon { animation: none; }
+}

@@ -11,8 +11,8 @@ export class Outbox {
 
   add(m: Sendable) {
     // A newer answer of the same kind in the same round supersedes the old one. Actions aimed at a target (Home Turf's
-    // build and mortgage taps) are separate moves, so they all stay.
-    if (m.t === 'action' && m.payload.target === undefined) {
+    // build and mortgage taps) or a resource (Sprawl's Windfall picks and bank trades) are separate moves, so they all stay.
+    if (m.t === 'action' && m.payload.target === undefined && m.payload.res === undefined && m.payload.give === undefined) {
       this.items = this.items.filter((o) => !(o.t === 'action' && o.round === m.round && o.payload.kind === m.payload.kind))
     }
     this.items.push(m)

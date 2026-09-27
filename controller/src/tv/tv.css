@@ -140,6 +140,13 @@
 .picker.five .cover h2 { font-size: 28px; -webkit-text-stroke: 7px var(--ink); }
 .picker.five .cover p { font-size: 17px; }
 .picker.five .cover .issue { font-size: 17px; }
+/* Six or more: two rows of three shorter covers. */
+.picker.six { gap: 16px 24px; margin-bottom: 24px; }
+.picker.six .cover { height: 168px; }
+.picker.six .cover h2 { font-size: 30px; -webkit-text-stroke: 7px var(--ink); }
+.picker.six .cover p { font-size: 17px; margin-top: 6px; padding: 2px 10px; }
+.picker.six .cover .issue { font-size: 16px; top: 10px; left: 12px; }
+.picker.six .cover .title { left: 16px; right: 16px; bottom: 12px; }
 .last-game { font-size: 26px; color: var(--ink-soft); }
 
 /* ---------- shared game pieces ---------- */

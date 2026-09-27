@@ -175,6 +175,8 @@ class PartyEngine private constructor(
         // Home Turf: 0 auto (solo up to 6 players, teams beyond), 1 solo, 2 teams; game clock in minutes (0 = no limit).
         "turfMode" -> 0..2
         "minutes" -> 0..120
+        // Sprawl: points to win (8 or 10).
+        "vp" -> 8..10
         "game" -> 0..(games.all.size - 1).coerceAtLeast(0)
         else -> null
     }
