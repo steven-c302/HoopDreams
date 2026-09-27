@@ -219,8 +219,8 @@ export function HostSays({ line, mood = 'happy', size = 190, className = '' }: {
 
 // ---------- the clock ----------
 
-/** An alarm clock whose face drains like a pie; it rattles through the last five seconds. */
-export function Timer({ deadline, total, frozen, size = 170 }: { deadline: number | null; total: number; frozen?: number | null; size?: number }) {
+/** Shared countdown, with a cartoon alarm housing or a quiet dial for the board games. */
+export function Timer({ deadline, total, frozen, size = 170, appearance = 'alarm' }: { deadline: number | null; total: number; frozen?: number | null; size?: number; appearance?: 'alarm' | 'dial' }) {
   const wedge = useRef<SVGPathElement>(null)
   const wrap = useRef<HTMLDivElement>(null)
   const [secs, setSecs] = useState(0)
@@ -245,11 +245,13 @@ export function Timer({ deadline, total, frozen, size = 170 }: { deadline: numbe
     return () => cancelAnimationFrame(raf)
   }, [deadline, total, frozen])
   return (
-    <div className="timer" ref={wrap} style={{ width: size, height: size * 1.05 }}>
+    <div className={`timer ${appearance === 'dial' ? 'game-dial' : ''}`} ref={wrap} style={{ width: size, height: size * 1.05 }}>
       <svg viewBox="0 0 160 168" width={size} height={size * 1.05} aria-hidden="true">
-        <path d="M40 150 L30 164 M120 150 L130 164" stroke={C.ink} strokeWidth="9" strokeLinecap="round" />
-        <circle cx="34" cy="34" r="20" fill={C.tomato} stroke={C.ink} strokeWidth="6" />
-        <circle cx="126" cy="34" r="20" fill={C.tomato} stroke={C.ink} strokeWidth="6" />
+        {appearance === 'alarm' && <>
+          <path d="M40 150 L30 164 M120 150 L130 164" stroke={C.ink} strokeWidth="9" strokeLinecap="round" />
+          <circle cx="34" cy="34" r="20" fill={C.tomato} stroke={C.ink} strokeWidth="6" />
+          <circle cx="126" cy="34" r="20" fill={C.tomato} stroke={C.ink} strokeWidth="6" />
+        </>}
         <circle cx="80" cy="96" r="66" fill={C.paper} />
         <path ref={wedge} stroke="none" />
         <circle cx="80" cy="96" r="66" fill="none" stroke={C.ink} strokeWidth="8" />

@@ -1,4 +1,4 @@
-import { useLayoutEffect, useState } from 'react'
+import { lazy, Suspense, useLayoutEffect, useState } from 'react'
 import type { PlayerSummary, StageInfo } from '../protocol'
 import { Card } from './Card'
 import { Chip, Led } from './Casino'
@@ -7,12 +7,15 @@ import { TriviaStage } from './TriviaStage'
 import type { TriviaTeam, TriviaTv } from './types'
 import { TurfGallery } from './TurfGallery'
 
+const ThemeGallery = lazy(() => import('./ThemeGallery').then(m => ({ default: m.ThemeGallery })))
+
 /**
  * Design review sheets. /tv?gallery shows the deck, chips and readouts; /tv?gallery=trivia&beat=<name> renders one
  * BRAIN DRAIN beat from fixture data at 1920×1080 (no server needed); /tv?gallery=trivia lists the beats.
  */
 export function Gallery() {
   const params = new URLSearchParams(location.search)
+  if (params.get('gallery') === 'themes') return <Suspense fallback={null}><ThemeGallery /></Suspense>
   if (params.get('gallery') === 'trivia') return <TriviaGallery beat={params.get('beat')} />
   if (params.get('gallery') === 'turf') return <TurfGallery beat={params.get('beat')} />
   return (

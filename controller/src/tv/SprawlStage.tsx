@@ -1,6 +1,7 @@
 import { AnimatePresence, motion } from 'motion/react'
 import { useEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode } from 'react'
 import type { PlayerSummary, ScoreRow, StageInfo } from '../protocol'
+import { GameMark } from '../theme/GameScene'
 import { sfx } from './audio'
 import { Led } from './Casino'
 import { GameHeader, Podium, Tutorial } from './Shared'
@@ -54,7 +55,7 @@ function Island({ g, stage, players, clock }: { g: SprawlTv; stage: StageInfo; p
   const box = useMemo(() => mapBox(g.map), [g.map])
   return (
     <div className="sp-stage">
-      <div className="sp-rail">
+      <div className="sp-rail"><GameMark game="sprawl" />
         <TurnCard g={g} people={people} stage={stage} clock={clock} />
         {left.map((i) => <SeatCard key={i} g={g} i={i} people={people} gain={gains[i]} />)}
       </div>
@@ -207,8 +208,8 @@ function SeatCard({ g, i, people, gain }: { g: SprawlTv; i: number; people: Map<
   const active = g.turn === i && g.phase !== 'tally'
   const p = people.get(s.player)
   return (
-    <Panel className={`sp-seat ${active ? 'active' : ''} ${s.gone ? 'out' : ''}`} fill={active ? C.sun : C.paper} tilt={active ? -1.5 : i % 2 ? 0.8 : -0.8}
-      style={{ '--seat': s.color } as CSSProperties} animate={{ scale: active ? 1.04 : 1 }} transition={{ type: 'spring', stiffness: 300, damping: 20 }}>
+    <Panel className={`sp-seat ${active ? 'active' : ''} ${s.gone ? 'out' : ''}`} fill={C.paper} tilt={0}
+      style={{ '--seat': s.color } as CSSProperties} animate={{ scale: 1 }} transition={{ type: 'spring', stiffness: 300, damping: 20 }}>
       <div className="top">
         {p ? <AvatarFace avatar={p.avatar} size={64} dim={!p.connected} /> : <span className="dot" />}
         <div className="who"><h3>{s.name}</h3>{active && <span className="now">{g.phase === 'setup' ? 'PLACING' : 'THEIR TURN'}</span>}</div>
@@ -289,7 +290,7 @@ function TurnCard({ g, people, stage, clock }: { g: SprawlTv; people: Map<string
       <div className="who">
         {p && <AvatarFace avatar={p.avatar} size={56} />}<b>{call(g)}</b>
         {g.timed && (clock.deadline != null || clock.frozen != null) && (
-          <Timer deadline={stage.paused ? null : clock.deadline} frozen={stage.paused ? clock.frozen ?? 0 : clock.frozen} total={DECISION_MS[g.phase] ?? 20_000} size={76} />
+          <Timer deadline={stage.paused ? null : clock.deadline} frozen={stage.paused ? clock.frozen ?? 0 : clock.frozen} total={DECISION_MS[g.phase] ?? 20_000} size={76} appearance="dial" />
         )}
       </div>
       {g.dice.length > 0 && g.phase !== 'setup' && (

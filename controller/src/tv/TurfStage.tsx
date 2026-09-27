@@ -2,6 +2,7 @@ import { AnimatePresence, motion } from 'motion/react'
 import { useEffect, useMemo, useRef, useState, type CSSProperties } from 'react'
 import type { PlayerSummary, ScoreRow, StageInfo } from '../protocol'
 import { Face } from '../theme/Face'
+import { GameMark, Neighborhood } from '../theme/GameScene'
 import { sfx } from './audio'
 import { Led } from './Casino'
 import { GameHeader, Podium, Tutorial } from './Shared'
@@ -64,7 +65,7 @@ function Turf({ g, stage, players, clock }: { g: TurfTv; stage: StageInfo; playe
   const hot = g.phase === 'buy' ? g.buy : g.phase === 'auction' ? g.auction?.space : undefined
   return (
     <div className="turf-stage">
-      <div className="turf-rail left">{left.map((i) => <TokenCard key={i} g={g} i={i} people={people} />)}</div>
+      <div className="turf-rail left"><GameMark game="turf" />{left.map((i) => <TokenCard key={i} g={g} i={i} people={people} />)}</div>
       <div className="turf-board-wrap">
         <TurfBoard tv={g} display={display} zoom={zoom} hot={hot}>
           <Well g={g} stage={stage} clock={clock} people={people} />
@@ -221,8 +222,8 @@ function TokenCard({ g, i, people }: { g: TurfTv; i: number; people: Map<string,
   const members = t.members.map((id) => people.get(id)).filter((p): p is PlayerSummary => !!p)
   const owned = g.owner.map((o, s) => (o === i ? s : -1)).filter((s) => s >= 0)
   return (
-    <Panel className={`turf-card ${active ? 'active' : ''} ${t.bankrupt ? 'out' : ''}`} fill={active ? C.sun : C.paper} tilt={active ? -1.5 : i % 2 ? 0.8 : -0.8}
-      animate={{ scale: active ? 1.04 : 1 }} transition={{ type: 'spring', stiffness: 300, damping: 20 }}>
+    <Panel className={`turf-card ${active ? 'active' : ''} ${t.bankrupt ? 'out' : ''}`} fill={C.paper} tilt={0}
+      animate={{ scale: 1 }} transition={{ type: 'spring', stiffness: 300, damping: 20 }}>
       <div className="top">
         <Piece piece={t.piece} color={t.color} size={78} />
         <div className="who">
@@ -285,7 +286,7 @@ function Well({ g, stage, clock, people }: { g: TurfTv; stage: StageInfo; clock:
           </div>
         ) : <div className="turn"><b>HOME TURF</b></div>}
         <GameClock g={g} clock={clock} />
-        {g.timed && (clock.deadline != null || clock.frozen != null) && <Timer deadline={stage.paused ? null : clock.deadline} frozen={stage.paused ? clock.frozen ?? 0 : clock.frozen} total={total} size={96} />}
+        {g.timed && (clock.deadline != null || clock.frozen != null) && <Timer deadline={stage.paused ? null : clock.deadline} frozen={stage.paused ? clock.frozen ?? 0 : clock.frozen} total={total} size={96} appearance="dial" />}
       </div>
       <div className="well-body">
         <AnimatePresence mode="wait">
@@ -347,6 +348,7 @@ function PhasePanel({ g, people }: { g: TurfTv; people: Map<string, PlayerSummar
     case 'move': return <div className="stack-center"><Dice g={g} /></div>
     default: return (
       <div className="stack-center">
+        <Neighborhood />
         <Dice g={g} />
         <p className="call">{g.doubles > 0 ? 'DOUBLES! ROLL AGAIN' : `${seatName.toUpperCase()} ROLLS`}</p>
       </div>

@@ -1,6 +1,6 @@
 import { useEffect, useLayoutEffect, useState } from 'react'
 import type { PlayerSummary, StageInfo } from '../protocol'
-import { Scene, C } from './toon'
+import { GameScene } from '../theme/GameScene'
 import { TurfStage } from './TurfStage'
 import type { TurfBeat, TurfSpace, TurfToken, TurfTv } from './types'
 
@@ -142,7 +142,7 @@ export function TurfGallery({ beat: name }: { beat: string | null }) {
   return (
     <div className="tv-root">
       <div className="tv-stage" style={{ transform: `scale(${scale}) translate(-50%, -50%)` }}>
-        <Scene color={C.lime}><TurfStage stage={stage} players={players} scores={[]} clock={clock} /></Scene>
+        <GameScene game="turf"><TurfStage stage={stage} players={players} scores={[]} clock={clock} /></GameScene>
       </div>
     </div>
   )

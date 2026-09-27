@@ -61,7 +61,7 @@ export function Play({ session, onLeave }: { session: Session; onLeave(why: stri
   const team = teamOf(view.screen)
 
   return (
-    <main className="page play" style={team ? { '--team': team.color } as CSSProperties : undefined}>
+    <main className="page play" data-game-theme={view.gameId === 'turf' || view.gameId === 'sprawl' ? view.gameId : undefined} style={team ? { '--team': team.color } as CSSProperties : undefined}>
       <header className="topbar">
         <span className="me">
           <span className="me-face"><Face face={view.me.avatar.face} color={view.me.avatar.color} size={40} />{view.captain && <Crown size={26} style={{ position: 'absolute', left: 7, top: -15, transform: 'rotate(-12deg)' }} />}</span>

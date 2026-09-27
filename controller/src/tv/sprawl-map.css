@@ -30,9 +30,9 @@
 @keyframes sp-glow { 50% { fill: var(--sun); } }
 .sp-peek { fill: none; stroke: var(--sun); stroke-width: 12; animation: sp-peek 0.9s ease-in-out infinite; }
 @keyframes sp-peek { 50% { stroke-width: 20; stroke: var(--tomato); } }
-.sp-hex.hot polygon { stroke: var(--sun); stroke-width: 16; animation: sp-hot 0.5s ease-in-out 3 alternate; }
+.sp-hex.hot > polygon:first-child { stroke: var(--sun); stroke-width: 16; animation: sp-hot 0.5s ease-in-out 3 alternate; }
 @keyframes sp-hot { to { stroke-width: 6; stroke: var(--ink); } }
 
 @media (prefers-reduced-motion: reduce) {
-  .sp-spot, .sp-peek, .sp-hex.hot polygon { animation: none; }
+  .sp-spot, .sp-peek, .sp-hex.hot > polygon:first-child { animation: none; }
 }

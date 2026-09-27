@@ -1,4 +1,4 @@
-import { useMemo, useRef, type CSSProperties, type PointerEvent } from 'react'
+import { useId, useMemo, useRef, type CSSProperties, type PointerEvent } from 'react'
 import type { SprawlMap as MapData } from '../protocol'
 import { CityShape, LandlordShape, ResourceGlyph, SettlementShape, TERRAIN_FILL } from './SprawlArt'
 import './sprawl-map.css'
@@ -66,6 +66,7 @@ const pips = (n: number) => (n === 0 ? 0 : 6 - Math.abs(7 - n))
 
 /** The island as an SVG: terrain, numbers, harbours, roads, buildings, The Landlord, and glowing spots to tap. */
 export function SprawlMap({ map, robber, vOwner, vLevel, eOwner, colors, spots = [], spotKind, selected, onPick, peek = -1, peekKind, hot = [], names = false, className = '', style }: Props) {
+  const terrainId = useId()
   const svg = useRef<SVGSVGElement>(null)
   const down = useRef<{ x: number; y: number } | null>(null)
   const box = useMemo(() => mapBox(map), [map])
@@ -94,6 +95,20 @@ export function SprawlMap({ map, robber, vOwner, vLevel, eOwner, colors, spots =
 
   return (
     <svg ref={svg} className={`sp-map ${onPick ? 'interactive' : ''} ${className}`} style={style} viewBox={`${box.x} ${box.y} ${box.w} ${box.h}`} onPointerDown={(e) => { down.current = { x: e.clientX, y: e.clientY } }} onPointerUp={pick} role="img" aria-label="The island">
+      <defs>
+        {Array.from({ length: 6 }, (_, t) => (
+          <pattern key={t} id={`${terrainId}-${t}`} width="48" height="48" patternUnits="userSpaceOnUse">
+            <g fill="none" stroke="var(--ink)" strokeWidth="1.5" opacity=".13">
+              {t === 0 ? <path d="M2 36 Q15 14 28 36 M23 14 Q34 -2 45 14" />
+                : t === 1 ? <path d="M8 28 L16 10 L24 28 Z M16 28 V34 M32 46 L40 28 L48 46 Z" />
+                : t === 2 ? <path d="M8 24 l3 -5 l3 5 M32 43 l3 -5 l3 5" />
+                : t === 3 ? <path d="M0 10 Q24 0 48 10 M0 24 Q24 14 48 24 M0 38 Q24 28 48 38" />
+                : t === 4 ? <path d="M0 35 L16 10 L32 35 M11 18 L16 22 L21 18 M30 12 L40 0 L50 12" />
+                : <path d="M0 20 Q12 10 24 20 T48 20 M0 40 Q12 30 24 40 T48 40" />}
+            </g>
+          </pattern>
+        ))}
+      </defs>
       {/* the island's shadow */}
       <g transform="translate(10 12)">{map.hexes.map((h, i) => <polygon key={i} points={hexPoints(h.x, h.y)} fill={INK} />)}</g>
 
@@ -123,6 +138,7 @@ export function SprawlMap({ map, robber, vOwner, vLevel, eOwner, colors, spots =
         return (
           <g key={i} className={`sp-hex ${hotSet.has(i) ? 'hot' : ''}`}>
             <polygon points={hexPoints(h.x, h.y)} fill={TERRAIN_FILL[h.terrain]} stroke={INK} strokeWidth="6" strokeLinejoin="round" />
+            <polygon className="sp-terrain-detail" points={hexPoints(h.x, h.y)} fill={`url(#${terrainId}-${h.terrain})`} pointerEvents="none" />
             {h.terrain < 5 && <g transform={names ? `translate(${h.x - 24} ${h.y - 92}) scale(.48)` : `translate(${h.x - 30} ${h.y - 80}) scale(.6)`} opacity=".92"><ResourceGlyph res={h.terrain} /></g>}
             {h.number > 0 && (
               <g transform={`translate(${h.x} ${h.y + numY})`}>

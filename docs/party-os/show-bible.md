@@ -4,8 +4,9 @@ The look, motion and sound of Party OS 2.0. Every screen and every sound should 
 
 ## The idea
 
-Party OS is a **Saturday-morning cartoon game show** broadcast from your living room. The TV is the stage and the
-host; phones are the contestants' buzzers. Two rules come from Jackbox and the Jack Principles:
+Party OS is a collection of games broadcast from your living room. The shell and Brain Drain use a
+**Saturday-morning cartoon game show** identity; Home Turf and Sprawl have their own environments, described below.
+The TV is the stage and the host; phones are the contestants' controls. Two rules come from Jackbox and the Jack Principles:
 
 1. **Talk to the room.** Brainy, the host, reacts to what just happened ("Only Smarty Pints knew that.", "Not one
    team. Not one.") instead of reading a script. One task at a time; everyone always knows what happens next.
@@ -17,7 +18,8 @@ text on every answer, and a result on your own phone.
 
 ## Saturday Morning (the shell)
 
-All values live in [`controller/src/theme/tokens.css`](../../controller/src/theme/tokens.css), in OKLCH.
+Shared values live in [`controller/src/theme/tokens.css`](../../controller/src/theme/tokens.css), in OKLCH.
+Scoped board-game overrides live in [`controller/src/theme/games.css`](../../controller/src/theme/games.css).
 
 | Token | Use |
 | --- | --- |
@@ -121,3 +123,37 @@ win and lose stingers (its soundtrack by Karl Flodin has "New Management" for a 
 
 > The original spec kept drink counts off the TV. Drunk Blackjack calls drinks on the TV on purpose, because it was
 > asked for. Sober Hand exists, and "sips" (or water) are the house unit.
+
+## Home Turf: the neighborhood
+
+A miniature neighborhood on an architectural game board. Navy surrounds, warm ivory deeds, brick accents,
+compact Figtree headings and an original streetscape distinguish it from the cartoon shell. Board geometry,
+property-group colors, player colors and the existing piece silhouettes stay intact. A brass-edged board,
+quieter rules, squared deed cards and a plain turn dial provide the physical framing. Active players have an
+accent border. The phone uses the same surfaces, with large action buttons and persistent navigation.
+
+## Sprawl: the island
+
+An ocean setting with parchment player cards, serif headings and illustrated terrain patterns. The number
+counters use a bold sans serif for legibility; resource glyphs, probability pips and player-color roads remain
+prominent. Forest, hills, pasture, fields, mountains and desert each have a subtle distinct texture. Pieces
+cast a small shadow; production highlights and placement markers stay above the terrain. The phone carries
+these same materials into its hand, map, development cards and trade controls.
+
+These two games scope their environment through `data-game-theme`. Do not redefine player colors or answer
+colors inside a game theme. Countdown/pause logic is shared; only the clock housing changes. Theme changes
+must cover the live TV, phone, tutorials and gallery. The TV respects reduced-motion preferences through
+MotionConfig, and CSS effects retain their reduced-motion alternatives.
+
+### Review this first implementation
+
+- `/tv?gallery=turf&beat=roll` and `&beat=auction` show Home Turf's populated board and deed/auction layout.
+- `/tv?gallery=themes&game=sprawl` shows the larger six-player island.
+- `/tv?gallery=themes&game=turf&view=phone` and `game=sprawl&view=phone` show narrow-screen controls.
+- The theme gallery uses fictional six-player rehearsal snapshots. Its actions never reach a game server.
+- `npm run build`, `npm test` and `npm run e2e` in `controller` check the implementation. Theme layout tests
+  cover six players at 1280×720, frozen countdowns, 320px phone navigation, identity stripes and trivia isolation.
+
+This first implementation covers Home Turf and Sprawl. Blackjack's after-hours treatment, Bluff Battle's
+newsroom treatment and Write It Down's pub-quiz treatment remain proposed in `game-theme-research.md`.
+Existing game-specific sound cues remain; no new recordings or music were added in this pass.
