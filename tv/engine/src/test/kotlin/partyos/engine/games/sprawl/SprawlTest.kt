@@ -377,6 +377,26 @@ class SprawlTest {
         assertTrue(tv.winner >= 0)
     }
 
+    @Test fun aPlayerKickedDuringSetupGetsNoStartingCardsOrFirstTurn() {
+        start(3)
+        e.kick(seat(0))
+        var steps = 0
+        while (tv.phase == "setup") {
+            check(steps++ < 100) { "setup never finished after a kick" }
+            if (state.seats[tv.turn].gone) {
+                passTime(5_000)
+            } else {
+                val who = seat(tv.turn)
+                assertEquals(ActionResult.Ack, act(who, "place", "target" to phone(who).spots.first()))
+            }
+            assertEquals(List(5) { 0 }, state.seats[0].hand)
+            assertEquals(List(5) { 19 }, total(state))
+        }
+        assertEquals("roll", tv.phase)
+        assertEquals(1, tv.turn)
+        assertTrue(state.seats.drop(1).all { it.hand.sum() > 0 })
+    }
+
     @Test fun aKickedPlayersTurnIsSkipped() {
         start(3)
         finishSetup()

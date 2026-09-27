@@ -200,7 +200,7 @@ class Sprawl(private val names: SprawlNames = SprawlSetup.loadNames()) : GameMod
         if (setupPiece(s) == SETTLEMENT) {
             if (target !in SprawlRules.settlementSpots(s.board, seat, setup = true)) throw Reject("BAD_SPOT")
             s = s.settle(target, seat, SprawlRules.SETTLEMENT_LEVEL).copy(setupVertex = target).beat("settle", seat = seat, target = target)
-            if (round2) {
+            if (round2 && !s.seats[seat].gone) {
                 val gain = MutableList(5) { 0 }
                 s.board.geo.vHexes[target].filter { s.board.terrain[it] != SprawlRules.DESERT }.forEach { gain[s.board.terrain[it]]++ }
                 s = s.pay(seat, gain).beat("harvest", seat = seat, gains = List(s.seats.size) { if (it == seat) gain else List(5) { 0 } })
@@ -211,7 +211,7 @@ class Sprawl(private val names: SprawlNames = SprawlSetup.loadNames()) : GameMod
         }
         s = s.copy(setupStep = s.setupStep + 1)
         if (!setupDone(s)) return go(s.copy(turn = setupSeat(s)).beat("setup", seat = setupSeat(s)), SETUP, ctx)
-        return beginTurn(s.copy(setupVertex = -1).log("Setup done. Roll 'em!"), 0, ctx)
+        return beginTurn(s.copy(setupVertex = -1).log("Setup done. Roll 'em!"), active(s).first(), ctx)
     }
 
     // ---- turns ------------------------------------------------------------------------

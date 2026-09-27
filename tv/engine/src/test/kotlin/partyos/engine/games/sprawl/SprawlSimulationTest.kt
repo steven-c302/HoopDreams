@@ -5,23 +5,26 @@ import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.buildJsonObject
+import partyos.engine.ActionResult
 import partyos.engine.FakeClock
 import partyos.engine.GameRegistry
 import partyos.engine.HostCmd
 import partyos.engine.PartyEngine
 import partyos.engine.PhoneState
+import partyos.engine.PlayerId
 import partyos.engine.Screen
 import partyos.engine.SeededEntropy
 import partyos.engine.TvState
 import partyos.engine.add
 import kotlin.random.Random
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 /**
  * Bots play whole games of Sprawl through the real engine at human-ish pace, checking the island's invariants every
  * second of game time; also estimates how long a party game runs. Heuristics after Catanatron's rule-based bot.
- * `SPRAWL_SIMS=200 ./gradlew :engine:test --tests '*SprawlSimulationTest*'` plays more games.
+ * `SPRAWL_SIMS=500 ./gradlew :engine:test --tests '*SprawlSimulationTest*' --rerun-tasks` plays more games.
  */
 class SprawlSimulationTest {
     private val registry = GameRegistry(listOf(Sprawl()))
@@ -31,10 +34,10 @@ class SprawlSimulationTest {
 
     private fun state(e: PartyEngine) = e.snapshot().game?.state?.let { Json.decodeFromJsonElement(SprawlState.serializer(), it) }
 
-    private fun play(seed: Long, players: Int, opts: Map<String, Int>, deep: Boolean): Result {
+    private fun play(seed: Long, players: Int, opts: Map<String, Int>, deep: Boolean, chaos: Boolean = false): Result {
         val clock = FakeClock(0)
         val e = PartyEngine(clock, SeededEntropy(seed), registry)
-        val ids = (1..players).map { e.add("P$it") }
+        val ids = (1..players).map { e.add("P$it") }.toMutableList()
         opts.forEach { (k, v) -> e.host(HostCmd.SetOption(k, v)) }
         e.host(HostCmd.StartGame("sprawl"))
         e.host(HostCmd.SkipPhase)
@@ -49,7 +52,11 @@ class SprawlSimulationTest {
         var sawLast = false
         var last: SprawlState? = null
         while (e.tvState().stage != null) {
-            check(++ticks < 4 * 3600) { "game $seed never ended (phase ${last?.phase})" }
+            check(++ticks < 4 * 3600) {
+                val st = e.tvState()
+                "game $seed never ended (phase ${last?.phase}, paused ${st.stage?.paused} ${st.stage?.pauseReason}, remaining ${st.stage?.remainingMs}, " +
+                    "connected ${st.players.count { it.connected }}/${st.players.size}, seats gone ${last?.seats?.count { it.gone }})"
+            }
             clock.advance(1_000)
             e.tick()
             val s = state(e) ?: break
@@ -70,8 +77,17 @@ class SprawlSimulationTest {
                 val phone = ids.maxOf { sizes.encodeToString(PhoneState.serializer(), e.phoneState(it)).length }
                 check(tv < 24_000 && phone < 12_000) { "payloads too big: tv $tv, phone $phone" }
             }
+            if (chaos) {
+                chaos(e, ids, rnd, n++)
+                // Reconnecting does not dismiss an engine pause: the host presses Resume when the party is back.
+                val tv = e.tvState()
+                if (tv.stage?.paused == true && tv.players.count { it.connected } >= 2) {
+                    assertEquals(ActionResult.Ack, e.host(HostCmd.Resume), "host resume in game $seed")
+                }
+                state(e)?.let { invariants(it, seed) }
+            }
             for (id in ids.shuffled(rnd)) {
-                if (rnd.nextDouble() > 0.45) continue // people take a few seconds to decide
+                if (rnd.nextDouble() > (if (chaos) 0.15 else 0.45)) continue // people take a few seconds to decide
                 val ps = e.phoneState(id)
                 val scr = ps.screen as? Screen.Sprawl ?: continue
                 val payload = decide(scr, s, rnd) ?: continue
@@ -80,6 +96,38 @@ class SprawlSimulationTest {
         }
         val end = last ?: error("no game")
         return Result(clock.now() / 60_000.0, turns, end.tally.maxOrNull() ?: 0, sawLast, trades, sevens, cards)
+    }
+
+    /**
+     * Party chaos: phones drop and come back, someone gets kicked now and then, and people mash buttons with nonsense
+     * (bad targets, wrong turns, junk trades). Actions may be accepted or refused, but must preserve the invariants.
+     */
+    private fun chaos(e: PartyEngine, ids: MutableList<PlayerId>, rnd: Random, n: Int) {
+        val id = ids[rnd.nextInt(ids.size)]
+        when {
+            rnd.nextDouble() < 0.02 -> e.setPresence(id, rnd.nextBoolean())
+            rnd.nextDouble() < 0.0015 && ids.size > 2 -> { e.kick(id); ids.remove(id); return }
+        }
+        if (rnd.nextDouble() < 0.3) {
+            val ps = e.phoneState(id)
+            val r = { rnd.nextInt(-3, 130) }
+            val cards = { List(rnd.nextInt(0, 7)) { rnd.nextInt(-1, 4) } }
+            val junk = when (rnd.nextInt(12)) {
+                0 -> payload("build", "what" to listOf("road", "settlement", "city", "castle")[rnd.nextInt(4)], "target" to r())
+                1 -> payload("place", "target" to r())
+                2 -> payload("robber", "target" to r())
+                3 -> payload("steal", "victim" to rnd.nextInt(-2, 8))
+                4 -> payload("pick", "res" to rnd.nextInt(-1, 7))
+                5 -> payload("bank", "give" to rnd.nextInt(-1, 6), "get" to rnd.nextInt(-1, 6))
+                6 -> payload("trade", "to" to rnd.nextInt(-3, 8), "give" to cards(), "get" to cards())
+                7 -> payload("tradeReply", "trade" to rnd.nextInt(0, 60), "option" to listOf("accept", "reject", "maybe")[rnd.nextInt(3)])
+                8 -> payload("discard", "cards" to cards())
+                9 -> payload("play", "card" to listOf("knight", "road", "plenty", "mono", "vp", "joker")[rnd.nextInt(6)])
+                10 -> payload("peek", "what" to listOf("vertex", "edge", "hex", "moon")[rnd.nextInt(4)], "target" to r())
+                else -> payload(listOf("roll", "end", "buyDev", "tradeCancel", "")[rnd.nextInt(5)], "trade" to rnd.nextInt(0, 60))
+            }
+            e.action(id, "c$n", if (rnd.nextBoolean()) ps.round else rnd.nextInt(0, 400), junk)
+        }
     }
 
     private fun invariants(s: SprawlState, seed: Long) {
@@ -105,6 +153,9 @@ class SprawlSimulationTest {
             if (!linked) fail("road $e floats")
         }
         if (s.phase == Sprawl.TRADE && s.trade == null) fail("trade phase with no trade")
+        s.seats.filter { it.gone }.forEach { if (it.hand.sum() > 0 || it.dev.isNotEmpty()) fail("${it.name} left but still holds cards") }
+        if (s.phase in setOf(Sprawl.ROLL, Sprawl.MAIN, Sprawl.ROBBER, Sprawl.STEAL, Sprawl.ROAD2, Sprawl.PICK) && s.seats[s.turn].gone) fail("a seat that left is taking a turn")
+        s.trade?.let { t -> if (s.seats[t.from].gone || (t.to >= 0 && s.seats[t.to].gone)) fail("a trade with a seat that left") }
         if (b.robber !in g.hexes.indices) fail("the Landlord is off the island")
         val devTotal = if (b.size == 0) 25 else 34
         if (s.deck.size + s.seats.sumOf { it.dev.size + it.knights } > devTotal) fail("dev cards appeared from nowhere")
@@ -188,6 +239,15 @@ class SprawlSimulationTest {
     }
 
     private val sims = System.getenv("SPRAWL_SIMS")?.toIntOrNull() ?: 24
+
+    @Test fun chaosNeverBreaksTheGame() {
+        val results = (0 until sims).map { g ->
+            val opts = mutableMapOf("minutes" to 3 + g % 8, "vp" to if (g % 3 == 0) 10 else 8, "drinks" to g % 2)
+            play(5_000L + g, 3 + g % 4, opts, deep = g < 6, chaos = true)
+        }
+        println("Sprawl chaos ($sims games): ${results.count { it.lastRound }} last rounds, median ${median(results.map { it.minutes })} min")
+        assertTrue(results.any { it.lastRound }, "short clocks reach a last round")
+    }
 
     @Test fun botsPlayWholeGamesWithoutBreakingTheRules() {
         val results = (0 until sims).map { g -> play(2_000L + g, 3 + g % 4, mapOf("minutes" to 30), deep = g < 8) }

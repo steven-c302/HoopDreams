@@ -3,6 +3,7 @@ package partyos.engine
 import kotlinx.serialization.json.Json
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertIs
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
@@ -126,6 +127,17 @@ class RuntimeTest {
         e.setPresence(ids[1], false)
         assertTrue(e.stage.paused)
         assertEquals("WAITING_FOR_PLAYERS", e.stage.pauseReason)
+        assertEquals(ActionResult.Rejected("NOT_ENOUGH_PLAYERS"), e.host(HostCmd.Resume))
+        e.setPresence(ids[1], true)
+        assertTrue(e.stage.paused, "reconnecting waits for the host to resume")
+        assertEquals("WAITING_FOR_PLAYERS", e.stage.pauseReason)
+        val remaining = e.stage.remainingMs
+        clock.advance(5_000); e.tick()
+        assertEquals(remaining, e.stage.remainingMs)
+        assertEquals(ActionResult.Ack, e.host(HostCmd.Resume))
+        assertFalse(e.stage.paused)
+        assertNull(e.stage.pauseReason)
+        assertEquals(remaining, e.stage.remainingMs)
     }
 
     @Test fun deadlineAdvancesPhaseAndFinishRecordsResult() {
