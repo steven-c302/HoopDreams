@@ -1,5 +1,10 @@
 /* Per-game environments. Identity/answer colors deliberately remain in tokens.css.
    Every override is scoped, including gallery, tutorial and phone surfaces. */
+@import '@fontsource/playfair-display/700.css';
+@import '@fontsource/playfair-display/900.css';
+@import '@fontsource/anton';
+@import '@fontsource/zilla-slab/600.css';
+@import '@fontsource/zilla-slab/700.css';
 [data-game-theme] {
   --stroke-tv: 2px;
   --stroke-phone: 2px;
@@ -11,6 +16,8 @@
   --game-accent: #a46642;
   --game-shadow: 0 12px 30px #081b2526;
   color: var(--ink);
+  /* Anton has one weight and the slab/serif faces two: never fake a bolder cut. */
+  font-synthesis: none;
 }
 [data-game-theme='turf'] {
   --ink: #1d3443;
@@ -130,6 +137,9 @@
 
 /* Phone environments. The background resets automatically when the game ends. */
 body:has(.play[data-game-theme]) { background: #182f3a; }
+body:has(.play[data-game-theme='blackjack']) { background: #0e0a08; }
+body:has(.play[data-game-theme='bluff']) { background: #d9d3c5; }
+body:has(.play[data-game-theme='writeitdown']) { background: #172e24; }
 body:has(.play[data-game-theme])::before { display: none; }
 .play[data-game-theme] { background: var(--game-bg); max-width: 560px; min-height: 100dvh; }
 .play[data-game-theme] .topbar { color: var(--paper); min-height: 52px; padding-bottom: 12px; border-bottom: 1px solid #ffffff26; }
@@ -169,3 +179,209 @@ body:has(.play[data-game-theme])::before { display: none; }
 }
 
 .theme-preview-note { text-align: center; font-size: .75rem; color: #e3e6d5; margin: 6px 0; }
+.play[data-game-theme='bluff'] .theme-preview-note { color: var(--ink-soft); }
+
+/* ======================================================================================================
+   The rooms below share one vocabulary: the theme redefines ink/paper and the kit's accent tokens (never
+   player or answer colours), thins the cartoon strokes, and swaps the headline face. */
+
+/* Text set straight on a dark room reads light; panels, cards and bubbles set their own ink. */
+.game-scene:is([data-game-theme='blackjack'], [data-game-theme='writeitdown']) { color: var(--paper); }
+[data-game-theme] :is(.bj-call, .answered, .write-team) { color: var(--ink); }
+[data-game-theme] .chip-label { border-width: 2px; border-radius: 6px; font: 800 24px var(--font-body); letter-spacing: .12em; padding: 8px 18px; }
+[data-game-theme] .stamp { border-width: 5px; border-radius: 6px; box-shadow: none; }
+[data-game-theme] .game-header h1 { -webkit-text-stroke: 0; }
+[data-game-theme] .tutorial-cards .panel { box-shadow: var(--game-shadow) !important; }
+[data-game-theme] .tutorial-cards .num { border-width: 3px; background: var(--game-accent) !important; color: var(--paper); }
+[data-game-theme] .ready-row .label { font: 800 28px var(--font-body); letter-spacing: .12em; }
+[data-game-theme] .score-row { box-shadow: var(--game-shadow) !important; }
+[data-game-theme] .delta-pill { border-width: 2px; }
+
+/* DRUNK BLACKJACK / after hours: emerald felt, mahogany rail, brass and ivory */
+[data-game-theme='blackjack'] {
+  --ink: #17120f;
+  --ink-soft: #5d5046;
+  --paper: #f3e9d2;
+  --paper-2: #e2d3b2;
+  --sun: #d8ae57;
+  --tomato: #c8463b;
+  --felt: #1f5d46;
+  --felt-deep: #10382a;
+  --mahogany: #4a1c17;
+  --font-display: 'Playfair Display', Georgia, serif;
+  --game-bg: #120d0b;
+  --game-accent: #a9412f;
+  --game-shadow: 0 14px 34px #000000a0;
+}
+.game-scene[data-game-theme='blackjack'] { background-image: radial-gradient(ellipse 80% 60% at 50% 18%, #3b211a 0%, transparent 70%); }
+[data-game-theme='blackjack'] .game-header h1 { font: 900 64px/1 var(--font-display); color: var(--sun); letter-spacing: .05em; text-shadow: 0 3px 0 #000; }
+[data-game-theme='blackjack'] .status-text { font: 700 34px var(--font-display); color: var(--paper); }
+[data-game-theme='blackjack'] .bj-table { border-color: var(--mahogany);
+  background: radial-gradient(ellipse 60% 45% at 50% 30%, #2a7556 0%, var(--felt) 45%, var(--felt-deep) 100%);
+  box-shadow: 0 0 0 4px #d8ae5799, inset 0 0 0 6px #0b2a1f, inset 0 0 0 9px #d8ae5766, 0 40px 120px #000c; }
+[data-game-theme='blackjack'] .bj-table::before { background-image: radial-gradient(circle, #ffffff0a 1px, transparent 1.6px); background-size: 7px 7px; opacity: 1; }
+[data-game-theme='blackjack'] .felt-print text { font-family: var(--font-display); font-weight: 700; }
+[data-game-theme='blackjack'] .felt-print ellipse { stroke: var(--sun); stroke-opacity: .55; stroke-width: 3px; stroke-dasharray: none; }
+[data-game-theme='blackjack'] .bj-shoe { border: 2px solid #000; box-shadow: 0 16px 34px #000b; }
+[data-game-theme='blackjack'] .bj-shoe::after { background: var(--tomato); border: 2px solid #000; }
+[data-game-theme='blackjack'] .bj-plate { border: 1px solid #0006; box-shadow: 0 8px 18px #000a; }
+[data-game-theme='blackjack'] .bj-plate.turn { background: var(--sun); outline: 2px solid var(--paper); outline-offset: 3px; }
+[data-game-theme='blackjack'] .bj-call { border-width: 2px; border-radius: 8px; box-shadow: 0 10px 24px #000a; }
+[data-game-theme='blackjack'] .dealer-name { border-width: 2px; border-radius: 6px; box-shadow: 0 8px 18px #000a; font-weight: 900; letter-spacing: .06em; }
+[data-game-theme='blackjack'] .on-the-line, [data-game-theme='blackjack'] .bj-rule { box-shadow: var(--game-shadow) !important; }
+[data-game-theme='blackjack'] :is(.on-the-line, .bj-rule) small { font: 800 18px var(--font-body); letter-spacing: .16em; }
+[data-game-theme='blackjack'] .bj-rule h3 { font-weight: 900; font-size: 34px; }
+[data-game-theme='blackjack'] .led7 { border-width: 2px; box-shadow: 0 6px 14px #0009; }
+.bj-sign { font: 900 54px/1 var(--font-display); letter-spacing: .05em; white-space: nowrap; padding: 22px 48px; border: 3px solid var(--sun);
+  outline: 1px solid var(--sun); outline-offset: -11px; border-radius: 4px; box-shadow: 0 24px 60px #000c; }
+.bj-sign.brass { background: var(--sun); color: var(--ink); border-color: #7a5a1f; outline-color: #7a5a1f; }
+.bj-sign.dark { background: #1a1310; color: var(--sun); }
+.bj-sign.ivory { background: var(--paper); color: var(--ink); }
+.bj-sign.bust { display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 34px 70px; background: var(--tomato); color: var(--paper); font-size: 104px; border-color: var(--paper); outline-color: var(--paper); }
+.bj-sign.bust small { font: 800 38px var(--font-body); letter-spacing: .16em; }
+[data-game-theme='blackjack'] .podium-block { border-width: 2px; }
+[data-game-theme='blackjack'] .podium-block[data-rank='1'] { background: var(--sun) !important; }
+[data-game-theme='blackjack'] .podium-block[data-rank='2'] { background: #c9c2b3 !important; }
+[data-game-theme='blackjack'] .podium-block[data-rank='3'] { background: #b27a4e !important; }
+[data-game-theme='blackjack'] .podium-block span { font: 900 120px var(--font-display); }
+[data-game-theme='blackjack'] .podium .display { font-weight: 700; color: var(--sun); }
+
+/* BLUFF BATTLE / the tabloid: newsprint, charcoal, warning red, a highlighter */
+[data-game-theme='bluff'] {
+  --ink: #1c1c1e;
+  --ink-soft: #54524d;
+  --paper: #f6f2e8;
+  --paper-2: #e3ddcf;
+  --sun: #f3e23b;
+  --tomato: #d42b20;
+  --font-display: 'Anton', Impact, 'Arial Narrow', sans-serif;
+  --game-bg: #e7e1d3;
+  --game-accent: #d42b20;
+  --game-shadow: 0 10px 26px #1c1c1e2e;
+}
+.game-scene[data-game-theme='bluff'] {
+  background-image: radial-gradient(circle, #1c1c1e12 1px, transparent 1.5px), repeating-linear-gradient(90deg, transparent 0 382px, #1c1c1e14 382px 384px);
+  background-size: 6px 6px, auto;
+}
+[data-game-theme='bluff'] .game-header { border-bottom: 8px double var(--ink); padding-bottom: 14px; margin-bottom: 10px; min-height: 160px; }
+[data-game-theme='bluff'] .game-header .titles::before { content: 'ALL THE NEWS THAT\2019S FIT TO FAKE'; font: 800 20px var(--font-body); letter-spacing: .24em; color: var(--tomato); }
+[data-game-theme='bluff'] .game-header h1 { font: 400 88px/.95 var(--font-display); color: var(--ink); letter-spacing: .01em; }
+[data-game-theme='bluff'] .status-text { font: 400 38px var(--font-display); letter-spacing: .02em; }
+[data-game-theme='bluff'] .prompt-bubble { background: transparent; border: 0; border-top: 5px solid var(--ink); border-bottom: 2px solid var(--ink); border-radius: 0;
+  box-shadow: none; font: 400 86px/1.04 var(--font-display); text-transform: uppercase; letter-spacing: .005em; padding: 34px 10px; }
+[data-game-theme='bluff'] .prompt-bubble.small { font-size: 52px; padding: 16px 6px; }
+.editor-note { background: var(--sun); color: var(--ink); padding: 22px 34px 26px; max-width: 1100px; rotate: -1.5deg; box-shadow: 0 16px 34px #1c1c1e33; }
+.editor-note small { display: block; font: 800 20px var(--font-body); letter-spacing: .22em; color: var(--tomato); }
+.editor-note p { font: 900 46px/1.2 var(--font-body); margin-top: 6px; }
+[data-game-theme='bluff'] .chip-dot { width: 46px; height: 58px; border-width: 2px; border-radius: 3px; box-shadow: none; }
+[data-game-theme='bluff'] .play-card { border-radius: 3px; box-shadow: var(--game-shadow) !important; font-weight: 800; }
+[data-game-theme='bluff'] .play-card .pip { font-family: var(--font-display); color: var(--tomato); }
+[data-game-theme='bluff'] .reveal-card { border-radius: 3px; box-shadow: var(--game-shadow) !important; }
+[data-game-theme='bluff'] .fooled-row .display { letter-spacing: .03em; }
+[data-game-theme='bluff'] .past-chip { border-width: 2px; border-radius: 3px; }
+[data-game-theme='bluff'] .past-chip s { text-decoration-color: var(--tomato); }
+[data-game-theme='bluff'] .rank-dot { font-family: var(--font-display); }
+[data-game-theme='bluff'] .total { font-family: var(--font-display); }
+[data-game-theme='bluff'] .podium-block { border-width: 2px; }
+[data-game-theme='bluff'] .podium-block[data-rank='1'] { background: var(--sun) !important; }
+[data-game-theme='bluff'] .podium-block[data-rank='2'] { background: var(--paper) !important; }
+[data-game-theme='bluff'] .podium-block[data-rank='3'] { background: #c9c2b1 !important; }
+
+/* WRITE IT DOWN / the pub quiz: a dark green room, answer sheets, a pencil and a quizmaster */
+[data-game-theme='writeitdown'] {
+  --ink: #1f2a24;
+  --ink-soft: #56615a;
+  --paper: #f6efdb;
+  --paper-2: #e8ddc1;
+  --sun: #e8b84a;
+  --tomato: #c4453a;
+  --font-display: 'Zilla Slab', Georgia, serif;
+  --game-bg: #1d392d;
+  --game-accent: #b8862d;
+  --game-shadow: 0 16px 34px #0a1a1266;
+}
+.game-scene[data-game-theme='writeitdown'] { background-image: radial-gradient(ellipse 70% 55% at 30% 15%, #ffffff0d, transparent 70%), radial-gradient(circle, #ffffff07 1px, transparent 1.6px); background-size: auto, 8px 8px; }
+[data-game-theme='writeitdown'] .show-title { transform: none; line-height: .9; }
+[data-game-theme='writeitdown'] .show-title b { font: 700 78px/.9 var(--font-display); color: var(--paper); -webkit-text-stroke: 0; text-shadow: none; letter-spacing: -.01em; }
+[data-game-theme='writeitdown'] .show-title b + b { color: var(--sun); margin-left: 0; }
+[data-game-theme='writeitdown'] .show-title.small b { font-size: 46px; -webkit-text-stroke: 0; text-shadow: none; }
+[data-game-theme='writeitdown'] .show-title.small b + b { margin-left: 0; }
+/* styles.css's phone .small button class also matches this title; drop its shadow. */
+[data-game-theme='writeitdown'] .show-title.small { box-shadow: none; }
+[data-game-theme='writeitdown'] .answered { border-width: 2px; box-shadow: var(--game-shadow); }
+[data-game-theme='writeitdown'] .q-bubble { border: 0; border-radius: 6px; box-shadow: var(--game-shadow); font: 700 66px/1.14 var(--font-display);
+  background: linear-gradient(90deg, transparent 58px, #c4453a77 58px 61px, transparent 61px), var(--paper); padding-left: 96px; }
+[data-game-theme='writeitdown'] .q-bubble.small { font-size: 44px; }
+[data-game-theme='writeitdown'] .unit-card { box-shadow: var(--game-shadow) !important; }
+[data-game-theme='writeitdown'] .unit-card b { font-weight: 700; }
+[data-game-theme='writeitdown'] .write-answer { box-shadow: var(--game-shadow) !important; }
+[data-game-theme='writeitdown'] .write-answer b { font-weight: 700; }
+[data-game-theme='writeitdown'] .write-team { border-width: 1px; border-radius: 6px; box-shadow: var(--game-shadow); }
+[data-game-theme='writeitdown'] .write-mark { border-width: 2px; }
+[data-game-theme='writeitdown'] .flag { border-width: 2px; border-radius: 6px; box-shadow: none; }
+[data-game-theme='writeitdown'] .team-badge { box-shadow: var(--game-shadow) !important; }
+[data-game-theme='writeitdown'] .pips i { border-width: 2px; border-color: var(--paper); background: transparent; }
+[data-game-theme='writeitdown'] .team-delta span { border-width: 2px; box-shadow: none; }
+[data-game-theme='writeitdown'] .fact { box-shadow: var(--game-shadow) !important; }
+[data-game-theme='writeitdown'] .fact b { font: 800 20px var(--font-body); letter-spacing: .12em; border-width: 1px; }
+.host-says.quizmaster { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; max-width: 1200px; padding: 20px 30px 24px; background: var(--paper); color: var(--ink);
+  border-left: 10px solid var(--sun); border-radius: 4px; box-shadow: var(--game-shadow); text-align: left; }
+.host-says.quizmaster small { font: 800 18px var(--font-body); letter-spacing: .22em; color: var(--ink-soft); }
+.host-says.quizmaster span { font: 600 40px/1.2 var(--font-display); }
+[data-game-theme='writeitdown'] .reveal-talk .quizmaster { max-width: 760px; }
+[data-game-theme='writeitdown'] .reveal-talk .quizmaster span { font-size: 34px; }
+.round-card { font: 700 150px/1 var(--font-display); color: var(--paper); padding: 30px 90px 40px; border-top: 3px solid var(--sun); border-bottom: 3px solid var(--sun); letter-spacing: -.01em; }
+[data-game-theme='writeitdown'] .teamup-col { box-shadow: var(--game-shadow) !important; }
+[data-game-theme='writeitdown'] .teamup-col h2 { font-weight: 700; }
+[data-game-theme='writeitdown'] .shuffle-hint { color: #c4cfc6; }
+[data-game-theme='writeitdown'] .standings-title { font: 700 96px var(--font-display); color: var(--paper); -webkit-text-stroke: 0; text-shadow: none; }
+[data-game-theme='writeitdown'] .bar { border-width: 2px; box-shadow: var(--game-shadow); }
+[data-game-theme='writeitdown'] .bar-score { font-weight: 700; }
+[data-game-theme='writeitdown'] .rank-dot { background: var(--paper); color: var(--ink); font-weight: 700; }
+[data-game-theme='writeitdown'] .award { box-shadow: var(--game-shadow) !important; }
+[data-game-theme='writeitdown'] .award-title { font: 700 44px/1.05 var(--font-display); color: var(--game-accent); padding: 6px 0 12px; border-bottom: 2px solid currentColor; }
+[data-game-theme='writeitdown'] .award.roast .award-title { color: var(--paper); }
+[data-game-theme='writeitdown'] .award-name { font-weight: 700; }
+[data-game-theme='writeitdown'] .award.roast .award-name { -webkit-text-stroke: 0; }
+[data-game-theme='writeitdown'] .podium-block { border-width: 2px; }
+[data-game-theme='writeitdown'] .podium-block span { font: 700 120px var(--font-display); }
+
+/* The three rooms on the phone. Text straight on a dark page reads light; cards keep their ink. */
+.play[data-game-theme='blackjack'], .play[data-game-theme='writeitdown'] { --page-text: var(--paper); }
+.play:is([data-game-theme='blackjack'], [data-game-theme='writeitdown']) .screen :is(h1, .muted) { color: var(--page-text); }
+.play:is([data-game-theme='blackjack'], [data-game-theme='writeitdown']) .screen .prompt.small,
+.play:is([data-game-theme='blackjack'], [data-game-theme='writeitdown']) .screen .waiting:not(.tone-lose) h1 { color: var(--ink); }
+.play:is([data-game-theme='blackjack'], [data-game-theme='writeitdown']) .screen .waiting.tone-lose h1 { color: var(--white); }
+.play:is([data-game-theme='blackjack'], [data-game-theme='bluff'], [data-game-theme='writeitdown']) .waiting .brainy { display: none; }
+.play:is([data-game-theme='blackjack'], [data-game-theme='bluff'], [data-game-theme='writeitdown']) :is(.waiting, .cards li, .scores li, .choice, input, textarea, .prompt.small, .number-display, .team-guesses span) { box-shadow: 0 5px 14px #0000002e; }
+.play:is([data-game-theme='blackjack'], [data-game-theme='bluff'], [data-game-theme='writeitdown']) :is(.waiting, .cards li, .scores li) { border-radius: 8px; }
+.play:is([data-game-theme='blackjack'], [data-game-theme='bluff'], [data-game-theme='writeitdown']) textarea { color: var(--ink); }
+.play:is([data-game-theme='blackjack'], [data-game-theme='bluff'], [data-game-theme='writeitdown']) .primary { border-radius: 8px; box-shadow: 0 5px 0 #0000004d; }
+
+.play[data-game-theme='blackjack'] .cardtable h1 { font-weight: 900; color: var(--sun); }
+.play[data-game-theme='blackjack'] :is(.dealer-strip, .my-hand) { border: 1px solid #d8ae5780; border-radius: 12px; box-shadow: inset 0 0 40px #0006;
+  background: radial-gradient(ellipse at 50% 30%, #2a7556, var(--felt) 50%, var(--felt-deep)); }
+.play[data-game-theme='blackjack'] .dealer-strip .label { font-weight: 900; color: var(--sun); -webkit-text-stroke: 0; letter-spacing: .08em; }
+.play[data-game-theme='blackjack'] .note { border-width: 1px; border-radius: 8px; }
+.play[data-game-theme='blackjack'] .key { border-width: 1px; border-color: #0008; border-radius: 10px; box-shadow: 0 6px 0 #000c; font-weight: 900; }
+.play[data-game-theme='blackjack'] .key:active:not(:disabled) { box-shadow: 0 1px 0 #000c; }
+.play[data-game-theme='blackjack'] .casino-chip { background: radial-gradient(circle, var(--paper) 0 52%, var(--tomato) 53%); border: 3px solid #000a;
+  outline: 5px dashed var(--paper); outline-offset: -13px; box-shadow: 0 6px 0 #000c; }
+.play[data-game-theme='blackjack'] .casino-chip .bet-label { font-weight: 900; }
+
+.play[data-game-theme='bluff'] .topbar { color: var(--ink); border-bottom: 5px double var(--ink); }
+.play[data-game-theme='bluff'] .room-chip { color: var(--ink); border-color: var(--ink); font-family: var(--font-display); font-weight: 400; letter-spacing: .06em; font-size: .85rem; }
+.play[data-game-theme='bluff'] .prompt:not(.small) { font: 400 2rem/1.05 var(--font-display); text-transform: uppercase; border-top: 4px solid var(--ink); border-bottom: 2px solid var(--ink); padding: 10px 0; }
+.play[data-game-theme='bluff'] textarea { border-width: 2px; border-radius: 3px; background: #fff; }
+.play[data-game-theme='bluff'] .primary { font-weight: 400; letter-spacing: .05em; font-size: 1.45rem; }
+.play[data-game-theme='bluff'] .choice { border-width: 2px; border-radius: 3px; background: #fff; }
+.play[data-game-theme='bluff'] .choice.on { background: var(--sun); }
+.play[data-game-theme='bluff'] :is(.waiting, .cards li, .scores li) { border-width: 2px; }
+.play[data-game-theme='bluff'] :is(h1, h2) { font-weight: 400; letter-spacing: .02em; }
+
+.play[data-game-theme='writeitdown'] .team-band { margin: 0; border: 0; border-radius: 6px; }
+.play[data-game-theme='writeitdown'] .team-band span { font-weight: 700; -webkit-text-stroke: 0; color: var(--ink); background: var(--paper); padding: 2px 10px; border-radius: 4px; }
+.play[data-game-theme='writeitdown'] h1 { font-weight: 700; }
+.play[data-game-theme='writeitdown'] textarea { border-width: 1px; border-radius: 6px; background: linear-gradient(90deg, transparent 30px, #c4453a77 30px 32px, transparent 32px), #fffaf0; padding-left: 44px; }
+.play[data-game-theme='writeitdown'] :is(.choice, .choice.team) { border-width: 2px; border-radius: 8px; }
+.play[data-game-theme='writeitdown'] .choice.team.on { outline-color: var(--paper); }

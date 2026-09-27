@@ -5,7 +5,8 @@ The look, motion and sound of Party OS 2.0. Every screen and every sound should 
 ## The idea
 
 Party OS is a collection of games broadcast from your living room. The shell and Brain Drain use a
-**Saturday-morning cartoon game show** identity; Home Turf and Sprawl have their own environments, described below.
+**Saturday-morning cartoon game show** identity; Home Turf, Sprawl, Drunk Blackjack, Bluff Battle and Write It Down have their own environments,
+described below.
 The TV is the stage and the host; phones are the contestants' controls. Two rules come from Jackbox and the Jack Principles:
 
 1. **Talk to the room.** Brainy, the host, reacts to what just happened ("Only Smarty Pints knew that.", "Not one
@@ -140,20 +141,48 @@ prominent. Forest, hills, pasture, fields, mountains and desert each have a subt
 cast a small shadow; production highlights and placement markers stay above the terrain. The phone carries
 these same materials into its hand, map, development cards and trade controls.
 
-These two games scope their environment through `data-game-theme`. Do not redefine player colors or answer
-colors inside a game theme. Countdown/pause logic is shared; only the clock housing changes. Theme changes
-must cover the live TV, phone, tutorials and gallery. The TV respects reduced-motion preferences through
-MotionConfig, and CSS effects retain their reduced-motion alternatives.
+## Drunk Blackjack: after hours
 
-### Review this first implementation
+A dark casino room: emerald felt, a mahogany rail with a brass inlay, ivory cards and brass signage in Playfair
+Display. Table calls ("BET AGAINST AVA", "AVA IS PLAYING") are framed signs rather than cartoon banners, and a
+dealer bust is an oxblood sign. The drawn dealer face with its visor stays: it's the player dealing. LED totals,
+drink calls and bust/blackjack stamps keep their meaning colours. The phone is a betting mat: felt strips for the
+House and your hand, oxblood-and-ivory chips for bets, and HIT / STAND / DOUBLE keys.
+
+## Bluff Battle: the tabloid
+
+Newsprint with column rules, charcoal ink, warning red and a highlighter yellow. The masthead ("ALL THE NEWS THAT'S
+FIT TO FAKE") sits over a double rule; the prompt runs as an Anton headline; the options are equal paper slips, so
+nothing hints at the truth. A yellow note "from the editor" stands in for Brainy. Reveals keep the FAKE! / THE TRUTH
+stamps and the tabloid starburst. The phone is a reporter's slip: a headline, a plain white answer box and a red
+Lock it in.
+
+## Write It Down: the pub quiz
+
+Played on its own (game id `writeitdown`), it's a dark green pub with Zilla Slab headings, answer sheets with a red
+margin rule and a quizmaster's card in place of Brainy (`HostSays` renders it). Round intros are printed cards, not
+bursts; awards print their title. Team colours, drink calls and the podium are unchanged. The Write It Down round
+inside Brain Drain keeps the cartoon show. The phone answer box is a ruled sheet.
+
+## How game themes work
+
+These games scope their environment through `data-game-theme` (`theme/gameTheme.ts` lists them; `GameScene` sets it
+on the TV and `Play` on the phone). A theme redefines ink, paper, the kit's accent tokens and the display face, never
+player colors or answer colors. Countdown/pause logic is shared; inside a theme the clock is a quiet dial. Theme
+changes must cover the live TV, phone, tutorials and gallery. The TV respects reduced-motion preferences through
+MotionConfig, and CSS effects retain their reduced-motion alternatives. Text set straight on a dark room inherits the
+light paper colour, so any light surface must set its own ink.
+
+### Review
 
 - `/tv?gallery=turf&beat=roll` and `&beat=auction` show Home Turf's populated board and deed/auction layout.
-- `/tv?gallery=themes&game=sprawl` shows the larger six-player island.
-- `/tv?gallery=themes&game=turf&view=phone` and `game=sprawl&view=phone` show narrow-screen controls.
+- `/tv?gallery=themes&game=<game>&beat=<beat>` renders any themed game from rehearsal snapshots; add `&view=phone`
+  for the phone. Blackjack has bet, play, settle; Bluff Battle write, pick, reveal, scores; Write It Down teamup,
+  intro, question, reveal, standings.
+- `/tv?gallery=trivia&show=writeitdown&beat=<beat>` renders any Brain Drain beat as the pub quiz (podium, awards).
 - The theme gallery uses fictional six-player rehearsal snapshots. Its actions never reach a game server.
-- `npm run build`, `npm test` and `npm run e2e` in `controller` check the implementation. Theme layout tests
-  cover six players at 1280×720, frozen countdowns, 320px phone navigation, identity stripes and trivia isolation.
+- `npm run build`, `npm test` and `npm run e2e` in `controller` check the implementation. Theme tests cover six
+  players at 1280×720, frozen countdowns, 320px phones, identity stripes, readable cards in dark rooms and trivia
+  isolation.
 
-This first implementation covers Home Turf and Sprawl. Blackjack's after-hours treatment, Bluff Battle's
-newsroom treatment and Write It Down's pub-quiz treatment remain proposed in `game-theme-research.md`.
-Existing game-specific sound cues remain; no new recordings or music were added in this pass.
+Existing game-specific sound cues remain; no new recordings or music were added for the themes.

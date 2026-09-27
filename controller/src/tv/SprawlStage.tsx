@@ -290,7 +290,7 @@ function TurnCard({ g, people, stage, clock }: { g: SprawlTv; people: Map<string
       <div className="who">
         {p && <AvatarFace avatar={p.avatar} size={56} />}<b>{call(g)}</b>
         {g.timed && (clock.deadline != null || clock.frozen != null) && (
-          <Timer deadline={stage.paused ? null : clock.deadline} frozen={stage.paused ? clock.frozen ?? 0 : clock.frozen} total={DECISION_MS[g.phase] ?? 20_000} size={76} appearance="dial" />
+          <Timer deadline={stage.paused ? null : clock.deadline} frozen={stage.paused ? clock.frozen ?? 0 : clock.frozen} total={DECISION_MS[g.phase] ?? 20_000} size={76} />
         )}
       </div>
       {g.dice.length > 0 && g.phase !== 'setup' && (

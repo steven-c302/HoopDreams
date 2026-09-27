@@ -1,11 +1,11 @@
 import '../theme/tokens.css'
 import './tv.css'
-import { GameScene } from '../theme/GameScene'
 import QRCode from 'qrcode'
 import { AnimatePresence, motion } from 'motion/react'
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { Connection, browserSocket, browserSocketUrl, type Status } from '../net/connection'
 import { rejectMessage, type GameListing, type HostCommand, type OptionKey, type PlayerSummary, type TvState } from '../protocol'
+import { GameScene } from '../theme/GameScene'
 import { audioRunning, loadMix, setMix, sfx, unlockAudio, type Mix } from './audio'
 import { BlackjackStage } from './BlackjackStage'
 import { BluffStage } from './BluffStage'
@@ -180,10 +180,10 @@ function Show({ session }: { session: TvSession }) {
           {!tv ? <Scene color={C.sun} /> : stage ? (
             <>
               {isTrivia(stage.gameId) ? <TriviaStage stage={stage} players={players} scores={tv.scores} clock={clock} />
-                : stage.gameId === 'blackjack' ? <Scene color={C.tangerine}><BlackjackStage stage={stage} players={players} scores={tv.scores} clock={clock} /></Scene>
+                : stage.gameId === 'blackjack' ? <GameScene game="blackjack"><BlackjackStage stage={stage} players={players} scores={tv.scores} clock={clock} /></GameScene>
                 : stage.gameId === 'turf' ? <GameScene game="turf"><TurfStage stage={stage} players={players} scores={tv.scores} clock={clock} /></GameScene>
                 : stage.gameId === 'sprawl' ? <GameScene game="sprawl"><SprawlStage stage={stage} players={players} scores={tv.scores} clock={clock} /></GameScene>
-                : <Scene color={C.bubblegum}><BluffStage stage={stage} players={players} scores={tv.scores} clock={clock} /></Scene>}
+                : <GameScene game="bluff"><BluffStage stage={stage} players={players} scores={tv.scores} clock={clock} /></GameScene>}
               {stage.paused && <Paused reason={stage.pauseReason} />}
             </>
           ) : (

@@ -4,6 +4,7 @@ import { rejectMessage, type ActionPayload, type GameListing, type HostCommand, 
 import type { Session } from '../net/token'
 import { ScreenView, teamOf } from '../screens/ScreenView'
 import { Face } from '../theme/Face'
+import { gameThemeOf } from '../theme/gameTheme'
 import { Crown } from '../tv/toon'
 import { CaptainControls, CaptainLobby, ShuffleTeams, inTeamUp } from './Captain'
 import { useCountdown } from './useCountdown'
@@ -61,7 +62,7 @@ export function Play({ session, onLeave }: { session: Session; onLeave(why: stri
   const team = teamOf(view.screen)
 
   return (
-    <main className="page play" data-game-theme={view.gameId === 'turf' || view.gameId === 'sprawl' ? view.gameId : undefined} style={team ? { '--team': team.color } as CSSProperties : undefined}>
+    <main className="page play" data-game-theme={gameThemeOf(view.gameId)} style={team ? { '--team': team.color } as CSSProperties : undefined}>
       <header className="topbar">
         <span className="me">
           <span className="me-face"><Face face={view.me.avatar.face} color={view.me.avatar.color} size={40} />{view.captain && <Crown size={26} style={{ position: 'absolute', left: 7, top: -15, transform: 'rotate(-12deg)' }} />}</span>

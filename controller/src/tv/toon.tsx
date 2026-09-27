@@ -2,6 +2,7 @@ import { motion, type HTMLMotionProps } from 'motion/react'
 import { useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode } from 'react'
 import confetti from 'canvas-confetti'
 import { Face } from '../theme/Face'
+import { useGameTheme } from '../theme/gameTheme'
 import type { Avatar, PlayerSummary } from '../protocol'
 
 /**
@@ -206,9 +207,17 @@ export function Brainy({ mood = 'happy', size = 220, className = '' }: { mood?: 
   )
 }
 
-/** Brainy says something: the host reacting to the room. */
+/** Brainy says something: the host reacting to the room. At the pub quiz the quizmaster reads it off a card instead. */
 export function HostSays({ line, mood = 'happy', size = 190, className = '' }: { line?: string | null; mood?: Mood; size?: number; className?: string }) {
+  const theme = useGameTheme()
   if (!line) return null
+  if (theme === 'writeitdown') {
+    return (
+      <motion.div className={`host-says quizmaster ${className}`} key={line} initial={{ y: 40, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ ...POP }}>
+        <small>QUIZMASTER</small><span>{line}</span>
+      </motion.div>
+    )
+  }
   return (
     <motion.div className={`host-says ${className}`} key={line} initial={{ y: 40, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ ...POP }}>
       <Brainy mood={mood} size={size} />
@@ -219,8 +228,10 @@ export function HostSays({ line, mood = 'happy', size = 190, className = '' }: {
 
 // ---------- the clock ----------
 
-/** Shared countdown, with a cartoon alarm housing or a quiet dial for the board games. */
-export function Timer({ deadline, total, frozen, size = 170, appearance = 'alarm' }: { deadline: number | null; total: number; frozen?: number | null; size?: number; appearance?: 'alarm' | 'dial' }) {
+/** Shared countdown: a cartoon alarm clock, or a quiet dial inside a game with its own environment. */
+export function Timer({ deadline, total, frozen, size = 170, appearance }: { deadline: number | null; total: number; frozen?: number | null; size?: number; appearance?: 'alarm' | 'dial' }) {
+  const theme = useGameTheme()
+  const look = appearance ?? (theme ? 'dial' : 'alarm')
   const wedge = useRef<SVGPathElement>(null)
   const wrap = useRef<HTMLDivElement>(null)
   const [secs, setSecs] = useState(0)
@@ -245,9 +256,9 @@ export function Timer({ deadline, total, frozen, size = 170, appearance = 'alarm
     return () => cancelAnimationFrame(raf)
   }, [deadline, total, frozen])
   return (
-    <div className={`timer ${appearance === 'dial' ? 'game-dial' : ''}`} ref={wrap} style={{ width: size, height: size * 1.05 }}>
+    <div className={`timer ${look === 'dial' ? 'game-dial' : ''}`} ref={wrap} style={{ width: size, height: size * 1.05 }}>
       <svg viewBox="0 0 160 168" width={size} height={size * 1.05} aria-hidden="true">
-        {appearance === 'alarm' && <>
+        {look === 'alarm' && <>
           <path d="M40 150 L30 164 M120 150 L130 164" stroke={C.ink} strokeWidth="9" strokeLinecap="round" />
           <circle cx="34" cy="34" r="20" fill={C.tomato} stroke={C.ink} strokeWidth="6" />
           <circle cx="126" cy="34" r="20" fill={C.tomato} stroke={C.ink} strokeWidth="6" />

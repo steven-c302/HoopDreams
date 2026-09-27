@@ -2,6 +2,8 @@ import './trivia.css'
 import { motion } from 'motion/react'
 import { createContext, useContext, useEffect, useMemo, useRef, type CSSProperties, type ReactNode } from 'react'
 import type { PlayerSummary, ScoreRow, StageInfo } from '../protocol'
+import { GameScene } from '../theme/GameScene'
+import { gameThemeOf, useGameTheme } from '../theme/gameTheme'
 import { sfx } from './audio'
 import { Tutorial, useLater } from './Shared'
 import {
@@ -21,15 +23,16 @@ const NO_DIM = new Set<string>()
 export function TriviaStage({ stage, players, clock }: Props) {
   const g = stage.game as TriviaTv | undefined
   const byId = useMemo(() => new Map(players.map((p) => [p.id, p])), [players])
+  const pub = gameThemeOf(stage.gameId) === 'writeitdown'
   if (stage.tutorial || !g) {
     return (
       <ShowName.Provider value={stage.title}>
-        <Scene color={C.sun}>
+        <Room pub={pub} color={C.sun}>
           <div className="stage-pad">
             <ShowTitle />
             <Tutorial cards={stage.tutorial?.cards ?? []} acked={stage.tutorial?.acked ?? []} players={players} />
           </div>
-        </Scene>
+        </Room>
       </ShowName.Provider>
     )
   }
@@ -37,13 +40,18 @@ export function TriviaStage({ stage, players, clock }: Props) {
   const split: [string, string] | undefined = g.format === 'sides' && (g.phase === 'question' || g.phase === 'reveal') ? [C.bubblegum, C.blueberry] : undefined
   return (
     <ShowName.Provider value={stage.title}>
-      <Scene color={color} split={split}>
+      <Room pub={pub} color={color} split={split}>
         <div className="stage-pad trivia">
           <Beat g={g} byId={byId} clock={clock} />
         </div>
-      </Scene>
+      </Room>
     </ShowName.Provider>
   )
+}
+
+/** Brain Drain's comic panel, recoloured every beat. Write It Down played on its own is a pub quiz instead. */
+function Room({ pub, color, split, children }: { pub: boolean; color: string; split?: [string, string]; children: ReactNode }) {
+  return pub ? <GameScene game="writeitdown">{children}</GameScene> : <Scene color={color} split={split}>{children}</Scene>
 }
 
 function Beat({ g, byId, clock }: { g: TriviaTv; byId: ById; clock: Clock }) {
@@ -208,11 +216,13 @@ function TeamUp({ g, byId, clock }: { g: TriviaTv; byId: ById; clock: Clock }) {
 // ---------- intro ----------
 
 function Intro({ g, byId }: { g: TriviaTv; byId: ById }) {
+  const pub = useGameTheme() === 'writeitdown'
   useEffect(() => { sfx.roundStart(g.format === 'gauntlet') }, [g.format])
   return (
     <div className="intro">
       <Chip fill={C.ink}>ROUND {g.round} OF {g.totalRounds}</Chip>
-      <Burst text={ROUND_TITLES[g.format].toUpperCase()} width={1240} height={470} size={g.format === 'gauntlet' ? 112 : 124} fill={g.format === 'gauntlet' ? C.sun : C.white} tilt={-4} spikes={22} />
+      {pub ? <Slam from={1.3} tilt={-2}><h2 className="round-card">{ROUND_TITLES[g.format]}</h2></Slam>
+        : <Burst text={ROUND_TITLES[g.format].toUpperCase()} width={1240} height={470} size={g.format === 'gauntlet' ? 112 : 124} fill={g.format === 'gauntlet' ? C.sun : C.white} tilt={-4} spikes={22} />}
       <HostSays line={g.format === 'gauntlet' ? (g.hostLine ?? ROUND_RULES.gauntlet) : ROUND_RULES[g.format]} mood={g.format === 'heist' ? 'smug' : 'happy'} size={160} />
       {g.format === 'gauntlet' && <Track g={g} byId={byId} compact />}
     </div>
@@ -358,6 +368,7 @@ function Anvil() {
 
 /** No options: the question, then the real answer and what each team wrote, stamped right or wrong. */
 function Write({ g, byId, clock }: { g: TriviaTv; byId: ById; clock: Clock }) {
+  const pub = useGameTheme() === 'writeitdown'
   const revealed = g.phase === 'reveal' && !!g.reveal
   useLater(revealed ? `w${g.round}-${g.q}` : null, 150, () => {
     if (!revealed) return
@@ -375,7 +386,7 @@ function Write({ g, byId, clock }: { g: TriviaTv; byId: ById; clock: Clock }) {
             <b className="display">No options!</b>
             <small>Your team's most-written answer counts. Close spelling is fine.</small>
           </Panel>
-          <Brainy mood="smug" size={230} />
+          {!pub && <Brainy mood="smug" size={230} />}
         </div>
       ) : (
         <div className="write-reveal">
@@ -633,6 +644,7 @@ const AWARD_GAP = 1.2
 
 /** The end-of-show shout-outs, one card at a time: the drawn face, the title in a burst, the damning number. */
 function Awards({ g, byId }: { g: TriviaTv; byId: ById }) {
+  const pub = useGameTheme() === 'writeitdown'
   const awards = g.awards ?? []
   useEffect(() => {
     sfx.drumroll(0.9)
@@ -651,8 +663,9 @@ function Awards({ g, byId }: { g: TriviaTv; byId: ById }) {
           return (
             <Slam key={a.title} delay={at} from={2.1} tilt={i % 2 ? 7 : -7}>
               <Panel className={`award ${a.roast ? 'roast' : ''}`} fill={a.roast ? C.tomato : C.white} tilt={[-2, 1.5, -1, 2][i % 4]}>
-                <Burst text={a.title.toUpperCase()} width={400} height={180} size={48} fill={a.roast ? C.white : C.sun} tilt={i % 2 ? 4 : -4} spikes={14} delay={at + 0.15} />
-                {p ? <AvatarFace avatar={p.avatar} size={170} /> : <Brainy mood="shocked" size={170} />}
+                {pub ? <b className="award-title">{a.title}</b>
+                  : <Burst text={a.title.toUpperCase()} width={400} height={180} size={48} fill={a.roast ? C.white : C.sun} tilt={i % 2 ? 4 : -4} spikes={14} delay={at + 0.15} />}
+                {p ? <AvatarFace avatar={p.avatar} size={170} /> : !pub && <Brainy mood="shocked" size={170} />}
                 <b className="award-name">{p?.name ?? 'Someone who left'}</b>
                 <p>{a.line}</p>
               </Panel>

@@ -286,7 +286,7 @@ function Well({ g, stage, clock, people }: { g: TurfTv; stage: StageInfo; clock:
           </div>
         ) : <div className="turn"><b>HOME TURF</b></div>}
         <GameClock g={g} clock={clock} />
-        {g.timed && (clock.deadline != null || clock.frozen != null) && <Timer deadline={stage.paused ? null : clock.deadline} frozen={stage.paused ? clock.frozen ?? 0 : clock.frozen} total={total} size={96} appearance="dial" />}
+        {g.timed && (clock.deadline != null || clock.frozen != null) && <Timer deadline={stage.paused ? null : clock.deadline} frozen={stage.paused ? clock.frozen ?? 0 : clock.frozen} total={total} size={96} />}
       </div>
       <div className="well-body">
         <AnimatePresence mode="wait">

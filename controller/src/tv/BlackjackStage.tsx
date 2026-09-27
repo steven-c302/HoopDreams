@@ -6,7 +6,7 @@ import { Card } from './Card'
 import { CheersIcon, DrinkBet, Led, MugIcon } from './Casino'
 import { GameHeader, Podium, Tutorial } from './Shared'
 import { Face } from '../theme/Face'
-import { AvatarFace, Burst, C, Panel, Pop, Slam, Stamp, coinShower, fireConfetti } from './toon'
+import { AvatarFace, C, Panel, Pop, Slam, Stamp, coinShower, fireConfetti } from './toon'
 import { sipLabel, type BjSeat, type BlackjackTv } from './types'
 
 const BET_MS = 15_000, PLAY_MS = 25_000, DEALER_MS = 30_000, SETTLE_MS = 10_000, PODIUM_MS = 15_000
@@ -106,14 +106,14 @@ function Table({ g, stage, clock }: { g: BlackjackTv; stage: StageInfo; clock: {
           </Panel>
         )}
       </div>
-      {g.phase === 'bet' && <div className="bj-banner" style={{ top: 520 }}><Banner text={`BET AGAINST ${who}`} fill={C.sun} /></div>}
-      {g.phase === 'dealer' && <div className="bj-banner" style={{ top: 520 }}><Banner key="dealer" text={`${who} IS PLAYING`} fill={C.bubblegum} /></div>}
+      {g.phase === 'bet' && <div className="bj-banner" style={{ top: 520 }}><Banner text={`BET AGAINST ${who}`} tone="brass" /></div>}
+      {g.phase === 'dealer' && <div className="bj-banner" style={{ top: 520 }}><Banner key="dealer" text={`${who} IS PLAYING`} tone="dark" /></div>}
       {g.phase === 'settle' && (
         <div className="bj-banner" style={{ top: dealerBust ? 400 : 520 }}>
           {dealerBust ? (
-            <Burst text={`${who} BUSTS!`} sub={`DRINK ${sipLabel(g.dealerDrinks)}`} width={1100} height={420} size={96} fill={C.tomato} ink={C.white} tilt={-6} delay={0.1} spikes={20} />
+            <Slam from={1.6} tilt={-3} delay={0.1}><div className="bj-sign bust"><span>{who} BUSTS!</span><small>DRINK {sipLabel(g.dealerDrinks)}</small></div></Slam>
           ) : (
-            <Banner text={g.dealerDrinks > 0 ? `${who} HAS ${dealerTotal}: DRINKS ${sipLabel(g.dealerDrinks)}` : `${who} HAS ${dealerTotal}`} fill={g.dealerDrinks > 0 ? C.lime : C.paper} />
+            <Banner text={g.dealerDrinks > 0 ? `${who} HAS ${dealerTotal}: DRINKS ${sipLabel(g.dealerDrinks)}` : `${who} HAS ${dealerTotal}`} tone={g.dealerDrinks > 0 ? 'brass' : 'ivory'} />
           )}
         </div>
       )}
@@ -205,11 +205,11 @@ function RuleCard({ g }: { g: BlackjackTv }) {
   )
 }
 
-/** A cartoon banner that slams onto the felt. */
-function Banner({ text, fill }: { text: string; fill: string }) {
+/** A brass-framed table sign that drops onto the felt. */
+function Banner({ text, tone }: { text: string; tone: 'brass' | 'dark' | 'ivory' }) {
   return (
-    <Slam from={2} tilt={-4}>
-      <Panel fill={fill} tilt={-2} style={{ padding: '14px 36px', fontFamily: 'var(--font-display)', fontSize: 52, whiteSpace: 'nowrap' }}>{text}</Panel>
+    <Slam from={1.4} tilt={-2}>
+      <div className={`bj-sign ${tone}`}>{text}</div>
     </Slam>
   )
 }

@@ -11,12 +11,13 @@ const ThemeGallery = lazy(() => import('./ThemeGallery').then(m => ({ default: m
 
 /**
  * Design review sheets. /tv?gallery shows the deck, chips and readouts; /tv?gallery=trivia&beat=<name> renders one
- * BRAIN DRAIN beat from fixture data at 1920×1080 (no server needed); /tv?gallery=trivia lists the beats.
+ * BRAIN DRAIN beat from fixture data at 1920×1080 (no server needed); /tv?gallery=trivia lists the beats. Add &show=writeitdown
+ * to see the beat as Write It Down played on its own, at the pub quiz.
  */
 export function Gallery() {
   const params = new URLSearchParams(location.search)
   if (params.get('gallery') === 'themes') return <Suspense fallback={null}><ThemeGallery /></Suspense>
-  if (params.get('gallery') === 'trivia') return <TriviaGallery beat={params.get('beat')} />
+  if (params.get('gallery') === 'trivia') return <TriviaGallery beat={params.get('beat')} pub={params.get('show') === 'writeitdown'} />
   if (params.get('gallery') === 'turf') return <TurfGallery beat={params.get('beat')} />
   return (
     <div style={{ position: 'fixed', inset: 0, overflow: 'auto', background: 'var(--felt)', padding: 24 }}>
@@ -100,7 +101,7 @@ const BEATS: Record<string, TriviaTv> = {
   ] },
 }
 
-function TriviaGallery({ beat }: { beat: string | null }) {
+function TriviaGallery({ beat, pub }: { beat: string | null; pub: boolean }) {
   const [scale, setScale] = useState(1)
   useLayoutEffect(() => {
     const fit = () => setScale(Math.min(window.innerWidth / 1920, window.innerHeight / 1080))
@@ -115,7 +116,7 @@ function TriviaGallery({ beat }: { beat: string | null }) {
       </div>
     )
   }
-  const stage: StageInfo = { gameId: 'trivia', title: 'Brain Drain', phaseSeq: 1, paused: false, game: g as unknown as StageInfo['game'] }
+  const stage: StageInfo = { gameId: pub ? 'writeitdown' : 'trivia', title: pub ? 'Write It Down' : 'Brain Drain', phaseSeq: 1, paused: false, game: g as unknown as StageInfo['game'] }
   const clock = { deadline: g.durationMs ? Date.now() + g.durationMs * 0.6 : null, frozen: null }
   return (
     <div className="tv-root">

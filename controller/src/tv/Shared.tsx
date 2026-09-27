@@ -96,7 +96,7 @@ export function Podium({ scores, unit = '' }: { scores: ScoreRow[]; unit?: strin
               <span className="display" style={{ fontSize: 44 }}>{r.score.toLocaleString()}{unit}</span>
             </Slam>
             <Deal i={0}>
-              <div className="podium-block panel" style={{ height: [440, 320, 220][rank], background: [C.sun, C.sky, C.bubblegum][rank], boxShadow: 'var(--shadow-tv) 0 0 var(--ink)' }}>
+              <div className="podium-block panel" data-rank={rank + 1} style={{ height: [440, 320, 220][rank], background: [C.sun, C.sky, C.bubblegum][rank], boxShadow: 'var(--shadow-tv) 0 0 var(--ink)' }}>
                 <span>{rank + 1}</span>
               </div>
             </Deal>

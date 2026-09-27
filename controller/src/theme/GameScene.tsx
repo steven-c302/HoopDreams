@@ -1,9 +1,14 @@
 import type { ReactNode } from 'react'
 import { MotionConfig } from 'motion/react'
+import { GameThemeContext, type GameTheme } from './gameTheme'
 
 /** A game's environment; the party shell and player identity colors stay independent. */
-export function GameScene({ game, children }: { game: 'turf' | 'sprawl'; children: ReactNode }) {
-  return <MotionConfig reducedMotion="user"><div className="game-scene" data-game-theme={game}>{children}</div></MotionConfig>
+export function GameScene({ game, children }: { game: GameTheme; children: ReactNode }) {
+  return (
+    <GameThemeContext.Provider value={game}>
+      <MotionConfig reducedMotion="user"><div className="game-scene" data-game-theme={game}>{children}</div></MotionConfig>
+    </GameThemeContext.Provider>
+  )
 }
 
 export function GameMark({ game }: { game: 'turf' | 'sprawl' }) {

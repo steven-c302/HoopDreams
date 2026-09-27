@@ -52,3 +52,64 @@ test('game themes do not change the trivia scene', async ({ page }) => {
   await expect(page.locator('[data-game-theme]')).toHaveCount(0)
   await expect(page.locator('.scene')).toBeVisible()
 })
+
+const BEATS: Record<string, string[]> = {
+  blackjack: ['bet', 'play', 'settle'],
+  bluff: ['write', 'pick', 'reveal', 'scores'],
+  writeitdown: ['teamup', 'intro', 'question', 'reveal', 'standings'],
+}
+
+for (const [game, beats] of Object.entries(BEATS)) {
+  test(`${game}: every beat sits in its own room with a dial and no cartoon host`, async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 720 })
+    for (const beat of beats) {
+      await page.goto(`/tv?gallery=themes&game=${game}&beat=${beat}`)
+      await expect(page.locator(`.game-scene[data-game-theme='${game}']`), beat).toBeVisible()
+      await expect(page.locator('.scene'), beat).toHaveCount(0)
+      await expect(page.locator('.brainy'), beat).toHaveCount(0)
+      await expect(page.locator('.timer:not(.game-dial)'), beat).toHaveCount(0)
+    }
+  })
+
+  test(`${game}: phone screens fit 320px`, async ({ page }) => {
+    await page.setViewportSize({ width: 320, height: 740 })
+    for (const beat of beats) {
+      await page.goto(`/tv?gallery=themes&game=${game}&beat=${beat}&view=phone`)
+      await expect(page.locator(`.play[data-game-theme='${game}']`), beat).toBeVisible()
+      expect(await page.evaluate(() => document.documentElement.scrollWidth), beat).toBeLessThanOrEqual(320)
+    }
+  })
+}
+
+/** Text colour differs from the background actually behind it (the element's own, or the nearest ancestor's). */
+async function readable(el: Locator) {
+  return el.evaluate((node) => {
+    const text = getComputedStyle(node).color
+    for (let n: Element | null = node; n; n = n.parentElement) {
+      const bg = getComputedStyle(n).backgroundColor
+      if (bg !== 'rgba(0, 0, 0, 0)' && bg !== 'transparent') return text !== bg
+    }
+    return true
+  })
+}
+
+test('light cards in dark rooms keep dark text', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 720 })
+  await page.goto('/tv?gallery=themes&game=writeitdown&beat=question')
+  expect(await readable(page.locator('.answered'))).toBe(true)
+  await page.goto('/tv?gallery=themes&game=writeitdown&beat=reveal')
+  for (const t of await page.locator('.write-text').all()) expect(await readable(t)).toBe(true)
+  await page.goto('/tv?gallery=themes&game=blackjack&beat=settle')
+  await expect(page.locator('.bj-call').first()).toBeVisible()
+  for (const c of await page.locator('.bj-call').all()) expect(await readable(c)).toBe(true)
+})
+
+test('write it down on its own is a pub quiz; inside Brain Drain the round stays a cartoon', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 720 })
+  await page.goto('/tv?gallery=trivia&show=writeitdown&beat=write-reveal')
+  await expect(page.locator(".game-scene[data-game-theme='writeitdown']")).toBeVisible()
+  await expect(page.locator('.quizmaster')).toBeVisible()
+  await page.goto('/tv?gallery=trivia&beat=write-reveal')
+  await expect(page.locator('[data-game-theme]')).toHaveCount(0)
+  await expect(page.locator('.brainy').first()).toBeVisible()
+})

@@ -1,8 +1,8 @@
-import { useEffect } from 'react'
+import { useEffect, type ReactNode } from 'react'
 import type { PlayerSummary, ScoreRow, StageInfo } from '../protocol'
 import { sfx } from './audio'
 import { Fill, GameHeader, Podium, ScoreBoard, Tutorial, useStep } from './Shared'
-import { AvatarFace, Brainy, Bubble, Burst, C, Deal, fireConfetti, Panel, Pop, Slam, Stamp, Wobble } from './toon'
+import { AvatarFace, Bubble, Burst, C, Deal, fireConfetti, Panel, Pop, Slam, Stamp } from './toon'
 import type { BluffReveal, BluffTv } from './types'
 
 const WRITE_MS = 60_000, PICK_MS = 30_000, REVEAL_STEP_MS = 2_500, REVEAL_TAIL_MS = 2_000, SCORES_MS = 8_000, PODIUM_MS = 15_000
@@ -35,18 +35,21 @@ export function BluffStage({ stage, players, scores, clock }: { stage: StageInfo
   )
 }
 
+/** The prompt runs as the day's headline. */
 function Prompt({ text, big }: { text: string; big: boolean }) {
   return <Bubble tail="none" className={`prompt-bubble ${big ? '' : 'small'}`}>{text}</Bubble>
+}
+
+/** A sticky note from the editor, standing in for the host. */
+function EditorNote({ children }: { children: ReactNode }) {
+  return <div className="editor-note"><small>FROM THE EDITOR</small><p>{children}</p></div>
 }
 
 function Write({ g }: { g: BluffTv }) {
   return (
     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 56 }}>
       <Slam from={1.4} tilt={-3} style={{ width: '100%' }}><Prompt text={g.prompt} big /></Slam>
-      <div className="row" style={{ gap: 36 }}>
-        <Brainy mood="smug" size={170} />
-        <Wobble><Bubble tail="left"><span style={{ fontSize: 44 }}>Write a fake answer that sounds true.</span></Bubble></Wobble>
-      </div>
+      <EditorNote>Write a fake answer that sounds true.</EditorNote>
       <div className="chips">
         {Array.from({ length: g.expected }, (_, i) => i < g.submitted
           ? <Pop key={`y${i}`}><div className="chip-dot" style={{ background: C.sun }} /></Pop>
@@ -103,7 +106,7 @@ function Reveal({ g, seq, paused, players }: { g: BluffTv; seq: number; paused: 
       <div className="row" style={{ alignItems: 'flex-start', marginTop: 40, gap: 48 }}>
         <div style={{ flex: 1 }}>
           {current ? <Slam key={shown} from={1.3} tilt={-4}><RevealCard item={current} players={players} /></Slam>
-            : <div className="row" style={{ gap: 30 }}><Brainy mood="happy" size={160} /><Bubble tail="left"><span style={{ fontSize: 44 }}>Let's see who got fooled.</span></Bubble></div>}
+            : <EditorNote>Let's see who got fooled.</EditorNote>}
         </div>
         {truth && <Burst text="THE TRUTH!" width={440} height={260} size={58} fill={C.sun} tilt={8} delay={0.2} />}
       </div>
