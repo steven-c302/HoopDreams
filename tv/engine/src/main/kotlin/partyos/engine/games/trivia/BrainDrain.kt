@@ -98,6 +98,8 @@ data class TriviaState(
     /** Gauntlet catch-up: team id → option shown crossed out. */
     val eliminated: Map<String, String> = emptyMap(),
     val sidesHistory: List<SidesCall> = emptyList(),
+    /** Pick a Side: the set's items (indices) in this show's shuffled play order; empty in older saves = pack order. */
+    val sidesOrder: List<Int> = emptyList(),
     val podium: List<String> = emptyList(),
     /** player id → running tally for the end-of-show awards. */
     val stats: Map<String, PStats> = emptyMap(),
@@ -131,20 +133,39 @@ class BrainDrain(
     private val feed: TriviaFeed? = null,
     /** Deal the rounds in a random order each show (tests turn this off to play them in [FORMATS] order). */
     private val shuffleRounds: Boolean = true,
+    /** [Mode.SHOW] is Brain Drain; [Mode.WRITE] is Write It Down on its own, a pub quiz of typed answers. */
+    private val mode: Mode = Mode.SHOW,
 ) : GameModule<TriviaState> {
-    override val info = GameInfo(
-        id = "trivia",
-        title = "Brain Drain",
-        tagline = "Team trivia in five rounds. Win the race, win the night.",
-        minPlayers = 2,
-        maxPlayers = 16,
-        tutorial = listOf(
-            TutorialCard("Team up", "Tap a team colour on your phone. The first teammate to type a name names the team."),
-            TutorialCard("Argue, then vote", "Everyone votes. Your team's answer is whatever most of you pick."),
-            TutorialCard("Five rounds, any order", "Quick Draw, Ballpark, Pick a Side, The Heist and Write It Down. Most points wins."),
-        ),
-        lateJoin = LateJoin.NEXT_ROUND,
-    )
+    enum class Mode { SHOW, WRITE }
+
+    override val info = when (mode) {
+        Mode.SHOW -> GameInfo(
+            id = GAME_ID,
+            title = "Brain Drain",
+            tagline = "Team trivia in five rounds. Most points wins the night.",
+            minPlayers = 2,
+            maxPlayers = 16,
+            tutorial = listOf(
+                TutorialCard("Team up", "Tap a team colour on your phone. The first teammate to type a name names the team."),
+                TutorialCard("Argue, then vote", "Everyone votes. Your team's answer is whatever most of you pick."),
+                TutorialCard("Five rounds, any order", "Quick Draw, Ballpark, Pick a Side, The Heist and Write It Down. Most points wins."),
+            ),
+            lateJoin = LateJoin.NEXT_ROUND,
+        )
+        Mode.WRITE -> GameInfo(
+            id = WRITE_GAME_ID,
+            title = "Write It Down",
+            tagline = "Pub quiz rules: no options, type the answer.",
+            minPlayers = 2,
+            maxPlayers = 16,
+            tutorial = listOf(
+                TutorialCard("Team up", "Tap a team colour on your phone. The first teammate to type a name names the team."),
+                TutorialCard("No options", "Type the answer on your phone. Your team's most-written answer counts."),
+                TutorialCard("Close enough counts", "Typos are fine; numbers must be exact. $WRITE_SHOW_ROUNDS rounds, most points wins."),
+            ),
+            lateJoin = LateJoin.NEXT_ROUND,
+        )
+    }
     override val stateSerializer = TriviaState.serializer()
 
     private val mcById = pack.mc.associateBy { it.id }
@@ -165,7 +186,11 @@ class BrainDrain(
             phase = TEAMUP,
             perRound = n,
             drinks = (ctx.settings["drinks"] ?: 1) != 0,
-            order = if (shuffleRounds) dealRounds(ctx.random) else FORMATS,
+            order = when {
+                mode == Mode.WRITE -> List(WRITE_SHOW_ROUNDS) { WRITE }
+                shuffleRounds -> dealRounds(ctx.random)
+                else -> FORMATS
+            },
             teams = seedTeams(count, ctx),
             roster = ctx.players.map { it.id },
             startedAt = ctx.now,
@@ -311,10 +336,12 @@ class BrainDrain(
             QUICK, WRITE -> s = s.copy(qTotal = s.perRound)
             BALLPARK, HEIST -> s = s.copy(qTotal = (s.perRound + 1) / 2)
             SIDES -> {
-                val set = pack.sides.filter { it.id !in ctx.usedContent }.randomOrNull(ctx.random)
+                val set = ctx.fresh(pack.sides) { it.id }.randomOrNull(ctx.random)
                     ?: return startRound(s0, round + 1, ctx)
                 effects += Effect.UseContent(set.id)
-                s = s.copy(itemId = set.id, qTotal = minOf(set.items.size, SIDES_ITEMS))
+                // A fresh order every show: the packs are written left, right, left… and shouldn't play that way.
+                val order = set.items.indices.shuffled(ctx.random).take(SIDES_ITEMS)
+                s = s.copy(itemId = set.id, qTotal = order.size, sidesOrder = order)
             }
             GAUNTLET -> {
                 if (pack.gauntlet.none { it.id !in ctx.usedContent }) return podium(s0, ctx)
@@ -349,13 +376,13 @@ class BrainDrain(
             }
             BALLPARK -> {
                 val lastCategory = ballparkById[s0.itemId]?.category
-                val unused = pack.ballpark.filter { it.id !in ctx.usedContent }
+                val unused = ctx.fresh(pack.ballpark) { it.id }
                 val item = unused.filter { it.category != lastCategory }.ifEmpty { unused }.randomOrNull(ctx.random) ?: return endRound(s0, ctx)
                 question(base.copy(itemId = item.id, options = emptyList(), correct = emptyList()), BALLPARK_MS, item.id)
             }
             SIDES -> {
                 val set = sidesById.getValue(requireNotNull(s0.itemId))
-                val item = set.items[q - 1]
+                val item = requireNotNull(sideItem(s0, set, q))
                 val options = listOf(
                     TOption(TriviaPack.LEFT, set.left, item.side == TriviaPack.LEFT),
                     TOption(TriviaPack.RIGHT, set.right, item.side == TriviaPack.RIGHT),
@@ -376,15 +403,19 @@ class BrainDrain(
 
     /**
      * An unused multiple-choice question that passes [fits], changing the subject from the last one when the pack
-     * allows. The bundled pack comes first; once it's used up, a live question if the feed has one ready.
+     * allows. The bundled pack comes first; once it's used up, a live question if the feed has one ready, and failing
+     * that, the bundled questions played longest ago.
      */
     private fun pickMc(s0: TriviaState, ctx: GameContext, fits: (McItem) -> Boolean): McItem? {
         val lastCategory = mcOf(s0)?.category
         val unused = pack.mc.filter { it.id !in ctx.usedContent }
         if (unused.size <= WARM_FEED_AT) feed?.warm()
         val pool = unused.filter(fits)
-        return pool.filter { it.category != lastCategory }.ifEmpty { pool }.randomOrNull(ctx.random)
+        fun pick(from: List<McItem>) = from.filter { it.category != lastCategory }.ifEmpty { from }.randomOrNull(ctx.random)
+        return pick(pool)
             ?: feed?.take(ctx.usedContent, lastCategory)?.takeIf { it.id !in mcById && TriviaPack.mcProblem(it) == null && fits(it) }
+            // Every bundled question played and nothing live: the ones played longest ago come back.
+            ?: pick(ctx.fresh(pack.mc.filter(fits)) { it.id })
     }
 
     private fun question(s: TriviaState, duration: Long, contentId: String?): Step<TriviaState> {
@@ -425,7 +456,7 @@ class BrainDrain(
                 if (s.format == HEIST) rightTeams.minByOrNull { it.seconds ?: Double.MAX_VALUE }?.let { heist = HeistInfo(thief = it.team) }
                 if (s.format == SIDES) {
                     val set = sidesById.getValue(requireNotNull(s.itemId))
-                    history = history + SidesCall(set.items[s.q - 1].text, s.correct.first(), rightTeams.map { it.team })
+                    history = history + SidesCall(requireNotNull(sideItem(s, set)).text, s.correct.first(), rightTeams.map { it.team })
                     line = null
                 } else {
                     line = verdictLine(ctx, rightTeams.map { nameOf(s, it.team) }, active.size)
@@ -663,7 +694,7 @@ class BrainDrain(
             }
         }
         val winner = order.firstOrNull()
-        winner?.let { effects += Effect.Highlight("${it.name} won Brain Drain") }
+        winner?.let { effects += Effect.Highlight("${it.name} won ${info.title}") }
         val finished = order.filter { it.position >= FINISH }
         val low = active.minOfOrNull { it.score }
         val drink = when {
@@ -676,7 +707,7 @@ class BrainDrain(
         return Step(
             s.copy(
                 phase = PODIUM, teams = teams, podium = order.map { it.id }, drink = drink, reveal = null, heist = null,
-                hostLine = winner?.let { "${it.name} win Brain Drain!" }, startedAt = ctx.now, durationMs = PODIUM_MS, awards = awardsFor(s, ctx),
+                hostLine = winner?.let { "${it.name} win ${info.title}!" }, startedAt = ctx.now, durationMs = PODIUM_MS, awards = awardsFor(s, ctx),
             ),
             effects + Effect.Phase(PODIUM_MS),
         )
@@ -707,7 +738,7 @@ class BrainDrain(
             live -> when (s.format) {
                 QUICK, HEIST, WRITE -> mcOf(s)?.prompt
                 BALLPARK -> ballparkById[s.itemId]?.prompt
-                SIDES -> sides?.items?.getOrNull(s.q - 1)?.text
+                SIDES -> sides?.let { sideItem(s, it) }?.text
                 GAUNTLET -> gauntletById[s.itemId]?.prompt
                 else -> null
             }
@@ -795,7 +826,7 @@ class BrainDrain(
                     )
                     SIDES -> {
                         val set = sidesById.getValue(requireNotNull(s.itemId))
-                        Screen.ChoiceList(set.items[s.q - 1].text, s.options.map { Choice(it.id, it.text) }, mine?.choice, "answer", style = "sides", votes = votes, team = tag)
+                        Screen.ChoiceList(requireNotNull(sideItem(s, set)).text, s.options.map { Choice(it.id, it.text) }, mine?.choice, "answer", style = "sides", votes = votes, team = tag)
                     }
                     BALLPARK -> {
                         val item = ballparkById.getValue(requireNotNull(s.itemId))
@@ -892,6 +923,10 @@ class BrainDrain(
     }
 
     // ---- helpers --------------------------------------------------------------------------------
+
+    /** Pick a Side's [q]th call (1-based) in this show's order. */
+    private fun sideItem(s: TriviaState, set: SidesSet, q: Int = s.q): SidesItem? =
+        set.items.getOrNull(s.sidesOrder.getOrNull(q - 1) ?: (q - 1))
 
     private fun teamOf(s: TriviaState, who: PlayerId) = s.teams.firstOrNull { who in it.members }
 
@@ -1070,6 +1105,11 @@ class BrainDrain(
         )
 
         const val MEMORY_KEY = "trivia.teams"
+        /** Game ids: Brain Drain, and Write It Down played on its own (both share teams and the question pool). */
+        const val GAME_ID = "trivia"
+        const val WRITE_GAME_ID = "writeitdown"
+        /** Write It Down on its own: this many rounds of typed answers, with standings between them. */
+        const val WRITE_SHOW_ROUNDS = 3
         const val DEFAULT_N = 5
         const val MAX_TEAM_NAME = 20
         const val MAX_GUESS = 1e12

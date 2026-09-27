@@ -91,6 +91,26 @@ sealed interface Screen {
         val tone: String? = null,
         val stack: Int? = null,
     ) : Screen
+
+    /**
+     * Home Turf: your token, the one thing to do now, your places (with what you can do to each), who you could
+     * trade with, and any open trade or auction. Faces are ids only; phones already have everyone's from `scores`.
+     */
+    @Serializable @SerialName("turf")
+    data class Turf(
+        val me: TurfMe?,
+        val prompt: TurfPrompt,
+        val deeds: List<TurfDeed> = emptyList(),
+        val partners: List<TurfPartner> = emptyList(),
+        val trade: TurfTradeView? = null,
+        /** You hold your token's dice and trades are open right now. */
+        val canTrade: Boolean = false,
+        val auction: TurfBidPad? = null,
+        val pieces: List<Choice> = emptyList(),
+        /** Your latest drink call this turn, if any. */
+        val drink: String? = null,
+        val drinks: Boolean = true,
+    ) : Screen
 }
 
 /** One playing card. rank 1 (ace) to 13 (king), suit 0..3 = spades, hearts, diamonds, clubs. rank 0 = face down. */

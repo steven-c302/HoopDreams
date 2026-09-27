@@ -24,9 +24,21 @@ import partyos.engine.TriviaReveal
 import partyos.engine.TriviaTeam
 import partyos.engine.TriviaTv
 import partyos.engine.DrinkCall
+import partyos.engine.TurfAuctionTv
+import partyos.engine.TurfBidPad
+import partyos.engine.TurfDeed
+import partyos.engine.TurfDeedRef
+import partyos.engine.TurfMe
+import partyos.engine.TurfPartner
+import partyos.engine.TurfPrompt
+import partyos.engine.TurfSpaceTv
+import partyos.engine.TurfTokenTv
+import partyos.engine.TurfTradeView
+import partyos.engine.TurfTv
 import partyos.engine.TutorialCard
 import partyos.engine.TutorialView
 import partyos.engine.TvState
+import partyos.engine.games.turf.TBeat
 import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -123,6 +135,51 @@ class ProtocolFixturesTest {
                 gamesPlayed = 1,
             ),
         ),
+        ServerMsg.View(
+            seq = 15,
+            view = PhoneState(
+                me, "KXQT", "turf", "Home Turf", 21, false, null, 14_000,
+                Screen.Turf(
+                    me = TurfMe(0, "Sam", "#FF4B3E", "duck", 1240, sam, "Sam", true, false, 0, false, 3, "The Laundromat", 1600),
+                    prompt = TurfPrompt("buy", "Buy The Laundromat?", "Or pass and everyone bids on it.",
+                        listOf(Choice("buy", "BUY $60"), Choice("pass", "AUCTION IT")), timed = true, space = 3, amount = 60),
+                    deeds = listOf(TurfDeed(1, "The Corner Store", "#8B5A2B", 0, 0, false, 2, mortgage = 30, tradable = true)),
+                    partners = listOf(TurfPartner(1, "Al", "#2F6BFF", 900, 0, listOf(TurfDeedRef(5, "The Night Bus", "#2B2B2B", 8, false, true)))),
+                    trade = TurfTradeView(4, 1, 0, "Al", "Sam", listOf(TurfDeedRef(5, "The Night Bus", "#2B2B2B", 8, false, true)), emptyList(),
+                        0, 50, 0, 0, "to", true),
+                    canTrade = true,
+                    auction = TurfBidPad(3, 3, "The Laundromat", "#8B5A2B", 60, 20, "Al", false, 1240, true),
+                    drink = "Drink 1 sip: paid rent at The Corner Store",
+                ),
+                rows,
+            ),
+        ),
+        ServerMsg.Tv(
+            16,
+            TvState(
+                roomCode = "KXQT",
+                players = listOf(me),
+                stage = StageInfo(
+                    "turf", "Home Turf", 21, 1_700_000_080_000, 14_000, false, null, null,
+                    game = TurfTv(
+                        phase = "auction", teams = false,
+                        board = listOf(TurfSpaceTv("Payday", "Payday", "payday"), TurfSpaceTv("The Corner Store", "Corner Store", "street", 0, "#8B5A2B", 60, listOf(2, 10, 30, 90, 160, 250), 50)),
+                        chanceName = "Plot Twist", chestName = "Group Chat",
+                        owner = listOf(-1, 0), level = listOf(0, 0), mortgaged = emptyList(),
+                        tokens = listOf(TurfTokenTv("Sam", "#FF4B3E", "duck", listOf(sam), sam, 1240, 3, false, 0, false, 1600, 0)),
+                        turn = 0, dice = listOf(1, 2, 3), housesLeft = 32, hotelsLeft = 12, buy = -1,
+                        auction = TurfAuctionTv(3, 3, 20, 1, 2),
+                        clockLeftMs = 2_400_000, phaseMs = 6_000, timed = true,
+                        beats = listOf(TBeat(40, "bid", token = 1, space = 3, amount = 20)),
+                        ticker = listOf("The Laundromat goes to auction!"),
+                    ),
+                ),
+                scores = rows,
+                lastResult = null,
+                gamesPlayed = 2,
+                settings = mapOf("game" to 4, "turfMode" to 0, "minutes" to 45, "drinks" to 1),
+            ),
+        ),
         ServerMsg.Ack("a-1"),
         ServerMsg.Reject("a-2", "TOO_TRUE"),
         ServerMsg.Pong,
@@ -150,6 +207,20 @@ class ProtocolFixturesTest {
         ClientMsg.Host("h-5", HostCommand.End),
         ClientMsg.Host("h-6", HostCommand.Kick(PlayerId("p-al"))),
         ClientMsg.Host("h-7", HostCommand.SetRounds(6)),
+        ClientMsg.Host("h-12", HostCommand.SetOption("turfMode", 2)),
+        ClientMsg.Host("h-13", HostCommand.SetOption("minutes", 45)),
+        ClientMsg.Action("a-6", 21, JsonObject(mapOf("kind" to JsonPrimitive("bid"), "auction" to JsonPrimitive(3), "amount" to JsonPrimitive(30)))),
+        ClientMsg.Action("a-7", 21, JsonObject(mapOf("kind" to JsonPrimitive("build"), "target" to JsonPrimitive(1)))),
+        ClientMsg.Action(
+            "a-8", 20,
+            JsonObject(
+                mapOf(
+                    "kind" to JsonPrimitive("trade"), "to" to JsonPrimitive(1),
+                    "give" to kotlinx.serialization.json.JsonArray(listOf(JsonPrimitive("1"))), "get" to kotlinx.serialization.json.JsonArray(listOf(JsonPrimitive("5"))),
+                    "giveCash" to JsonPrimitive(50), "getCash" to JsonPrimitive(0),
+                ),
+            ),
+        ),
         ClientMsg.Ping,
     )
 

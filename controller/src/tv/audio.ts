@@ -85,7 +85,7 @@ async function loadBank() {
   const order = Object.entries(manifest.music ?? {}).sort(([a], [b]) => (a === want ? -1 : b === want ? 1 : 0))
   for (const [mode, track] of order) {
     const buf = await fetchBuffer(track.file)
-    if (buf) { musicBank.set(mode, { buf, track }); if (mode === want || (mode === 'hurry' && hurry)) retune() }
+    if (buf) { musicBank.set(mode, { buf, track }); if (mode === want || mode === MUSIC_FALLBACK[want] || (mode === 'hurry' && hurry)) retune() }
   }
 }
 
@@ -330,6 +330,24 @@ export const sfx = {
   steal: () => { duck(0.3, 1.6); play('steal', {}, () => { synth.whoosh(); synth.payout(14) }) },
   drinkCall: () => { duck(0.3, 1.6); play('drinkCall', {}, () => { synth.ding(); synth.stamp() }) },
   boing: () => play('boing', {}, synth.pop),
+  // ---- Home Turf (each falls back to an existing sample until its own cue is generated) ----
+  diceRoll: () => play('diceRoll', {}, () => { play('chipClack', { rate: semis(4) }, () => synth.chipClack(4)); play('chipClack', { delay: 0.09, rate: semis(7) }) }),
+  /** A piece hops one space: climbs a scale as it goes. */
+  hop: (step: number) => play('hop', { rate: semis(PENTA_SEMIS[step % 10]), gain: 0.7 }, () => play('pop', { rate: semis(PENTA_SEMIS[step % 10]), gain: 0.6 }, synth.pop)),
+  gavel: () => { duck(0.3, 1); play('gavel', {}, () => play('stamp', {}, synth.stamp)) },
+  jailClang: () => { duck(0.3, 1.2); play('jailClang', {}, () => play('bust', {}, synth.bust)) },
+  hammer: () => play('hammer', {}, () => play('stamp', { rate: semis(5), gain: 0.7 }, synth.stamp)),
+  register: () => play('register', {}, () => play('payout', {}, () => synth.payout(6))),
+  payday: () => play('payday', {}, () => play('payout', {}, () => synth.payout(8))),
+  homeTurf: () => { duck(0.3, 2); play('homeTurf', {}, () => play('jackpot', {}, synth.jackpot)) },
+  bankruptSting: () => { duck(0.25, 2.4); play('bankruptSting', {}, () => { play('crash', {}, synth.crash); play('womp', {}, synth.womp) }) },
+  lastLap: () => { duck(0.25, 2); play('lastLap', {}, () => play('finalRound', {}, () => synth.roundStart(true))) },
+  couch: () => play('couch', {}, () => play('boing', {}, synth.pop)),
+  busHorn: () => play('busHorn', {}, () => play('whoosh', {}, synth.whoosh)),
+  dealDone: () => { duck(0.3, 1.6); play('dealDone', {}, () => { play('stamp', {}, synth.stamp); play('applause', {}, () => synth.applause(1.8)) }) },
+  offerPing: () => play('offerPing', {}, () => play('ding', {}, synth.ding)),
+  soldTag: () => play('soldTag', {}, () => play('stamp', {}, synth.stamp)),
+  cardDraw: () => play('cardDraw', {}, () => play('cardFlip', {}, synth.cardFlip)),
 }
 
 const PENTA_SEMIS = [0, 2, 4, 7, 9, 12, 14, 16, 19, 21]
@@ -337,7 +355,9 @@ const PENTA_SEMIS = [0, 2, 4, 7, 9, 12, 14, 16, 19, 21]
 // ---------- music ----------
 
 export type Mode = 'off' | 'lobby' | 'teamup' | 'quick' | 'ballpark' | 'sides' | 'heist' | 'gauntlet' | 'standings' | 'podium'
-  | 'bluff' | 'reveal' | 'scores' | 'casino'
+  | 'bluff' | 'reveal' | 'scores' | 'casino' | 'turf' | 'auction' | 'lastlap'
+/** Modes whose own loop may not be generated yet borrow another one meanwhile. */
+const MUSIC_FALLBACK: Partial<Record<Mode, Mode>> = { turf: 'lobby', auction: 'heist', lastlap: 'gauntlet' }
 let want: Mode = 'off'
 let hurry = false
 let current: { mode: string; src: AudioBufferSourceNode; gain: GainNode } | null = null
@@ -361,7 +381,7 @@ function retune() {
     old.src.stop(t + fade + 0.05)
     current = null
   }
-  const entry = musicBank.get(target)
+  const entry = musicBank.get(target) ?? musicBank.get(MUSIC_FALLBACK[target as Mode] ?? '')
   if (!entry || target === 'off') return
   const src = ctx.createBufferSource()
   src.buffer = entry.buf

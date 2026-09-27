@@ -57,6 +57,8 @@ class PartyEngine private constructor(
     private val tokens = HashMap(tokenHashes)
     private val settings = HashMap(settings)
     private val usedContent = LinkedHashSet(usedContent)
+    /** What's been played at this party, as opposed to remembered from earlier nights (a restored party counts it all). */
+    private val partyPlayed = LinkedHashSet(usedContent)
     private val results = ArrayList(results)
     private val memory = LinkedHashMap(memory)
     private var active: ActiveGame<*>? = null
@@ -118,6 +120,19 @@ class PartyEngine private constructor(
         return null
     }
 
+    /**
+     * Questions and prompts already played on earlier nights (oldest first), so games skip them. Call before the first
+     * game; see [GameContext.fresh] for what happens once a pack is used up.
+     */
+    fun rememberPlayed(ids: Collection<String>) = ids.forEach(::markPlayed)
+
+    /** Played content, oldest first: playing something again moves it to the end, and only the newest [MAX_PLAYED] are kept. */
+    private fun markPlayed(id: String) {
+        usedContent.remove(id)
+        usedContent += id
+        while (usedContent.size > MAX_PLAYED) usedContent.first().let { usedContent.remove(it); partyPlayed.remove(it) }
+    }
+
     fun setPin(pin: String) {
         val salt = entropy.token()
         pinSalt = salt
@@ -157,6 +172,9 @@ class PartyEngine private constructor(
         "rounds" -> 3..8
         "teams" -> 0..6
         "drinks", "captain" -> 0..1
+        // Home Turf: 0 auto (solo up to 6 players, teams beyond), 1 solo, 2 teams; game clock in minutes (0 = no limit).
+        "turfMode" -> 0..2
+        "minutes" -> 0..120
         "game" -> 0..(games.all.size - 1).coerceAtLeast(0)
         else -> null
     }
@@ -169,7 +187,7 @@ class PartyEngine private constructor(
         val g = active ?: return ActionResult.Rejected("NO_GAME")
         if (actionId in g.handled) return ActionResult.Ack
         if (g.paused) return ActionResult.Rejected("PAUSED")
-        if (round != g.phaseSeq) return ActionResult.Rejected("STALE")
+        if (round != g.phaseSeq && !(g.tutorialAcks == null && g.state != null && g.module.phaseFree(payload))) return ActionResult.Rejected("STALE")
         val result = if (g.tutorialAcks != null) {
             if (payload["kind"]?.jsonPrimitive?.content != "ack") return ActionResult.Rejected("TUTORIAL")
             g.tutorialAcks!!.add(id)
@@ -310,7 +328,9 @@ class PartyEngine private constructor(
         scores = g.scores.toMap(),
         settings = g.settings,
         usedContent = usedContent.toSet(),
+        playedThisParty = partyPlayed.toSet(),
         memory = memory.toMap(),
+        remainingMs = g.remaining(clock.now()),
     )
 
     private fun <S : Any> beginGame(g: ActiveGame<S>) {
@@ -349,18 +369,26 @@ class PartyEngine private constructor(
         for (e in step.effects) when (e) {
             is Effect.Phase -> {
                 g.phaseSeq++
-                if (g.paused) {
-                    g.pausedRemaining = e.durationMs
-                    g.deadlineAt = null
-                } else {
-                    g.deadlineAt = e.durationMs?.let { clock.now() + it }
-                }
+                setDeadline(g, e.durationMs)
             }
+            is Effect.Deadline -> setDeadline(g, e.durationMs)
             is Effect.Award -> if (roster.containsKey(e.player)) g.scores.merge(e.player, e.points, Int::plus)
             is Effect.Highlight -> g.highlights += e.text
-            is Effect.UseContent -> usedContent += e.id
+            is Effect.UseContent -> {
+                markPlayed(e.id)
+                partyPlayed += e.id
+            }
             is Effect.Remember -> if (e.key.length <= MAX_MEMORY_KEY && e.value.length <= MAX_MEMORY_VALUE) memory[e.key] = e.value
             Effect.Finish -> g.finishPending = true
+        }
+    }
+
+    private fun setDeadline(g: ActiveGame<*>, durationMs: Long?) {
+        if (g.paused) {
+            g.pausedRemaining = durationMs
+            g.deadlineAt = null
+        } else {
+            g.deadlineAt = durationMs?.let { clock.now() + it }
         }
     }
 
@@ -420,6 +448,8 @@ class PartyEngine private constructor(
         private const val MAX_MEMORY_KEY = 64
         private const val MAX_MEMORY_VALUE = 8_192
         private const val MAX_SETTLE = 16
+        /** Played-content ids kept: far more than every pack together, so only very old live questions ever drop off. */
+        const val MAX_PLAYED = 5_000
         private const val ROOM_ALPHABET = "ABCDEFGHJKMNPQRSTUVWXYZ"
 
         /**

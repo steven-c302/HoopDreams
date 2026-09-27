@@ -5,6 +5,8 @@ const javaHome = process.env.JAVA_HOME ?? '/opt/homebrew/opt/openjdk@17/libexec/
 // Runs the real Kotlin server (tv/devserver) serving this app's production build.
 export default defineConfig({
   testDir: 'e2e',
+  // Every spec shares the one dev server (and its one party), so they take turns.
+  workers: 1,
   timeout: 90_000,
   use: { baseURL: 'http://127.0.0.1:8090', ...devices['Pixel 7'] },
   webServer: {

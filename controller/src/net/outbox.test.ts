@@ -27,6 +27,14 @@ describe('Outbox', () => {
     o.add({ t: 'action', id: 'b', round: 2, payload: { kind: 'write', text: 'two' } })
     expect(o.pending().map((m) => m.id)).toEqual(['b'])
   })
+
+  it('keeps same-kind actions on different targets (build here, build there)', () => {
+    const o = new Outbox()
+    o.add({ t: 'action', id: 'a', round: 5, payload: { kind: 'build', target: 6 } })
+    o.add({ t: 'action', id: 'b', round: 5, payload: { kind: 'build', target: 8 } })
+    o.add({ t: 'action', id: 'c', round: 5, payload: { kind: 'build', target: 6 } })
+    expect(o.pending().map((m) => m.id)).toEqual(['a', 'b', 'c'])
+  })
 })
 
 describe('backoff', () => {

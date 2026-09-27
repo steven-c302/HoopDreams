@@ -574,5 +574,257 @@
     "side": "left"
    }
   ]
+ },
+ {
+  "id": "tsd-countries",
+  "prompt": "Real country or made up?",
+  "left": "Real",
+  "right": "Made up",
+  "items": [
+   {
+    "text": "Eswatini",
+    "side": "left"
+   },
+   {
+    "text": "Genovia",
+    "side": "right"
+   },
+   {
+    "text": "Tuvalu",
+    "side": "left"
+   },
+   {
+    "text": "Sokovia",
+    "side": "right"
+   },
+   {
+    "text": "Kiribati",
+    "side": "left"
+   },
+   {
+    "text": "Zamunda",
+    "side": "right"
+   },
+   {
+    "text": "Bhutan",
+    "side": "left"
+   }
+  ]
+ },
+ {
+  "id": "tsd-nfl",
+  "prompt": "NFL team or not?",
+  "left": "NFL team",
+  "right": "Not NFL",
+  "items": [
+   {
+    "text": "Commanders",
+    "side": "left"
+   },
+   {
+    "text": "Outlaws",
+    "side": "right"
+   },
+   {
+    "text": "Jaguars",
+    "side": "left"
+   },
+   {
+    "text": "Stallions",
+    "side": "right"
+   },
+   {
+    "text": "Texans",
+    "side": "left"
+   },
+   {
+    "text": "Mountaineers",
+    "side": "right"
+   },
+   {
+    "text": "Titans",
+    "side": "left"
+   }
+  ]
+ },
+ {
+  "id": "tsd-elements",
+  "prompt": "Real element or made up?",
+  "left": "Real element",
+  "right": "Made up",
+  "items": [
+   {
+    "text": "Livermorium",
+    "side": "left"
+   },
+   {
+    "text": "Unobtainium",
+    "side": "right"
+   },
+   {
+    "text": "Tennessine",
+    "side": "left"
+   },
+   {
+    "text": "Adamantium",
+    "side": "right"
+   },
+   {
+    "text": "Moscovium",
+    "side": "left"
+   },
+   {
+    "text": "Vibranium",
+    "side": "right"
+   },
+   {
+    "text": "Dubnium",
+    "side": "left"
+   }
+  ]
+ },
+ {
+  "id": "tsd-cocktails",
+  "prompt": "Cocktail or dance?",
+  "left": "Cocktail",
+  "right": "Dance",
+  "items": [
+   {
+    "text": "Sidecar",
+    "side": "left"
+   },
+   {
+    "text": "Foxtrot",
+    "side": "right"
+   },
+   {
+    "text": "Gimlet",
+    "side": "left"
+   },
+   {
+    "text": "Lindy Hop",
+    "side": "right"
+   },
+   {
+    "text": "Sazerac",
+    "side": "left"
+   },
+   {
+    "text": "Mambo",
+    "side": "right"
+   },
+   {
+    "text": "Mai Tai",
+    "side": "left"
+   }
+  ]
+ },
+ {
+  "id": "tsd-italian",
+  "prompt": "Pasta shape or Italian car brand?",
+  "left": "Pasta",
+  "right": "Car",
+  "items": [
+   {
+    "text": "Rigatoni",
+    "side": "left"
+   },
+   {
+    "text": "Lancia",
+    "side": "right"
+   },
+   {
+    "text": "Fusilli",
+    "side": "left"
+   },
+   {
+    "text": "Maserati",
+    "side": "right"
+   },
+   {
+    "text": "Pappardelle",
+    "side": "left"
+   },
+   {
+    "text": "Abarth",
+    "side": "right"
+   },
+   {
+    "text": "Tortellini",
+    "side": "left"
+   }
+  ]
+ },
+ {
+  "id": "tsd-bones",
+  "prompt": "Bone in your body or not?",
+  "left": "Bone",
+  "right": "Not a bone",
+  "items": [
+   {
+    "text": "Femur",
+    "side": "left"
+   },
+   {
+    "text": "Mandolin",
+    "side": "right"
+   },
+   {
+    "text": "Fibula",
+    "side": "left"
+   },
+   {
+    "text": "Sprocket",
+    "side": "right"
+   },
+   {
+    "text": "Patella",
+    "side": "left"
+   },
+   {
+    "text": "Pistachio",
+    "side": "right"
+   },
+   {
+    "text": "Clavicle",
+    "side": "left"
+   }
+  ]
+ },
+ {
+  "id": "tsd-sitcoms",
+  "prompt": "Friends character or Seinfeld character?",
+  "left": "Friends",
+  "right": "Seinfeld",
+  "items": [
+   {
+    "text": "Gunther",
+    "side": "left"
+   },
+   {
+    "text": "Newman",
+    "side": "right"
+   },
+   {
+    "text": "Janice",
+    "side": "left"
+   },
+   {
+    "text": "Kramer",
+    "side": "right"
+   },
+   {
+    "text": "Phoebe",
+    "side": "left"
+   },
+   {
+    "text": "Elaine",
+    "side": "right"
+   },
+   {
+    "text": "Joey",
+    "side": "left"
+   }
+  ]
  }
 ]

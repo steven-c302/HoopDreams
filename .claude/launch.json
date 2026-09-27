@@ -21,6 +21,16 @@
       ],
       "port": 8080,
       "url": "http://127.0.0.1:8080"
+    },
+    {
+      "name": "partyos-gallery",
+      "runtimeExecutable": "bash",
+      "runtimeArgs": [
+        "-c",
+        "cd controller && exec npx vite preview --port 4173 --strictPort --host 127.0.0.1"
+      ],
+      "port": 4173,
+      "url": "http://127.0.0.1:4173"
     }
   ]
 }

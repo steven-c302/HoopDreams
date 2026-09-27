@@ -4,6 +4,7 @@ import { Face } from '../theme/Face'
 import { Card } from '../tv/Card'
 import { DrinkBet, Led } from '../tv/Casino'
 import { Brainy, Shape } from '../tv/toon'
+import { TurfScreen } from './TurfScreen'
 
 const buzz = (ms: number | number[]) => { try { navigator.vibrate?.(ms) } catch { /* not supported */ } }
 
@@ -19,6 +20,7 @@ export function ScreenView({ screen, disabled, meId, people, onAction }: Props) 
     case 'multi': return <MultiSelect screen={screen} disabled={disabled} meId={meId} people={people} onAction={onAction} />
     case 'scores': return <Scores title={screen.title} rows={screen.rows} meId={meId} />
     case 'cards': return <CardTable screen={screen} disabled={disabled} onAction={onAction} />
+    case 'turf': return <TurfScreen screen={screen} disabled={disabled} onAction={onAction} />
   }
 }
 

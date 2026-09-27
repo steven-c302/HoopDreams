@@ -4,14 +4,17 @@ import QRCode from 'qrcode'
 import { AnimatePresence, motion } from 'motion/react'
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { Connection, browserSocket, browserSocketUrl, type Status } from '../net/connection'
-import { rejectMessage, type GameListing, type HostCommand, type PlayerSummary, type TvState } from '../protocol'
+import { rejectMessage, type GameListing, type HostCommand, type OptionKey, type PlayerSummary, type TvState } from '../protocol'
 import { audioRunning, loadMix, setMix, sfx, unlockAudio, type Mix } from './audio'
 import { BlackjackStage } from './BlackjackStage'
 import { BluffStage } from './BluffStage'
 import { Gallery } from './Gallery'
 import { TriviaStage } from './TriviaStage'
+import { TurfCover } from './TurfArt'
+import { TurfStage } from './TurfStage'
 import { useCueDirector, useDeadline } from './director'
 import { nowPlaying, useSpotify } from './spotify'
+import { isTrivia } from './types'
 import { Paused } from './Shared'
 import { SuitSprite } from './Suits'
 import { AvatarFace, Brainy, Burst, C, Crown, Keycap, Panel, Pop, Scene, Slam } from './toon'
@@ -62,13 +65,27 @@ function TvShow() {
   )
 }
 
-/** Lobby settings live on the server so the TV and the captain's phone always agree. teams 0 = auto. */
-interface Lobby { rounds: number; teams: number; drinks: boolean; game: number; phones: boolean }
+/**
+ * Lobby settings live on the server so the TV and the captain's phone always agree. teams 0 = auto. Home Turf:
+ * turfMode 0 auto / 1 solo / 2 teams, minutes = its game clock (0 = no limit).
+ */
+interface Lobby { rounds: number; teams: number; drinks: boolean; game: number; phones: boolean; turfMode: number; minutes: number }
 function lobbyOf(tv: TvState | null): Lobby {
   const s = tv?.settings ?? {}
-  return { rounds: s.rounds ?? 5, teams: s.teams ?? 0, drinks: (s.drinks ?? 1) === 1, game: s.game ?? 0, phones: (s.captain ?? 1) === 1 }
+  return {
+    rounds: s.rounds ?? 5, teams: s.teams ?? 0, drinks: (s.drinks ?? 1) === 1, game: s.game ?? 0, phones: (s.captain ?? 1) === 1,
+    turfMode: s.turfMode ?? 0, minutes: s.minutes ?? 45,
+  }
 }
-type SetOption = (key: 'rounds' | 'teams' | 'drinks' | 'game' | 'captain', value: number) => void
+type SetOption = (key: OptionKey, value: number) => void
+
+/** Home Turf's game clock choices, in minutes (0 = no limit). */
+export const TURF_MINUTES = [30, 45, 60, 90, 0]
+/** Home Turf's T key walks through Auto, Solo, then Teams of 2 to 6. */
+const TURF_MODES: [number, number][] = [[0, 0], [1, 0], [2, 2], [2, 3], [2, 4], [2, 5], [2, 6]]
+export const turfModeText = (l: { turfMode: number; teams: number }) =>
+  l.turfMode === 1 ? 'SOLO' : l.turfMode === 2 ? `${l.teams >= 2 ? l.teams : 'AUTO'} TEAMS` : 'AUTO'
+export const turfMinutesText = (m: number) => (m === 0 ? 'NO LIMIT' : `${m} MIN`)
 
 function Show({ session }: { session: TvSession }) {
   const [tv, setTv] = useState<TvState | null>(null)
@@ -101,7 +118,9 @@ function Show({ session }: { session: TvSession }) {
   const setOption: SetOption = useCallback((key, value) => cmd({ t: 'setOption', key, value }), [cmd])
   const lobby = lobbyOf(tv)
   const clock = useDeadline(tv)
-  useCueDirector(live ? tv : null, clock.deadline)
+  // Home Turf only counts down real decisions: a hop or a card reveal shouldn't tick.
+  const untimed = tv?.stage?.gameId === 'turf' && !(tv.stage.game as { timed?: boolean } | undefined)?.timed
+  useCueDirector(live ? tv : null, untimed ? null : clock.deadline)
 
   // Hide the mouse when it stops moving: this is a TV.
   useEffect(() => {
@@ -157,8 +176,9 @@ function Show({ session }: { session: TvSession }) {
           initial={{ clipPath: 'circle(0% at 50% 50%)' }} animate={{ clipPath: 'circle(75% at 50% 50%)' }} exit={{ opacity: 0 }} transition={{ duration: 0.6, ease: [0.7, 0, 0.2, 1] }}>
           {!tv ? <Scene color={C.sun} /> : stage ? (
             <>
-              {stage.gameId === 'trivia' ? <TriviaStage stage={stage} players={players} scores={tv.scores} clock={clock} />
+              {isTrivia(stage.gameId) ? <TriviaStage stage={stage} players={players} scores={tv.scores} clock={clock} />
                 : stage.gameId === 'blackjack' ? <Scene color={C.tangerine}><BlackjackStage stage={stage} players={players} scores={tv.scores} clock={clock} /></Scene>
+                : stage.gameId === 'turf' ? <Scene color={C.lime}><TurfStage stage={stage} players={players} scores={tv.scores} clock={clock} /></Scene>
                 : <Scene color={C.bubblegum}><BluffStage stage={stage} players={players} scores={tv.scores} clock={clock} /></Scene>}
               {stage.paused && <Paused reason={stage.pauseReason} />}
             </>
@@ -180,7 +200,8 @@ function Show({ session }: { session: TvSession }) {
       )}
       {overlay && tv && <HostOverlay tv={tv} cmd={cmd} mix={mix} setMix={updateMix} lobby={lobby} setOption={setOption} onClose={() => setOverlay(false)}
         spotify={spotify} toggleSpotify={toggleSpotify} />}
-      {live && !overlay && (
+      {/* Lobby only: during a game the corner belongs to the show (Ready row, team strip, table). The keys still work. */}
+      {live && !overlay && !stage && (
         // Keyed on the song, so the fading hint comes back for each new track.
         <div className="hint" key={playing ?? 'hint'}>
           {playing && <span className="now-playing"><b>ON SPOTIFY</b> {playing} <Keycap label="N" /> next</span>}
@@ -209,7 +230,8 @@ function LobbyScreen({ tv, session, games, lobby, setOption, onStart, keys }: {
   const setFocus = (i: number) => { if (i !== focus) setOption('game', i) }
   const focused = games[focus]
   const captain = tv.players.find((p) => p.id === tv.captain)
-  const trivia = focused?.id === 'trivia'
+  const trivia = isTrivia(focused?.id)
+  const turf = focused?.id === 'turf'
   useEffect(() => {
     if (qr.current && session.joinUrl) QRCode.toCanvas(qr.current, session.joinUrl, { width: 360, margin: 4, errorCorrectionLevel: 'Q' })
   }, [session.joinUrl])
@@ -219,10 +241,19 @@ function LobbyScreen({ tv, session, games, lobby, setOption, onStart, keys }: {
       const k = e.key.toLowerCase()
       if (e.key === 'ArrowRight') { setFocus(Math.min(games.length - 1, focus + 1)); sfx.focus() }
       else if (e.key === 'ArrowLeft') { setFocus(Math.max(0, focus - 1)); sfx.focus() }
+      else if ((e.key === 'ArrowUp' || e.key === 'ArrowDown') && turf) {
+        const at = Math.max(0, TURF_MINUTES.indexOf(lobby.minutes))
+        setOption('minutes', TURF_MINUTES[Math.min(TURF_MINUTES.length - 1, Math.max(0, at + (e.key === 'ArrowUp' ? 1 : -1)))]); sfx.focus()
+      }
       else if (e.key === 'ArrowUp' && focused?.id !== 'blackjack') { setOption('rounds', Math.min(8, lobby.rounds + 1)); sfx.focus() }
       else if (e.key === 'ArrowDown' && focused?.id !== 'blackjack') { setOption('rounds', Math.max(3, lobby.rounds - 1)); sfx.focus() }
+      else if (k === 't' && turf) {
+        const at = TURF_MODES.findIndex(([m, t]) => m === lobby.turfMode && (m !== 2 || t === lobby.teams))
+        const [mode, teams] = TURF_MODES[(at + 1) % TURF_MODES.length]
+        setOption('turfMode', mode); if (mode === 2) setOption('teams', teams); sfx.focus()
+      }
       else if (k === 't' && trivia) { setOption('teams', TEAM_CHOICES[(TEAM_CHOICES.indexOf(lobby.teams) + 1) % TEAM_CHOICES.length] ?? 0); sfx.focus() }
-      else if (k === 'd' && trivia) { setOption('drinks', lobby.drinks ? 0 : 1); sfx.focus() }
+      else if (k === 'd' && (trivia || turf)) { setOption('drinks', lobby.drinks ? 0 : 1); sfx.focus() }
       else if (e.key === 'Enter' && focused) onStart(focused)
     }
     window.addEventListener('keydown', onKey)
@@ -257,13 +288,15 @@ function LobbyScreen({ tv, session, games, lobby, setOption, onStart, keys }: {
           <div className="controls-row">
             {focused?.id === 'blackjack'
               ? <span className="stepper">Everyone deals once: <b>one hand per player</b></span>
+              : turf ? <span className="stepper"><Keycap label="↑" /><Keycap label="↓" /> Game clock <b>{turfMinutesText(lobby.minutes)}</b></span>
               : <span className="stepper"><Keycap label="↑" /><Keycap label="↓" /> {trivia ? 'Questions per round' : 'Rounds'} <b>{lobby.rounds}</b></span>}
             {trivia && <span className="stepper"><Keycap label="T" /> Teams <b>{lobby.teams === 0 ? 'AUTO' : lobby.teams}</b></span>}
-            {trivia && <span className="stepper"><Keycap label="D" /> Drink calls <b>{lobby.drinks ? 'ON' : 'OFF'}</b></span>}
+            {turf && <span className="stepper"><Keycap label="T" /> Play <b>{turfModeText(lobby)}</b></span>}
+            {(trivia || turf) && <span className="stepper"><Keycap label="D" /> Drink calls <b>{lobby.drinks ? 'ON' : 'OFF'}</b></span>}
             <span style={{ flex: 1 }} />
             <span className="stepper"><Keycap label="←" /><Keycap label="→" /> pick <Keycap label="Enter" /> start</span>
           </div>
-          <div className="picker">
+          <div className={`picker ${games.length > 3 ? 'four' : ''} ${games.length > 4 ? 'five' : ''}`} style={{ gridTemplateColumns: `repeat(${Math.max(1, games.length)}, minmax(0, 1fr))` }}>
             {games.map((g, i) => {
               const enough = online >= g.minPlayers
               return (
@@ -296,11 +329,31 @@ function CastCard({ p, i, small, captain }: { p: PlayerSummary; i: number; small
   )
 }
 
-/** Code-drawn covers: Brainy for Brain Drain, a liar's grin for Bluff Battle, a fanned hand for Drunk Blackjack. */
+/** Code-drawn covers: Brainy for Brain Drain, a pencil on an answer sheet for Write It Down, a liar's grin for Bluff Battle, a fanned hand for Drunk Blackjack. */
 function CoverArt({ id }: { id: string }) {
   const rays = (fill: string) => (
     <g opacity=".22">{Array.from({ length: 12 }, (_, k) => <path key={k} d="M400 170 L1100 -40 L1100 120 Z" fill={fill} transform={`rotate(${k * 30} 400 170)`} />)}</g>
   )
+  if (id === 'writeitdown') {
+    return (
+      <svg className="art" viewBox="0 0 560 330" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+        <rect width="560" height="330" fill="var(--tangerine)" />{rays('var(--white)')}
+        <g transform="translate(400 40) rotate(8)">
+          <rect x="-95" y="0" width="190" height="240" rx="10" fill="var(--white)" stroke="var(--ink)" strokeWidth="7" />
+          {[50, 90, 130, 170].map((y) => <path key={y} d={`M-70 ${y} H70`} stroke="var(--sky)" strokeWidth="5" strokeLinecap="round" />)}
+          <path d="M-70 50 Q-40 34 -10 52 T50 48" fill="none" stroke="var(--ink)" strokeWidth="6" strokeLinecap="round" />
+          <path d="M-70 90 Q-30 76 10 92" fill="none" stroke="var(--ink)" strokeWidth="6" strokeLinecap="round" />
+        </g>
+        <g transform="translate(470 110) rotate(35)">
+          <rect x="-16" y="-110" width="32" height="170" fill="var(--sun)" stroke="var(--ink)" strokeWidth="6" />
+          <rect x="-16" y="-138" width="32" height="30" rx="6" fill="var(--bubblegum)" stroke="var(--ink)" strokeWidth="6" />
+          <path d="M-16 60 L0 100 L16 60 Z" fill="var(--paper)" stroke="var(--ink)" strokeWidth="6" strokeLinejoin="round" />
+          <path d="M-6 85 L0 100 L6 85 Z" fill="var(--ink)" />
+        </g>
+      </svg>
+    )
+  }
+  if (id === 'turf') return <TurfCover />
   if (id === 'trivia') {
     return (
       <svg className="art" viewBox="0 0 560 330" preserveAspectRatio="xMidYMid slice" aria-hidden="true">

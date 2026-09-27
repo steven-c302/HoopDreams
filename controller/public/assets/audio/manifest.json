@@ -9,10 +9,16 @@
   "back": [
    "sfx/back-1.mp3"
   ],
+  "bankruptSting": [
+   "sfx/bankruptSting-1.mp3"
+  ],
   "boing": [
    "sfx/boing-1.mp3",
    "sfx/boing-2.mp3",
    "sfx/boing-3.mp3"
+  ],
+  "busHorn": [
+   "sfx/busHorn-1.mp3"
   ],
   "bust": [
    "sfx/bust-1.mp3"
@@ -25,6 +31,10 @@
    "sfx/card-2.mp3",
    "sfx/card-3.mp3"
   ],
+  "cardDraw": [
+   "sfx/cardDraw-1.mp3",
+   "sfx/cardDraw-2.mp3"
+  ],
   "cardFlip": [
    "sfx/cardFlip-1.mp3"
   ],
@@ -34,11 +44,24 @@
   "correct": [
    "sfx/correct-1.mp3"
   ],
+  "couch": [
+   "sfx/couch-1.mp3",
+   "sfx/couch-2.mp3"
+  ],
   "countTick": [
    "sfx/countTick-1.mp3"
   ],
   "crash": [
    "sfx/crash-1.mp3"
+  ],
+  "dealDone": [
+   "sfx/dealDone-1.mp3"
+  ],
+  "diceRoll": [
+   "sfx/diceRoll-1.mp3",
+   "sfx/diceRoll-2.mp3",
+   "sfx/diceRoll-3.mp3",
+   "sfx/diceRoll-4.mp3"
   ],
   "ding": [
    "sfx/ding-1.mp3"
@@ -58,11 +81,36 @@
   "focus": [
    "sfx/focus-1.mp3"
   ],
+  "gavel": [
+   "sfx/gavel-1.mp3",
+   "sfx/gavel-2.mp3"
+  ],
+  "hammer": [
+   "sfx/hammer-1.mp3",
+   "sfx/hammer-2.mp3",
+   "sfx/hammer-3.mp3"
+  ],
+  "homeTurf": [
+   "sfx/homeTurf-1.mp3"
+  ],
+  "hop": [
+   "sfx/hop-1.mp3",
+   "sfx/hop-2.mp3",
+   "sfx/hop-3.mp3",
+   "sfx/hop-4.mp3"
+  ],
   "jackpot": [
    "sfx/jackpot-1.mp3"
   ],
+  "jailClang": [
+   "sfx/jailClang-1.mp3",
+   "sfx/jailClang-2.mp3"
+  ],
   "join": [
    "sfx/join-1.mp3"
+  ],
+  "lastLap": [
+   "sfx/lastLap-1.mp3"
   ],
   "laugh": [
    "sfx/laugh-1.mp3"
@@ -73,8 +121,16 @@
   "loseSting": [
    "sfx/loseSting-1.mp3"
   ],
+  "offerPing": [
+   "sfx/offerPing-1.mp3",
+   "sfx/offerPing-2.mp3"
+  ],
   "ooh": [
    "sfx/ooh-1.mp3"
+  ],
+  "payday": [
+   "sfx/payday-1.mp3",
+   "sfx/payday-2.mp3"
   ],
   "payout": [
    "sfx/payout-1.mp3"
@@ -83,6 +139,11 @@
    "sfx/pop-1.mp3",
    "sfx/pop-2.mp3",
    "sfx/pop-3.mp3"
+  ],
+  "register": [
+   "sfx/register-1.mp3",
+   "sfx/register-2.mp3",
+   "sfx/register-3.mp3"
   ],
   "resume": [
    "sfx/resume-1.mp3"
@@ -98,6 +159,9 @@
   ],
   "showOpen": [
    "sfx/showOpen-1.mp3"
+  ],
+  "soldTag": [
+   "sfx/soldTag-1.mp3"
   ],
   "stamp": [
    "sfx/stamp-1.mp3"
@@ -129,6 +193,10 @@
   ]
  },
  "music": {
+  "auction": {
+   "file": "music/auction.mp3",
+   "gain": 0.9
+  },
   "ballpark": {
    "file": "music/ballpark.mp3",
    "gain": 0.9
@@ -151,6 +219,10 @@
   },
   "hurry": {
    "file": "music/hurry.mp3",
+   "gain": 0.9
+  },
+  "lastlap": {
+   "file": "music/lastlap.mp3",
    "gain": 0.9
   },
   "lobby": {
@@ -179,6 +251,10 @@
   },
   "teamup": {
    "file": "music/teamup.mp3",
+   "gain": 0.9
+  },
+  "turf": {
+   "file": "music/turf.mp3",
    "gain": 0.9
   },
   "scores": {

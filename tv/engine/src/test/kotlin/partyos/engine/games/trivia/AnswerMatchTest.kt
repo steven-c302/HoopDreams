@@ -27,6 +27,8 @@ class AnswerMatchTest {
         no("Rex", "Red")
         no("Rhine", "Seine")
         no("Portugal", "Spain")
+        no("Troposphere", "Stratosphere")
+        yes("Stratosfere", "Stratosphere")
     }
 
     @Test fun theDistinctivePartOfALongerAnswerCounts() {

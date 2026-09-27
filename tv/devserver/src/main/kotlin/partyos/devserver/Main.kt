@@ -3,6 +3,7 @@ package partyos.devserver
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.runBlocking
 import partyos.engine.GameRegistry
 import partyos.engine.PartyEngine
 import partyos.engine.SecureEntropy
@@ -10,10 +11,12 @@ import partyos.engine.SystemClock
 import partyos.engine.games.blackjack.DrunkBlackjack
 import partyos.engine.games.trivia.BrainDrain
 import partyos.engine.games.bluff.BluffBattle
+import partyos.engine.games.turf.HomeTurf
 import partyos.server.DirectoryStaticFiles
 import partyos.server.OpenTriviaFeed
 import partyos.server.PartyHost
 import partyos.server.PartyServer
+import partyos.server.PlayedStore
 import partyos.server.ServerConfig
 import partyos.server.SpotifyMac
 import partyos.server.lanAddresses
@@ -22,6 +25,7 @@ import java.io.File
 /**
  * Runs the PARTY OS engine + server on a Mac/PC (no TV UI) for phone-controller development and e2e tests.
  * Usage: devserver [--port 8080] [--pin 1234] [--static ../controller/dist] [--bind 0.0.0.0] [--live-trivia off] [--spotify off]
+ *   [--played ~/Library/Application Support/PartyOS/played-questions.json]
  * Brain Drain tops up from Open Trivia DB once its bundled questions run out; `--live-trivia off` keeps it offline.
  */
 fun main(args: Array<String>) {
@@ -37,9 +41,18 @@ fun main(args: Array<String>) {
     } else {
         null
     }
-    val engine = PartyEngine(SystemClock, SecureEntropy(), GameRegistry(listOf(BrainDrain(feed = feed), BluffBattle(), DrunkBlackjack())))
+    val engine = PartyEngine(SystemClock, SecureEntropy(), GameRegistry(listOf(BrainDrain(feed = feed), BrainDrain(feed = feed, mode = BrainDrain.Mode.WRITE), BluffBattle(), DrunkBlackjack(), HomeTurf())))
     engine.setPin(pin)
-    val host = PartyHost(engine, SystemClock, CoroutineScope(SupervisorJob() + Dispatchers.Default))
+    // Played questions survive restarts when --played names a file: games skip them on later nights too.
+    val played = opts["played"]?.let { PlayedStore(File(it), onError = { msg -> System.err.println("played questions: $msg") }) }
+    played?.let { engine.rememberPlayed(it.load()) }
+    var saved = engine.snapshot().usedContent
+    val host = PartyHost(engine, SystemClock, CoroutineScope(SupervisorJob() + Dispatchers.Default), onCommit = { snap ->
+        if (played != null && snap.usedContent != saved) {
+            played.save(snap.usedContent)
+            saved = snap.usedContent
+        }
+    })
     val music = if (opts["spotify"] == "off") null else SpotifyMac.detect()
     val server = PartyServer.start(host, DirectoryStaticFiles(staticDir), ServerConfig(music = music), ports = port..port, bindHost = bind)
 
@@ -51,6 +64,11 @@ fun main(args: Array<String>) {
     println("  TV:   http://127.0.0.1:${server.port}/tv   (open on this machine, full screen)")
     println("  live questions: " + if (liveTrivia) "Open Trivia DB once the bundled ones run out (--live-trivia off to disable)" else "off")
     println("  music: " + if (music != null) "Spotify on this Mac can play under the show (TV: Esc → Music; --spotify off to disable)" else "the show's own score")
-    Runtime.getRuntime().addShutdownHook(Thread { server.stop() })
+    println("  played questions: " + if (played != null) "${saved.size} remembered in ${opts["played"]} (delete it to replay everything)" else "forgotten when this stops")
+    Runtime.getRuntime().addShutdownHook(Thread {
+        // Saves are throttled; make sure a question started just before Ctrl+C is on disk.
+        played?.let { store -> runBlocking { host.read { snapshot().usedContent } }.let(store::save) }
+        server.stop()
+    })
     Thread.currentThread().join()
 }

@@ -14,7 +14,7 @@ describe('protocol fixtures shared with the Kotlin server', () => {
 
   it('covers every screen kind the phone can render', () => {
     const kinds = serverFixtures.flatMap((m) => ('view' in m ? [(m.view as { screen: { t: string } }).screen.t] : []))
-    expect(new Set(kinds)).toEqual(new Set(['waiting', 'tutorial', 'text', 'choice', 'scores', 'number', 'multi']))
+    expect(new Set(kinds)).toEqual(new Set(['waiting', 'tutorial', 'text', 'choice', 'scores', 'number', 'multi', 'turf']))
   })
 
   it('encodes client messages exactly as the server expects', () => {
@@ -36,6 +36,11 @@ describe('protocol fixtures shared with the Kotlin server', () => {
       { t: 'host', id: 'h-5', cmd: { t: 'end' } },
       { t: 'host', id: 'h-6', cmd: { t: 'kick', playerId: 'p-al' } },
       { t: 'host', id: 'h-7', cmd: { t: 'setRounds', rounds: 6 } },
+      { t: 'host', id: 'h-12', cmd: { t: 'setOption', key: 'turfMode', value: 2 } },
+      { t: 'host', id: 'h-13', cmd: { t: 'setOption', key: 'minutes', value: 45 } },
+      { t: 'action', id: 'a-6', round: 21, payload: { kind: 'bid', auction: 3, amount: 30 } },
+      { t: 'action', id: 'a-7', round: 21, payload: { kind: 'build', target: 1 } },
+      { t: 'action', id: 'a-8', round: 20, payload: { kind: 'trade', to: 1, give: ['1'], get: ['5'], giveCash: 50, getCash: 0 } },
       { t: 'ping' },
     ]
     expect(ours.map((m) => JSON.parse(encodeClient(m)))).toEqual(clientFixtures)

@@ -27,6 +27,7 @@ async function bot(i) {
     const m = JSON.parse(e.data)
     if (m.t !== 'view') return
     const { screen, round, paused } = m.view
+    if (screen.t === 'turf') return turf(screen, round)
     const key = `${round}:${screen.t}:${screen.kind ?? ''}:${(screen.hand ?? []).length}:${screen.actions?.length ?? ''}:${screen.acknowledged ?? ''}:${screen.value ?? ''}:${screen.selected ?? ''}:${screen.locked ?? ''}`
     if (paused || key === lastKey) return
     lastKey = key
@@ -57,6 +58,53 @@ async function bot(i) {
         const choice = has('double') && (t === 10 || t === 11) ? 'double' : !has('stand') || t < 16 ? 'hit' : t < 18 && Math.random() < 0.25 ? 'hit' : 'stand'
         act(round, { kind: 'move', option: choice })
       }
+    }
+  }
+
+  // Home Turf keeps one round across auction bids and trades, so the act-once key is the prompt itself.
+  let turfKey = ''
+  async function turf(screen, round) {
+    const p = screen.prompt, me = screen.me, pad = screen.auction
+    const key = `${round}:${p.kind}:${p.title}:${pad?.top ?? ''}:${pad?.leading ?? ''}:${screen.trade?.id ?? ''}:${me?.cash ?? ''}:${screen.deeds.length}`
+    if (key === turfKey) return
+    turfKey = key
+    await sleep(600 + Math.random() * 1800)
+    const has = (id) => p.actions.some((a) => a.id === id)
+    const cash = me?.cash ?? 0
+    switch (p.kind) {
+      case 'pieces': if (screen.pieces.length) act(round, { kind: 'piece', option: pick(screen.pieces).id }); break
+      case 'roll': act(round, { kind: 'roll' }); break
+      case 'jail': act(round, { kind: 'jail', option: has('card') ? 'card' : cash >= 400 ? 'pay' : 'roll' }); break
+      case 'buy': act(round, { kind: 'buy', option: has('buy') && cash - p.amount >= 150 ? 'buy' : 'pass' }); break
+      case 'bid': {
+        // Raise $10-50 up to 1.5x the printed price while keeping $50 back.
+        if (!pad?.canBid || pad.leading) break
+        const amount = pad.top + 10 * (1 + Math.floor(Math.random() * 5))
+        if (amount <= Math.min(pad.maxBid, pad.price * 1.5, cash - 50)) act(round, { kind: 'bid', auction: pad.auction, amount })
+        break
+      }
+      case 'bus': case 'triples': act(round, { kind: 'choose', option: p.actions[0].id }); break
+      case 'manage': {
+        const build = screen.deeds.find((d) => d.build != null && cash - d.build >= 250)
+        const payOff = screen.deeds.find((d) => d.unmortgage != null && cash - d.unmortgage >= 400)
+        if (build) act(round, { kind: 'build', target: build.space })
+        else if (payOff) act(round, { kind: 'unmortgage', target: payOff.space })
+        else act(round, { kind: 'end' })
+        break
+      }
+      case 'debt': {
+        // Sell buildings, then mortgage singles before set members, then pay; bankrupt only when there's nothing left.
+        const sell = screen.deeds.find((d) => d.sell != null)
+        const mortgage = screen.deeds.filter((d) => d.mortgage != null).sort((a, b) => Number(a.set) - Number(b.set))[0]
+        if (has('pay')) act(round, { kind: 'pay' })
+        else if (sell) act(round, { kind: 'sell', target: sell.space })
+        else if (mortgage) act(round, { kind: 'mortgage', target: mortgage.space })
+        else act(round, { kind: 'bankrupt' })
+        break
+      }
+      case 'trade':
+        if (screen.trade) act(round, { kind: 'tradeReply', trade: screen.trade.id, option: Math.random() < 0.5 ? 'accept' : 'reject' })
+        break
     }
   }
 }

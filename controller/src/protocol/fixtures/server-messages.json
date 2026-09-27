@@ -926,6 +926,320 @@
         }
     },
     {
+        "t": "view",
+        "seq": 15,
+        "view": {
+            "me": {
+                "id": "p-sam",
+                "name": "Sam",
+                "avatar": {
+                    "face": "p:01",
+                    "color": "#FF7A00"
+                },
+                "role": "PLAYER",
+                "connected": true
+            },
+            "roomCode": "KXQT",
+            "gameId": "turf",
+            "gameTitle": "Home Turf",
+            "round": 21,
+            "paused": false,
+            "remainingMs": 14000,
+            "screen": {
+                "t": "turf",
+                "me": {
+                    "index": 0,
+                    "name": "Sam",
+                    "color": "#FF4B3E",
+                    "piece": "duck",
+                    "cash": 1240,
+                    "seat": "p-sam",
+                    "seatName": "Sam",
+                    "mine": true,
+                    "jailed": false,
+                    "jailCards": 0,
+                    "bankrupt": false,
+                    "pos": 3,
+                    "spaceName": "The Laundromat",
+                    "worth": 1600
+                },
+                "prompt": {
+                    "kind": "buy",
+                    "title": "Buy The Laundromat?",
+                    "detail": "Or pass and everyone bids on it.",
+                    "actions": [
+                        {
+                            "id": "buy",
+                            "text": "BUY $60"
+                        },
+                        {
+                            "id": "pass",
+                            "text": "AUCTION IT"
+                        }
+                    ],
+                    "timed": true,
+                    "space": 3,
+                    "amount": 60
+                },
+                "deeds": [
+                    {
+                        "space": 1,
+                        "name": "The Corner Store",
+                        "color": "#8B5A2B",
+                        "group": 0,
+                        "level": 0,
+                        "mortgaged": false,
+                        "rent": 2,
+                        "mortgage": 30,
+                        "tradable": true,
+                        "set": false
+                    }
+                ],
+                "partners": [
+                    {
+                        "index": 1,
+                        "name": "Al",
+                        "color": "#2F6BFF",
+                        "cash": 900,
+                        "jailCards": 0,
+                        "deeds": [
+                            {
+                                "space": 5,
+                                "name": "The Night Bus",
+                                "color": "#2B2B2B",
+                                "group": 8,
+                                "mortgaged": false,
+                                "tradable": true
+                            }
+                        ]
+                    }
+                ],
+                "trade": {
+                    "id": 4,
+                    "from": 1,
+                    "to": 0,
+                    "fromName": "Al",
+                    "toName": "Sam",
+                    "give": [
+                        {
+                            "space": 5,
+                            "name": "The Night Bus",
+                            "color": "#2B2B2B",
+                            "group": 8,
+                            "mortgaged": false,
+                            "tradable": true
+                        }
+                    ],
+                    "get": [],
+                    "giveCash": 0,
+                    "getCash": 50,
+                    "giveCards": 0,
+                    "getCards": 0,
+                    "role": "to",
+                    "canCounter": true
+                },
+                "canTrade": true,
+                "auction": {
+                    "auction": 3,
+                    "space": 3,
+                    "name": "The Laundromat",
+                    "color": "#8B5A2B",
+                    "price": 60,
+                    "top": 20,
+                    "leaderName": "Al",
+                    "leading": false,
+                    "maxBid": 1240,
+                    "canBid": true
+                },
+                "pieces": [],
+                "drink": "Drink 1 sip: paid rent at The Corner Store",
+                "drinks": true
+            },
+            "scores": [
+                {
+                    "id": "p-sam",
+                    "name": "Sam",
+                    "avatar": {
+                        "face": "p:01",
+                        "color": "#FF7A00"
+                    },
+                    "score": 1500
+                },
+                {
+                    "id": "p-al",
+                    "name": "Al",
+                    "avatar": {
+                        "face": "p:02",
+                        "color": "#22AA55"
+                    },
+                    "score": 500
+                }
+            ],
+            "captain": false,
+            "settings": {},
+            "crew": []
+        }
+    },
+    {
+        "t": "tv",
+        "seq": 16,
+        "tv": {
+            "roomCode": "KXQT",
+            "players": [
+                {
+                    "id": "p-sam",
+                    "name": "Sam",
+                    "avatar": {
+                        "face": "p:01",
+                        "color": "#FF7A00"
+                    },
+                    "role": "PLAYER",
+                    "connected": true
+                }
+            ],
+            "stage": {
+                "gameId": "turf",
+                "title": "Home Turf",
+                "phaseSeq": 21,
+                "deadlineAt": 1700000080000,
+                "remainingMs": 14000,
+                "paused": false,
+                "game": {
+                    "t": "turf",
+                    "phase": "auction",
+                    "teams": false,
+                    "board": [
+                        {
+                            "name": "Payday",
+                            "label": "Payday",
+                            "kind": "payday",
+                            "group": -1,
+                            "price": 0,
+                            "rent": [],
+                            "houseCost": 0,
+                            "tax": 0
+                        },
+                        {
+                            "name": "The Corner Store",
+                            "label": "Corner Store",
+                            "kind": "street",
+                            "group": 0,
+                            "color": "#8B5A2B",
+                            "price": 60,
+                            "rent": [
+                                2,
+                                10,
+                                30,
+                                90,
+                                160,
+                                250
+                            ],
+                            "houseCost": 50,
+                            "tax": 0
+                        }
+                    ],
+                    "chanceName": "Plot Twist",
+                    "chestName": "Group Chat",
+                    "owner": [
+                        -1,
+                        0
+                    ],
+                    "level": [
+                        0,
+                        0
+                    ],
+                    "mortgaged": [],
+                    "tokens": [
+                        {
+                            "name": "Sam",
+                            "color": "#FF4B3E",
+                            "piece": "duck",
+                            "members": [
+                                "p-sam"
+                            ],
+                            "seat": "p-sam",
+                            "cash": 1240,
+                            "pos": 3,
+                            "jailed": false,
+                            "jailCards": 0,
+                            "bankrupt": false,
+                            "worth": 1600,
+                            "sets": 0
+                        }
+                    ],
+                    "turn": 0,
+                    "dice": [
+                        1,
+                        2,
+                        3
+                    ],
+                    "doubles": 0,
+                    "housesLeft": 32,
+                    "hotelsLeft": 12,
+                    "buy": -1,
+                    "auction": {
+                        "id": 3,
+                        "space": 3,
+                        "top": 20,
+                        "leader": 1,
+                        "bids": 2
+                    },
+                    "clockLeftMs": 2400000,
+                    "phaseMs": 6000,
+                    "lastLap": false,
+                    "timed": true,
+                    "drinks": true,
+                    "beats": [
+                        {
+                            "seq": 40,
+                            "kind": "bid",
+                            "token": 1,
+                            "other": -1,
+                            "space": 3,
+                            "amount": 20,
+                            "dice": [],
+                            "path": [],
+                            "tokens": [],
+                            "sips": 0
+                        }
+                    ],
+                    "ticker": [
+                        "The Laundromat goes to auction!"
+                    ],
+                    "pieces": [],
+                    "tally": []
+                }
+            },
+            "scores": [
+                {
+                    "id": "p-sam",
+                    "name": "Sam",
+                    "avatar": {
+                        "face": "p:01",
+                        "color": "#FF7A00"
+                    },
+                    "score": 1500
+                },
+                {
+                    "id": "p-al",
+                    "name": "Al",
+                    "avatar": {
+                        "face": "p:02",
+                        "color": "#22AA55"
+                    },
+                    "score": 500
+                }
+            ],
+            "gamesPlayed": 2,
+            "settings": {
+                "game": 4,
+                "turfMode": 0,
+                "minutes": 45,
+                "drinks": 1
+            }
+        }
+    },
+    {
         "t": "ack",
         "id": "a-1"
     },

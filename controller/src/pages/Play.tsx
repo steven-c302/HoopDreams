@@ -56,6 +56,8 @@ export function Play({ session, onLeave }: { session: Session; onLeave(why: stri
   const host = (c: HostCommand) => { conn.current?.host(c) }
 
   if (!view) return <main className="page center"><div className="spinner" /><p>Connecting to the TV…</p></main>
+  // Home Turf only counts down real decisions; token hops and card reveals don't tick.
+  const timed = view.screen.t !== 'turf' || view.screen.prompt.timed
   const team = teamOf(view.screen)
 
   return (
@@ -66,12 +68,14 @@ export function Play({ session, onLeave }: { session: Session; onLeave(why: stri
           {view.me.name}
         </span>
         <span className="room-chip">{view.gameTitle ?? `Room ${view.roomCode}`}</span>
-        {seconds != null && view.gameId && <span className={`timer ${seconds <= 5 ? 'hot' : ''}`}>{seconds}</span>}
+        {seconds != null && view.gameId && timed && <span className={`timer ${seconds <= 5 ? 'hot' : ''}`}>{seconds}</span>}
       </header>
       {team && <div className="team-band" style={{ background: team.color }}><span>{team.name}</span></div>}
       {status !== 'online' && <div className="banner warn">Reconnecting…</div>}
       {view.paused && <div className="banner">{view.pauseReason === 'WAITING_FOR_PLAYERS' ? 'Paused: waiting for players' : 'Paused'}</div>}
-      <section className="screen" key={`${view.round}-${view.screen.t}`}>
+      {/* Each new round remounts the screen, except Home Turf's: the board moves on every few seconds and a half-built
+          trade or an open tab must survive other players' turns. */}
+      <section className="screen" key={view.screen.t === 'turf' ? 'turf' : `${view.round}-${view.screen.t}`}>
         {view.captain && !view.gameId
           ? <CaptainLobby view={view} games={games} host={host} />
           : <ScreenView screen={view.screen} disabled={view.paused} onAction={send} meId={view.me.id} people={people} />}

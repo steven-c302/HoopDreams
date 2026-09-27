@@ -34,7 +34,9 @@ cd "$ROOT/tv"
 ./gradlew -q :devserver:installDist
 
 PIN="${PARTYOS_PIN:-$(( RANDOM % 9000 + 1000 ))}"
-"$ROOT/tv/devserver/build/install/devserver/bin/devserver" --port "$PORT" --pin "$PIN" --static "$ROOT/controller/dist" &
+# Questions already played are remembered here so they don't come up again. Delete the file to replay everything.
+PLAYED="$HOME/Library/Application Support/PartyOS/played-questions.json"
+"$ROOT/tv/devserver/build/install/devserver/bin/devserver" --port "$PORT" --pin "$PIN" --static "$ROOT/controller/dist" --played "$PLAYED" &
 SERVER=$!
 trap 'echo; echo "Stopping PARTY OS…"; kill $SERVER 2>/dev/null; exit 0' INT TERM EXIT
 caffeinate -dimsu -w $SERVER &

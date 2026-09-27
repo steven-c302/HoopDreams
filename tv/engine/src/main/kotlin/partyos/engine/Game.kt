@@ -26,6 +26,11 @@ data class GameInfo(
 sealed interface Effect {
     /** A new phase begins: the runtime bumps the round number and sets the deadline (null = no deadline). */
     data class Phase(val durationMs: Long?) : Effect
+    /**
+     * Resets the current phase's deadline without starting a new phase (the round number stays, so phones keep their
+     * screen and in-flight actions stay valid), e.g. an auction clock that restarts on every bid. Null = no deadline.
+     */
+    data class Deadline(val durationMs: Long?) : Effect
     data class Award(val player: PlayerId, val points: Int, val reason: String) : Effect
     data class Highlight(val text: String) : Effect
     /** Marks a content item (e.g. a question id) as used for the rest of the party. */
@@ -46,8 +51,26 @@ class GameContext(
     val settings: Map<String, Int>,
     val usedContent: Set<String>,
     val memory: Map<String, String> = emptyMap(),
+    /** The part of [usedContent] played at this party (the rest was remembered from earlier nights). */
+    val playedThisParty: Set<String> = usedContent,
+    /** Time left on the current phase's deadline (frozen while paused), or null when it has none. */
+    val remainingMs: Long? = null,
 ) {
     fun player(id: PlayerId) = players.firstOrNull { it.id == id }
+
+    /**
+     * The [items] nobody has played yet ([usedContent] is oldest first, and remembered across restarts). Once a pack
+     * is used up, the older half of what was played on earlier nights comes back, so a pack never runs dry across
+     * nights; nothing played at this party ever comes back tonight (then this is empty, as when a pack runs out).
+     */
+    fun <T> fresh(items: List<T>, id: (T) -> String): List<T> {
+        val unused = items.filter { id(it) !in usedContent }
+        if (unused.isNotEmpty()) return unused
+        val earlier = items.filter { id(it) !in playedThisParty }
+        if (earlier.isEmpty()) return emptyList()
+        val age = usedContent.withIndex().associate { (i, v) -> v to i }
+        return earlier.sortedBy { age[id(it)] ?: -1 }.take(maxOf(1, earlier.size / 2))
+    }
     fun isConnected(id: PlayerId) = player(id)?.connected == true
 }
 
@@ -66,6 +89,11 @@ interface GameModule<S : Any> {
     fun playerView(s: S, who: PlayerId, ctx: GameContext): Screen
     /** False if a saved state can no longer be played (e.g. its content left the pack); restore then drops the game. */
     fun restorable(s: S): Boolean = true
+    /**
+     * True for actions that stay valid across phase changes (the game checks them itself, e.g. by an offer id), so
+     * the runtime doesn't refuse them as STALE when the round moved on while the player was composing them.
+     */
+    fun phaseFree(payload: JsonObject): Boolean = false
 }
 
 class GameRegistry(modules: List<GameModule<*>>) {

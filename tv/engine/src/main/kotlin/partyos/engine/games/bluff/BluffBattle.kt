@@ -62,7 +62,7 @@ class BluffBattle(private val pack: BluffPack = BluffPack.core()) : GameModule<B
     }
 
     private fun newRound(prev: BluffState, round: Int, ctx: GameContext): Step<BluffState> {
-        val unused = pack.items.filter { it.id !in ctx.usedContent }
+        val unused = ctx.fresh(pack.items) { it.id }
         if (unused.isEmpty()) return Step(prev.copy(phase = PODIUM), listOf(Effect.Phase(PODIUM_MS)))
         val q = unused.random(ctx.random)
         val s = BluffState(WRITE, round, prev.totalRounds, q.id, ctx.players.map { it.id })

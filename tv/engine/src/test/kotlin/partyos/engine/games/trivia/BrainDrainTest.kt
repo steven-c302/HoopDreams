@@ -273,14 +273,55 @@ class BrainDrainTest {
         val (a, b, c, d) = fourInTwoTeams()
         repeat(2) { skipRound(); e.host(HostCmd.SkipPhase) }
         assertEquals("sides", tv.format)
-        e.host(HostCmd.SkipPhase) // intro → first item
-        assertEquals("Item 1", tv.prompt)
+        e.host(HostCmd.SkipPhase) // intro → first call (in this show's shuffled order)
+        assertTrue(tv.prompt.startsWith("Item "))
         assertEquals("Left or right?", tv.category)
-        listOf(a, b).forEach { answer(it, "Lefty") }
-        listOf(c, d).forEach { answer(it, "Righty") }
+        // The test pack puts odd items on the left.
+        val (right, wrong) = if (tv.prompt.removePrefix("Item ").toInt() % 2 == 1) "Lefty" to "Righty" else "Righty" to "Lefty"
+        listOf(a, b).forEach { answer(it, right) }
+        listOf(c, d).forEach { answer(it, wrong) }
         assertEquals(BrainDrain.SIDES_POINTS, score("T1"))
         assertEquals(0, score("T2"))
         assertEquals(listOf("T1"), tv.sides!!.history.single().teamsRight)
+    }
+
+    /** Plays one show from [seed] to the end of Pick a Side and returns its calls in play order. */
+    private fun sidesOrder(seed: Long): List<String> {
+        e = PartyEngine(clock, SeededEntropy(seed), GameRegistry(listOf(BrainDrain(pack, shuffleRounds = false))))
+        repeat(4) { e.add("P$it") }
+        startShow()
+        val calls = mutableListOf<String>()
+        while (tv.format != "sides") e.host(HostCmd.SkipPhase)
+        while (tv.format == "sides" && tv.phase != "standings") {
+            if (tv.phase == "question") calls += tv.prompt
+            e.host(HostCmd.SkipPhase)
+        }
+        return calls
+    }
+
+    @Test fun pickASidePlaysEveryCallOnceInAFreshOrderEachShow() {
+        val items = pack.sides.single().items.map { it.text }
+        val orders = (1L..12L).map(::sidesOrder)
+        orders.forEach { assertEquals(items.sorted(), it.sorted()) } // every call, exactly once
+        assertTrue(orders.toSet().size >= 6, "orders barely change: $orders")
+        // The pack alternates left, right, left…; shows mostly shouldn't.
+        val alternating = orders.count { o -> o.map { it.removePrefix("Item ").toInt() % 2 }.zipWithNext().all { (x, y) -> x != y } }
+        assertTrue(alternating <= 3, "$alternating of 12 shows alternated")
+    }
+
+    @Test fun aRestoredShowKeepsItsPickASideOrder() {
+        engine()
+        repeat(4) { e.add("P$it") }
+        startShow()
+        while (!(tv.format == "sides" && tv.phase == "question" && tv.q == 2)) e.host(HostCmd.SkipPhase)
+        val snap = e.snapshot()
+        val atSnap = tv.prompt
+        e.host(HostCmd.SkipPhase); e.host(HostCmd.SkipPhase)
+        val next = tv.prompt
+        val restored = PartyEngine.restore(snap, clock, SeededEntropy(9), GameRegistry(listOf(BrainDrain(pack, shuffleRounds = false))))
+        assertEquals(atSnap, (restored.tvState().stage!!.game as TriviaTv).prompt)
+        restored.host(HostCmd.SkipPhase); restored.host(HostCmd.SkipPhase)
+        assertEquals(next, (restored.tvState().stage!!.game as TriviaTv).prompt)
     }
 
     @Test fun theFastestCorrectHeistTeamRobsTheTeamTheyPick() {
@@ -370,6 +411,44 @@ class BrainDrainTest {
         assertEquals(2, tv.drink?.sips)
         assertEquals("You won!", waiting(c).title)
         assertEquals("2nd place", waiting(a).title)
+    }
+
+    @Test fun writeItDownOnItsOwnIsThreeRoundsOfTypedAnswersThenAPodium() {
+        val bigger = pack.copy(mc = (1..12).map { McItem("tw$it", "Test", "Question $it?", "Right $it", listOf("Wrong A$it", "Wrong B$it", "Wrong C$it")) })
+        val game = BrainDrain(bigger, mode = BrainDrain.Mode.WRITE)
+        assertEquals(BrainDrain.WRITE_GAME_ID, game.info.id)
+        assertEquals("Write It Down", game.info.title)
+        // It sits next to Brain Drain in the same party.
+        e = PartyEngine(clock, SeededEntropy(3), GameRegistry(listOf(BrainDrain(bigger, shuffleRounds = false), game)))
+        val (a, b, c, d) = listOf("A", "B", "C", "D").map { e.add(it) }
+        assertEquals(ActionResult.Ack, e.host(HostCmd.StartGame(BrainDrain.WRITE_GAME_ID, mapOf("rounds" to 3, "teams" to 2))))
+        assertEquals(BrainDrain.WRITE_GAME_ID, e.tvState().stage!!.gameId)
+        e.host(HostCmd.SkipPhase) // tutorial
+        join(a, "T1"); join(b, "T1"); join(c, "T2"); join(d, "T2")
+        name(a, "Quizzards"); name(c, "Brainiacs")
+
+        val formats = mutableListOf<String>()
+        var answered = false
+        while (tv.phase != "podium") {
+            assertEquals(BrainDrain.WRITE_SHOW_ROUNDS, tv.totalRounds)
+            if (tv.phase == "intro") formats += tv.format
+            if (tv.phase == "question") {
+                assertTrue(tv.options.isEmpty())
+                if (!answered) {
+                    val right = currentRight()
+                    write(a, right); write(b, right.lowercase()); write(c, "Nope"); write(d, "Nope")
+                    answered = true
+                    continue
+                }
+            }
+            e.host(HostCmd.SkipPhase)
+        }
+        assertEquals(List(BrainDrain.WRITE_SHOW_ROUNDS) { BrainDrain.WRITE }, formats)
+        assertEquals(listOf("T1", "T2"), tv.podium)
+        assertEquals(BrainDrain.WRITE_POINTS, score("T1"))
+        assertEquals("Quizzards win Write It Down!", tv.hostLine)
+        while (e.tvState().stage != null) e.host(HostCmd.SkipPhase)
+        assertEquals("Quizzards won Write It Down", e.tvState().lastResult!!.highlights.first())
     }
 
     @Test fun everyShowDealsAllFiveRoundsAndNeverOpensOnTheHeist() {
@@ -489,9 +568,9 @@ class BrainDrainTest {
 
     @Test fun theCorePackIsValidAndBigEnoughForTwoShows() {
         val core = TriviaPack.core()
-        assertTrue(core.mc.size >= 150)
-        assertTrue(core.ballpark.size >= 40)
-        assertTrue(core.sides.size >= 15)
+        assertTrue(core.mc.size >= 300)
+        assertTrue(core.ballpark.size >= 60)
+        assertTrue(core.sides.size >= 23)
         assertTrue(core.gauntlet.size >= 30)
     }
 

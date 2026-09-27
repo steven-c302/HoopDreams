@@ -23,6 +23,47 @@ export type Screen =
   | { t: 'tutorial'; cards: TutorialCard[]; acknowledged: boolean }
   | { t: 'scores'; title: string; rows: ScoreRow[] }
   | { t: 'cards'; title: string; hand: PlayingCard[]; total?: number; dealer: PlayingCard[]; actions: Choice[]; kind: string; note?: string; tone?: string; stack?: number }
+  | TurfScreen
+
+// ---- Home Turf (tv/engine/.../TurfViews.kt) -------------------------------------------------
+
+/** Your token (or team). mine = you hold the dice right now. */
+export interface TurfMe {
+  index: number; name: string; color: string; piece?: string; cash: number; seat?: string; seatName?: string
+  mine: boolean; jailed: boolean; jailCards: number; bankrupt: boolean; pos: number; spaceName: string; worth: number
+}
+/** kind: wait | watch | out | teamup | pieces | deal | roll | jail | buy | bid | bus | triples | manage | debt | trade | card | over */
+export interface TurfPrompt {
+  kind: string; title: string; detail?: string; actions: Choice[]; timed: boolean; tone?: 'win' | 'lose' | 'neutral'; space: number; amount: number
+}
+/** One of your places; build/sell/mortgage/unmortgage are the cost or refund when allowed right now. group: 0-7 streets, 8 rides, 9 utilities. */
+export interface TurfDeed {
+  space: number; name: string; color: string; group: number; level: number; mortgaged: boolean; rent: number
+  build?: number; sell?: number; mortgage?: number; unmortgage?: number; tradable: boolean; set: boolean
+}
+export interface TurfDeedRef { space: number; name: string; color: string; group: number; mortgaged: boolean; tradable: boolean }
+export interface TurfPartner { index: number; name: string; color: string; cash: number; jailCards: number; deeds: TurfDeedRef[] }
+export interface TurfTradeView {
+  id: number; from: number; to: number; fromName: string; toName: string; give: TurfDeedRef[]; get: TurfDeedRef[]
+  giveCash: number; getCash: number; giveCards: number; getCards: number; role: 'from' | 'to' | 'watch'; canCounter: boolean
+}
+export interface TurfBidPad {
+  auction: number; space: number; name: string; color: string; price: number; top: number; leaderName?: string
+  leading: boolean; maxBid: number; canBid: boolean
+}
+export interface TurfScreen {
+  t: 'turf'
+  me?: TurfMe
+  prompt: TurfPrompt
+  deeds: TurfDeed[]
+  partners: TurfPartner[]
+  trade?: TurfTradeView
+  canTrade: boolean
+  auction?: TurfBidPad
+  pieces: Choice[]
+  drink?: string
+  drinks: boolean
+}
 
 export interface PhoneState {
   me: PlayerSummary
@@ -87,10 +128,13 @@ export type HostCommand =
   | { t: 'end' }
   | { t: 'kick'; playerId: string }
   | { t: 'setRounds'; rounds: number }
-  | { t: 'setOption'; key: 'rounds' | 'teams' | 'drinks' | 'game' | 'captain'; value: number }
+  | { t: 'setOption'; key: OptionKey; value: number }
   | { t: 'makeCaptain'; playerId: string }
   /** A game's own show control, e.g. 'shuffle' during Brain Drain's Team Up. */
   | { t: 'gameAction'; action: string }
+
+/** Shared lobby settings. turfMode: Home Turf 0 auto, 1 solo, 2 teams; minutes: Home Turf's game clock (0 = no limit). */
+export type OptionKey = 'rounds' | 'teams' | 'drinks' | 'game' | 'captain' | 'turfMode' | 'minutes'
 
 export type ActionPayload = { kind: string; [k: string]: string | number | boolean | string[] }
 
@@ -102,7 +146,7 @@ export type ClientMsg =
 
 export interface GameListing { id: string; title: string; tagline: string; minPlayers: number; maxPlayers: number }
 
-const SCREENS = new Set(['waiting', 'text', 'choice', 'number', 'multi', 'tutorial', 'scores', 'cards'])
+const SCREENS = new Set(['waiting', 'text', 'choice', 'number', 'multi', 'tutorial', 'scores', 'cards', 'turf'])
 const isObj = (v: unknown): v is Record<string, unknown> => typeof v === 'object' && v !== null
 
 /** Parses one server frame; returns null for anything malformed or unknown instead of throwing. */
@@ -149,6 +193,36 @@ export function rejectMessage(code: string): string {
     case 'RATE_LIMIT': return 'Slow down a little!'
     case 'NOT_ENOUGH_PLAYERS': return 'Need more players connected.'
     case 'STALE': return ''
+    // Home Turf
+    case 'NOT_YOUR_TURN': return "It's not your turn."
+    case 'NOT_YOUR_SEAT': return 'A teammate has the dice right now.'
+    case 'NOT_PLAYING': return "You're not in this game."
+    case 'PIECE_TAKEN': return 'Someone grabbed that piece. Pick another!'
+    case 'ALREADY_PICKED': return 'You already have a piece.'
+    case 'CANT_AFFORD': return "Not enough cash. Mortgage or sell something first."
+    case 'BID_TOO_LOW': return 'Someone bid higher. Go again!'
+    case 'NEED_SET': return 'You need the whole colour set to build.'
+    case 'BUILD_EVENLY': return 'Build evenly: add to the places with fewer houses first.'
+    case 'SELL_EVENLY': return 'Sell evenly: start with the places with the most houses.'
+    case 'MORTGAGED_IN_SET': return 'Pay off the mortgages in this set before building.'
+    case 'MAX_BUILT': return 'That place already has a hotel.'
+    case 'NO_HOUSES_LEFT': return 'The bank is out of houses.'
+    case 'NO_HOTELS_LEFT': return 'The bank is out of hotels.'
+    case 'MUST_SELL_BUILDINGS': return 'Sell the buildings in that colour set first.'
+    case 'ALREADY_MORTGAGED': return "It's already mortgaged."
+    case 'NOT_MORTGAGED': return "It isn't mortgaged."
+    case 'NOTHING_TO_SELL': return 'Nothing to sell there.'
+    case 'NOT_YOURS': return "That's not yours."
+    case 'NOT_A_STREET': case 'NOT_A_DEED': return "You can't do that there."
+    case 'NO_CARD': return "You don't have a Get Out card."
+    case 'PAY_FIRST': return 'Settle up first: sell or mortgage, then pay.'
+    case 'TRADE_OPEN': return 'A trade is on the table. Wait for it to finish.'
+    case 'TRADE_LATER': return 'Wait for the dice to settle, then send it.'
+    case 'TRADE_GONE': return 'That offer is off the table.'
+    case 'ONE_OFFER': return 'One offer per person per turn.'
+    case 'NO_MORE_COUNTERS': return 'No more counters: accept or reject.'
+    case 'EMPTY_TRADE': return 'Add something to the deal first.'
+    case 'BAD_TRADE': return "That deal doesn't work."
     default: return `Couldn't do that (${code}).`
   }
 }

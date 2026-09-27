@@ -1,18 +1,21 @@
 import { useEffect, useRef } from 'react'
 import type { TvState } from '../protocol'
 import { setHurry, setMusic, sfx, type Mode } from './audio'
-import type { BlackjackTv, BluffTv, TriviaTv } from './types'
+import { isTrivia, type BlackjackTv, type BluffTv, type TriviaTv, type TurfTv } from './types'
 
-type Game = BluffTv | BlackjackTv | TriviaTv | undefined
+type Game = BluffTv | BlackjackTv | TriviaTv | TurfTv | undefined
 
 /** Seconds left on the stage clock, from the snapshot's remaining time anchored when it arrived. */
 export function useDeadline(tv: TvState | null): { deadline: number | null; frozen: number | null } {
-  const ref = useRef<{ seq: number; deadline: number | null }>({ seq: -1, deadline: null })
+  const ref = useRef<{ key: string; deadline: number | null }>({ key: '', deadline: null })
   const stage = tv?.stage
   if (!stage) return { deadline: null, frozen: null }
   if (stage.paused) return { deadline: null, frozen: stage.remainingMs ?? 0 }
-  if (ref.current.seq !== stage.phaseSeq || ref.current.deadline == null) {
-    ref.current = { seq: stage.phaseSeq, deadline: stage.remainingMs != null ? Date.now() + stage.remainingMs : stage.deadlineAt ?? null }
+  // Re-anchor on a new phase and whenever the server moves the deadline (a resume, or a clock reset mid-phase like an
+  // auction bid), not on every snapshot, so the countdown doesn't jitter with network delay.
+  const key = `${stage.phaseSeq}:${stage.deadlineAt ?? ''}`
+  if (ref.current.key !== key || ref.current.deadline == null) {
+    ref.current = { key, deadline: stage.remainingMs != null ? Date.now() + stage.remainingMs : stage.deadlineAt ?? null }
   }
   return { deadline: ref.current.deadline, frozen: null }
 }
@@ -20,10 +23,11 @@ export function useDeadline(tv: TvState | null): { deadline: number | null; froz
 function musicFor(tv: TvState): Mode {
   const s = tv.stage
   if (!s) return 'lobby'
-  if (s.tutorial) return s.gameId === 'blackjack' ? 'casino' : s.gameId === 'trivia' ? 'teamup' : 'lobby'
+  if (s.tutorial) return s.gameId === 'blackjack' ? 'casino' : isTrivia(s.gameId) ? 'teamup' : 'lobby'
   const g = s.game as unknown as Game
   if (!g) return 'lobby'
   if (g.t === 'blackjack') return g.phase === 'dealer' ? 'reveal' : g.phase === 'podium' ? 'podium' : 'casino'
+  if (g.t === 'turf') return g.phase === 'auction' ? 'auction' : g.phase === 'tally' ? 'standings' : g.phase === 'podium' ? 'podium' : g.lastLap ? 'lastlap' : 'turf'
   if (g.t === 'trivia') {
     switch (g.phase) {
       case 'teamup': return 'teamup'

@@ -1,6 +1,6 @@
 import './trivia.css'
 import { motion } from 'motion/react'
-import { useEffect, useMemo, useRef, type CSSProperties, type ReactNode } from 'react'
+import { createContext, useContext, useEffect, useMemo, useRef, type CSSProperties, type ReactNode } from 'react'
 import type { PlayerSummary, ScoreRow, StageInfo } from '../protocol'
 import { sfx } from './audio'
 import { Tutorial, useLater } from './Shared'
@@ -23,22 +23,26 @@ export function TriviaStage({ stage, players, clock }: Props) {
   const byId = useMemo(() => new Map(players.map((p) => [p.id, p])), [players])
   if (stage.tutorial || !g) {
     return (
-      <Scene color={C.sun}>
-        <div className="stage-pad">
-          <ShowTitle />
-          <Tutorial cards={stage.tutorial?.cards ?? []} acked={stage.tutorial?.acked ?? []} players={players} />
-        </div>
-      </Scene>
+      <ShowName.Provider value={stage.title}>
+        <Scene color={C.sun}>
+          <div className="stage-pad">
+            <ShowTitle />
+            <Tutorial cards={stage.tutorial?.cards ?? []} acked={stage.tutorial?.acked ?? []} players={players} />
+          </div>
+        </Scene>
+      </ShowName.Provider>
     )
   }
   const color = g.phase === 'standings' ? C.paper : g.phase === 'podium' ? C.sun : g.phase === 'awards' ? C.grape : SCENE[g.format] ?? C.sun
   const split: [string, string] | undefined = g.format === 'sides' && (g.phase === 'question' || g.phase === 'reveal') ? [C.bubblegum, C.blueberry] : undefined
   return (
-    <Scene color={color} split={split}>
-      <div className="stage-pad trivia">
-        <Beat g={g} byId={byId} clock={clock} />
-      </div>
-    </Scene>
+    <ShowName.Provider value={stage.title}>
+      <Scene color={color} split={split}>
+        <div className="stage-pad trivia">
+          <Beat g={g} byId={byId} clock={clock} />
+        </div>
+      </Scene>
+    </ShowName.Provider>
   )
 }
 
@@ -62,8 +66,14 @@ function Beat({ g, byId, clock }: { g: TriviaTv; byId: ById; clock: Clock }) {
 
 // ---------- shared pieces ----------
 
+/** The game this stage is running ("Brain Drain" or "Write It Down"), for the logo. */
+const ShowName = createContext('Brain Drain')
+
+/** The show's logo in two stacked lines: the last word drops to the second line (BRAIN / DRAIN, WRITE IT / DOWN). */
 function ShowTitle({ small = false }: { small?: boolean }) {
-  return <div className={`show-title ${small ? 'small' : ''}`}><b>BRAIN</b><b>DRAIN</b></div>
+  const words = useContext(ShowName).toUpperCase().split(' ')
+  const last = words.pop() ?? ''
+  return <div className={`show-title ${small ? 'small' : ''}`}>{words.length > 0 && <b>{words.join(' ')}</b>}<b>{last}</b></div>
 }
 
 function Header({ g, clock, extra }: { g: TriviaTv; clock: Clock; extra?: ReactNode }) {
@@ -235,7 +245,7 @@ function Quick({ g, byId, clock }: { g: TriviaTv; byId: ById; clock: Clock }) {
                 <span className="answer-text">{o.text}</span>
                 {revealed && <div className="answer-teams">{pickers(o.id).map((t) => <span key={t.id} className="flag" style={{ background: t.color, color: inkOn(t.color) }}>{t.name}</span>)}</div>}
                 {state === 'wrong' && <Scribble />}
-                {state === 'right' && <Burst text="RIGHT!" width={330} height={200} size={56} fill={C.sun} tilt={10} delay={0.35} spikes={14} className="answer-burst" />}
+                {state === 'right' && <Burst text="RIGHT!" width={260} height={160} size={48} fill={C.sun} tilt={10} delay={0.35} spikes={14} className="answer-burst" />}
               </div>
             </Deal>
           )
@@ -468,7 +478,7 @@ function Steal({ g, byId }: { g: TriviaTv; byId: ById }) {
       <div className="trivia-header"><ShowTitle small /><div style={{ flex: 1 }} /></div>
       <div className="steal">
         <TeamBadge team={victim} byId={byId} size="lg" score delta={-h.amount} tilt={3} />
-        <motion.div className="sack-fly" initial={{ x: -480, y: 0, rotate: -20 }} animate={{ x: 470, y: [0, -240, -150], rotate: 12 }} transition={{ duration: 1.1, ease: 'easeInOut', delay: 0.3 }}>
+        <motion.div className="sack-fly" initial={{ x: -480, y: 0, rotate: -20 }} animate={{ x: 470, y: [0, -240, -150], rotate: 12, opacity: [1, 1, 0] }} transition={{ duration: 1.1, ease: 'easeInOut', delay: 0.3, opacity: { duration: 1.4, delay: 0.3, times: [0, 0.8, 1] } }}>
           <LootSack big />
         </motion.div>
         <TeamBadge team={thief} byId={byId} size="lg" score delta={h.amount} tilt={-3} />
@@ -573,7 +583,8 @@ function Standings({ g, byId }: { g: TriviaTv; byId: ById }) {
         ))}
       </div>
       <div className="trivia-foot"><HostSays line={g.hostLine} mood="smug" size={140} /><div /></div>
-      <DrinkCall g={g} style={{ right: 70, bottom: 70 }} />
+      {/* Top right: the bottom holds Brainy's line. */}
+      <DrinkCall g={g} style={{ right: 70, top: 40 }} />
     </>
   )
 }

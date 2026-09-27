@@ -5,6 +5,7 @@ import { Chip, Led } from './Casino'
 import { SuitSprite } from './Suits'
 import { TriviaStage } from './TriviaStage'
 import type { TriviaTeam, TriviaTv } from './types'
+import { TurfGallery } from './TurfGallery'
 
 /**
  * Design review sheets. /tv?gallery shows the deck, chips and readouts; /tv?gallery=trivia&beat=<name> renders one
@@ -13,6 +14,7 @@ import type { TriviaTeam, TriviaTv } from './types'
 export function Gallery() {
   const params = new URLSearchParams(location.search)
   if (params.get('gallery') === 'trivia') return <TriviaGallery beat={params.get('beat')} />
+  if (params.get('gallery') === 'turf') return <TurfGallery beat={params.get('beat')} />
   return (
     <div style={{ position: 'fixed', inset: 0, overflow: 'auto', background: 'var(--felt)', padding: 24 }}>
       <SuitSprite />

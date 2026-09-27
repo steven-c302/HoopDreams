@@ -13,7 +13,10 @@
     { "id": "hurry", "seconds": 30, "prompt": "Last ten seconds hurry-up music. Fast ticking clock, rising tension, frantic xylophone and brass stabs, 160 BPM. Seamless loop." },
     { "id": "bluff", "seconds": 90, "prompt": "Mischievous tiptoe music for writing lies. Bassoon and pizzicato strings, sly clarinet, soft bongos, cartoon villain energy. Seamless loop." },
     { "id": "reveal", "seconds": 45, "prompt": "Suspense bed for a dramatic reveal. Low rumbling timpani, soft snare roll, held brass chord, cartoon suspense. Seamless loop." },
-    { "id": "casino", "seconds": 90, "prompt": "Cartoon casino lounge bossa nova. Vibraphone, brushed drums, walking bass, muted horns, relaxed but playful. Seamless loop." }
+    { "id": "casino", "seconds": 90, "prompt": "Cartoon casino lounge bossa nova. Vibraphone, brushed drums, walking bass, muted horns, relaxed but playful. Seamless loop." },
+    { "id": "turf", "seconds": 150, "prompt": "Strolling big-band groove for a cartoon property board game: walking upright bass, muted trumpet melody, brushed snare, xylophone answers, a sly confident swagger. Seamless loop." },
+    { "id": "auction", "seconds": 60, "prompt": "Fast frantic auction music: rapid xylophone runs, stabbing brass hits, galloping bongos, rising tension that never resolves. Seamless loop." },
+    { "id": "lastlap", "seconds": 60, "prompt": "The strolling property-game groove pushed into overdrive for the final lap: double-time walking bass, urgent muted trumpets, ticking woodblock clock, rising brass stabs. Tense but fun. Seamless loop." }
   ],
   "sfx": [
     { "id": "focus", "seconds": 0.5, "prompt": "Soft short wooden tick, UI navigation, cartoon" },
@@ -54,6 +57,22 @@
     { "id": "wrong", "seconds": 1.5, "prompt": "Cartoon wrong answer: springy boing into a low honk" },
     { "id": "steal", "seconds": 2, "prompt": "Sneaky slide whistle up then a cash register cha-ching" },
     { "id": "drinkCall", "seconds": 2, "prompt": "Two glasses clinking, then a punchy brass hit, cheers" },
-    { "id": "boing", "seconds": 0.6, "variants": 3, "prompt": "Cartoon spring boing, short and bouncy" }
+    { "id": "boing", "seconds": 0.6, "variants": 3, "prompt": "Cartoon spring boing, short and bouncy" },
+    { "id": "diceRoll", "seconds": 1, "prompt": "Two plastic dice rattled in a cupped hand then clattering onto a wooden board, cartoon", "variants": 4 },
+    { "id": "hop", "seconds": 0.5, "prompt": "Tiny springy wooden hop, a game piece bouncing one space on a board, cartoon", "variants": 4 },
+    { "id": "gavel", "seconds": 1, "prompt": "Auctioneer wooden gavel banging twice, SOLD, cartoon punchy", "variants": 2 },
+    { "id": "jailClang", "seconds": 1.5, "prompt": "Heavy iron jail cell door slamming shut with a clang, cartoon, slightly comic", "variants": 2 },
+    { "id": "hammer", "seconds": 0.8, "prompt": "Quick cartoon hammer tapping nails three times, building a tiny house", "variants": 3 },
+    { "id": "register", "seconds": 1, "prompt": "Old cash register cha-ching with a coin drawer, cartoon bright", "variants": 3 },
+    { "id": "payday", "seconds": 1, "variants": 2, "prompt": "Bright coin cascade into a piggy bank with a happy little chime, getting paid, cartoon" },
+    { "id": "homeTurf", "seconds": 2, "prompt": "Triumphant short brass fanfare with a crowd cheer, claiming a whole neighbourhood, cartoon game show" },
+    { "id": "bankruptSting", "seconds": 2.5, "prompt": "Sad descending trombone wah-wah-wah with coins spilling out and a hollow clunk, going broke, cartoon" },
+    { "id": "lastLap", "seconds": 2, "prompt": "Cartoon alarm clock ringing then a race starting whistle, time is up, final lap" },
+    { "id": "couch", "seconds": 1, "variants": 2, "prompt": "Someone flopping onto a squeaky soft couch cushion with a relaxed sigh, cartoon" },
+    { "id": "busHorn", "seconds": 1, "prompt": "Friendly city bus double honk and air brakes hiss, cartoon" },
+    { "id": "dealDone", "seconds": 1.5, "prompt": "Firm handshake slap followed by a bright cha-ching and a short brass hit, deal done, cartoon" },
+    { "id": "offerPing", "seconds": 0.6, "variants": 2, "prompt": "Playful phone notification double ping, incoming offer, cartoon" },
+    { "id": "soldTag", "seconds": 1, "prompt": "Rubber stamp thump on paper followed by a tiny bell ding, property sold, cartoon" },
+    { "id": "cardDraw", "seconds": 0.8, "variants": 2, "prompt": "Card slid out of a deck and flipped over with a snappy swish, cartoon" }
   ]
 }

@@ -62,6 +62,8 @@ object AnswerMatch {
     private fun typoClose(x: String, y: String): Boolean {
         if (x == y) return true
         if (x.all { it.isDigit() } || y.all { it.isDigit() }) return false
+        // People rarely misspell the first letter, and it keeps look-alikes apart ("Troposphere" is not "Stratosphere").
+        if (x.first() != y.first()) return false
         return distance(x, y) <= tolerance(y.length)
     }
 

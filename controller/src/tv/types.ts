@@ -25,6 +25,9 @@ export function sipLabel(n: number): string {
   return [shots ? `${shots} SHOT${shots > 1 ? 'S' : ''}` : '', sips ? `${sips} SIP${sips > 1 ? 'S' : ''}` : ''].filter(Boolean).join(' + ') || '0 SIPS'
 }
 
+/** Games that run on the trivia engine (TriviaTv on the TV): Brain Drain, and Write It Down played on its own. */
+export const isTrivia = (gameId?: string | null) => gameId === 'trivia' || gameId === 'writeitdown'
+
 /** 'gauntlet' only appears in a show saved before it was retired. */
 export type TriviaFormat = 'teamup' | 'quick' | 'ballpark' | 'sides' | 'heist' | 'write' | 'gauntlet'
 export type TriviaPhase = 'teamup' | 'intro' | 'question' | 'reveal' | 'victim' | 'steal' | 'standings' | 'podium' | 'awards'
@@ -57,3 +60,56 @@ export const ROUND_RULES: Record<string, string> = {
   write: "No options this time. Type the answer; your team's most-written one counts. Close spelling is fine.",
   gauntlet: 'Pick every answer that fits. Right picks move you forward, wrong ones back. First to the finish wins.',
 }
+
+// ---- Home Turf (tv/engine/.../TurfViews.kt) -------------------------------------------------
+
+/** kind: payday | street | railroad | utility | chance | chest | tax | jail | couch | gotojail */
+export interface TurfSpace { name: string; label: string; kind: string; group: number; color?: string; price: number; rent: number[]; houseCost: number; tax: number }
+export interface TurfToken {
+  name: string; color: string; piece?: string; members: string[]; seat?: string; cash: number; pos: number
+  jailed: boolean; jailCards: number; bankrupt: boolean; worth: number; sets: number
+}
+/** Something that just happened, oldest first; seq only goes up. Unused fields keep their defaults. */
+export interface TurfBeat {
+  seq: number; kind: string; token: number; other: number; space: number; amount: number
+  dice: number[]; path: number[]; tokens: number[]; sips: number; text?: string
+}
+export type TurfPhase = 'teamup' | 'pieces' | 'deal' | 'roll' | 'jail' | 'move' | 'buy' | 'auction' | 'card' | 'choose' | 'manage' | 'debt' | 'trade' | 'tally' | 'podium'
+export interface TurfTv {
+  t: 'turf'
+  phase: TurfPhase
+  teams: boolean
+  board: TurfSpace[]
+  chanceName: string
+  chestName: string
+  owner: number[]
+  level: number[]
+  mortgaged: number[]
+  tokens: TurfToken[]
+  turn: number
+  dice: number[]
+  doubles: number
+  housesLeft: number
+  hotelsLeft: number
+  buy: number
+  choose?: 'bus' | 'triples'
+  card?: { deck: string; deckName: string; text: string; sips: number }
+  auction?: { id: number; space: number; top: number; leader: number; bids: number }
+  trade?: { id: number; from: number; to: number; give: number[]; get: number[]; giveCash: number; getCash: number; giveCards: number; getCards: number; counters: number }
+  debt?: { token: number; amount: number; to: number; why: string }
+  clockLeftMs?: number
+  phaseMs?: number
+  lastLap: boolean
+  timed: boolean
+  drinks: boolean
+  beats: TurfBeat[]
+  ticker: string[]
+  pieces: string[]
+  tally: { token: number; worth: number; cash: number; places: number; buildings: number; rank: number }[]
+  notice?: string
+}
+
+/** Speed die faces beyond the pips. */
+export const SPEED_BUS = 4
+export const SPEED_SCOUT = 5
+export const TURF_HOTEL = 4

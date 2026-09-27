@@ -1,37 +1,22 @@
-import { expect, test, type Browser, type Page } from '@playwright/test'
+import { expect, test, type Page } from '@playwright/test'
+import { clearParty, hostPage, phone } from './helpers'
 
-async function phone(browser: Browser, room: string, name: string): Promise<Page> {
-  const ctx = await browser.newContext()
-  const p = await ctx.newPage()
-  await p.goto(`/j/${room}`)
-  await p.getByLabel('Your name').fill(name)
-  await p.getByRole('button', { name: 'Join the party' }).click()
-  // The first phone to join holds the crown and lands on the captain's panel instead.
-  await expect(p.getByRole('heading', { name: /You're in|You have the crown/ })).toBeVisible()
-  return p
-}
-
-async function hostPage(browser: Browser): Promise<{ host: Page; room: string }> {
-  const host = await (await browser.newContext()).newPage()
-  await host.goto('/host')
-  await host.getByRole('textbox').fill('4242')
-  await host.getByRole('button', { name: 'Unlock host controls' }).click()
-  const chip = host.locator('.room-chip')
-  await expect(chip).toHaveText(/Room [A-Z]{4}/)
-  return { host, room: (await chip.textContent())!.replace('Room ', '').trim() }
-}
-
-/** The dev server is shared across tests: end any game and remove everyone an earlier test left behind. */
-async function clearParty(host: Page) {
-  host.on('dialog', (d) => d.accept())
-  const end = host.getByRole('button', { name: 'End game' })
-  if (await end.isVisible()) await end.click()
-  await expect(host.getByRole('heading', { name: 'Start a game' })).toBeVisible()
-  const rows = host.locator('.players li')
-  while ((await rows.count()) > 0) {
-    const n = await rows.count()
-    await rows.first().getByRole('button', { name: 'Remove' }).click()
-    await expect(rows).toHaveCount(n - 1)
+/**
+ * Names each team from its first phone, if the phone asks. Trivia games remember teams (names included) for the next
+ * show in the same party, so a team may already be named and go straight to "You're on …".
+ */
+async function nameTeams(namers: (readonly [Page, string])[]) {
+  for (const [p, name] of namers) {
+    // Named already, the phone shows "You're on …" or, once every team is confirmed, has moved on to the show.
+    const naming = p.getByRole('heading', { name: 'Name your team' })
+    await expect.poll(async () => {
+      if (await naming.isVisible()) return 'name it'
+      if (await p.getByRole('heading', { name: /You.re on/ }).isVisible() || !(await p.locator('.choices.teams').count())) return 'named'
+      return 'waiting'
+    }, { timeout: 20_000 }).not.toBe('waiting')
+    if (!(await naming.isVisible())) continue
+    await p.locator('textarea').fill(name)
+    await p.getByRole('button', { name: 'Lock it in' }).click()
   }
 }
 
@@ -70,10 +55,7 @@ test('four phones team up and answer a Brain Drain question', async ({ browser }
 
   // Two teams for four players: Ana and Bo on the first, Cal and Di on the second; the first of each names it.
   for (const [i, p] of phones.entries()) await p.locator('.choices.teams button').nth(i < 2 ? 0 : 1).click()
-  for (const [p, name] of [[phones[0], 'Quizzly Bears'], [phones[2], 'Smarty Pints']] as const) {
-    await p.locator('textarea').fill(name)
-    await p.getByRole('button', { name: 'Lock it in' }).click()
-  }
+  await nameTeams([[phones[0], 'Quizzly Bears'], [phones[2], 'Smarty Pints']])
 
   // The round card, then the first question. Rounds come in a random order, so answer whichever one it is.
   await expect(phones[1].locator('.team-band')).toHaveText('Quizzly Bears')
@@ -90,6 +72,25 @@ test('four phones team up and answer a Brain Drain question', async ({ browser }
     }
   }
   for (const p of phones) await expect(p.getByRole('heading', { name: /Correct!|Nope|Closest!|Off by|Bullseye!/ })).toBeVisible()
+  await host.getByRole('button', { name: 'End game' }).click()
+})
+
+test('Write It Down plays on its own: type the answer, no options', async ({ browser }) => {
+  const { host, room } = await hostPage(browser)
+  await clearParty(host)
+  const phones = await Promise.all(['Eve', 'Fay', 'Gil', 'Hal'].map((n) => phone(browser, room, n)))
+  await host.getByRole('button', { name: /Write It Down/ }).click()
+  for (const p of phones) await p.getByRole('button', { name: 'Ready!' }).click()
+  for (const [i, p] of phones.entries()) await p.locator('.choices.teams button').nth(i < 2 ? 0 : 1).click()
+  await nameTeams([[phones[0], 'Pens Out'], [phones[2], 'Scribblers']])
+  // Every question is typed: a text box, never answer buttons.
+  for (const p of phones) {
+    await expect(p.locator('textarea')).toBeVisible({ timeout: 20_000 })
+    await expect(p.locator('.choices button')).toHaveCount(0)
+    await p.locator('textarea').fill('Paris')
+    await p.getByRole('button', { name: 'Lock it in' }).click()
+  }
+  for (const p of phones) await expect(p.getByRole('heading', { name: /Correct!|Nope/ })).toBeVisible()
   await host.getByRole('button', { name: 'End game' }).click()
 })
 

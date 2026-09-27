@@ -95,7 +95,11 @@
 .qr-panel { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 44px 30px 22px; }
 /* The canvas carries the QR's own 4-module quiet zone; nothing may overlap it. */
 .qr-panel canvas { display: block; border: 5px solid var(--ink); border-radius: 18px; background: var(--white); }
-.qr-panel .scan { position: absolute !important; left: 50%; top: -62px; margin-left: -140px; }
+/* SCAN ME sits in the gap between the logo and the QR panel: never on the logo, never on the QR code's quiet zone. */
+.qr-panel .scan { position: absolute !important; left: 50%; top: -74px; margin-left: -140px; }
+.lobby-left .logo b { font-size: 100px; }
+.lobby-left .logo b + b { font-size: 128px; }
+.lobby-left .qr-panel { margin-top: 58px; }
 .room-code { font-family: var(--font-display); font-size: 70px; line-height: 1; letter-spacing: .08em; }
 .join-url { font-size: 30px; font-weight: 900; }
 .lobby-help { font-size: 24px; text-align: center; color: var(--ink-soft); max-width: 520px; }
@@ -127,6 +131,15 @@
 .cover h2 { font-family: var(--font-display); font-weight: 400; font-size: 40px; line-height: .98; color: var(--paper); -webkit-text-stroke: 9px var(--ink); paint-order: stroke fill; }
 .cover p { margin-top: 10px; font-size: 24px; font-weight: 900; background: var(--paper); border: 4px solid var(--ink); border-radius: 12px; padding: 4px 12px; display: inline-block; }
 .cover p.need { background: var(--tomato); color: var(--white); }
+/* Four games side by side: slimmer covers, smaller type. */
+.picker.four { gap: 22px; }
+.picker.four .cover h2 { font-size: 32px; -webkit-text-stroke: 8px var(--ink); }
+.picker.four .cover p { font-size: 19px; padding: 3px 10px; }
+.picker.four .cover .title { left: 16px; right: 16px; }
+.picker.five { gap: 18px; }
+.picker.five .cover h2 { font-size: 28px; -webkit-text-stroke: 7px var(--ink); }
+.picker.five .cover p { font-size: 17px; }
+.picker.five .cover .issue { font-size: 17px; }
 .last-game { font-size: 26px; color: var(--ink-soft); }
 
 /* ---------- shared game pieces ---------- */

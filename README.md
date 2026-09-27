@@ -32,6 +32,7 @@ Made with [brag](https://github.com/latent-spaces/brag)'s lightweight `brag-slim
 
 | Change | What it means on game night |
 | --- | --- |
+| **Home Turf** | The property game on the crew's own places. Buy, auction, build and trade from your phone. A game clock ends it in 30 to 90 minutes, and the richest wins. |
 | **Write It Down** | Type your team's answer with no multiple-choice hints. Close spelling counts. Play it inside Brain Drain or as its own pub quiz. |
 | **A bigger question bank** | 302 multiple-choice questions, 62 Ballpark numbers and 23 Pick a Side sets. |
 | **Questions remembered between nights** | The Mac launcher saves played questions, so the next party starts with fresh material. Exhausted packs recycle older questions on a later night. |
@@ -157,6 +158,35 @@ truth among the fakes. Fool a friend for points; find the truth for more.
 
 **Drunk Blackjack.** The dealer rotates round the room. Everyone else bets sips or a shot against this hand's
 dealer, and the dealer plays their own hand from their phone. If the dealer busts, they drink every bet on the table.
+
+**Home Turf.** Buy your friends' places and charge them rent, with the real property-game rules sped up for a party:
+
+- **Turns:** roll on your phone. Buy what you land on, or pass it to a live auction on every phone, where each bid
+  resets the clock. The speed die kicks in once you've passed Payday.
+- **Sets, hotels and trades:** a full colour set doubles the rent, three houses make a hotel, and trades (places,
+  cash and Get Out cards) are built, countered and accepted on the phones while the TV shows the deal.
+- **Solo or teams:** play solo up to 6, or in teams with a rotating dice-holder.
+- **The clock:** when it runs out, everyone finishes the lap and the richest wins (cash, plus places at their price,
+  plus buildings at cost).
+- **Drinks:** rent, Timeout and bankruptcy come with drink calls; the lobby can switch them off.
+- **Controls:** on the TV lobby, ↑/↓ sets the game clock and T switches between Auto, Solo and Teams.
+
+<p align="center">
+  <img src="docs/media/turf-board.png" alt="Home Turf: the crew's places around the board, players' cash on the side rails, dice in the middle" width="49%">
+  <img src="docs/media/turf-auction.png" alt="Home Turf auction: the place on offer, the top bid on an LED readout and who's leading" width="49%">
+</p>
+
+### Rename the board
+
+The spaces are named after the crew's places. To rename them, edit
+[`tv/engine/src/main/resources/turf/board.json`](tv/engine/src/main/resources/turf/board.json):
+
+- **What you can change:** each space has a `name` (≤ 24 characters) and a TV `label` (≤ 22). The deck names and the
+  card text are in the same file, and `{space:N}` in a card is replaced by that space's name.
+- **What stays fixed:** prices and rents are the standard values, keyed by board position in `TurfBoard.kt`, so a
+  rename can't break the economy.
+- **Applying edits:** the launcher rebuilds on every start. A test checks the file (40 spaces, lengths,
+  placeholders) if you run `./gradlew :engine:test`.
 
 <p align="center">
   <img src="docs/media/bluff-reveal.png" alt="Bluff Battle: a fake answer stamped FAKE! with who wrote it and who fell for it" width="49%">

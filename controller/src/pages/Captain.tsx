@@ -1,23 +1,33 @@
 import { useState } from 'react'
-import type { GameListing, HostCommand, PhoneState } from '../protocol'
+import type { GameListing, HostCommand, OptionKey, PhoneState } from '../protocol'
 import { Face } from '../theme/Face'
 import { Crown } from '../tv/toon'
+import { isTrivia } from '../tv/types'
 
 const buzz = (ms: number | number[]) => { try { navigator.vibrate?.(ms) } catch { /* not supported */ } }
 const TEAM_CHOICES = [0, 2, 3, 4, 5, 6]
+/** Home Turf: game clock in minutes (0 = no limit) and play modes. */
+const TURF_MINUTES = [30, 45, 60, 90, 0]
+const TURF_MODES = ['Auto', 'Solo', 'Teams']
 
 /** Lobby settings as the server holds them (the TV shows the same values). */
 function settingsOf(view: PhoneState) {
   const s = view.settings ?? {}
-  return { rounds: s.rounds ?? 5, teams: s.teams ?? 0, drinks: (s.drinks ?? 1) === 1, game: s.game ?? 0 }
+  return {
+    rounds: s.rounds ?? 5, teams: s.teams ?? 0, drinks: (s.drinks ?? 1) === 1, game: s.game ?? 0,
+    turfMode: s.turfMode ?? 0, minutes: s.minutes ?? 45,
+  }
 }
 
 /** The captain's lobby: pick the game and its settings, then start it. Everything shows up live on the TV. */
 export function CaptainLobby({ view, games, host }: { view: PhoneState; games: GameListing[]; host(c: HostCommand): void }) {
   const s = settingsOf(view)
   const game = games[Math.min(s.game, Math.max(0, games.length - 1))]
-  const trivia = game?.id === 'trivia'
-  const set = (key: 'rounds' | 'teams' | 'drinks' | 'game', value: number) => { buzz(12); host({ t: 'setOption', key, value }) }
+  const trivia = isTrivia(game?.id)
+  const turf = game?.id === 'turf'
+  const set = (key: OptionKey, value: number) => { buzz(12); host({ t: 'setOption', key, value }) }
+  const minuteAt = Math.max(0, TURF_MINUTES.indexOf(s.minutes))
+  const teamAt = Math.max(1, TEAM_CHOICES.indexOf(s.teams))
   return (
     <div className="captain stack">
       <div className="captain-head">
@@ -34,6 +44,18 @@ export function CaptainLobby({ view, games, host }: { view: PhoneState; games: G
       <div className="settings-card">
         {game?.id === 'blackjack'
           ? <div className="setting-row"><span>Everyone deals once</span><b>1 hand each</b></div>
+          : turf ? (
+            <>
+              <Stepper label="Play" value={TURF_MODES[s.turfMode] ?? 'Auto'}
+                onDown={() => set('turfMode', (s.turfMode + 2) % 3)} onUp={() => set('turfMode', (s.turfMode + 1) % 3)} />
+              {s.turfMode === 2 && (
+                <Stepper label="Teams" value={s.teams >= 2 ? String(s.teams) : 'Auto'}
+                  onDown={() => set('teams', TEAM_CHOICES[Math.max(0, teamAt - 1)])} onUp={() => set('teams', TEAM_CHOICES[Math.min(TEAM_CHOICES.length - 1, teamAt + 1)])} />
+              )}
+              <Stepper label="Game clock" value={s.minutes === 0 ? 'No limit' : `${s.minutes} min`}
+                onDown={() => set('minutes', TURF_MINUTES[Math.max(0, minuteAt - 1)])} onUp={() => set('minutes', TURF_MINUTES[Math.min(TURF_MINUTES.length - 1, minuteAt + 1)])} />
+            </>
+          )
           : <Stepper label={trivia ? 'Questions per round' : 'Rounds'} value={String(s.rounds)}
               onDown={() => set('rounds', Math.max(3, s.rounds - 1))} onUp={() => set('rounds', Math.min(8, s.rounds + 1))} />}
         {trivia && (
@@ -41,7 +63,7 @@ export function CaptainLobby({ view, games, host }: { view: PhoneState; games: G
             onDown={() => set('teams', TEAM_CHOICES[Math.max(0, TEAM_CHOICES.indexOf(s.teams) - 1)])}
             onUp={() => set('teams', TEAM_CHOICES[Math.min(TEAM_CHOICES.length - 1, TEAM_CHOICES.indexOf(s.teams) + 1)])} />
         )}
-        {trivia && (
+        {(trivia || turf) && (
           <div className="setting-row">
             <span>Drink calls</span>
             <button className={`toggle ${s.drinks ? 'on' : ''}`} role="switch" aria-checked={s.drinks} onClick={() => set('drinks', s.drinks ? 0 : 1)}>{s.drinks ? 'On' : 'Off'}</button>
@@ -92,7 +114,8 @@ function PassCrown({ view, host }: { view: PhoneState; host(c: HostCommand): voi
 
 /** Brain Drain's Team Up is on this phone: it's picking or naming a team. */
 export const inTeamUp = (view: PhoneState) =>
-  (view.screen.t === 'choice' && view.screen.kind === 'team') || (view.screen.t === 'text' && view.screen.kind === 'teamName')
+  (view.screen.t === 'choice' && view.screen.kind === 'team') || (view.screen.t === 'text' && view.screen.kind === 'teamName') ||
+  (view.screen.t === 'turf' && view.screen.prompt.kind === 'teamup')
 
 const shuffle = (host: (c: HostCommand) => void) => { buzz([20, 40, 20]); host({ t: 'gameAction', action: 'shuffle' }) }
 

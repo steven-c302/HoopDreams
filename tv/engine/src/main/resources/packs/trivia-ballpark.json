@@ -323,5 +323,164 @@
   "prompt": "How many main islands make up Hawaii?",
   "answer": 8,
   "unit": "islands"
+ },
+ {
+  "id": "tbp043",
+  "category": "Places",
+  "prompt": "How tall is the Burj Khalifa, in feet?",
+  "answer": 2717,
+  "unit": "feet",
+  "fact": "It's 828 meters: the tallest building in the world."
+ },
+ {
+  "id": "tbp044",
+  "category": "History",
+  "prompt": "In what year was the Eiffel Tower finished?",
+  "answer": 1889,
+  "fact": "It was built for the 1889 World's Fair in Paris.",
+  "year": true
+ },
+ {
+  "id": "tbp045",
+  "category": "World",
+  "prompt": "How many countries are in Africa?",
+  "answer": 54,
+  "unit": "countries",
+  "fact": "The newest is South Sudan, independent since 2011."
+ },
+ {
+  "id": "tbp046",
+  "category": "Animals",
+  "prompt": "How many bones are in a giraffe's neck?",
+  "answer": 7,
+  "unit": "bones",
+  "fact": "The same number as in yours: they're just much longer."
+ },
+ {
+  "id": "tbp047",
+  "category": "Screen Time",
+  "prompt": "How many episodes of The Office (US) were made?",
+  "answer": 201,
+  "unit": "episodes",
+  "fact": "It ran for nine seasons, from 2005 to 2013."
+ },
+ {
+  "id": "tbp048",
+  "category": "Sports",
+  "prompt": "How long is an Olympic swimming pool, in meters?",
+  "answer": 50,
+  "unit": "meters",
+  "fact": "It holds about 2.5 million liters of water."
+ },
+ {
+  "id": "tbp049",
+  "category": "Screen Time",
+  "prompt": "How many official James Bond films were made through No Time to Die (2021)?",
+  "answer": 25,
+  "unit": "films",
+  "fact": "Roger Moore made the most official Bond films: seven."
+ },
+ {
+  "id": "tbp050",
+  "category": "History",
+  "prompt": "In what year was the US Declaration of Independence adopted?",
+  "answer": 1776,
+  "fact": "It was adopted on July 4 in Philadelphia.",
+  "year": true
+ },
+ {
+  "id": "tbp051",
+  "category": "Games",
+  "prompt": "How many cards are in a standard deck, without jokers?",
+  "answer": 52,
+  "unit": "cards",
+  "fact": "Four suits of 13."
+ },
+ {
+  "id": "tbp052",
+  "category": "History",
+  "prompt": "In what year did the Wright brothers make the first powered flight?",
+  "answer": 1903,
+  "fact": "The first flight lasted 12 seconds, at Kitty Hawk, North Carolina.",
+  "year": true
+ },
+ {
+  "id": "tbp053",
+  "category": "World",
+  "prompt": "Joe Biden was which number US president?",
+  "answer": 46,
+  "fact": "Grover Cleveland counts twice, as the 22nd and 24th."
+ },
+ {
+  "id": "tbp054",
+  "category": "World",
+  "prompt": "How many stripes are on the US flag?",
+  "answer": 13,
+  "unit": "stripes",
+  "fact": "One for each of the original 13 colonies."
+ },
+ {
+  "id": "tbp055",
+  "category": "Games",
+  "prompt": "How many colored stickers are on a standard Rubik's Cube?",
+  "answer": 54,
+  "unit": "stickers",
+  "fact": "Nine on each of its six faces."
+ },
+ {
+  "id": "tbp056",
+  "category": "Places",
+  "prompt": "How tall is the Empire State Building to its tip, in feet?",
+  "answer": 1454,
+  "unit": "feet",
+  "fact": "It was the world's tallest building for nearly 40 years."
+ },
+ {
+  "id": "tbp057",
+  "category": "Screen Time",
+  "prompt": "In what year did the first Star Wars movie come out?",
+  "answer": 1977,
+  "fact": "It opened in May 1977.",
+  "year": true
+ },
+ {
+  "id": "tbp058",
+  "category": "World",
+  "prompt": "What was the US population in the 2020 census, in millions?",
+  "answer": 331,
+  "unit": "million",
+  "fact": "The next census is in 2030."
+ },
+ {
+  "id": "tbp059",
+  "category": "History",
+  "prompt": "How many years did the Hundred Years' War actually last?",
+  "answer": 116,
+  "unit": "years",
+  "fact": "It ran from 1337 to 1453."
+ },
+ {
+  "id": "tbp060",
+  "category": "Sports",
+  "prompt": "How many minutes is a soccer match, not counting stoppage time?",
+  "answer": 90,
+  "unit": "minutes",
+  "fact": "Two halves of 45 minutes."
+ },
+ {
+  "id": "tbp061",
+  "category": "Science",
+  "prompt": "How many seconds are in an hour?",
+  "answer": 3600,
+  "unit": "seconds",
+  "fact": "60 minutes of 60 seconds."
+ },
+ {
+  "id": "tbp062",
+  "category": "Places",
+  "prompt": "About how long is the Nile, in miles?",
+  "answer": 4132,
+  "unit": "miles",
+  "fact": "About 6,650 km, ending in the Mediterranean."
  }
 ]
