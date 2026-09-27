@@ -11,6 +11,7 @@ import { BluffStage } from './BluffStage'
 import { Gallery } from './Gallery'
 import { TriviaStage } from './TriviaStage'
 import { useCueDirector, useDeadline } from './director'
+import { nowPlaying, useSpotify } from './spotify'
 import { Paused } from './Shared'
 import { SuitSprite } from './Suits'
 import { AvatarFace, Brainy, Burst, C, Crown, Keycap, Panel, Pop, Scene, Slam } from './toon'
@@ -79,6 +80,7 @@ function Show({ session }: { session: TvSession }) {
   const [mix, setMixState] = useState<Mix>(loadMix)
   const [idle, setIdle] = useState(false)
   const conn = useRef<Connection | null>(null)
+  const spotify = useSpotify(mix.spotify || overlay)
 
   useEffect(() => { fetch('/api/games').then((r) => r.json()).then(setGames).catch(() => setGames([])) }, [])
   useEffect(() => {
@@ -126,10 +128,12 @@ function Show({ session }: { session: TvSession }) {
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (!live) { if (e.key === 'Enter' || e.key === ' ') goLive(); return }
+      // A focused button (the GO LIVE gate) already clicks on Enter/Space; going live twice doubles the intro sting.
+      if (!live) { if ((e.key === 'Enter' || e.key === ' ') && !(e.target instanceof HTMLButtonElement)) goLive(); return }
       if (e.key === 'Escape' || e.key === 'Backspace') { setOverlay((o) => { sfx[o ? 'back' : 'select'](); return !o }); e.preventDefault() }
       else if (e.key.toLowerCase() === 'f') document.documentElement.requestFullscreen?.().catch(() => undefined)
       else if (e.key.toLowerCase() === 'm') { const m = { ...mix, on: !mix.on }; setMix(m); setMixState(m) }
+      else if (e.key.toLowerCase() === 'n' && mix.spotify) void spotify.send('next')
       else if (e.key.toLowerCase() === 'p' && stage) cmd({ t: stage.paused ? 'resume' : 'pause' })
       else if (e.key.toLowerCase() === 's' && (stage?.game as { phase?: string } | undefined)?.phase === 'teamup') { cmd({ t: 'gameAction', action: 'shuffle' }); sfx.select() }
     }
@@ -138,6 +142,13 @@ function Show({ session }: { session: TvSession }) {
   })
 
   const updateMix = (m: Mix) => { setMix(m); setMixState(m) }
+  // Spotify takes over from the score: start it playing when switched on, pause it when the score comes back.
+  const toggleSpotify = () => {
+    const on = !mix.spotify
+    updateMix({ ...mix, spotify: on })
+    void spotify.send(on ? 'play' : 'pause')
+  }
+  const playing = mix.spotify ? nowPlaying(spotify.status) : null
 
   return (
     <div style={{ position: 'absolute', inset: 0, cursor: idle && !overlay ? 'none' : 'default' }}>
@@ -152,7 +163,7 @@ function Show({ session }: { session: TvSession }) {
               {stage.paused && <Paused reason={stage.pauseReason} />}
             </>
           ) : (
-            <LobbyScreen tv={tv} session={session} games={games} lobby={lobby} setOption={setOption} onStart={start} />
+            <LobbyScreen tv={tv} session={session} games={games} lobby={lobby} setOption={setOption} onStart={start} keys={live && !overlay} />
           )}
         </motion.div>
       </AnimatePresence>
@@ -167,8 +178,15 @@ function Show({ session }: { session: TvSession }) {
           </button>
         </div>
       )}
-      {overlay && tv && <HostOverlay tv={tv} cmd={cmd} mix={mix} setMix={updateMix} lobby={lobby} setOption={setOption} onClose={() => setOverlay(false)} />}
-      {live && !overlay && <div className="hint"><Keycap label="Esc" /> host <Keycap label="P" /> pause <Keycap label="M" /> mute <Keycap label="F" /> full screen</div>}
+      {overlay && tv && <HostOverlay tv={tv} cmd={cmd} mix={mix} setMix={updateMix} lobby={lobby} setOption={setOption} onClose={() => setOverlay(false)}
+        spotify={spotify} toggleSpotify={toggleSpotify} />}
+      {live && !overlay && (
+        // Keyed on the song, so the fading hint comes back for each new track.
+        <div className="hint" key={playing ?? 'hint'}>
+          {playing && <span className="now-playing"><b>ON SPOTIFY</b> {playing} <Keycap label="N" /> next</span>}
+          <Keycap label="Esc" /> host <Keycap label="P" /> pause <Keycap label="M" /> mute <Keycap label="F" /> full screen
+        </div>
+      )}
     </div>
   )
 }
@@ -179,8 +197,9 @@ function PartyLogo() {
 
 const TEAM_CHOICES = [0, 2, 3, 4, 5, 6]
 
-function LobbyScreen({ tv, session, games, lobby, setOption, onStart }: {
-  tv: TvState; session: TvSession; games: GameListing[]; lobby: Lobby; setOption: SetOption; onStart(g: GameListing): void
+/** [keys]: the lobby is in front, so the TV keyboard drives it (not while the GO LIVE gate or host controls are up). */
+function LobbyScreen({ tv, session, games, lobby, setOption, onStart, keys }: {
+  tv: TvState; session: TvSession; games: GameListing[]; lobby: Lobby; setOption: SetOption; onStart(g: GameListing): void; keys: boolean
 }) {
   const gamePlayers = tv.players.filter((p) => p.role === 'PLAYER')
   const online = gamePlayers.filter((p) => p.connected).length
@@ -196,11 +215,12 @@ function LobbyScreen({ tv, session, games, lobby, setOption, onStart }: {
   }, [session.joinUrl])
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
+      if (!keys) return
       const k = e.key.toLowerCase()
       if (e.key === 'ArrowRight') { setFocus(Math.min(games.length - 1, focus + 1)); sfx.focus() }
       else if (e.key === 'ArrowLeft') { setFocus(Math.max(0, focus - 1)); sfx.focus() }
-      else if (e.key === 'ArrowUp') { setOption('rounds', Math.min(8, lobby.rounds + 1)); sfx.focus() }
-      else if (e.key === 'ArrowDown') { setOption('rounds', Math.max(3, lobby.rounds - 1)); sfx.focus() }
+      else if (e.key === 'ArrowUp' && focused?.id !== 'blackjack') { setOption('rounds', Math.min(8, lobby.rounds + 1)); sfx.focus() }
+      else if (e.key === 'ArrowDown' && focused?.id !== 'blackjack') { setOption('rounds', Math.max(3, lobby.rounds - 1)); sfx.focus() }
       else if (k === 't' && trivia) { setOption('teams', TEAM_CHOICES[(TEAM_CHOICES.indexOf(lobby.teams) + 1) % TEAM_CHOICES.length] ?? 0); sfx.focus() }
       else if (k === 'd' && trivia) { setOption('drinks', lobby.drinks ? 0 : 1); sfx.focus() }
       else if (e.key === 'Enter' && focused) onStart(focused)
@@ -235,7 +255,9 @@ function LobbyScreen({ tv, session, games, lobby, setOption, onStart }: {
           {captain && <p className="crown-note"><Crown size={40} /><span><b>{captain.name}</b> has the crown and can run the show from their phone.</span></p>}
           {tv.lastResult && <p className="last-game">Last game: {tv.lastResult.title}. {tv.lastResult.highlights[0] ?? `Winner: ${tv.lastResult.standings[0]?.name ?? '-'}`}</p>}
           <div className="controls-row">
-            <span className="stepper"><Keycap label="↑" /><Keycap label="↓" /> {trivia ? 'Questions per round' : 'Rounds'} <b>{lobby.rounds}</b></span>
+            {focused?.id === 'blackjack'
+              ? <span className="stepper">Everyone deals once: <b>one hand per player</b></span>
+              : <span className="stepper"><Keycap label="↑" /><Keycap label="↓" /> {trivia ? 'Questions per round' : 'Rounds'} <b>{lobby.rounds}</b></span>}
             {trivia && <span className="stepper"><Keycap label="T" /> Teams <b>{lobby.teams === 0 ? 'AUTO' : lobby.teams}</b></span>}
             {trivia && <span className="stepper"><Keycap label="D" /> Drink calls <b>{lobby.drinks ? 'ON' : 'OFF'}</b></span>}
             <span style={{ flex: 1 }} />
@@ -329,8 +351,37 @@ function BrainyInline() {
   )
 }
 
-function HostOverlay({ tv, cmd, mix, setMix, lobby, setOption, onClose }: {
+/** Music under the show: the composed score, or Spotify on this Mac with play/pause/skip. */
+function SpotifyRow({ mix, spotify, toggle }: { mix: Mix; spotify: ReturnType<typeof useSpotify>; toggle(): void }) {
+  const s = spotify.status
+  if (s && !s.available) {
+    return <div className="row"><h2 style={{ fontSize: 32, flex: 1 }}>MUSIC</h2><span className="stepper">Install Spotify on this Mac to play it under the show</span></div>
+  }
+  const song = nowPlaying(s)
+  const note = spotify.failed
+    ? 'Spotify didn’t answer. If macOS asked to let “java” control Spotify, click OK, then try again.'
+    : !mix.spotify ? null : s?.running ? (song ?? 'Pick a playlist in Spotify') : 'Opening Spotify…'
+  return (
+    <div className="stack" style={{ gap: 12 }}>
+      <div className="row" style={{ flexWrap: 'wrap' }}>
+        <h2 style={{ fontSize: 32, flex: 1 }}>MUSIC</h2>
+        <button className={`tv-btn small ${mix.spotify ? '' : 'quiet'}`} onClick={toggle}>{mix.spotify ? 'SPOTIFY' : 'PARTY OS SCORE'}</button>
+      </div>
+      {mix.spotify && (
+        <div className="row" style={{ flexWrap: 'wrap' }}>
+          <button className="tv-btn small quiet" onClick={() => void spotify.send('previous')}>BACK</button>
+          <button className="tv-btn small" onClick={() => void spotify.send(s?.playing ? 'pause' : 'play')}>{s?.playing ? 'PAUSE' : 'PLAY'}</button>
+          <button className="tv-btn small quiet" onClick={() => void spotify.send('next')}>NEXT SONG</button>
+        </div>
+      )}
+      {note && <span className="stepper" style={{ fontSize: 24 }}>{note}</span>}
+    </div>
+  )
+}
+
+function HostOverlay({ tv, cmd, mix, setMix, lobby, setOption, onClose, spotify, toggleSpotify }: {
   tv: TvState; cmd(c: HostCommand): void; mix: Mix; setMix(m: Mix): void; lobby: Lobby; setOption: SetOption; onClose(): void
+  spotify: ReturnType<typeof useSpotify>; toggleSpotify(): void
 }) {
   const stage = tv.stage
   const [confirmEnd, setConfirmEnd] = useState(false)
@@ -354,9 +405,10 @@ function HostOverlay({ tv, cmd, mix, setMix, lobby, setOption, onClose }: {
           )}
           <div className="row" style={{ flexWrap: 'wrap', gap: 30 }}>
             <button className="tv-btn small" onClick={() => setMix({ ...mix, on: !mix.on })}>{mix.on ? 'SOUND ON' : 'SOUND OFF'}</button>
-            <label className="slider">Music <input type="range" min={0} max={1} step={0.05} value={mix.music} onChange={(e) => setMix({ ...mix, music: Number(e.target.value) })} /></label>
+            {!mix.spotify && <label className="slider">Music <input type="range" min={0} max={1} step={0.05} value={mix.music} onChange={(e) => setMix({ ...mix, music: Number(e.target.value) })} /></label>}
             <label className="slider">Effects <input type="range" min={0} max={1} step={0.05} value={mix.sfx} onChange={(e) => setMix({ ...mix, sfx: Number(e.target.value) })} /></label>
           </div>
+          <SpotifyRow mix={mix} spotify={spotify} toggle={toggleSpotify} />
           <div className="row" style={{ flexWrap: 'wrap' }}>
             <h2 style={{ fontSize: 32, flex: 1 }}>PHONE CONTROL</h2>
             <button className={`tv-btn small ${lobby.phones ? '' : 'quiet'}`} onClick={() => setOption('captain', lobby.phones ? 0 : 1)}>

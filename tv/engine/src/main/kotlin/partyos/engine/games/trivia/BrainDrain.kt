@@ -49,7 +49,15 @@ data class TTeam(
 
 /** A player's current vote. [at] is when they last changed it. */
 @Serializable
-data class TVote(val choice: String? = null, val number: Double? = null, val picks: List<String> = emptyList(), val locked: Boolean = false, val at: Long = 0)
+data class TVote(
+    val choice: String? = null,
+    val number: Double? = null,
+    val picks: List<String> = emptyList(),
+    val locked: Boolean = false,
+    val at: Long = 0,
+    /** Write It Down: what they typed. */
+    val text: String? = null,
+)
 
 @Serializable
 data class TOption(val id: String, val text: String, val fit: Boolean = false)
@@ -66,6 +74,8 @@ data class TriviaState(
     val qTotal: Int = 0,
     val perRound: Int = BrainDrain.DEFAULT_N,
     val drinks: Boolean = true,
+    /** This show's rounds, in play order (shuffled at the start). Older saved shows default to the fixed order. */
+    val order: List<String> = BrainDrain.LEGACY_ORDER,
     val teams: List<TTeam> = emptyList(),
     /** Players present when the show started; Team Up waits for each of them to tap a team. */
     val roster: List<PlayerId> = emptyList(),
@@ -111,14 +121,16 @@ data class PStats(
 )
 
 /**
- * BRAIN DRAIN: a team trivia show in five formats. Teams vote on their phones and the team's answer is the
- * plurality (numbers: the median). Quick Draw, Ballpark, Pick a Side and The Heist build a lead; The Gauntlet
- * turns that lead into a head start in a race, so a trailing team can still win the night.
+ * BRAIN DRAIN: a team trivia show in five formats, played in a random order. Teams vote on their phones and the
+ * team's answer is the plurality (numbers: the median; typed answers: the most-written one, typos of the right
+ * answer counting together). The most points wins. (The Gauntlet race is retired: old saved shows can still finish it.)
  */
 class BrainDrain(
     private val pack: TriviaPack = TriviaPack.core(),
     /** Live multiple-choice questions for when the bundled ones run out; null keeps the show fully offline. */
     private val feed: TriviaFeed? = null,
+    /** Deal the rounds in a random order each show (tests turn this off to play them in [FORMATS] order). */
+    private val shuffleRounds: Boolean = true,
 ) : GameModule<TriviaState> {
     override val info = GameInfo(
         id = "trivia",
@@ -129,7 +141,7 @@ class BrainDrain(
         tutorial = listOf(
             TutorialCard("Team up", "Tap a team colour on your phone. The first teammate to type a name names the team."),
             TutorialCard("Argue, then vote", "Everyone votes. Your team's answer is whatever most of you pick."),
-            TutorialCard("Five rounds", "Quick Draw, Ballpark, Pick a Side, The Heist, then The Gauntlet: a race for the win."),
+            TutorialCard("Five rounds, any order", "Quick Draw, Ballpark, Pick a Side, The Heist and Write It Down. Most points wins."),
         ),
         lateJoin = LateJoin.NEXT_ROUND,
     )
@@ -153,6 +165,7 @@ class BrainDrain(
             phase = TEAMUP,
             perRound = n,
             drinks = (ctx.settings["drinks"] ?: 1) != 0,
+            order = if (shuffleRounds) dealRounds(ctx.random) else FORMATS,
             teams = seedTeams(count, ctx),
             roster = ctx.players.map { it.id },
             startedAt = ctx.now,
@@ -196,6 +209,11 @@ class BrainDrain(
                         if (kind != "guess") throw Reject("NOT_NOW")
                         val v = payload["value"]?.jsonPrimitive?.doubleOrNull?.takeIf { it.isFinite() && abs(it) <= MAX_GUESS } ?: throw Reject("BAD_NUMBER")
                         TVote(number = v, at = ctx.now)
+                    }
+                    WRITE -> {
+                        if (kind != "write") throw Reject("NOT_NOW")
+                        val text = cleanText(str("text") ?: "", MAX_WRITE) ?: throw Reject("BAD_TEXT")
+                        if (prev?.text == text) prev else TVote(text = text, at = ctx.now)
                     }
                     GAUNTLET -> {
                         if (kind != "multi") throw Reject("NOT_NOW")
@@ -281,8 +299,8 @@ class BrainDrain(
     }
 
     private fun startRound(s0: TriviaState, round: Int, ctx: GameContext): Step<TriviaState> {
-        if (round > FORMATS.size) return podium(s0, ctx)
-        val format = FORMATS[round - 1]
+        if (round > s0.order.size) return podium(s0, ctx)
+        val format = s0.order[round - 1]
         var s = s0.copy(
             phase = INTRO, format = format, round = round, q = 0, votes = emptyMap(), reveal = null, drink = null,
             heist = null, eliminated = emptyMap(), sidesHistory = emptyList(), options = emptyList(), correct = emptyList(),
@@ -290,7 +308,7 @@ class BrainDrain(
         )
         val effects = mutableListOf<Effect>()
         when (format) {
-            QUICK -> s = s.copy(qTotal = s.perRound)
+            QUICK, WRITE -> s = s.copy(qTotal = s.perRound)
             BALLPARK, HEIST -> s = s.copy(qTotal = (s.perRound + 1) / 2)
             SIDES -> {
                 val set = pack.sides.filter { it.id !in ctx.usedContent }.randomOrNull(ctx.random)
@@ -318,17 +336,16 @@ class BrainDrain(
         val base = s0.copy(q = q, votes = emptyMap(), reveal = null, drink = null, heist = null, hostLine = null, live = null, teams = sync(s0.teams, ctx), startedAt = ctx.now)
         return when (s0.format) {
             QUICK, HEIST -> {
-                // Change the subject every question when the pack allows it.
-                val lastCategory = mcOf(s0)?.category
-                val unused = pack.mc.filter { it.id !in ctx.usedContent }
-                if (unused.size <= WARM_FEED_AT) feed?.warm()
-                // The bundled pack first; once it's used up, a live question if the feed has one ready.
-                val item = unused.filter { it.category != lastCategory }.ifEmpty { unused }.randomOrNull(ctx.random)
-                    ?: feed?.take(ctx.usedContent, lastCategory)?.takeIf { it.id !in mcById && TriviaPack.mcProblem(it) == null }
-                    ?: return endRound(s0, ctx)
+                val item = pickMc(s0, ctx) { true } ?: return endRound(s0, ctx)
                 val options = (item.wrong + item.answer).shuffled(ctx.random).mapIndexed { i, t -> TOption(LETTERS[i], t, t == item.answer) }
                 val live = item.takeIf { it.id !in mcById }
                 question(base.copy(itemId = item.id, live = live, options = options, correct = options.filter { it.fit }.map { it.id }), QUICK_MS, item.id)
+            }
+            WRITE -> {
+                // No options on screen: only questions that still make sense without them.
+                val item = pickMc(s0, ctx, ::writable) ?: return endRound(s0, ctx)
+                val live = item.takeIf { it.id !in mcById }
+                question(base.copy(itemId = item.id, live = live, options = emptyList(), correct = emptyList()), WRITE_MS, item.id)
             }
             BALLPARK -> {
                 val lastCategory = ballparkById[s0.itemId]?.category
@@ -355,6 +372,19 @@ class BrainDrain(
             }
             else -> endRound(s0, ctx)
         }
+    }
+
+    /**
+     * An unused multiple-choice question that passes [fits], changing the subject from the last one when the pack
+     * allows. The bundled pack comes first; once it's used up, a live question if the feed has one ready.
+     */
+    private fun pickMc(s0: TriviaState, ctx: GameContext, fits: (McItem) -> Boolean): McItem? {
+        val lastCategory = mcOf(s0)?.category
+        val unused = pack.mc.filter { it.id !in ctx.usedContent }
+        if (unused.size <= WARM_FEED_AT) feed?.warm()
+        val pool = unused.filter(fits)
+        return pool.filter { it.category != lastCategory }.ifEmpty { pool }.randomOrNull(ctx.random)
+            ?: feed?.take(ctx.usedContent, lastCategory)?.takeIf { it.id !in mcById && TriviaPack.mcProblem(it) == null && fits(it) }
     }
 
     private fun question(s: TriviaState, duration: Long, contentId: String?): Step<TriviaState> {
@@ -400,6 +430,17 @@ class BrainDrain(
                 } else {
                     line = verdictLine(ctx, rightTeams.map { nameOf(s, it.team) }, active.size)
                 }
+            }
+            WRITE -> {
+                val item = requireNotNull(mcOf(s))
+                answerText = item.answer
+                answers = active.map { t ->
+                    val w = teamWrite(t, s.votes, item.answer)
+                    val pts = if (w?.right == true) WRITE_POINTS else 0
+                    if (pts > 0) points[t.id] = pts
+                    TeamAnswer(t.id, text = w?.text, correct = w?.right == true, points = pts, seconds = w?.let { (it.at - s.startedAt) / 1000.0 })
+                }
+                line = verdictLine(ctx, answers.filter { it.correct }.map { nameOf(s, it.team) }, active.size)
             }
             BALLPARK -> {
                 val item = ballparkById.getValue(requireNotNull(s.itemId))
@@ -460,6 +501,8 @@ class BrainDrain(
     private fun tally(s: TriviaState, answer: Double?): Map<String, PStats> {
         val stats = s.stats.toMutableMap()
         for (t in s.teams.filter { it.members.isNotEmpty() }) {
+            val written = if (s.format == WRITE) mcOf(s)?.answer else null
+            val teamWritten = written?.let { teamWrite(t, s.votes, it) }
             val teamPick = if (s.format in setOf(QUICK, HEIST, SIDES)) plurality(t, s.votes)?.first else null
             val teamRight = teamPick != null && teamPick in s.correct
             val voters = t.members.filter { s.votes[it.v] != null }
@@ -475,6 +518,16 @@ class BrainDrain(
                             asked = was.asked + 1, answered = was.answered + 1, right = was.right + if (right) 1 else 0,
                             first = was.first + if (m == first) 1 else 0, rebel = was.rebel + if (rebel) 1 else 0,
                             rebelRight = was.rebelRight + if (rebel && right && !teamRight) 1 else 0,
+                        )
+                    }
+                    WRITE -> {
+                        val key = if (v.text != null && written != null) writeKey(v.text, written) else null
+                        val right = key == RIGHT_KEY
+                        val rebel = key != null && key != teamWritten?.key
+                        was.copy(
+                            asked = was.asked + 1, answered = was.answered + 1, right = was.right + if (right) 1 else 0,
+                            first = was.first + if (m == first) 1 else 0, rebel = was.rebel + if (rebel) 1 else 0,
+                            rebelRight = was.rebelRight + if (rebel && right && teamWritten?.right != true) 1 else 0,
                         )
                     }
                     BALLPARK -> {
@@ -612,8 +665,14 @@ class BrainDrain(
         val winner = order.firstOrNull()
         winner?.let { effects += Effect.Highlight("${it.name} won Brain Drain") }
         val finished = order.filter { it.position >= FINISH }
-        val losers = if (!raced) emptyList() else if (finished.isNotEmpty()) order - finished.toSet() else order.drop(1)
-        val drink = if (s.drinks && losers.isNotEmpty()) DrinkCall(losers.map { it.id }, 2, "didn't escape") else null
+        val low = active.minOfOrNull { it.score }
+        val drink = when {
+            !s.drinks -> null
+            // A points show: last place drinks two (nobody, if everyone tied).
+            !raced -> active.filter { it.score == low }.takeIf { it.size < active.size }?.let { DrinkCall(it.map { t -> t.id }, 2, "last place") }
+            else -> (if (finished.isNotEmpty()) order - finished.toSet() else order.drop(1))
+                .takeIf { it.isNotEmpty() }?.let { DrinkCall(it.map { t -> t.id }, 2, "didn't escape") }
+        }
         return Step(
             s.copy(
                 phase = PODIUM, teams = teams, podium = order.map { it.id }, drink = drink, reveal = null, heist = null,
@@ -646,7 +705,7 @@ class BrainDrain(
         val prompt = when {
             s.phase == TEAMUP -> "Team up!"
             live -> when (s.format) {
-                QUICK, HEIST -> mcOf(s)?.prompt
+                QUICK, HEIST, WRITE -> mcOf(s)?.prompt
                 BALLPARK -> ballparkById[s.itemId]?.prompt
                 SIDES -> sides?.items?.getOrNull(s.q - 1)?.text
                 GAUNTLET -> gauntletById[s.itemId]?.prompt
@@ -658,13 +717,13 @@ class BrainDrain(
             phase = s.phase,
             format = s.format,
             round = s.round,
-            totalRounds = FORMATS.size,
+            totalRounds = s.order.size,
             q = s.q,
             qTotal = s.qTotal,
             durationMs = s.durationMs,
             prompt = prompt,
             category = when (s.format) {
-                QUICK, HEIST -> mcOf(s)?.category
+                QUICK, HEIST, WRITE -> mcOf(s)?.category
                 BALLPARK -> ballparkById[s.itemId]?.category
                 SIDES -> sides?.prompt
                 else -> null
@@ -686,7 +745,7 @@ class BrainDrain(
             drink = s.drink,
             hostLine = s.hostLine,
             fact = if (showAnswer) factFor(s) else null,
-            credit = if (live && (s.format == QUICK || s.format == HEIST)) mcOf(s)?.source else null,
+            credit = if (live && s.format in setOf(QUICK, HEIST, WRITE)) mcOf(s)?.source else null,
             finishLine = FINISH,
             podium = s.podium,
             awards = if (s.phase == AWARDS) s.awards else emptyList(),
@@ -694,7 +753,7 @@ class BrainDrain(
     }
 
     private fun factFor(s: TriviaState): String? = when (s.format) {
-        QUICK, HEIST -> mcOf(s)?.fact
+        QUICK, HEIST, WRITE -> mcOf(s)?.fact
         BALLPARK -> ballparkById[s.itemId]?.fact
         else -> null
     }
@@ -743,6 +802,15 @@ class BrainDrain(
                         Screen.NumberEntry(
                             item.prompt, item.unit, mine?.number, "guess",
                             guesses = team.members.filter { it != who }.mapNotNull { id -> s.votes[id.v]?.number?.let { TeamGuess(id, it) } },
+                            team = tag,
+                        )
+                    }
+                    WRITE -> {
+                        val names = ctx.players.associate { it.id to it.name }
+                        val mates = team.members.filter { it != who }.mapNotNull { id -> s.votes[id.v]?.text?.let { "${names[id] ?: "?"}: $it" } }
+                        Screen.TextEntry(
+                            mcOf(s)?.prompt ?: "", MAX_WRITE, mine?.text, "write",
+                            hint = if (mates.isEmpty()) "Spelling doesn't need to be perfect" else "Team: " + mates.joinToString(" · "),
                             team = tag,
                         )
                     }
@@ -805,6 +873,11 @@ class BrainDrain(
                     if (a.points > 0) "win" else "lose", tag,
                 )
             }
+            WRITE -> when {
+                a.text == null -> Screen.Waiting("No answer", "It was ${r.answerText}", "lose", tag)
+                a.correct -> Screen.Waiting("Correct!", "“${a.text}” counts · +${a.points}", "win", tag)
+                else -> Screen.Waiting("Nope", "Your team wrote “${a.text}”. It was ${r.answerText}", "lose", tag)
+            }
             GAUNTLET -> {
                 val m = a.moved ?: 0
                 val title = if (m > 0) "Forward $m!" else if (m < 0) "Back ${-m}" else "Standing still"
@@ -842,6 +915,25 @@ class BrainDrain(
             .sortedWith(compareByDescending<Map.Entry<String, List<TVote>>> { it.value.size }.thenBy { e -> e.value.minOf { it.at } })
             .first()
         return best.key to best.value.minOf { it.at }
+    }
+
+    private data class WriteAnswer(val key: String, val text: String, val right: Boolean, val at: Long)
+
+    /** How one typed answer groups: every accepted spelling of the right answer is one group. */
+    private fun writeKey(text: String, answer: String) = if (AnswerMatch.accepts(text, answer)) RIGHT_KEY else AnswerMatch.key(text)
+
+    /**
+     * The team's written answer: the most-written one (typos of the right answer count together), ties to the one
+     * written first, shown as its first spelling. Null if nobody on the team typed anything.
+     */
+    private fun teamWrite(team: TTeam, votes: Map<String, TVote>, answer: String): WriteAnswer? {
+        val typed = team.members.mapNotNull { votes[it.v] }.filter { it.text != null }
+        if (typed.isEmpty()) return null
+        val best = typed.groupBy { writeKey(it.text!!, answer) }.entries
+            .sortedWith(compareByDescending<Map.Entry<String, List<TVote>>> { it.value.size }.thenBy { e -> e.value.minOf { it.at } })
+            .first()
+        val first = best.value.minBy { it.at }
+        return WriteAnswer(best.key, first.text!!, best.key == RIGHT_KEY, first.at)
     }
 
     /** Options picked by at least half of the teammates who answered. */
@@ -930,18 +1022,42 @@ class BrainDrain(
         const val BALLPARK = "ballpark"
         const val SIDES = "sides"
         const val HEIST = "heist"
+        /** Retired from the show: only a saved show from before the change can still reach it. */
         const val GAUNTLET = "gauntlet"
-        val FORMATS = listOf(QUICK, BALLPARK, SIDES, HEIST, GAUNTLET)
+        const val WRITE = "write"
+        /** Every show plays these five, in the order [dealRounds] deals them. */
+        val FORMATS = listOf(QUICK, BALLPARK, SIDES, HEIST, WRITE)
+        /** The fixed order shows were saved with before rounds were shuffled. */
+        val LEGACY_ORDER = listOf(QUICK, BALLPARK, SIDES, HEIST, GAUNTLET)
         private val LETTERS = listOf("a", "b", "c", "d")
+        /** Groups every accepted spelling of the right answer (typed keys are letters, digits and spaces only). */
+        private const val RIGHT_KEY = "✓"
 
-        val ROUND_TITLES = mapOf(QUICK to "Quick Draw", BALLPARK to "Ballpark", SIDES to "Pick a Side", HEIST to "The Heist", GAUNTLET to "The Gauntlet")
+        val ROUND_TITLES = mapOf(
+            QUICK to "Quick Draw", BALLPARK to "Ballpark", SIDES to "Pick a Side", HEIST to "The Heist", WRITE to "Write It Down", GAUNTLET to "The Gauntlet",
+        )
         val ROUND_RULES = mapOf(
             QUICK to "Four answers. Your team's top pick counts. Faster is worth more.",
             BALLPARK to "Guess the number. Your team's guess is the middle of everyone's. Closest wins.",
             SIDES to "Quick calls, five seconds each. Which side does it belong on?",
             HEIST to "Right answers win 500. The fastest team robs somebody.",
+            WRITE to "No options this time. Type the answer; your team's most-written one counts. Close spelling is fine.",
             GAUNTLET to "Pick every answer that fits. Right picks move you forward, wrong ones back. First to the finish wins.",
         )
+
+        /** The five rounds in a random order, never opening on The Heist (nobody has points to steal yet). */
+        fun dealRounds(random: kotlin.random.Random): List<String> {
+            val order = FORMATS.shuffled(random).toMutableList()
+            if (order.first() == HEIST) {
+                val swap = 1 + random.nextInt(order.size - 1)
+                order[0] = order[swap].also { order[swap] = HEIST }
+            }
+            return order
+        }
+
+        /** A multiple-choice question that still works with no options shown ("Which of these…" doesn't). */
+        fun writable(q: McItem) = q.answer.length <= MAX_WRITE_ANSWER && !OPTION_BOUND.containsMatchIn(q.prompt)
+        private val OPTION_BOUND = Regex("(?i)\\b(of these|the following|which one|not a|isn't a|can't|cannot)\\b|\\(not ")
 
         /** Team colours and default names, in order. */
         val TEAM_KIT = listOf(
@@ -965,6 +1081,10 @@ class BrainDrain(
         const val BULLSEYE_POINTS = 500
         const val BULLSEYE_TOLERANCE = 0.01
         const val SIDES_POINTS = 200
+        const val WRITE_POINTS = 1000
+        /** Longest typed answer a phone can send, and longest pack answer Write It Down will ask for. */
+        const val MAX_WRITE = 40
+        const val MAX_WRITE_ANSWER = 30
         const val HEIST_POINTS = 500
         const val STEAL_POINTS = 500
         const val FINISH = 10
@@ -982,6 +1102,7 @@ class BrainDrain(
         const val BALLPARK_MS = 35_000L
         const val SIDES_MS = 6_000L
         const val GAUNTLET_MS = 30_000L
+        const val WRITE_MS = 40_000L
         const val REVEAL_MS = 8_000L
         const val BALLPARK_REVEAL_MS = 9_000L
         const val SIDES_REVEAL_MS = 2_500L

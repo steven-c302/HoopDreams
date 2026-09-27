@@ -72,6 +72,20 @@
 .intro .host-says .bubble { font-size: 40px; max-width: 1200px; }
 
 /* ballpark */
+/* Write It Down reveal: the answer on the left, each team's written answer stamped on the right. */
+.write-reveal { flex: 1; display: flex; align-items: center; justify-content: center; gap: 60px; min-height: 0; }
+.write-answer { display: flex; flex-direction: column; gap: 6px; padding: 26px 44px; max-width: 760px; }
+.write-answer small { font-size: 26px; font-weight: 900; letter-spacing: 0.08em; color: var(--ink-soft); }
+.write-answer b { font-size: 72px; font-weight: 400; line-height: 1.05; overflow-wrap: anywhere; }
+.write-teams { display: flex; flex-direction: column; gap: 14px; min-width: 0; max-width: 860px; }
+.write-team { display: flex; align-items: center; gap: 16px; background: var(--paper); border: 5px solid var(--ink); border-radius: 18px; padding: 10px 16px; box-shadow: 5px 5px 0 var(--ink); }
+.write-team.wrong { opacity: 0.8; }
+.write-team .flag { flex: none; }
+.write-text { flex: 1; min-width: 0; font-size: 34px; font-weight: 900; overflow-wrap: anywhere; }
+.write-team.wrong .write-text { text-decoration: line-through; text-decoration-thickness: 4px; }
+.write-mark { flex: none; display: grid; place-items: center; width: 56px; height: 56px; border: 4px solid var(--ink); border-radius: 50%; background: var(--white); }
+.write-team.right .write-mark { background: var(--lime); }
+.write-team.wrong .write-mark { background: var(--tomato); }
 .ballpark-wait { flex: 1; display: flex; align-items: center; justify-content: center; gap: 80px; }
 .unit-card { display: flex; flex-direction: column; gap: 10px; padding: 34px 50px; font-size: 40px; }
 .unit-card b { font-size: 76px; font-weight: 400; }
@@ -122,8 +136,9 @@
 .g-option .mark { display: grid; place-items: center; width: 56px; height: 56px; border-radius: 50%; background: var(--white); border: 4px solid var(--ink); }
 .track { display: flex; flex-direction: column; gap: 16px; margin-top: 16px; }
 .track.compact { width: 1400px; gap: 8px; }
-.lane { display: grid; grid-template-columns: 250px 1fr; gap: 16px; align-items: center; }
-.lane-name { font-size: 32px; font-weight: 900; padding: 6px 14px; border: 5px solid var(--ink); border-radius: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; box-shadow: 4px 4px 0 var(--ink); }
+.lane { display: grid; grid-template-columns: 300px 1fr; gap: 16px; align-items: center; }
+/* Team names run to 20 characters: wrap to a second line rather than cut the pun off. */
+.lane-name { font-size: 28px; line-height: 1.05; font-weight: 900; padding: 6px 14px; border: 5px solid var(--ink); border-radius: 14px; overflow-wrap: anywhere; box-shadow: 4px 4px 0 var(--ink); }
 .lane-cells { position: relative; display: grid; gap: 8px; height: 96px; }
 .track.compact .lane-cells { height: 58px; }
 .lane-cells i { background: color-mix(in oklab, var(--paper) 85%, var(--team)); border: 4px solid var(--ink); border-radius: 12px; }

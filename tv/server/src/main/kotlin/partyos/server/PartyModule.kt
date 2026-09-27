@@ -26,6 +26,7 @@ import io.ktor.websocket.CloseReason
 import io.ktor.websocket.Frame
 import io.ktor.websocket.close
 import io.ktor.websocket.readText
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
@@ -46,7 +47,15 @@ data class ServerConfig(
     val maxFrameBytes: Long = 64 * 1024,
     val pinMaxFailures: Int = 5,
     val pinLockMs: Long = 60_000,
+    /** A music app the TV can steer (Spotify on the Mac running the show); null where there isn't one. */
+    val music: MusicPlayer? = null,
 )
+
+/** The caller is this machine (the browser TV), never a phone on the Wi-Fi. */
+private fun RoutingCall.fromLoopback(): Boolean {
+    val remote = request.origin.remoteAddress
+    return remote == "localhost" || runCatching { java.net.InetAddress.getByName(remote).isLoopbackAddress }.getOrDefault(false)
+}
 
 private const val MAX_BODY = 4_096L
 
@@ -119,12 +128,26 @@ fun Application.partyModule(host: PartyHost, static: StaticFiles, cfg: ServerCon
         // A browser TV running on the host machine (the Mac mirrored to a TV) gets host rights without a PIN.
         // Only loopback callers qualify, so phones on the Wi-Fi can never use it.
         get("/api/tv/session") {
-            val remote = call.request.origin.remoteAddress
-            val loopback = remote == "localhost" || runCatching { java.net.InetAddress.getByName(remote).isLoopbackAddress }.getOrDefault(false)
-            if (!loopback) return@get call.respond(HttpStatusCode.Forbidden, ErrorResponse("LOCAL_ONLY"))
+            if (!call.fromLoopback()) return@get call.respond(HttpStatusCode.Forbidden, ErrorResponse("LOCAL_ONLY"))
             val room = host.tv.value.roomCode
             val joinUrl = lanAddresses().firstOrNull()?.let { "http://$it:${call.request.local.localPort}/j/$room" }
             call.respond(TvSessionResponse(host.issueHostToken(), room, joinUrl))
+        }
+
+        // Music under the show (Spotify on the Mac). Like the TV session, only the machine running the show may steer it.
+        get("/api/music") {
+            if (!call.fromLoopback()) return@get call.respond(HttpStatusCode.Forbidden, ErrorResponse("LOCAL_ONLY"))
+            val player = cfg.music ?: return@get call.respond(MusicStatus(available = false))
+            call.respond(withContext(Dispatchers.IO) { player.status() })
+        }
+        post("/api/music/{cmd}") {
+            if (!call.fromLoopback()) return@post call.respond(HttpStatusCode.Forbidden, ErrorResponse("LOCAL_ONLY"))
+            val player = cfg.music ?: return@post call.respond(HttpStatusCode.NotFound, ErrorResponse("NO_MUSIC"))
+            val cmd = call.parameters["cmd"]?.takeIf { it in MusicPlayer.COMMANDS }
+                ?: return@post call.respond(HttpStatusCode.BadRequest, ErrorResponse("BAD_COMMAND"))
+            val ok = withContext(Dispatchers.IO) { player.command(cmd) }
+            if (!ok) return@post call.respond(HttpStatusCode.Conflict, ErrorResponse("MUSIC_FAILED"))
+            call.respond(withContext(Dispatchers.IO) { player.status() })
         }
 
         webSocket("/ws") {

@@ -8,10 +8,12 @@ let ctx: AudioContext | null = null
 let master: GainNode, sfxBus: GainNode, musicBus: GainNode, duckBus: GainNode
 let noiseBuf: AudioBuffer
 
-export interface Mix { on: boolean; music: number; sfx: number }
+/** [spotify]: Spotify on the Mac plays under the show instead of the score (effects still play). */
+export interface Mix { on: boolean; music: number; sfx: number; spotify: boolean }
 const KEY = 'partyos.tv.mix'
+const DEFAULT_MIX: Mix = { on: true, music: 0.6, sfx: 0.9, spotify: false }
 export function loadMix(): Mix {
-  try { return { on: true, music: 0.6, sfx: 0.9, ...JSON.parse(localStorage.getItem(KEY) ?? '{}') } } catch { return { on: true, music: 0.6, sfx: 0.9 } }
+  try { return { ...DEFAULT_MIX, ...JSON.parse(localStorage.getItem(KEY) ?? '{}') } } catch { return { ...DEFAULT_MIX } }
 }
 let mix = loadMix()
 
@@ -21,7 +23,7 @@ export function setMix(m: Mix) {
   if (!ctx) return
   const t = ctx.currentTime
   master.gain.setTargetAtTime(m.on ? 0.9 : 0, t, 0.05)
-  musicBus.gain.setTargetAtTime(m.music * 0.7, t, 0.05)
+  musicBus.gain.setTargetAtTime(m.spotify ? 0 : m.music * 0.7, t, 0.05)
   sfxBus.gain.setTargetAtTime(m.sfx, t, 0.05)
 }
 

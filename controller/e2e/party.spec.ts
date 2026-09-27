@@ -75,11 +75,21 @@ test('four phones team up and answer a Brain Drain question', async ({ browser }
     await p.getByRole('button', { name: 'Lock it in' }).click()
   }
 
-  // The round card, then a four-way question with shape buttons on every phone.
-  for (const p of phones) await expect(p.locator('.choices.shapes button')).toHaveCount(4, { timeout: 20_000 })
+  // The round card, then the first question. Rounds come in a random order, so answer whichever one it is.
   await expect(phones[1].locator('.team-band')).toHaveText('Quizzly Bears')
-  for (const p of phones) await p.locator('.choices.shapes button').first().click()
-  for (const p of phones) await expect(p.getByRole('heading', { name: /Correct!|Nope/ })).toBeVisible()
+  for (const p of phones) {
+    await expect(p.locator('.choices.shapes button, .choices.sides button, .numkey, textarea').first()).toBeVisible({ timeout: 20_000 })
+    if (await p.locator('textarea').count()) {
+      await p.locator('textarea').fill('Paris')
+      await p.getByRole('button', { name: 'Lock it in' }).click()
+    } else if (await p.locator('.numkey').count()) {
+      await p.getByRole('button', { name: '7', exact: true }).click()
+      await p.getByRole('button', { name: 'Send guess' }).click()
+    } else {
+      await p.locator('.choices.shapes button, .choices.sides button').first().click()
+    }
+  }
+  for (const p of phones) await expect(p.getByRole('heading', { name: /Correct!|Nope|Closest!|Off by|Bullseye!/ })).toBeVisible()
   await host.getByRole('button', { name: 'End game' }).click()
 })
 

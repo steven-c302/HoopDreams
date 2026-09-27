@@ -11,7 +11,7 @@ import kotlinx.serialization.Serializable
 data class TriviaTv(
     /** teamup | intro | question | reveal | victim | steal | standings | podium */
     val phase: String,
-    /** teamup | quick | ballpark | sides | heist | gauntlet */
+    /** teamup | quick | ballpark | sides | heist | write (gauntlet only in shows saved before it was retired) */
     val format: String,
     /** 1-based round number and the number of rounds in the show. */
     val round: Int,
@@ -87,6 +87,8 @@ data class TeamAnswer(
     val bullseye: Boolean = false,
     /** Seconds the team took (speed-bonus rounds). */
     val seconds: Double? = null,
+    /** Write It Down: the team's written answer, as first typed. */
+    val text: String? = null,
 )
 
 @Serializable

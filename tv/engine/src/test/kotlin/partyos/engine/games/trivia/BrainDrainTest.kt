@@ -16,6 +16,7 @@ import partyos.engine.TriviaTv
 import partyos.engine.add
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertIs
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
@@ -35,7 +36,7 @@ class BrainDrainTest {
     private lateinit var e: PartyEngine
     private var n = 0
 
-    private fun engine(game: BrainDrain = BrainDrain(pack)) = PartyEngine(clock, SeededEntropy(3), GameRegistry(listOf(game))).also { e = it }
+    private fun engine(game: BrainDrain = BrainDrain(pack, shuffleRounds = false)) = PartyEngine(clock, SeededEntropy(3), GameRegistry(listOf(game))).also { e = it }
 
     private fun startShow(teams: Int = 2, rounds: Int = 3) {
         assertEquals(ActionResult.Ack, e.host(HostCmd.StartGame("trivia", mapOf("rounds" to rounds, "teams" to teams, "drinks" to 1))))
@@ -74,7 +75,7 @@ class BrainDrainTest {
     private fun waiting(who: PlayerId) = assertIs<Screen.Waiting>(e.phoneState(who).screen)
 
     /** Four players, two named teams (A,B on T1; C,D on T2), now at the Quick Draw intro. */
-    private fun fourInTwoTeams(game: BrainDrain = BrainDrain(pack)): List<PlayerId> {
+    private fun fourInTwoTeams(game: BrainDrain = BrainDrain(pack, shuffleRounds = false)): List<PlayerId> {
         engine(game)
         val ids = listOf("A", "B", "C", "D").map { e.add(it) }
         startShow()
@@ -313,32 +314,83 @@ class BrainDrainTest {
         assertEquals("lose", waiting(ids[4]).tone)
     }
 
-    @Test fun theGauntletGivesHeadStartsCatchUpHelpAndAFinishLine() {
+    private fun write(who: PlayerId, text: String) = assertEquals(ActionResult.Ack, act(who, "write", "text" to text))
+
+    @Test fun writeItDownHidesTheOptionsAndForgivesTypos() {
+        val (a, b, c, d) = fourInTwoTeams()
+        while (tv.format != "write") e.host(HostCmd.SkipPhase)
+        assertEquals("intro", tv.phase)
+        e.host(HostCmd.SkipPhase)
+        assertEquals("question", tv.phase)
+        assertTrue(tv.options.isEmpty()) // nothing to pick from, on the TV or the phones
+        assertNull(tv.reveal)
+        val right = currentRight() // "Right N"
+        val entry = assertIs<Screen.TextEntry>(e.phoneState(a).screen)
+        assertEquals("write", entry.kind)
+        assertEquals(tv.prompt, entry.prompt)
+
+        // T1: a typo and a clean spelling are the same (right) answer. T2 splits 1-1 and c wrote first, wrongly.
+        write(a, right.replace("Right", "Rihgt")); clock.advance(500)
+        assertEquals("Team: A: ${right.replace("Right", "Rihgt")}", assertIs<Screen.TextEntry>(e.phoneState(b).screen).hint)
+        write(c, "Wrong"); clock.advance(500)
+        write(b, right.lowercase()); clock.advance(500)
+        write(d, right)
+        assertEquals("reveal", tv.phase)
+
+        val r = assertNotNull(tv.reveal)
+        assertEquals(right, r.answerText)
+        val t1 = r.answers.single { it.team == "T1" }
+        val t2 = r.answers.single { it.team == "T2" }
+        assertTrue(t1.correct); assertEquals(BrainDrain.WRITE_POINTS, t1.points); assertEquals(right.replace("Right", "Rihgt"), t1.text)
+        assertFalse(t2.correct); assertEquals(0, t2.points); assertEquals("Wrong", t2.text)
+        assertEquals("Correct!", waiting(a).title)
+        assertEquals("Nope", waiting(d).title)
+        assertEquals("Your team wrote “Wrong”. It was $right", waiting(d).detail)
+    }
+
+    @Test fun aNumberAnswerMustBeExactAndBlankAnswersAreRefused() {
+        val (a, _, _, _) = fourInTwoTeams()
+        while (tv.format != "write") e.host(HostCmd.SkipPhase)
+        e.host(HostCmd.SkipPhase)
+        assertEquals(ActionResult.Rejected("BAD_TEXT"), act(a, "write", "text" to "   "))
+        assertEquals(ActionResult.Rejected("BAD_TEXT"), act(a, "write", "text" to "x".repeat(BrainDrain.MAX_WRITE + 1)))
+        assertEquals(ActionResult.Rejected("NOT_NOW"), act(a, "answer", "option" to "a"))
+    }
+
+    @Test fun thePodiumRanksByPointsAndLastPlaceDrinks() {
         val (a, b, c, d) = fourInTwoTeams()
         e.host(HostCmd.SkipPhase)
-        answer(a, currentRight()); answer(b, currentRight()) // T1 takes the lead
-        while (tv.format != "gauntlet") e.host(HostCmd.SkipPhase)
-        assertEquals("intro", tv.phase)
-        assertEquals(3, tv.teams.single { it.id == "T1" }.position)
-        assertEquals(2, tv.teams.single { it.id == "T2" }.position)
-        e.host(HostCmd.SkipPhase) // → first prompt
-        // T2 trails, so its phones show the wrong option crossed out.
-        assertEquals(1, assertIs<Screen.MultiSelect>(e.phoneState(c).screen).eliminated.size)
-        assertTrue(assertIs<Screen.MultiSelect>(e.phoneState(a).screen).eliminated.isEmpty())
-        repeat(4) {
-            val fits = options(a).filter { it.text.startsWith("Fit") }.map { it.id }
-            listOf(a, b).forEach { assertEquals(ActionResult.Ack, act(it, "multi", "picks" to fits, "lock" to true)) }
-            val miss = options(c).first { it.text.startsWith("Miss") }.id
-            listOf(c, d).forEach { assertEquals(ActionResult.Ack, act(it, "multi", "picks" to listOf(miss), "lock" to true)) }
-            assertEquals("reveal", tv.phase)
+        // T2 gets the only points of the show.
+        answer(c, currentRight()); answer(d, currentRight())
+        answer(a, options(a).first { it.text != currentRight() }.text); answer(b, options(b).first { it.text != currentRight() }.text)
+        while (tv.phase != "podium") e.host(HostCmd.SkipPhase)
+        assertEquals(listOf("T2", "T1"), tv.podium)
+        assertTrue(score("T2") > score("T1"))
+        assertEquals(listOf("T1"), tv.drink?.teams)
+        assertEquals(2, tv.drink?.sips)
+        assertEquals("You won!", waiting(c).title)
+        assertEquals("2nd place", waiting(a).title)
+    }
+
+    @Test fun everyShowDealsAllFiveRoundsAndNeverOpensOnTheHeist() {
+        val orders = (1..400).map { BrainDrain.dealRounds(kotlin.random.Random(it)) }
+        assertTrue(orders.all { it.sorted() == BrainDrain.FORMATS.sorted() })
+        assertTrue(orders.none { it.first() == BrainDrain.HEIST })
+        assertTrue(orders.toSet().size > 50) // really shuffled
+        assertTrue(BrainDrain.FORMATS.filter { it != BrainDrain.HEIST }.all { f -> orders.count { it.first() == f } > 60 })
+    }
+
+    @Test fun aShuffledShowPlaysItsOwnOrderAndCountsItsRounds() {
+        engine(BrainDrain(pack))
+        repeat(4) { e.add("P$it") }
+        startShow()
+        val order = mutableListOf<String>()
+        while (e.tvState().stage != null && tv.phase != "podium") {
+            if (tv.phase == "intro") order += tv.format
+            assertEquals(5, tv.totalRounds)
             e.host(HostCmd.SkipPhase)
         }
-        // T1 moved +2 a prompt from 3 and crossed 10 on the fourth; T2's crossed-out pick never cost it a space.
-        assertEquals("podium", tv.phase)
-        assertEquals(listOf("T1", "T2"), tv.podium)
-        assertEquals(2, tv.teams.single { it.id == "T2" }.position)
-        assertEquals(listOf("T2"), tv.drink?.teams)
-        assertEquals("You won!", waiting(a).title)
+        assertEquals(BrainDrain.FORMATS.sorted(), order.sorted())
     }
 
     @Test fun lateJoinersGoToTheSmallestTeamAtTheNextQuestion() {
@@ -359,7 +411,7 @@ class BrainDrainTest {
         answer(ids[0], currentRight())
         val snap = e.snapshot()
         assertTrue(snap.memory.containsKey(BrainDrain.MEMORY_KEY))
-        val restored = PartyEngine.restore(snap, clock, SeededEntropy(9), GameRegistry(listOf(BrainDrain(pack))))
+        val restored = PartyEngine.restore(snap, clock, SeededEntropy(9), GameRegistry(listOf(BrainDrain(pack, shuffleRounds = false))))
         val game = restored.tvState().stage!!.game as TriviaTv
         assertEquals("question", game.phase)
         assertEquals(1, game.answered)
@@ -384,7 +436,7 @@ class BrainDrainTest {
 
     @Test fun liveQuestionsTakeOverOnceTheBundledOnesRunOutAndSurviveARestore() {
         val feed = FakeFeed((1..3).map(::liveItem))
-        val ids = fourInTwoTeams(BrainDrain(pack.copy(mc = pack.mc.take(1)), feed))
+        val ids = fourInTwoTeams(BrainDrain(pack.copy(mc = pack.mc.take(1)), feed, shuffleRounds = false))
         e.host(HostCmd.SkipPhase) // intro → the one bundled question
         assertEquals("Question 1?", tv.prompt)
         assertNull(tv.credit)
@@ -399,7 +451,7 @@ class BrainDrainTest {
         assertTrue("tlive-1" in e.snapshot().usedContent)
 
         // A restored show carries its live question with it: no feed needed.
-        val restored = PartyEngine.restore(e.snapshot(), clock, SeededEntropy(9), GameRegistry(listOf(BrainDrain(pack.copy(mc = pack.mc.take(1))))))
+        val restored = PartyEngine.restore(e.snapshot(), clock, SeededEntropy(9), GameRegistry(listOf(BrainDrain(pack.copy(mc = pack.mc.take(1)), shuffleRounds = false))))
         assertEquals("Live question 1?", (restored.tvState().stage!!.game as TriviaTv).prompt)
 
         ids.forEach { answer(it, "Live right 1") }
@@ -415,7 +467,7 @@ class BrainDrainTest {
     @Test fun withNoLiveQuestionReadyTheRoundJustEndsEarly() {
         val broken = liveItem(1).copy(wrong = listOf("Only one wrong answer"))
         for (feed in listOf(null, FakeFeed(emptyList()), FakeFeed(listOf(broken)))) {
-            val ids = fourInTwoTeams(BrainDrain(pack.copy(mc = pack.mc.take(1)), feed))
+            val ids = fourInTwoTeams(BrainDrain(pack.copy(mc = pack.mc.take(1)), feed, shuffleRounds = false))
             e.host(HostCmd.SkipPhase)
             ids.forEach { answer(it, "Right 1") }
             toNextQuestion()
@@ -427,7 +479,7 @@ class BrainDrainTest {
     @Test fun theBundledPackComesFirstAndTheFeedStaysColdWhileThereArePlenty() {
         val feed = FakeFeed((1..3).map(::liveItem))
         val big = pack.copy(mc = (1..40).map { McItem("tm$it", "Test", "Question $it?", "Right $it", listOf("Wrong A$it", "Wrong B$it", "Wrong C$it")) })
-        fourInTwoTeams(BrainDrain(big, feed))
+        fourInTwoTeams(BrainDrain(big, feed, shuffleRounds = false))
         e.host(HostCmd.SkipPhase)
         assertTrue(tv.prompt.startsWith("Question "))
         assertNull(tv.credit)

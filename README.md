@@ -26,10 +26,22 @@ brew install openjdk@17 node          # once
 Then double-click **`Start Party OS.command`** in this folder.
 
 1. It builds everything, starts the party server and keeps the Mac awake.
-2. The TV screen opens full screen in Chrome. Press **Enter** to go live with sound.
+2. The TV screen opens full screen in Chrome on the Mac's main display (so mirror the TV). If it shows **GO LIVE**,
+   press **Enter** for sound.
 3. Friends scan the QR code on the TV (same Wi-Fi), type a name and **draw their own face**.
 4. The first person to join gets the **crown**: they pick the game and start it from their phone, so nobody has to
    get up. The TV keyboard works too.
+5. To stop: press **Ctrl+C** in the Terminal window (or close it), and **Cmd+Q** closes the TV window.
+
+If something's off:
+
+- **Phones can't join:** they must be on the same Wi-Fi as the Mac, and guest networks usually block this. If macOS
+  asks whether `java` may accept incoming connections, click **Allow**.
+- **TV window on the wrong screen:** System Settings → Displays → mirror the TV. **No sound on the TV:** System
+  Settings → Sound → Output → the TV, and check PARTY OS isn't muted (**M** toggles it).
+- **"Port 8080 is already in use":** PARTY OS is already running in another Terminal window. Close that one first.
+- **Host PIN:** printed in the Terminal window. Open `/host` on your phone and enter it to pause, skip or remove
+  players without the Mac's keyboard.
 
 No friends yet? Rehearse with bots that join, team up, argue and vote like people do:
 
@@ -42,7 +54,8 @@ node controller/scripts/bots.mjs 12
 | ← → · Enter | pick a game · start it |
 | ↑ ↓ | questions per round (Brain Drain) or rounds (3–8) |
 | T · D | Brain Drain teams (auto, 2–6) · drink calls on/off |
-| Esc | host controls: pause, skip ahead, end, remove players, give the crown, phone control on/off, volume |
+| Esc | host controls: pause, skip ahead, end, remove players, give the crown, phone control on/off, volume, Spotify |
+| N | next song (when Spotify is playing) |
 | P · M · F | pause · mute · full screen |
 
 <p align="center"><img src="docs/media/lobby.png" alt="The lobby: QR code, every player's hand-drawn face, and the three games as comic-book covers" width="88%"></p>
@@ -50,7 +63,7 @@ node controller/scripts/bots.mjs 12
 ## Brain Drain: team trivia night
 
 Teams vote on their phones. **The team's answer is whatever most of them pick**, so the fun is arguing out loud
-before the buzzer. Five rounds, five different formats, one host: Brainy, a pink brain sipping through a bendy straw.
+before the buzzer. Five rounds, five different formats, dealt in a new order every show, one host: Brainy, a pink brain sipping through a bendy straw.
 
 | Round | How it works |
 | --- | --- |
@@ -58,26 +71,25 @@ before the buzzer. Five rounds, five different formats, one host: Brainy, a pink
 | **Ballpark** | Guess a number on a keypad. Your team's guess is the median of everyone's. Closest team wins; within 1% is a **bullseye**. |
 | **Pick a Side** | Seven rapid calls, five seconds each: *Pokémon or medication? Font or cheese? IKEA or Middle-earth?* |
 | **The Heist** | Right answers win 500. The fastest correct team votes on which team to rob. |
-| **The Gauntlet** | Select every answer that fits. Points only buy a head start in a race to the finish, and last place gets one wrong answer crossed out, so anyone can win. |
+| **Write It Down** | No options on screen: type the answer. Your team's most-written answer counts, and close spelling is fine ("Seatle", "da Vinci", "the river Seine"), but numbers must be exact and "red or blue" never counts. |
 
 <p align="center">
   <img src="docs/media/trivia-teamup.png" alt="Team Up: players tap a team colour and the first teammate to type a name names it" width="49%">
   <img src="docs/media/trivia-ballpark-reveal.png" alt="Ballpark reveal: team flags on a number line and the answer dropping like an anvil, with a BULLSEYE burst" width="49%">
   <img src="docs/media/trivia-sides-reveal.png" alt="Pick a Side: a split screen, each item snapping to its side" width="49%">
   <img src="docs/media/trivia-steal.png" alt="The Heist: a loot sack flies between teams, ROBBED! and a drink call for the victim" width="49%">
-  <img src="docs/media/trivia-gauntlet-reveal.png" alt="The Gauntlet: teams race along a ten-space track as answers are marked" width="49%">
   <img src="docs/media/trivia-podium.png" alt="The podium: the winning team's faces hop under a crown while confetti falls" width="49%">
 </p>
 
 - **Drink calls** (on by default, **D** turns them off): last place after each round drinks a sip, a Heist victim
-  drinks a sip, and teams that don't escape the Gauntlet drink two. Water counts.
+  drinks a sip, and the last-place team at the end drinks two. Water counts. The most points wins; The Heist never opens a show.
 - Teams carry over to the next show. Late arrivals join the smallest team at the next question.
 - **Shuffle:** friends always pile onto one team. During Team Up, press **S** on the TV (or tap "Shuffle evenly"
   on the captain's phone) to deal everyone evenly across the teams; names stay, everyone checks their new team.
 - **Awards:** after the podium, up to four shout-outs from how each person actually played: Big Brain, Fastest
   Thumb, Lone Wolf (went against their team and was right), Human Calculator, and roasts like Contrarian, Dead
   Weight and Ghost. Winners see theirs on their phone.
-- 183 multiple-choice questions, 42 Ballpark numbers, 16 Pick a Side sets and 32 Gauntlet prompts, all original,
+- 183 multiple-choice questions, 42 Ballpark numbers, 16 Pick a Side sets, all original,
   every one with a fun fact or a checkable answer. That's enough for two full shows without a repeat.
 - **Live fallback:** once the bundled multiple-choice questions run low, the server quietly fetches more from
   [Open Trivia DB](https://opentdb.com) (easy and medium only, anything too long for the TV dropped) and uses them
@@ -124,6 +136,9 @@ dealer, and the dealer plays their own hand from their phone. If the dealer bust
 - **Saturday Morning:** thick ink outlines, flat loud colour, halftone dots, comic bursts, hand-drawn faces instead
   of emoji. One token file ([`controller/src/theme/tokens.css`](controller/src/theme/tokens.css)) drives the TV
   and the phones. Fonts: Rammetto One for display, Figtree for reading.
+- **Spotify instead:** with the Spotify app on the Mac, press **Esc** on the TV → **Music** → **Spotify**. The score
+  goes quiet, Spotify starts playing (pick a playlist in Spotify first), the effects still play over it, and **N**
+  skips a song. The first time, macOS asks whether `java` may control Spotify: click **OK**.
 - **Music:** a composed cartoon big band score (120 BPM, F major) with a loop per round, a hurry-up bed for the last
   ten seconds and stingers that duck the music. Generate it once with ElevenLabs:
 

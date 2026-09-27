@@ -25,12 +25,13 @@ export function sipLabel(n: number): string {
   return [shots ? `${shots} SHOT${shots > 1 ? 'S' : ''}` : '', sips ? `${sips} SIP${sips > 1 ? 'S' : ''}` : ''].filter(Boolean).join(' + ') || '0 SIPS'
 }
 
-export type TriviaFormat = 'teamup' | 'quick' | 'ballpark' | 'sides' | 'heist' | 'gauntlet'
+/** 'gauntlet' only appears in a show saved before it was retired. */
+export type TriviaFormat = 'teamup' | 'quick' | 'ballpark' | 'sides' | 'heist' | 'write' | 'gauntlet'
 export type TriviaPhase = 'teamup' | 'intro' | 'question' | 'reveal' | 'victim' | 'steal' | 'standings' | 'podium' | 'awards'
 export interface TriviaTeam { id: string; name: string; color: string; members: string[]; score: number; answered: number; position: number; headStart: number }
 /** One end-of-show award. `line` never names the player; the TV shows their face and name. */
 export interface TriviaAward { title: string; player: string; line: string; roast?: boolean }
-export interface TeamAnswer { team: string; choice?: string; number?: number; picks: string[]; correct: boolean; points: number; rank?: number; moved?: number; bullseye: boolean; seconds?: number }
+export interface TeamAnswer { team: string; choice?: string; number?: number; picks: string[]; correct: boolean; points: number; rank?: number; moved?: number; bullseye: boolean; seconds?: number; text?: string }
 export interface TriviaTv {
   t: 'trivia'; phase: TriviaPhase; format: TriviaFormat; round: number; totalRounds: number; q: number; qTotal: number; durationMs?: number
   prompt: string; category?: string; options: { id: string; text: string }[]; unit?: string; teams: TriviaTeam[]; answered: number; expected: number
@@ -45,11 +46,14 @@ export interface TriviaTv {
   awards?: TriviaAward[]
 }
 
-export const ROUND_TITLES: Record<string, string> = { teamup: 'Team Up', quick: 'Quick Draw', ballpark: 'Ballpark', sides: 'Pick a Side', heist: 'The Heist', gauntlet: 'The Gauntlet' }
+export const ROUND_TITLES: Record<string, string> = {
+  teamup: 'Team Up', quick: 'Quick Draw', ballpark: 'Ballpark', sides: 'Pick a Side', heist: 'The Heist', write: 'Write It Down', gauntlet: 'The Gauntlet',
+}
 export const ROUND_RULES: Record<string, string> = {
   quick: "Four answers. Your team's top pick counts. Faster is worth more.",
   ballpark: "Guess the number. Your team's guess is the middle of everyone's. Closest wins.",
   sides: 'Quick calls, five seconds each. Which side does it belong on?',
   heist: 'Right answers win 500. The fastest team robs somebody.',
+  write: "No options this time. Type the answer; your team's most-written one counts. Close spelling is fine.",
   gauntlet: 'Pick every answer that fits. Right picks move you forward, wrong ones back. First to the finish wins.',
 }

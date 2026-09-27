@@ -305,7 +305,7 @@ class PartyEngine private constructor(
 
     private fun <S : Any> ctx(g: ActiveGame<S>) = GameContext(
         now = clock.now(),
-        random = Random(g.seed xor (g.phaseSeq.toLong() * -0x61c8864680b583ebL)),
+        random = Random(phaseSeed(g.seed, g.phaseSeq)),
         players = gamePlayers,
         scores = g.scores.toMap(),
         settings = g.settings,
@@ -421,6 +421,18 @@ class PartyEngine private constructor(
         private const val MAX_MEMORY_VALUE = 8_192
         private const val MAX_SETTLE = 16
         private const val ROOM_ALPHABET = "ABCDEFGHJKMNPQRSTUVWXYZ"
+
+        /**
+         * Each phase's own seed. Kotlin's Random only lightly mixes its seed, so nearby seeds give related first draws
+         * (answer shuffles that fall into patterns from one question to the next); SplitMix64's finaliser fully
+         * scrambles the game seed + phase number so every phase draws independently.
+         */
+        internal fun phaseSeed(seed: Long, phase: Int): Long {
+            var z = seed + phase.toLong() * -0x61c8864680b583ebL
+            z = (z xor (z ushr 30)) * -0x40a7b892e31b1a47L
+            z = (z xor (z ushr 27)) * -0x6b2fb644ecceee15L
+            return z xor (z ushr 31)
+        }
 
         private fun newRoomCode(entropy: Entropy) =
             (1..4).map { ROOM_ALPHABET[entropy.nextInt(ROOM_ALPHABET.length)] }.joinToString("")

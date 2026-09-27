@@ -19,7 +19,7 @@ function PinForm({ onToken }: { onToken(t: string): void }) {
     const r = await fetch('/api/host/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ pin }) })
     const body = await r.json().catch(() => ({}))
     if (r.ok) onToken(body.hostToken)
-    else setError(body.error === 'LOCKED' ? `Too many tries. Wait ${body.retryAfterSec}s.` : 'Wrong PIN. It is shown in the TV settings.')
+    else setError(body.error === 'LOCKED' ? `Too many tries. Wait ${body.retryAfterSec}s.` : "Wrong PIN. It's printed in the Terminal window on the Mac running the TV.")
   }
   return (
     <main className="page join">
@@ -38,7 +38,6 @@ function PinForm({ onToken }: { onToken(t: string): void }) {
 function HostPanel({ token, onLogout }: { token: string; onLogout(): void }) {
   const [tv, setTv] = useState<TvState | null>(null)
   const [games, setGames] = useState<GameListing[]>([])
-  const [rounds, setRounds] = useState(5)
   const [status, setStatus] = useState<Status>('connecting')
   const [toast, setToast] = useState<string | null>(null)
   const conn = useRef<Connection | null>(null)
@@ -68,6 +67,8 @@ function HostPanel({ token, onLogout }: { token: string; onLogout(): void }) {
   if (!tv) return <main className="page center"><div className="spinner" /><p>Connecting…</p></main>
   const stage = tv.stage
   const game = stage?.game as { phase?: string; round?: number; totalRounds?: number } | undefined
+  // Shared with the TV and the captain's phone, so all three always agree.
+  const rounds = tv.settings?.rounds ?? 5
 
   return (
     <main className="page host">
@@ -88,10 +89,10 @@ function HostPanel({ token, onLogout }: { token: string; onLogout(): void }) {
         <section className="panel stack">
           <h2>Start a game</h2>
           <label className="row between"><span>Rounds</span>
-            <select value={rounds} onChange={(e) => setRounds(Number(e.target.value))}>{[3, 4, 5, 6, 7, 8].map((n) => <option key={n}>{n}</option>)}</select>
+            <select value={rounds} onChange={(e) => cmd({ t: 'setOption', key: 'rounds', value: Number(e.target.value) })}>{[3, 4, 5, 6, 7, 8].map((n) => <option key={n}>{n}</option>)}</select>
           </label>
           {games.map((g) => (
-            <button key={g.id} className="primary game-btn" onClick={() => cmd({ t: 'start', gameId: g.id, rounds, options: {} })}>
+            <button key={g.id} className="primary game-btn" onClick={() => cmd({ t: 'start', gameId: g.id, options: {} })}>
               <b>{g.title}</b><span>{g.tagline} · {g.minPlayers}+ players</span>
             </button>
           ))}

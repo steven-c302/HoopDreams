@@ -30,8 +30,8 @@ function musicFor(tv: TvState): Mode {
       case 'standings': case 'awards': return 'standings'
       case 'podium': return 'podium'
       case 'victim': case 'steal': return 'heist'
-      case 'intro': return g.format === 'teamup' ? 'teamup' : (g.format as Mode)
-      default: return g.format === 'teamup' ? 'teamup' : (g.format as Mode)
+      // Write It Down plays the retired Gauntlet's cue.
+      default: return g.format === 'teamup' ? 'teamup' : g.format === 'write' ? 'gauntlet' : (g.format as Mode)
     }
   }
   switch (g.phase) {

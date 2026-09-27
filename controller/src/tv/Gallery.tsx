@@ -70,6 +70,13 @@ const BEATS: Record<string, TriviaTv> = {
   victim: { ...base, format: 'heist', phase: 'victim', durationMs: 12000, heist: { thief: 'T2', amount: 0 }, hostLine: 'Les Quizerables were fastest. Who are they robbing?' },
   steal: { ...base, format: 'heist', phase: 'steal', heist: { thief: 'T2', victim: 'T1', amount: 500 }, drink: { teams: ['T1'], sips: 1, reason: 'robbed' }, hostLine: 'Les Quizerables robbed Smarty Pints for 500.' },
   standings: { ...base, phase: 'standings', round: 2, drink: { teams: ['T3'], sips: 1, reason: 'last place' }, hostLine: 'Les Quizerables on top. For now.' },
+  'write-question': { ...base, format: 'write', q: 2, qTotal: 5, prompt: 'Which river runs through Paris?', category: 'Geography', options: [], durationMs: 40000 },
+  'write-reveal': { ...base, format: 'write', phase: 'reveal', q: 2, qTotal: 5, prompt: 'Which river runs through Paris?', category: 'Geography', options: [],
+    reveal: { correct: [], answerText: 'The Seine', answers: [
+      { team: 'T1', text: 'the sein', picks: [], correct: true, points: 1000, bullseye: false },
+      { team: 'T2', text: 'Thames', picks: [], correct: false, points: 0, bullseye: false },
+      { team: 'T3', picks: [], correct: false, points: 0, bullseye: false }] },
+    hostLine: 'Only Smarty Pints knew that.', fact: 'Paris has 37 bridges over the Seine.' },
   'gauntlet-question': { ...base, format: 'gauntlet', q: 3, qTotal: 8, prompt: 'Which of these are Mario Kart items?', category: undefined, durationMs: 30000,
     options: [{ id: 'a', text: 'Blue Shell' }, { id: 'b', text: 'Poké Ball' }, { id: 'c', text: 'Banana' }],
     teams: [team(0, 'Smarty Pints', '#FF4B3E', 4200, { position: 5 }), team(1, 'Les Quizerables', '#2F6BFF', 5400, { position: 7 }), team(2, 'Sip Happens', '#2FBF55', 3100, { position: 3 })] },

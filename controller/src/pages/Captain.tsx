@@ -32,8 +32,10 @@ export function CaptainLobby({ view, games, host }: { view: PhoneState; games: G
         ))}
       </div>
       <div className="settings-card">
-        <Stepper label={trivia ? 'Questions per round' : 'Rounds'} value={String(s.rounds)}
-          onDown={() => set('rounds', Math.max(3, s.rounds - 1))} onUp={() => set('rounds', Math.min(8, s.rounds + 1))} />
+        {game?.id === 'blackjack'
+          ? <div className="setting-row"><span>Everyone deals once</span><b>1 hand each</b></div>
+          : <Stepper label={trivia ? 'Questions per round' : 'Rounds'} value={String(s.rounds)}
+              onDown={() => set('rounds', Math.max(3, s.rounds - 1))} onUp={() => set('rounds', Math.min(8, s.rounds + 1))} />}
         {trivia && (
           <Stepper label="Teams" value={s.teams === 0 ? 'Auto' : String(s.teams)}
             onDown={() => set('teams', TEAM_CHOICES[Math.max(0, TEAM_CHOICES.indexOf(s.teams) - 1)])}

@@ -14,7 +14,7 @@ type Clock = { deadline: number | null; frozen: number | null }
 interface Props { stage: StageInfo; players: PlayerSummary[]; scores: ScoreRow[]; clock: Clock }
 type ById = Map<string, PlayerSummary>
 
-const SCENE: Record<string, string> = { teamup: C.sun, quick: C.sun, ballpark: C.sky, sides: C.paper, heist: C.lime, gauntlet: C.tomato }
+const SCENE: Record<string, string> = { teamup: C.sun, quick: C.sun, ballpark: C.sky, sides: C.paper, heist: C.lime, write: C.tangerine, gauntlet: C.tomato }
 const NO_DIM = new Set<string>()
 
 /** BRAIN DRAIN on the TV: one comic panel per beat, Brainy hosting, teams along the bottom. */
@@ -54,6 +54,7 @@ function Beat({ g, byId, clock }: { g: TriviaTv; byId: ById; clock: Clock }) {
     default:
       if (g.format === 'ballpark') return <Ballpark g={g} byId={byId} clock={clock} />
       if (g.format === 'sides') return <Sides g={g} byId={byId} clock={clock} />
+      if (g.format === 'write') return <Write g={g} byId={byId} clock={clock} />
       if (g.format === 'gauntlet') return <Gauntlet g={g} byId={byId} clock={clock} />
       return <Quick g={g} byId={byId} clock={clock} />
   }
@@ -340,6 +341,58 @@ function Anvil() {
       <path d="M10 14 H140 Q124 36 104 40 V62 H120 V90 H30 V62 H46 V40 Q26 36 10 14 Z" fill={C.inkSoft} stroke={C.ink} strokeWidth="6" strokeLinejoin="round" />
       <path d="M24 20 H120" stroke={C.paper} strokeWidth="4" strokeLinecap="round" opacity=".5" />
     </svg>
+  )
+}
+
+// ---------- write it down ----------
+
+/** No options: the question, then the real answer and what each team wrote, stamped right or wrong. */
+function Write({ g, byId, clock }: { g: TriviaTv; byId: ById; clock: Clock }) {
+  const revealed = g.phase === 'reveal' && !!g.reveal
+  useLater(revealed ? `w${g.round}-${g.q}` : null, 150, () => {
+    if (!revealed) return
+    const right = (g.reveal?.answers ?? []).filter((a) => a.correct).length
+    if (right > 0) { sfx.correct(); sfx.applause(1.6) } else { sfx.wrong(); sfx.ooh(2) }
+  })
+  return (
+    <>
+      <Header g={g} clock={clock} />
+      <Bubble tail="none" className={`q-bubble ${revealed ? 'small' : ''}`}>{g.prompt}</Bubble>
+      {!revealed ? (
+        <div className="ballpark-wait">
+          <Panel className="unit-card" fill={C.paper} tilt={-2}>
+            <span>Type the answer on your phone</span>
+            <b className="display">No options!</b>
+            <small>Your team's most-written answer counts. Close spelling is fine.</small>
+          </Panel>
+          <Brainy mood="smug" size={230} />
+        </div>
+      ) : (
+        <div className="write-reveal">
+          <Slam tilt={-3} from={1.8}>
+            <Panel className="write-answer" fill={C.white} tilt={-2}><small>THE ANSWER</small><b className="display">{g.reveal!.answerText}</b></Panel>
+          </Slam>
+          <div className="write-teams">
+            {g.teams.map((t, i) => {
+              const a = g.reveal!.answers.find((x) => x.team === t.id)
+              return (
+                <Deal key={t.id} i={i + 2}>
+                  <div className={`write-team ${a?.correct ? 'right' : 'wrong'}`}>
+                    <span className="flag" style={{ background: t.color, color: inkOn(t.color) }}>{t.name}</span>
+                    <span className="write-text">{a?.text ? `“${a.text}”` : 'No answer'}</span>
+                    <span className="write-mark">{a?.correct ? <Check /> : <Cross />}</span>
+                  </div>
+                </Deal>
+              )
+            })}
+          </div>
+        </div>
+      )}
+      <div className="trivia-foot">
+        {revealed ? <RevealTalk g={g} /> : <div />}
+        <TeamStrip g={g} byId={byId} deltas={revealed ? deltasOf(g) : undefined} />
+      </div>
+    </>
   )
 }
 
