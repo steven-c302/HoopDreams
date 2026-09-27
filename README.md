@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="docs/media/trivia-quick-reveal.png" alt="Brain Drain on the TV: a Quick Draw reveal with wrong answers scribbled out, team flags on their picks and Brainy the host reacting" width="100%">
+<a href="brag-output-2026-09-27-015402/brag.mp4"><img src="docs/media/party-os-crew-poster.jpg" alt="Watch PARTY OS: Amanda, Steven, John, Sunhye, Alex, Anna, Charlie, Daniel, Daniel, Ethan, Junha, Kaishun and Izzy — 13 friends, two Daniels, one game show" width="100%"></a>
 
 # PARTY OS
 
@@ -9,11 +9,35 @@
 A party game show for the living room, built for trivia night. The TV runs the show; up to 16 friends play in
 teams from their phone's browser. No app, no account, one double-click.
 
-[Quick start](#quick-start) · [Brain Drain](#brain-drain-team-trivia-night) · [The other games](#the-other-games) · [How it's built](#how-its-built)
+[Watch the video](#13-friends-two-daniels-one-game-show) · [What’s new](#whats-new) · [Quick start](#quick-start) · [Brain Drain](#brain-drain-team-trivia-night) · [The other games](#the-other-games) · [How it's built](#how-its-built)
 
 </div>
 
 ---
+
+## 13 friends. Two Daniels. One game show.
+
+**[▶ Watch the 24-second launch video](brag-output-2026-09-27-015402/brag.mp4)** — 1080p, with Party OS's own music,
+an animated roll call, real Quick Draw reveals, a Heist and the new Write It Down round.
+
+Starring **Amanda, Steven, John, Sunhye, Alex, Anna, Charlie, Daniel, Daniel, Ethan, Junha, Kaishun and Izzy**.
+Both Daniels get their own face and player ID. The video uses staged demo data rendered through the current game
+components; the names and results illustrate a party, rather than document a real match.
+
+Made with [brag](https://github.com/latent-spaces/brag)'s lightweight `brag-slim` workflow.
+[Poster](docs/media/party-os-crew-poster.jpg) · [Share caption](brag-output-2026-09-27-015402/share-copy.txt) ·
+[Storyboard](brag-output-2026-09-27-015402/brag-plan.md)
+
+## What's new
+
+| Change | What it means on game night |
+| --- | --- |
+| **Write It Down** | Type your team's answer with no multiple-choice hints. Close spelling counts. Play it inside Brain Drain or as its own pub quiz. |
+| **A bigger question bank** | 302 multiple-choice questions, 62 Ballpark numbers and 23 Pick a Side sets. |
+| **Questions remembered between nights** | The Mac launcher saves played questions, so the next party starts with fresh material. Exhausted packs recycle older questions on a later night. |
+| **Live trivia when the pack runs low** | Optional Open Trivia DB questions extend Quick Draw and The Heist; the bundled game works offline. |
+| **Shuffle and shout-outs** | Balance teams from the TV or captain's phone, then hand out awards based on how people played. |
+| **The crew cut** | A new launch video featuring all 13 requested players, using the current game screens and soundtrack. |
 
 ## Quick start
 
@@ -58,7 +82,7 @@ node controller/scripts/bots.mjs 12
 | N | next song (when Spotify is playing) |
 | P · M · F | pause · mute · full screen |
 
-<p align="center"><img src="docs/media/lobby.png" alt="The lobby: QR code, every player's hand-drawn face, and the three games as comic-book covers" width="88%"></p>
+<p align="center"><img src="docs/media/lobby.png" alt="The lobby: QR code, every player's hand-drawn face, and the games as comic-book covers" width="88%"></p>
 
 ## Brain Drain: team trivia night
 
@@ -89,8 +113,12 @@ before the buzzer. Five rounds, five different formats, dealt in a new order eve
 - **Awards:** after the podium, up to four shout-outs from how each person actually played: Big Brain, Fastest
   Thumb, Lone Wolf (went against their team and was right), Human Calculator, and roasts like Contrarian, Dead
   Weight and Ghost. Winners see theirs on their phone.
-- 183 multiple-choice questions, 42 Ballpark numbers, 16 Pick a Side sets, all original,
-  every one with a fun fact or a checkable answer. That's enough for two full shows without a repeat.
+- 302 multiple-choice questions, 62 Ballpark numbers, 23 Pick a Side sets, all original,
+  every one with a fun fact or a checkable answer. That's enough for about 20 full shows without a repeat, and
+  Pick a Side deals its calls in a new order every show.
+- **No repeats:** every question played is remembered in `~/Library/Application Support/PartyOS/played-questions.json`,
+  so later shows and later nights skip it. Nothing played tonight comes back tonight; once a pack is used up on a
+  later night, the questions played longest ago return. Delete that file to replay everything.
 - **Live fallback:** once the bundled multiple-choice questions run low, the server quietly fetches more from
   [Open Trivia DB](https://opentdb.com) (easy and medium only, anything too long for the TV dropped) and uses them
   for Quick Draw and The Heist after the bundled ones are gone. Live questions have no fun fact and show a small
@@ -119,6 +147,10 @@ teammates' faces show up on the answer they picked, and phones buzz on every tap
 refreshed or dropped phone rejoins as the same player.
 
 ## The other games
+
+**Write It Down.** Brain Drain's typed-answer round as a game of its own: a pub quiz in three rounds. No options on
+screen, everyone types the answer, and the team's most-written answer counts (close spelling is fine). Same teams,
+settings, standings, drink calls and awards as Brain Drain.
 
 **Bluff Battle.** Everyone gets a weird-but-true question and writes a fake answer. Then everyone hunts for the
 truth among the fakes. Fool a friend for points; find the truth for more.
