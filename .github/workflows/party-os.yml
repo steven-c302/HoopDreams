@@ -108,7 +108,8 @@ jobs:
       - name: Launch on an Android TV emulator and hit /healthz
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 34
+          # Google TV ships x86_64 images from API 36 (API 34 is x86 only); 36 is also the targetSdk.
+          api-level: 36
           target: google-tv
           arch: x86_64
           profile: tv_1080p
