@@ -20,6 +20,9 @@ export interface BlackjackTv {
 }
 
 /** Sips as people say them: 5 sips is a shot. */
+/** " · Ava + Ben on water" after a drink call, or nothing. */
+export const waterNote = (names: string[]) => (names.length ? ` · ${names.join(' + ')} on water` : '')
+
 export function sipLabel(n: number): string {
   const shots = Math.floor(n / 5), sips = n % 5
   return [shots ? `${shots} SHOT${shots > 1 ? 'S' : ''}` : '', sips ? `${sips} SIP${sips > 1 ? 'S' : ''}` : ''].filter(Boolean).join(' + ') || '0 SIPS'

@@ -3,13 +3,14 @@ import { useEffect, useMemo, useRef, useState, type CSSProperties } from 'react'
 import type { PlayerSummary, ScoreRow, StageInfo } from '../protocol'
 import { Face } from '../theme/Face'
 import { GameMark, Neighborhood } from '../theme/GameScene'
+import { useTimerScale } from './timerScale'
 import { sfx } from './audio'
 import { Led } from './Casino'
 import { GameHeader, Podium, Tutorial } from './Shared'
 import { Die, Piece, PIECE_NAMES } from './TurfArt'
 import { TurfBoard } from './TurfBoard'
 import { Burst, C, CountUp, Crown, Deal, Panel, Pop, Slam, Stamp, Timer, coinShower, fireConfetti, inkOn } from './toon'
-import type { TurfBeat, TurfTv } from './types'
+import { waterNote, type TurfBeat, type TurfTv } from './types'
 import './turf.css'
 
 type Clock = { deadline: number | null; frozen: number | null }
@@ -58,7 +59,7 @@ function podiumRows(g: TurfTv, players: PlayerSummary[]): ScoreRow[] {
 function Turf({ g, stage, players, clock }: { g: TurfTv; stage: StageInfo; players: PlayerSummary[]; clock: Clock }) {
   const people = useMemo(() => new Map(players.map((p) => [p.id, p])), [players])
   const { display, zoom } = useHops(g)
-  const flash = useFlashes(g)
+  const flash = useFlashes(g, people)
   useBeatSounds(g)
   const left = g.tokens.map((_, i) => i).filter((i) => i % 2 === 0)
   const right = g.tokens.map((_, i) => i).filter((i) => i % 2 === 1)
@@ -111,7 +112,7 @@ function useHops(g: TurfTv) {
 
 interface Flash { id: number; text: string; sub?: string; fill: string; ink?: string; ms: number; small?: boolean }
 
-function flashFor(b: TurfBeat, g: TurfTv): Flash | null {
+function flashFor(b: TurfBeat, g: TurfTv, people: Map<string, PlayerSummary>): Flash | null {
   const name = (i: number) => g.tokens[i]?.name ?? ''
   const alive = g.tokens.filter((t) => !t.bankrupt).length
   switch (b.kind) {
@@ -122,7 +123,9 @@ function flashFor(b: TurfBeat, g: TurfTv): Flash | null {
       const who = b.tokens.length > 1 && b.tokens.length >= alive - 1 && alive > 2
         ? `Everyone but ${name(g.tokens.findIndex((_, i) => !b.tokens.includes(i) && !g.tokens[i].bankrupt))}`
         : b.tokens.map(name).join(' + ')
-      return { id: b.seq, text: 'DRINK!', sub: `${who}: ${sipText(b.sips)}`, fill: C.bubblegum, ms: 2200 }
+      // A token whose players are all on water tonight drinks water; the call itself is the same.
+      const water = b.tokens.filter((i) => (g.tokens[i]?.members.length ?? 0) > 0 && g.tokens[i].members.every((m) => people.get(m)?.water)).map(name)
+      return { id: b.seq, text: 'DRINK!', sub: `${who}: ${sipText(b.sips)}${waterNote(water)}`, fill: C.bubblegum, ms: 2200 }
     }
     case 'jail': return { id: b.seq, text: 'TIMEOUT!', sub: `${name(b.token)} is off the board`, fill: C.blueberry, ink: C.white, ms: 1700 }
     case 'bankrupt': return { id: b.seq, text: 'BANKRUPT!', sub: `${name(b.token)} is out`, fill: C.ink, ink: C.sun, ms: 2400 }
@@ -135,7 +138,7 @@ function flashFor(b: TurfBeat, g: TurfTv): Flash | null {
   }
 }
 
-function useFlashes(g: TurfTv) {
+function useFlashes(g: TurfTv, people: Map<string, PlayerSummary>) {
   const [flash, setFlash] = useState<Flash | null>(null)
   const queue = useRef<Flash[]>([])
   const seen = useRef(latest(g.beats))
@@ -150,7 +153,7 @@ function useFlashes(g: TurfTv) {
   useEffect(() => {
     const fresh = g.beats.filter((b) => b.seq > seen.current)
     seen.current = Math.max(seen.current, latest(g.beats))
-    for (const b of fresh) { const f = flashFor(b, g); if (f) queue.current.push(f) }
+    for (const b of fresh) { const f = flashFor(b, g, people); if (f) queue.current.push(f) }
     if (!showing.current && queue.current.length) next()
   }, [g]) // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => () => { if (timer.current) clearTimeout(timer.current) }, [])
@@ -272,10 +275,11 @@ function GameClock({ g, clock }: { g: TurfTv; clock: Clock }) {
 const DECISION_MS: Record<string, number> = { roll: 20_000, jail: 15_000, buy: 15_000, auction: 10_000, choose: 10_000, manage: 20_000, debt: 60_000, trade: 30_000, pieces: 15_000, teamup: 15_000 }
 
 function Well({ g, stage, clock, people }: { g: TurfTv; stage: StageInfo; clock: Clock; people: Map<string, PlayerSummary> }) {
+  const scale = useTimerScale()
   const cur = g.tokens[g.turn]
   const seat = cur?.seat ? people.get(cur.seat) : undefined
   const showTurn = cur && !SETUP.has(g.phase)
-  const total = g.phase === 'auction' && (g.auction?.bids ?? 0) > 0 ? 6_000 : DECISION_MS[g.phase] ?? 20_000
+  const total = (g.phase === 'auction' && (g.auction?.bids ?? 0) > 0 ? 6_000 : DECISION_MS[g.phase] ?? 20_000) * scale
   return (
     <div className="well">
       <div className="well-head">

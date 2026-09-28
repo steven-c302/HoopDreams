@@ -6,7 +6,8 @@ export const PROTOCOL_VERSION = 1
 export type Role = 'PLAYER' | 'SPECTATOR'
 /** face: a preset `p:00`..`p:15` or a doodle `d:` + M/L points on a 0..99 grid. */
 export interface Avatar { face: string; color: string }
-export interface PlayerSummary { id: string; name: string; avatar: Avatar; role: Role; connected: boolean }
+/** water: on water tonight; drink calls for them are worded as water. */
+export interface PlayerSummary { id: string; name: string; avatar: Avatar; role: Role; connected: boolean; water?: boolean }
 export interface ScoreRow { id: string; name: string; avatar: Avatar; score: number }
 export interface Choice { id: string; text: string; color?: string; detail?: string }
 export interface TeamTag { id: string; name: string; color: string }
@@ -191,7 +192,7 @@ export type HostCommand =
  * Shared lobby settings. turfMode: Home Turf 0 auto, 1 solo, 2 teams; minutes: Home Turf's and Sprawl's game clock
  * (0 = no limit); vp: Sprawl's points to win (8 or 10).
  */
-export type OptionKey = 'rounds' | 'teams' | 'drinks' | 'game' | 'captain' | 'turfMode' | 'minutes' | 'vp'
+export type OptionKey = 'rounds' | 'teams' | 'drinks' | 'game' | 'captain' | 'turfMode' | 'minutes' | 'vp' | 'timers'
 
 export type ActionPayload = { kind: string; [k: string]: string | number | boolean | string[] | number[] }
 

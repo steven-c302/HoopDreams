@@ -9,13 +9,15 @@ const TEAM_CHOICES = [0, 2, 3, 4, 5, 6]
 /** Home Turf: game clock in minutes (0 = no limit) and play modes. */
 const TURF_MINUTES = [30, 45, 60, 90, 0]
 const TURF_MODES = ['Auto', 'Solo', 'Teams']
+/** Time to answer, bet or roll: normal, 1.5× or 2× (the "timers" setting). */
+const TIMER_LABELS = ['Normal', 'Relaxed', 'No rush']
 
 /** Lobby settings as the server holds them (the TV shows the same values). */
 function settingsOf(view: PhoneState) {
   const s = view.settings ?? {}
   return {
     rounds: s.rounds ?? 5, teams: s.teams ?? 0, drinks: (s.drinks ?? 1) === 1, game: s.game ?? 0,
-    turfMode: s.turfMode ?? 0, minutes: s.minutes ?? 45, vp: s.vp ?? 8,
+    turfMode: s.turfMode ?? 0, minutes: s.minutes ?? 45, vp: s.vp ?? 8, timers: s.timers ?? 0,
   }
 }
 
@@ -77,6 +79,8 @@ export function CaptainLobby({ view, games, host }: { view: PhoneState; games: G
             <button className={`toggle ${s.drinks ? 'on' : ''}`} role="switch" aria-checked={s.drinks} onClick={() => set('drinks', s.drinks ? 0 : 1)}>{s.drinks ? 'On' : 'Off'}</button>
           </div>
         )}
+        <Stepper label="Timers" value={TIMER_LABELS[s.timers] ?? TIMER_LABELS[0]}
+          onDown={() => set('timers', Math.max(0, s.timers - 1))} onUp={() => set('timers', Math.min(TIMER_LABELS.length - 1, s.timers + 1))} />
       </div>
       <button className="primary big" disabled={!game} onClick={() => { buzz([30, 40, 30]); if (game) host({ t: 'start', gameId: game.id, options: {} }) }}>
         Everybody's in! Start {game?.title ?? ''}

@@ -152,24 +152,24 @@ class HomeTurf(private val names: BoardNames = TurfBoard.loadNames()) : GameModu
     private fun reset(s: TurfState, ms: Long) = Step(s.copy(phaseMs = ms), listOf<Effect>(Effect.Deadline(ms)))
 
     private fun dur(s: TurfState, phase: String, ctx: GameContext): Long = when (phase) {
-        TEAMUP -> TEAMUP_MS
-        PIECES -> PIECES_MS
+        TEAMUP -> ctx.timer(TEAMUP_MS)
+        PIECES -> ctx.timer(PIECES_MS)
         DEAL -> DEAL_MS
         ROLL -> auto(s, ctx, ROLL_MS)
         JAIL -> auto(s, ctx, JAIL_MS)
         BUY -> auto(s, ctx, BUY_MS)
         CHOOSE -> auto(s, ctx, CHOOSE_MS)
         MANAGE -> auto(s, ctx, MANAGE_MS)
-        AUCTION -> AUCTION_MS
+        AUCTION -> ctx.timer(AUCTION_MS)
         CARD -> CARD_MS
-        DEBT -> DEBT_MS
-        TRADE -> TRADE_MS
+        DEBT -> ctx.timer(DEBT_MS)
+        TRADE -> ctx.timer(TRADE_MS)
         TALLY -> TALLY_MS
         else -> PODIUM_MS
     }
 
-    /** A turn whose dice-holder is away plays itself quickly (autopilot). */
-    private fun auto(s: TurfState, ctx: GameContext, ms: Long) = if (away(s, s.turn, ctx)) AUTOPILOT_MS else ms
+    /** A turn whose dice-holder is away plays itself quickly (autopilot); otherwise it's a decision timer. */
+    private fun auto(s: TurfState, ctx: GameContext, ms: Long) = if (away(s, s.turn, ctx)) AUTOPILOT_MS else ctx.timer(ms)
 
     private fun away(s: TurfState, t: Int, ctx: GameContext) = s.tokens.getOrNull(t)?.seat?.let { !ctx.isConnected(it) } ?: true
 
@@ -184,7 +184,7 @@ class HomeTurf(private val names: BoardNames = TurfBoard.loadNames()) : GameModu
             "trade" -> propose(s, who, me, payload, ctx)
             "tradeReply" -> reply(s, who, payload, ctx)
             "tradeCancel" -> cancelTrade(s, who, payload, ctx)
-            "bid" -> bid(s, who, me, payload)
+            "bid" -> bid(s, who, me, payload, ctx)
             "build", "sell", "mortgage", "unmortgage" -> manage(s, who, me, kind, payload.int("target"), ctx)
             "pay", "bankrupt" -> debtAction(s, who, me, kind, ctx)
             else -> turnAction(s, who, me, kind, payload, ctx)
@@ -479,7 +479,7 @@ class HomeTurf(private val names: BoardNames = TurfBoard.loadNames()) : GameModu
         return go(s.copy(serial = a.id, auction = a, buy = -1).beat("auction", space = space).log("${names.spaces[space].name} goes to auction!"), AUCTION, ctx)
     }
 
-    private fun bid(s: TurfState, who: PlayerId, me: Int, payload: JsonObject): Step<TurfState> {
+    private fun bid(s: TurfState, who: PlayerId, me: Int, payload: JsonObject, ctx: GameContext): Step<TurfState> {
         val a = s.auction
         if (s.phase != AUCTION || a == null) throw Reject("NOT_NOW")
         if (payload.int("auction") != a.id) throw Reject("STALE")
@@ -489,7 +489,7 @@ class HomeTurf(private val names: BoardNames = TurfBoard.loadNames()) : GameModu
         if (amount <= a.top) throw Reject("BID_TOO_LOW")
         if (amount > s.tokens[me].cash) throw Reject("CANT_AFFORD")
         val next = s.copy(auction = a.copy(bids = (a.bids + TBid(me, amount)).takeLast(MAX_BIDS))).beat("bid", token = me, space = a.space, amount = amount)
-        return reset(next, BID_MS)
+        return reset(next, ctx.timer(BID_MS))
     }
 
     private fun closeAuction(s0: TurfState, ctx: GameContext): Step<TurfState> {
@@ -733,7 +733,7 @@ class HomeTurf(private val names: BoardNames = TurfBoard.loadNames()) : GameModu
             if (open.counters >= MAX_COUNTERS) throw Reject("NO_MORE_COUNTERS")
             TurfRules.tradeRefusal(s.estate, a, b)?.let { throw Reject(it) }
             val t = TTrade(s.serial + 1, me, to, give, get, giveCash, getCash, giveCards, getCards, open.counters + 1, open.frozenPhase, open.frozenMs)
-            return reset(s.copy(trade = t, serial = t.id).beat("counter", token = me, other = to).log("${s.tokens[me].name} countered"), TRADE_MS)
+            return reset(s.copy(trade = t, serial = t.id).beat("counter", token = me, other = to).log("${s.tokens[me].name} countered"), ctx.timer(TRADE_MS))
         }
         if (open != null) throw Reject("TRADE_OPEN")
         if (s.phase !in TRADE_PHASES) throw Reject("TRADE_LATER")

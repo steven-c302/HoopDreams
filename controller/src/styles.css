@@ -149,6 +149,9 @@ h2 { margin: 0; font-size: 1.2rem; }
 .stepper-btns b { font-family: var(--font-display); font-weight: 400; font-size: 1.2rem; min-width: 52px; text-align: center; }
 .toggle { min-width: 76px; padding: 10px 14px; }
 .toggle.on { background: var(--lime); }
+.water-row { background: var(--paper); border: var(--stroke-phone) solid var(--ink); border-radius: 18px; padding: 10px 14px; box-shadow: 4px 4px 0 var(--ink); }
+.water-row span { display: flex; flex-direction: column; }
+.water-row small { font-weight: 700; font-size: .8rem; color: var(--ink-soft); }
 .pass-crown { display: flex; flex-direction: column; gap: 8px; }
 .crew { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .crew button { display: flex; align-items: center; gap: 8px; padding: 6px 10px; text-align: left; overflow: hidden; }

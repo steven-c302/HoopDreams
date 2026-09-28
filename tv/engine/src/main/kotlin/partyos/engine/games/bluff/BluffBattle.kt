@@ -66,7 +66,7 @@ class BluffBattle(private val pack: BluffPack = BluffPack.core()) : GameModule<B
         if (unused.isEmpty()) return Step(prev.copy(phase = PODIUM), listOf(Effect.Phase(PODIUM_MS)))
         val q = unused.random(ctx.random)
         val s = BluffState(WRITE, round, prev.totalRounds, q.id, ctx.players.map { it.id })
-        return Step(s, listOf(Effect.UseContent(q.id), Effect.Phase(WRITE_MS)))
+        return Step(s, listOf(Effect.UseContent(q.id), Effect.Phase(ctx.timer(WRITE_MS))))
     }
 
     override fun onAction(s: BluffState, who: PlayerId, payload: JsonObject, ctx: GameContext): Step<BluffState> {
@@ -88,7 +88,7 @@ class BluffBattle(private val pack: BluffPack = BluffPack.core()) : GameModule<B
     }
 
     override fun onDeadline(s: BluffState, ctx: GameContext): Step<BluffState> = when (s.phase) {
-        WRITE -> Step(s.copy(phase = PICK, options = buildOptions(s, ctx)), listOf(Effect.Phase(PICK_MS)))
+        WRITE -> Step(s.copy(phase = PICK, options = buildOptions(s, ctx)), listOf(Effect.Phase(ctx.timer(PICK_MS))))
         PICK -> score(s, ctx)
         REVEAL -> Step(s.copy(phase = SCORES), listOf(Effect.Phase(SCORES_MS)))
         SCORES -> if (s.round < s.totalRounds) newRound(s, s.round + 1, ctx) else Step(s.copy(phase = PODIUM), listOf(Effect.Phase(PODIUM_MS)))

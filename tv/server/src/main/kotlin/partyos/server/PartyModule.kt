@@ -88,7 +88,7 @@ fun Application.partyModule(host: PartyHost, static: StaticFiles, cfg: ServerCon
         post("/api/join") {
             val req = call.receiveSmall<JoinRequest>() ?: return@post call.respond(HttpStatusCode.BadRequest, ErrorResponse("BAD_REQUEST"))
             val role = if (req.spectator) Role.SPECTATOR else Role.PLAYER
-            when (val r = host.mutate { join(req.room, req.name, req.avatar, role) }) {
+            when (val r = host.mutate { join(req.room, req.name, req.avatar, role, req.water) }) {
                 is JoinResult.Joined -> call.respond(JoinResponse(r.player.id, r.token))
                 is JoinResult.Failed -> call.respond(
                     when (r.error) {
@@ -121,6 +121,13 @@ fun Application.partyModule(host: PartyHost, static: StaticFiles, cfg: ServerCon
             call.response.header("Cache-Control", "public, max-age=31536000, immutable")
             call.response.header("X-Content-Type-Options", "nosniff")
             call.respondBytes(bytes, ContentType.Image.JPEG)
+        }
+
+        // Water tonight: a player's own switch, any time.
+        post("/api/water") {
+            val req = call.receiveSmall<WaterRequest>() ?: return@post call.respond(HttpStatusCode.BadRequest, ErrorResponse("BAD_REQUEST"))
+            val ok = host.mutate { resolve(req.token)?.let { setWater(it, req.water) } ?: false }
+            if (ok) call.respond(HttpStatusCode.OK, ErrorResponse("OK")) else call.respond(HttpStatusCode.Unauthorized, ErrorResponse("BAD_TOKEN"))
         }
 
         post("/api/role") {

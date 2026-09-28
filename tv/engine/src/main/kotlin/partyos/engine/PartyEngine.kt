@@ -74,7 +74,7 @@ class PartyEngine private constructor(
 
     // ---- identity -------------------------------------------------------------------------
 
-    fun join(room: String, rawName: String, avatar: Avatar, role: Role): JoinResult {
+    fun join(room: String, rawName: String, avatar: Avatar, role: Role, water: Boolean = false): JoinResult {
         if (!room.trim().equals(roomCode, ignoreCase = true)) return JoinResult.Failed(JoinError.WRONG_ROOM)
         val name = rawName.trim()
         if (name.isEmpty() || name.length > MAX_NAME || name.any { Character.isISOControl(it) }) {
@@ -82,7 +82,7 @@ class PartyEngine private constructor(
         }
         if (players.any { it.name.equals(name, ignoreCase = true) }) return JoinResult.Failed(JoinError.NAME_TAKEN)
         if (players.count { it.role == role } >= MAX_PER_ROLE) return JoinResult.Failed(JoinError.FULL)
-        val player = Player(PlayerId(entropy.token().take(12)), name, avatar.sanitized(), role, clock.now())
+        val player = Player(PlayerId(entropy.token().take(12)), name, avatar.sanitized(), role, clock.now(), water = water)
         val token = entropy.token()
         roster[player.id] = player
         tokens[sha256(token)] = player.id
@@ -118,6 +118,13 @@ class PartyEngine private constructor(
         if (players.count { it.role == role } >= MAX_PER_ROLE) return "FULL"
         roster[id] = p.copy(role = role)
         return null
+    }
+
+    /** Water tonight (or not): any time, games included. Drink calls stay the same; screens word them as water. */
+    fun setWater(id: PlayerId, water: Boolean): Boolean {
+        val p = player(id) ?: return false
+        roster[id] = p.copy(water = water)
+        return true
     }
 
     /**
@@ -172,6 +179,8 @@ class PartyEngine private constructor(
         "rounds" -> 3..8
         "teams" -> 0..6
         "drinks", "captain" -> 0..1
+        // Decision timers: 0 normal, 1 relaxed (1.5×), 2 no rush (2×). See GameContext.timer.
+        "timers" -> 0..2
         // Home Turf: 0 auto (solo up to 6 players, teams beyond), 1 solo, 2 teams; game clock in minutes (0 = no limit).
         "turfMode" -> 0..2
         "minutes" -> 0..120
@@ -233,7 +242,11 @@ class PartyEngine private constructor(
             HostCmd.EndGame -> active?.let { finish(it) } ?: return ActionResult.Rejected("NO_GAME")
             is HostCmd.Kick -> kick(cmd.player)
             is HostCmd.SetRounds -> settings["rounds"] = cmd.rounds.coerceIn(3, 8)
-            is HostCmd.SetOption -> settings[cmd.key] = cmd.value.coerceIn(optionRange(cmd.key) ?: return ActionResult.Rejected("BAD_OPTION"))
+            is HostCmd.SetOption -> {
+                // A running game keeps the timers it started with (the TV's clock faces assume them).
+                if (cmd.key == "timers" && active != null) return ActionResult.Rejected("GAME_RUNNING")
+                settings[cmd.key] = cmd.value.coerceIn(optionRange(cmd.key) ?: return ActionResult.Rejected("BAD_OPTION"))
+            }
             is HostCmd.MakeCaptain -> {
                 if (player(cmd.player) == null) return ActionResult.Rejected("UNKNOWN_PLAYER")
                 captainPick = cmd.player
@@ -441,7 +454,7 @@ class PartyEngine private constructor(
         .map { ScoreRow(it.id, it.name, it.avatar, scores[it.id] ?: 0) }
         .sortedByDescending { it.score }
 
-    private fun Player.summary() = PlayerSummary(id, name, avatar, role, connected)
+    private fun Player.summary() = PlayerSummary(id, name, avatar, role, connected, water)
 
     companion object {
         const val MAX_NAME = 16

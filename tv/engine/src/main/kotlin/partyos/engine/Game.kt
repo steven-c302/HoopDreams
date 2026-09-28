@@ -42,6 +42,11 @@ sealed interface Effect {
 
 data class Step<S>(val state: S, val effects: List<Effect> = emptyList())
 
+val TIMER_SCALES = listOf(1.0, 1.5, 2.0)
+
+/** Drink wording for a player on water tonight: "Drink 2 sips" becomes "Drink 2 sips of water". */
+fun ofWater(water: Boolean) = if (water) " of water" else ""
+
 class GameContext(
     val now: Long,
     val random: Random,
@@ -57,6 +62,15 @@ class GameContext(
     val remainingMs: Long? = null,
 ) {
     fun player(id: PlayerId) = players.firstOrNull { it.id == id }
+
+    /** The lobby's timer length ("timers": 0 normal, 1 relaxed, 2 no rush) as a factor on decision timers. */
+    val timerScale: Double get() = TIMER_SCALES.getOrElse(settings["timers"] ?: 0) { 1.0 }
+
+    /**
+     * A decision timer ([ms] to answer, bet, roll...) stretched by [timerScale]. Games use it for the time players
+     * get to act, never for animations and reveals, so a relaxed show isn't a slower one to watch.
+     */
+    fun timer(ms: Long): Long = (ms * timerScale).toLong()
 
     /**
      * The [items] nobody has played yet ([usedContent] is oldest first, and remembered across restarts). Once a pack

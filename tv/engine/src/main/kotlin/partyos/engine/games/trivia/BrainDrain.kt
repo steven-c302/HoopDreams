@@ -194,10 +194,10 @@ class BrainDrain(
             teams = seedTeams(count, ctx),
             roster = ctx.players.map { it.id },
             startedAt = ctx.now,
-            durationMs = TEAMUP_MS,
+            durationMs = ctx.timer(TEAMUP_MS),
             hostLine = pick(ctx, "Grab a team. Argue about the name later.", "Pick your people wisely.", "Choose your allies."),
         )
-        return Step(s, listOf(Effect.Phase(TEAMUP_MS)))
+        return Step(s, listOf(Effect.Phase(s.durationMs!!)))
     }
 
     override fun onAction(s: TriviaState, who: PlayerId, payload: JsonObject, ctx: GameContext): Step<TriviaState> {
@@ -278,9 +278,24 @@ class BrainDrain(
         else -> Step(s, listOf(Effect.Finish))
     }
 
-    override fun onHost(s: TriviaState, action: String, ctx: GameContext): Step<TriviaState> = when (action) {
-        SHUFFLE -> shuffle(s, ctx)
+    override fun onHost(s: TriviaState, action: String, ctx: GameContext): Step<TriviaState> = when {
+        action == SHUFFLE -> shuffle(s, ctx)
+        action.startsWith(UNNAME) -> unname(s, action.removePrefix(UNNAME))
         else -> throw Reject("UNSUPPORTED")
+    }
+
+    /**
+     * The host's veto on a typed team name: it goes back to the team's kit name, and in Team Up the team can name
+     * itself again. Once the show is on, the kit name is remembered for the next game instead.
+     */
+    private fun unname(s: TriviaState, teamId: String): Step<TriviaState> {
+        val kit = TEAM_KIT.getOrNull((teamId.removePrefix("T").toIntOrNull() ?: 0) - 1) ?: throw Reject("UNKNOWN_TEAM")
+        if (s.teams.none { it.id == teamId }) throw Reject("UNKNOWN_TEAM")
+        val teams = s.teams.map { if (it.id == teamId) it.copy(name = kit.second, named = false) else it }
+        val next = s.copy(teams = teams)
+        if (s.phase == TEAMUP) return Step(next)
+        val remembered = teams.map { RememberedTeam(it.name, it.color, it.named, it.members) }
+        return Step(next, listOf(Effect.Remember(MEMORY_KEY, json.encodeToString(ListSerializer(RememberedTeam.serializer()), remembered))))
     }
 
     /** Team Up: deal everyone evenly across the teams at random. Names stay; everyone checks their new team. */
@@ -366,19 +381,19 @@ class BrainDrain(
                 val item = pickMc(s0, ctx) { true } ?: return endRound(s0, ctx)
                 val options = (item.wrong + item.answer).shuffled(ctx.random).mapIndexed { i, t -> TOption(LETTERS[i], t, t == item.answer) }
                 val live = item.takeIf { it.id !in mcById }
-                question(base.copy(itemId = item.id, live = live, options = options, correct = options.filter { it.fit }.map { it.id }), QUICK_MS, item.id)
+                question(base.copy(itemId = item.id, live = live, options = options, correct = options.filter { it.fit }.map { it.id }), ctx.timer(QUICK_MS), item.id)
             }
             WRITE -> {
                 // No options on screen: only questions that still make sense without them.
                 val item = pickMc(s0, ctx, ::writable) ?: return endRound(s0, ctx)
                 val live = item.takeIf { it.id !in mcById }
-                question(base.copy(itemId = item.id, live = live, options = emptyList(), correct = emptyList()), WRITE_MS, item.id)
+                question(base.copy(itemId = item.id, live = live, options = emptyList(), correct = emptyList()), ctx.timer(WRITE_MS), item.id)
             }
             BALLPARK -> {
                 val lastCategory = ballparkById[s0.itemId]?.category
                 val unused = ctx.fresh(pack.ballpark) { it.id }
                 val item = unused.filter { it.category != lastCategory }.ifEmpty { unused }.randomOrNull(ctx.random) ?: return endRound(s0, ctx)
-                question(base.copy(itemId = item.id, options = emptyList(), correct = emptyList()), BALLPARK_MS, item.id)
+                question(base.copy(itemId = item.id, options = emptyList(), correct = emptyList()), ctx.timer(BALLPARK_MS), item.id)
             }
             SIDES -> {
                 val set = sidesById.getValue(requireNotNull(s0.itemId))
@@ -387,7 +402,7 @@ class BrainDrain(
                     TOption(TriviaPack.LEFT, set.left, item.side == TriviaPack.LEFT),
                     TOption(TriviaPack.RIGHT, set.right, item.side == TriviaPack.RIGHT),
                 )
-                question(base.copy(options = options, correct = listOf(item.side)), SIDES_MS, null)
+                question(base.copy(options = options, correct = listOf(item.side)), ctx.timer(SIDES_MS), null)
             }
             GAUNTLET -> {
                 val item = pack.gauntlet.filter { it.id !in ctx.usedContent }.randomOrNull(ctx.random) ?: return podium(s0, ctx)
@@ -395,7 +410,7 @@ class BrainDrain(
                 // Catch-up help: the team(s) in last place see one wrong option crossed out.
                 val misfits = options.filter { !it.fit }
                 val eliminated = if (misfits.isEmpty()) emptyMap() else trailingByPosition(base.teams).associate { it.id to misfits.random(ctx.random).id }
-                question(base.copy(itemId = item.id, options = options, correct = options.filter { it.fit }.map { it.id }, eliminated = eliminated), GAUNTLET_MS, item.id)
+                question(base.copy(itemId = item.id, options = options, correct = options.filter { it.fit }.map { it.id }, eliminated = eliminated), ctx.timer(GAUNTLET_MS), item.id)
             }
             else -> endRound(s0, ctx)
         }
@@ -617,10 +632,10 @@ class BrainDrain(
             if (others.size == 1) return steal(s.copy(votes = emptyMap()), ctx)
             return Step(
                 s.copy(
-                    phase = VICTIM, votes = emptyMap(), startedAt = ctx.now, durationMs = VICTIM_MS,
+                    phase = VICTIM, votes = emptyMap(), startedAt = ctx.now, durationMs = ctx.timer(VICTIM_MS),
                     hostLine = "${nameOf(s, heist.thief)} were fastest. Who are they robbing?",
                 ),
-                listOf(Effect.Phase(VICTIM_MS)),
+                listOf(Effect.Phase(ctx.timer(VICTIM_MS))),
             )
         }
         if (s.format == GAUNTLET && (s.teams.any { it.position >= FINISH } || s.q >= s.qTotal)) return podium(s, ctx)
@@ -1046,6 +1061,8 @@ class BrainDrain(
 
         /** [HostCmd.GameAction] during Team Up: deal everyone evenly across the teams. */
         const val SHUFFLE = "shuffle"
+        /** Host action "unname:<team id>": a typed team name goes back to the kit name. */
+        const val UNNAME = "unname:"
         /** After a shuffle, Team Up lasts at least this long so people can find their new team. */
         const val SHUFFLE_GRACE_MS = 20_000L
         const val AWARDS_MS = 14_000L

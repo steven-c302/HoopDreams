@@ -98,20 +98,20 @@ class Sprawl(private val names: SprawlNames = SprawlSetup.loadNames()) : GameMod
     private fun reset(s: SprawlState, ms: Long) = SStep(s.copy(phaseMs = ms), listOf<Effect>(Effect.Deadline(ms)))
 
     private fun dur(s: SprawlState, phase: String, ctx: GameContext): Long = when (phase) {
-        SETUP -> if (away(s, setupSeat(s), ctx)) AUTOPILOT_MS else SETUP_MS
+        SETUP -> if (away(s, setupSeat(s), ctx)) AUTOPILOT_MS else ctx.timer(SETUP_MS)
         ROLL -> auto(s, ctx, ROLL_MS)
         MAIN -> auto(s, ctx, MAIN_MS)
         ROBBER -> auto(s, ctx, ROBBER_MS)
         STEAL -> auto(s, ctx, STEAL_MS)
         ROAD2 -> auto(s, ctx, ROAD2_MS)
         PICK -> auto(s, ctx, PICK_MS)
-        DISCARD -> DISCARD_MS
-        TRADE -> TRADE_MS
+        DISCARD -> ctx.timer(DISCARD_MS)
+        TRADE -> ctx.timer(TRADE_MS)
         TALLY -> TALLY_MS
         else -> PODIUM_MS
     }
 
-    private fun auto(s: SprawlState, ctx: GameContext, ms: Long) = if (away(s, s.turn, ctx)) AUTOPILOT_MS else ms
+    private fun auto(s: SprawlState, ctx: GameContext, ms: Long) = if (away(s, s.turn, ctx)) AUTOPILOT_MS else ctx.timer(ms)
     private fun away(s: SprawlState, seat: Int, ctx: GameContext) = s.seats.getOrNull(seat)?.let { it.gone || !ctx.isConnected(it.player) } ?: true
 
     // ---- engine hooks -----------------------------------------------------------------
@@ -507,7 +507,7 @@ class Sprawl(private val names: SprawlNames = SprawlSetup.loadNames()) : GameMod
             if (open == null || open.id != counterId || s.phase != TRADE || !canAccept(s, open, me)) throw Reject("TRADE_GONE")
             if (open.counters >= MAX_COUNTERS) throw Reject("NO_MORE_COUNTERS")
             val t = STrade(s.serial + 1, me, open.from, give, get, open.counters + 1, open.frozenPhase, open.frozenMs)
-            return reset(s.copy(trade = t, serial = t.id).beat("counter", seat = me, other = open.from).log("${s.seats[me].name} countered"), TRADE_MS)
+            return reset(s.copy(trade = t, serial = t.id).beat("counter", seat = me, other = open.from).log("${s.seats[me].name} countered"), ctx.timer(TRADE_MS))
         }
         if (open != null) throw Reject("TRADE_OPEN")
         if (me != s.turn) throw Reject("NOT_YOUR_TURN")

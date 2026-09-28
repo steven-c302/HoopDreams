@@ -10,7 +10,7 @@ import {
   ANSWER_COLOR, AvatarFace, Brainy, Bubble, Burst, C, Chip, CountUp, Crown, Deal, FaceRow, HostSays, Keycap, Panel, Pop, Scene, Shape, Slam, Timer,
   coinShower, fireConfetti, inkOn, type Mood,
 } from './toon'
-import { ROUND_RULES, ROUND_TITLES, type TriviaTeam, type TriviaTv } from './types'
+import { ROUND_RULES, ROUND_TITLES, waterNote, type TriviaTeam, type TriviaTv } from './types'
 
 type Clock = { deadline: number | null; frozen: number | null }
 interface Props { stage: StageInfo; players: PlayerSummary[]; scores: ScoreRow[]; clock: Clock }
@@ -151,7 +151,7 @@ function moodFor(g: TriviaTv): Mood {
   return right === 0 ? 'shocked' : right === answers.length ? 'smug' : 'happy'
 }
 
-function DrinkCall({ g, style }: { g: TriviaTv; style?: CSSProperties }) {
+function DrinkCall({ g, byId, style }: { g: TriviaTv; byId: ById; style?: CSSProperties }) {
   const call = g.drink
   useLater(call ? `${g.phase}-${g.round}-${g.q}-${call.teams.join()}` : null, 900, () => { if (call) sfx.drinkCall() })
   if (!call) return null
@@ -169,7 +169,7 @@ function DrinkCall({ g, style }: { g: TriviaTv; style?: CSSProperties }) {
         <div>
           <b className="display">DRINK!</b>
           <p>{teams.map((t) => t.name).join(' + ')}: {call.sips} {call.sips === 1 ? 'sip' : 'sips'}</p>
-          <small>{why} Water counts.</small>
+          <small>{why} Water counts.{waterNote(teams.flatMap((t) => members(t, byId)).filter((p) => p.water).map((p) => p.name))}</small>
         </div>
       </Panel>
     </Slam>
@@ -498,7 +498,7 @@ function Steal({ g, byId }: { g: TriviaTv; byId: ById }) {
         <Burst text={h.amount > 0 ? 'ROBBED!' : 'NOTHING TO TAKE'} width={900} height={340} size={110} fill={C.sun} tilt={-5} delay={0.2} />
         <HostSays line={g.hostLine} mood="smug" size={140} />
       </div>
-      <DrinkCall g={g} style={{ right: 70, top: 40 }} />
+      <DrinkCall g={g} byId={byId} style={{ right: 70, top: 40 }} />
     </>
   )
 }
@@ -595,7 +595,7 @@ function Standings({ g, byId }: { g: TriviaTv; byId: ById }) {
       </div>
       <div className="trivia-foot"><HostSays line={g.hostLine} mood="smug" size={140} /><div /></div>
       {/* Top right: the bottom holds Brainy's line. */}
-      <DrinkCall g={g} style={{ right: 70, top: 40 }} />
+      <DrinkCall g={g} byId={byId} style={{ right: 70, top: 40 }} />
     </>
   )
 }
@@ -633,7 +633,7 @@ function TeamPodium({ g, byId }: { g: TriviaTv; byId: ById }) {
           )
         })}
       </div>
-      <DrinkCall g={g} style={{ right: 60, top: 230 }} />
+      <DrinkCall g={g} byId={byId} style={{ right: 60, top: 230 }} />
     </>
   )
 }

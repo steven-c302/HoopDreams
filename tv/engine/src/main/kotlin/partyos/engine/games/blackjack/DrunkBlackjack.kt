@@ -8,6 +8,7 @@ import partyos.engine.BlackjackTv
 import partyos.engine.Choice
 import partyos.engine.Effect
 import partyos.engine.GameContext
+import partyos.engine.ofWater
 import partyos.engine.GameInfo
 import partyos.engine.GameModule
 import partyos.engine.LateJoin
@@ -83,7 +84,7 @@ class DrunkBlackjack : GameModule<BjState> {
         val rule = if (round == 1) CLASSIC else RULES.keys.toList()[ctx.random.nextInt(RULES.size)]
         val players = ctx.players.map { it.id }.filter { it != dealer }
         val s = BjState(BET, round, prev.totalRounds, order, dealer, players, rule, shoe = shoe)
-        return Step(s, listOf(Effect.Phase(BET_MS)))
+        return Step(s, listOf(Effect.Phase(ctx.timer(BET_MS))))
     }
 
     override fun onAction(s: BjState, who: PlayerId, payload: JsonObject, ctx: GameContext): Step<BjState> {
@@ -129,7 +130,7 @@ class DrunkBlackjack : GameModule<BjState> {
     }
 
     override fun onDeadline(s: BjState, ctx: GameContext): Step<BjState> = when (s.phase) {
-        BET -> deal(s)
+        BET -> deal(s, ctx)
         PLAY -> dealerTurn(s.copy(hands = s.hands.mapValues { it.value.copy(done = true) }), ctx)
         // Time's up for the dealer: they play by the book (hit to 17).
         DEALER -> {
@@ -142,7 +143,7 @@ class DrunkBlackjack : GameModule<BjState> {
         else -> Step(s, listOf(Effect.Finish))
     }
 
-    private fun deal(s: BjState): Step<BjState> {
+    private fun deal(s: BjState, ctx: GameContext): Step<BjState> {
         var shoe = s.shoe
         fun draw(): PlayingCard { val c = shoe.first(); shoe = shoe.drop(1); return c }
         // One card round the table, one to the dealer, then the second round.
@@ -154,14 +155,14 @@ class DrunkBlackjack : GameModule<BjState> {
             val cards = listOf(first.getValue(p.v), second.getValue(p.v))
             p.v to BjHand(cards, s.bets[p.v] ?: BETS.first(), done = total(cards) == 21)
         }
-        return Step(s.copy(phase = PLAY, hands = hands, dealer = listOf(dealer1, dealer2), shoe = shoe), listOf(Effect.Phase(PLAY_MS)))
+        return Step(s.copy(phase = PLAY, hands = hands, dealer = listOf(dealer1, dealer2), shoe = shoe), listOf(Effect.Phase(ctx.timer(PLAY_MS))))
     }
 
     private fun dealerTurn(s: BjState, ctx: GameContext): Step<BjState> {
         // Nothing to play for if every player busted or has blackjack, or if the dealer has 21 already.
         val alive = s.hands.values.any { total(it.cards) <= 21 && !isBlackjack(it.cards) }
         if (!alive || total(s.dealer) == 21) return settle(s.copy(dealerDone = true), ctx)
-        return Step(s.copy(phase = DEALER), listOf(Effect.Phase(DEALER_MS)))
+        return Step(s.copy(phase = DEALER), listOf(Effect.Phase(ctx.timer(DEALER_MS))))
     }
 
     private fun settle(s: BjState, ctx: GameContext): Step<BjState> {
@@ -264,7 +265,8 @@ class DrunkBlackjack : GameModule<BjState> {
     override fun playerView(s: BjState, who: PlayerId, ctx: GameContext): Screen {
         if (s.phase == PODIUM) return Screen.Scores("Sips handed out", rows(ctx))
         val rule = RULES.getValue(s.rule)
-        if (who == s.dealerId) return dealerScreen(s, rule)
+        val water = ofWater(ctx.player(who)?.water == true)
+        if (who == s.dealerId) return dealerScreen(s, rule, water)
         if (who !in s.participants) return Screen.Waiting("You're in next hand", "Grab a drink and watch the table")
         val hand = s.hands[who.v]
         val dealerName = s.dealerId?.let { ctx.player(it)?.name } ?: "the dealer"
@@ -285,7 +287,7 @@ class DrunkBlackjack : GameModule<BjState> {
                     if (h.cards.size == 2) add(Choice("double", "DOUBLE"))
                 }
                 val note = when {
-                    t > 21 -> "BUST! Drink ${sipLabel(h.bet)}."
+                    t > 21 -> "BUST! Drink ${sipLabel(h.bet)}$water."
                     isBlackjack(h.cards) -> "BLACKJACK! $dealerName drinks double."
                     h.done -> "Standing on $t. Now $dealerName plays…"
                     else -> "${sipLabel(h.bet)} riding · double to double the drinks"
@@ -306,7 +308,7 @@ class DrunkBlackjack : GameModule<BjState> {
                 }
                 val d = r?.drinks ?: 0
                 val call = when {
-                    d > 0 -> "DRINK ${sipLabel(d)}"
+                    d > 0 -> "DRINK ${sipLabel(d)}${water.uppercase()}"
                     d < 0 -> "$dealerName drinks ${sipLabel(-d)}"
                     else -> "Nobody drinks"
                 }
@@ -316,7 +318,7 @@ class DrunkBlackjack : GameModule<BjState> {
         }
     }
 
-    private fun dealerScreen(s: BjState, rule: Pair<String, String>): Screen {
+    private fun dealerScreen(s: BjState, rule: Pair<String, String>, water: String): Screen {
         val t = total(s.dealer)
         val line = onTheLine(s)
         return when (s.phase) {
@@ -328,14 +330,14 @@ class DrunkBlackjack : GameModule<BjState> {
                 "Your turn to deal", s.dealer, t, emptyList(),
                 if (s.dealerDone) emptyList() else buildList { add(Choice("hit", "HIT")); if (t >= DEALER_STANDS) add(Choice("stand", "STAND")) },
                 "move",
-                if (t < DEALER_STANDS) "Under 17: you must hit. Bust and you drink $line sips." else "$line sips riding. Stand, or push your luck?",
+                if (t < DEALER_STANDS) "Under 17: you must hit. Bust and you drink $line sips$water." else "$line sips riding. Stand, or push your luck?",
                 if (t > 21) "lose" else "neutral",
             )
             else -> {
                 val drank = s.results.values.sumOf { if (it.drinks < 0) -it.drinks else 0 }
                 val gave = s.results.values.sumOf { if (it.drinks > 0) it.drinks else 0 }
                 Screen.Cards(if (t > 21) "YOU BUSTED" else "House has $t", s.dealer, t, emptyList(), emptyList(), "move",
-                    if (drank > 0) "DRINK ${sipLabel(drank)} · you made the table drink $gave" else "You drink nothing · the table drinks $gave",
+                    if (drank > 0) "DRINK ${sipLabel(drank)}${water.uppercase()} · you made the table drink $gave" else "You drink nothing · the table drinks $gave",
                     if (drank > gave) "lose" else "win")
             }
         }

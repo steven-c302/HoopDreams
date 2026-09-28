@@ -1,6 +1,7 @@
 import { useEffect, type ReactNode } from 'react'
 import type { PlayerSummary, ScoreRow, StageInfo } from '../protocol'
 import { sfx } from './audio'
+import { useTimerScale } from './timerScale'
 import { Fill, GameHeader, Podium, ScoreBoard, Tutorial, useStep } from './Shared'
 import { AvatarFace, Bubble, Burst, C, Deal, fireConfetti, Panel, Pop, Slam, Stamp } from './toon'
 import type { BluffReveal, BluffTv } from './types'
@@ -8,6 +9,7 @@ import type { BluffReveal, BluffTv } from './types'
 const WRITE_MS = 60_000, PICK_MS = 30_000, REVEAL_STEP_MS = 2_500, REVEAL_TAIL_MS = 2_000, SCORES_MS = 8_000, PODIUM_MS = 15_000
 
 export function BluffStage({ stage, players, scores, clock }: { stage: StageInfo; players: PlayerSummary[]; scores: ScoreRow[]; clock: { deadline: number | null; frozen: number | null } }) {
+  const scale = useTimerScale()
   if (stage.tutorial) {
     return (
       <div className="stage-pad">
@@ -19,7 +21,7 @@ export function BluffStage({ stage, players, scores, clock }: { stage: StageInfo
   const g = stage.game as unknown as BluffTv
   const chips: [string, string][] = [[g.phase === 'podium' ? 'FINAL RESULTS' : `ROUND ${g.round} OF ${g.totalRounds}`, C.paper]]
   if (g.finalRound && ['write', 'pick', 'reveal'].includes(g.phase)) chips.push(['FINAL ROUND: DOUBLE POINTS', C.sun])
-  const total = { write: WRITE_MS, pick: PICK_MS, scores: SCORES_MS, podium: PODIUM_MS, reveal: REVEAL_STEP_MS * g.reveal.length + REVEAL_TAIL_MS }[g.phase]
+  const total = { write: WRITE_MS * scale, pick: PICK_MS * scale, scores: SCORES_MS, podium: PODIUM_MS, reveal: REVEAL_STEP_MS * g.reveal.length + REVEAL_TAIL_MS }[g.phase]
   const status = g.phase === 'write' ? `${g.submitted}/${g.expected} BLUFFS IN` : g.phase === 'pick' ? `${g.submitted}/${g.expected} PICKED` : null
   return (
     <div className="stage-pad">

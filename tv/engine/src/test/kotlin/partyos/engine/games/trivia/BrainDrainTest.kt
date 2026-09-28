@@ -107,6 +107,27 @@ class BrainDrainTest {
         assertEquals("intro", tv.phase)
     }
 
+    @Test fun theHostCanSendATypedTeamNameBackToItsKitName() {
+        engine()
+        val ids = (1..4).map { e.add("P$it") }
+        startShow(teams = 2)
+        join(ids[0], "T1"); join(ids[1], "T1"); join(ids[2], "T2"); join(ids[3], "T2")
+        val kit = tv.teams.single { it.id == "T1" }.name
+        assertEquals(ActionResult.Ack, name(ids[0], "Something Rude"))
+        assertEquals("Something Rude", tv.teams.single { it.id == "T1" }.name)
+
+        assertEquals(ActionResult.Ack, e.host(HostCmd.GameAction(BrainDrain.UNNAME + "T1")))
+        assertEquals(kit, tv.teams.single { it.id == "T1" }.name)
+        assertEquals("Name your team", assertIs<Screen.TextEntry>(e.phoneState(ids[1]).screen).prompt, "they can name it again")
+        assertEquals(ActionResult.Rejected("UNKNOWN_TEAM"), e.host(HostCmd.GameAction(BrainDrain.UNNAME + "T9")))
+
+        // Once the show is on, the veto sticks for the next game too.
+        assertEquals(ActionResult.Ack, name(ids[2], "Also Rude"))
+        e.host(HostCmd.SkipPhase) // Team Up over
+        assertEquals(ActionResult.Ack, e.host(HostCmd.GameAction(BrainDrain.UNNAME + "T2")))
+        assertTrue("Also Rude" !in e.snapshot().memory.getValue(BrainDrain.MEMORY_KEY))
+    }
+
     @Test fun shuffleDealsEveryoneEvenlyKeepsTheNamesAndGivesTimeToCheck() {
         engine()
         val ids = (1..6).map { e.add("P$it") }

@@ -2,6 +2,7 @@ package partyos.engine.games.turf
 
 import partyos.engine.Choice
 import partyos.engine.GameContext
+import partyos.engine.ofWater
 import partyos.engine.PlayerId
 import partyos.engine.Screen
 import partyos.engine.TurfBidPad
@@ -62,7 +63,7 @@ internal class TurfPhone(private val names: BoardNames, private val game: HomeTu
             pieces = if (s.phase == PIECES && tok != null && tok.piece == null) {
                 PIECES_ALL.filter { p -> s.tokens.none { it.piece == p } }.map { Choice(it, PIECE_NAMES.getValue(it)) }
             } else emptyList(),
-            drink = drinkCall(s, me),
+            drink = drinkCall(s, me, ctx.player(who)?.water == true),
             drinks = s.drinks,
         )
     }
@@ -266,10 +267,10 @@ internal class TurfPhone(private val names: BoardNames, private val game: HomeTu
     }
 
     /** Your latest drink call this turn, as a line for the phone. */
-    private fun drinkCall(s: TurfState, me: Int): String? {
+    private fun drinkCall(s: TurfState, me: Int, water: Boolean): String? {
         if (!s.drinks || me < 0) return null
         val b = s.beats.lastOrNull { it.kind == "drink" && me in it.tokens && it.seq > s.turnBeat } ?: return null
-        val what = if (b.sips == HomeTurf.FINISH) "Finish your drink" else "Drink ${sipLabel(b.sips)}"
+        val what = if (b.sips == HomeTurf.FINISH) (if (water) "Finish your water" else "Finish your drink") else "Drink ${sipLabel(b.sips)}${ofWater(water)}"
         return "$what: ${b.text ?: ""}".trimEnd(' ', ':')
     }
 }

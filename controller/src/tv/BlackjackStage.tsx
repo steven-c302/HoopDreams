@@ -2,6 +2,7 @@ import { motion } from 'motion/react'
 import { useEffect, useMemo, type CSSProperties } from 'react'
 import type { PlayerSummary, PlayingCard, ScoreRow, StageInfo } from '../protocol'
 import { sfx } from './audio'
+import { useTimerScale } from './timerScale'
 import { Card } from './Card'
 import { CheersIcon, DrinkBet, Led, MugIcon } from './Casino'
 import { GameHeader, Podium, Tutorial } from './Shared'
@@ -52,10 +53,13 @@ export function BlackjackStage({ stage, players, scores, clock }: { stage: Stage
       </div>
     )
   }
-  return <Table g={g} stage={stage} clock={clock} />
+  return <Table g={g} stage={stage} clock={clock} players={players} />
 }
 
-function Table({ g, stage, clock }: { g: BlackjackTv; stage: StageInfo; clock: { deadline: number | null; frozen: number | null } }) {
+function Table({ g, stage, clock, players }: { g: BlackjackTv; stage: StageInfo; clock: { deadline: number | null; frozen: number | null }; players: PlayerSummary[] }) {
+  // Players on water tonight: their calls say so (the drinks themselves are the same).
+  const water = new Set(players.filter((p) => p.water).map((p) => p.id))
+  const dealerWater = g.dealerId != null && water.has(g.dealerId) ? ' OF WATER' : ''
   const layout = useMemo(() => seatLayout(g.seats.length), [g.seats.length])
   const n = g.seats.length
   const step = Math.min(0.13, 2.6 / (2 * n + 2))
@@ -75,7 +79,8 @@ function Table({ g, stage, clock }: { g: BlackjackTv; stage: StageInfo; clock: {
 
   const who = g.dealerName.toUpperCase()
   const status = g.phase === 'bet' ? `${g.submitted}/${g.expected} BETS IN` : g.phase === 'play' ? `${g.submitted}/${g.expected} DONE` : null
-  const total = { bet: BET_MS, play: PLAY_MS, dealer: DEALER_MS, settle: SETTLE_MS, podium: PODIUM_MS }[g.phase]
+  const scale = useTimerScale()
+  const total = { bet: BET_MS * scale, play: PLAY_MS * scale, dealer: DEALER_MS * scale, settle: SETTLE_MS, podium: PODIUM_MS }[g.phase]
   const chips: [string, string][] = [[`HAND ${g.round} OF ${g.totalRounds}`, C.paper]]
   if (g.finalRound) chips.push(['LAST DEALER', C.sun])
 
@@ -111,14 +116,14 @@ function Table({ g, stage, clock }: { g: BlackjackTv; stage: StageInfo; clock: {
       {g.phase === 'settle' && (
         <div className="bj-banner" style={{ top: dealerBust ? 400 : 520 }}>
           {dealerBust ? (
-            <Slam from={1.6} tilt={-3} delay={0.1}><div className="bj-sign bust"><span>{who} BUSTS!</span><small>DRINK {sipLabel(g.dealerDrinks)}</small></div></Slam>
+            <Slam from={1.6} tilt={-3} delay={0.1}><div className="bj-sign bust"><span>{who} BUSTS!</span><small>DRINK {sipLabel(g.dealerDrinks)}{dealerWater}</small></div></Slam>
           ) : (
-            <Banner text={g.dealerDrinks > 0 ? `${who} HAS ${dealerTotal}: DRINKS ${sipLabel(g.dealerDrinks)}` : `${who} HAS ${dealerTotal}`} tone={g.dealerDrinks > 0 ? 'brass' : 'ivory'} />
+            <Banner text={g.dealerDrinks > 0 ? `${who} HAS ${dealerTotal}: DRINKS ${sipLabel(g.dealerDrinks)}${dealerWater}` : `${who} HAS ${dealerTotal}`} tone={g.dealerDrinks > 0 ? 'brass' : 'ivory'} />
           )}
         </div>
       )}
       {g.seats.map((s, i) => (
-        <Seat key={s.id} s={s} phase={g.phase} pos={layout.pos[i]} cardW={layout.card} delayFor={(k) => (g.phase === 'play' ? dealDelay(i, k) : 0)} />
+        <Seat key={s.id} s={s} water={water.has(s.id)} phase={g.phase} pos={layout.pos[i]} cardW={layout.card} delayFor={(k) => (g.phase === 'play' ? dealDelay(i, k) : 0)} />
       ))}
     </>
   )
@@ -137,7 +142,7 @@ function useSettleSounds(g: BlackjackTv, seq: number) {
   }, [seq]) // eslint-disable-line react-hooks/exhaustive-deps
 }
 
-function Seat({ s, phase, pos, cardW, delayFor }: { s: BjSeat; phase: BlackjackTv['phase']; pos: { x: number; y: number }; cardW: number; delayFor: (k: number) => number }) {
+function Seat({ s, water, phase, pos, cardW, delayFor }: { s: BjSeat; water: boolean; phase: BlackjackTv['phase']; pos: { x: number; y: number }; cardW: number; delayFor: (k: number) => number }) {
   const deciding = phase === 'play' && s.status === 'playing'
   const settled = phase === 'settle' && s.outcome
   const drinks = s.drinks ?? 0
@@ -148,7 +153,7 @@ function Seat({ s, phase, pos, cardW, delayFor }: { s: BjSeat; phase: BlackjackT
         <Pop delay={0.9} style={{ position: 'absolute', top: -cardW * 0.58, zIndex: 6 }}>
           <span className="bj-call" style={{ fontSize: callSize, background: drinks > 0 ? C.tomato : drinks < 0 ? C.sun : C.paper, color: drinks > 0 ? C.white : C.ink }}>
             {drinks > 0 ? <MugIcon size={callSize * 1.25} /> : drinks < 0 ? <CheersIcon size={callSize * 1.25} /> : null}
-            <b>{drinks > 0 ? `DRINK ${sipLabel(drinks)}` : drinks < 0 ? `DEALER +${-drinks}` : 'SAFE'}</b>
+            <b>{drinks > 0 ? `DRINK ${sipLabel(drinks)}${water ? ' OF WATER' : ''}` : drinks < 0 ? `DEALER +${-drinks}` : 'SAFE'}</b>
           </span>
         </Pop>
       )}

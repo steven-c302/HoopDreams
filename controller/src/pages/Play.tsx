@@ -8,10 +8,17 @@ import { gameThemeOf } from '../theme/gameTheme'
 import { Crown } from '../tv/toon'
 import { CaptainControls, CaptainLobby, ShuffleTeams, inTeamUp } from './Captain'
 import { useCountdown } from './useCountdown'
+import { useNoSleep } from './useNoSleep'
 
 const BYE: Record<string, string> = {
   KICKED: 'The host removed you from the party.',
   BAD_TOKEN: 'That party has ended or the TV restarted. Join again!',
+}
+
+/** Water tonight, on or off: the TV and this phone word this player's drink calls as water. */
+async function setWater(token: string, water: boolean, report: (m: string) => void) {
+  const r = await fetch('/api/water', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ token, water }) }).catch(() => null)
+  if (!r?.ok) report("Couldn't switch that right now.")
 }
 
 async function takeSeat(token: string, report: (m: string) => void) {
@@ -52,6 +59,7 @@ export function Play({ session, onLeave }: { session: Session; onLeave(why: stri
   }, [toast])
 
   const seconds = useCountdown(view?.remainingMs, seq, view?.paused ?? false)
+  useNoSleep(!!view?.gameId)
   const people = useMemo(() => new Map((view?.scores ?? []).map((r) => [r.id, r])), [view?.scores])
   const send = (payload: ActionPayload) => { if (view) conn.current?.act(view.round, payload) }
   const host = (c: HostCommand) => { conn.current?.host(c) }
@@ -83,6 +91,12 @@ export function Play({ session, onLeave }: { session: Session; onLeave(why: stri
         {view.captain && inTeamUp(view) && <ShuffleTeams host={host} />}
         {view.me.role === 'SPECTATOR' && !view.gameId && (
           <button className="primary big" onClick={() => void takeSeat(session.token, setToast)}>Join as a player</button>
+        )}
+        {!view.gameId && view.me.role === 'PLAYER' && (
+          <div className="setting-row water-row">
+            <span>Water tonight<small>Your drink calls say water</small></span>
+            <button className={`toggle ${view.me.water ? 'on' : ''}`} role="switch" aria-checked={!!view.me.water} onClick={() => void setWater(session.token, !view.me.water, setToast)}>{view.me.water ? 'On' : 'Off'}</button>
+          </div>
         )}
       </section>
       {view.captain && view.gameId && <CaptainControls view={view} host={host} />}

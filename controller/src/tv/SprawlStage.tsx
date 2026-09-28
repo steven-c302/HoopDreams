@@ -2,6 +2,7 @@ import { AnimatePresence, motion } from 'motion/react'
 import { useEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode } from 'react'
 import type { PlayerSummary, ScoreRow, StageInfo } from '../protocol'
 import { GameMark } from '../theme/GameScene'
+import { useTimerScale } from './timerScale'
 import { sfx } from './audio'
 import { Led } from './Casino'
 import { GameHeader, Podium, Tutorial } from './Shared'
@@ -9,7 +10,7 @@ import { RES_FILL, ResourceIcon } from './SprawlArt'
 import { SprawlMap, mapBox } from './SprawlMap'
 import { AvatarFace, Burst, C, CountUp, Crown, Deal, Panel, Pop, Stamp, Timer, fireConfetti } from './toon'
 import { Die } from './TurfArt'
-import type { SprawlBeat, SprawlTv } from './types'
+import { waterNote, type SprawlBeat, type SprawlTv } from './types'
 import './sprawl.css'
 
 type Clock = { deadline: number | null; frozen: number | null }
@@ -47,7 +48,7 @@ export function SprawlStage({ stage, players, clock }: { stage: StageInfo; playe
 
 function Island({ g, stage, players, clock }: { g: SprawlTv; stage: StageInfo; players: PlayerSummary[]; clock: Clock }) {
   const people = useMemo(() => new Map(players.map((p) => [p.id, p])), [players])
-  const flash = useFlashes(g)
+  const flash = useFlashes(g, people)
   const { hot, gains } = useHarvest(g)
   useBeatSounds(g)
   const left = g.seats.map((_, i) => i).filter((i) => i % 2 === 0)
@@ -103,7 +104,7 @@ function useHarvest(g: SprawlTv) {
 
 interface Flash { id: number; text: string; sub?: string; fill: string; ink?: string; ms: number }
 
-function flashFor(b: SprawlBeat, g: SprawlTv): Flash | null {
+function flashFor(b: SprawlBeat, g: SprawlTv, people: Map<string, PlayerSummary>): Flash | null {
   const name = (i: number) => g.seats[i]?.name ?? ''
   const dev = (k?: string) => (k ? g.map.dev[k] ?? k : '')
   switch (b.kind) {
@@ -119,7 +120,8 @@ function flashFor(b: SprawlBeat, g: SprawlTv): Flash | null {
       if (!g.drinks) return null
       const alive = g.seats.filter((s) => !s.gone).length
       const who = b.seats.length >= alive - 1 && alive > 2 ? `Everyone but ${name(g.seats.findIndex((s, i) => !s.gone && !b.seats.includes(i)))}` : b.seats.map(name).join(' + ')
-      return { id: b.seq, text: 'DRINK!', sub: `${who}: ${sipText(b.sips)}`, fill: C.bubblegum, ms: 2200 }
+      const water = b.seats.filter((i) => g.seats[i] && people.get(g.seats[i].player)?.water).map(name)
+      return { id: b.seq, text: 'DRINK!', sub: `${who}: ${sipText(b.sips)}${waterNote(water)}`, fill: C.bubblegum, ms: 2200 }
     }
     case 'lastround': return { id: b.seq, text: 'LAST ROUND!', sub: "Time's up: one more lap of the table", fill: C.tomato, ink: C.white, ms: 2400 }
     case 'win': return { id: b.seq, text: `${name(b.seat).toUpperCase()} WINS!`, sub: `${g.vpTarget} points`, fill: C.sun, ms: 3000 }
@@ -127,7 +129,7 @@ function flashFor(b: SprawlBeat, g: SprawlTv): Flash | null {
   }
 }
 
-function useFlashes(g: SprawlTv) {
+function useFlashes(g: SprawlTv, people: Map<string, PlayerSummary>) {
   const [flash, setFlash] = useState<Flash | null>(null)
   const queue = useRef<Flash[]>([])
   const seen = useRef(latest(g.beats))
@@ -142,7 +144,7 @@ function useFlashes(g: SprawlTv) {
   useEffect(() => {
     const fresh = g.beats.filter((b) => b.seq > seen.current)
     seen.current = Math.max(seen.current, latest(g.beats))
-    for (const b of fresh) { const f = flashFor(b, g); if (f) queue.current.push(f) }
+    for (const b of fresh) { const f = flashFor(b, g, people); if (f) queue.current.push(f) }
     if (!showing.current && queue.current.length) next()
   }, [g]) // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => () => { if (timer.current) clearTimeout(timer.current) }, [])
@@ -283,6 +285,7 @@ function call(g: SprawlTv): string {
 
 /** Whose turn it is and what they're doing, with the dice. */
 function TurnCard({ g, people, stage, clock }: { g: SprawlTv; people: Map<string, PlayerSummary>; stage: StageInfo; clock: Clock }) {
+  const scale = useTimerScale()
   const s = g.seats[g.turn]
   const p = s ? people.get(s.player) : undefined
   return (
@@ -290,7 +293,7 @@ function TurnCard({ g, people, stage, clock }: { g: SprawlTv; people: Map<string
       <div className="who">
         {p && <AvatarFace avatar={p.avatar} size={56} />}<b>{call(g)}</b>
         {g.timed && (clock.deadline != null || clock.frozen != null) && (
-          <Timer deadline={stage.paused ? null : clock.deadline} frozen={stage.paused ? clock.frozen ?? 0 : clock.frozen} total={DECISION_MS[g.phase] ?? 20_000} size={76} />
+          <Timer deadline={stage.paused ? null : clock.deadline} frozen={stage.paused ? clock.frozen ?? 0 : clock.frozen} total={(DECISION_MS[g.phase] ?? 20_000) * scale} size={76} />
         )}
       </div>
       {g.dice.length > 0 && g.phase !== 'setup' && (

@@ -82,6 +82,7 @@
 .host-players { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .host-players > div { display: flex; align-items: center; gap: 14px; background: var(--paper-2); border: 4px solid var(--ink); border-radius: 20px; padding: 8px 12px; font-size: 26px; font-weight: 900; }
 .host-players span.name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.host-players .team-swatch { width: 40px; height: 40px; border-radius: 50%; border: 4px solid var(--ink); flex: none; }
 .slider { display: flex; align-items: center; gap: 18px; font-size: 26px; font-weight: 900; }
 .slider input { width: 320px; accent-color: var(--tomato); }
 

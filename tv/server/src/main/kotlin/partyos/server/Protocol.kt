@@ -80,7 +80,7 @@ sealed interface HostCommand {
 }
 
 @Serializable
-data class JoinRequest(val room: String, val name: String, val avatar: Avatar, val spectator: Boolean = false)
+data class JoinRequest(val room: String, val name: String, val avatar: Avatar, val spectator: Boolean = false, val water: Boolean = false)
 
 @Serializable
 data class JoinResponse(val playerId: PlayerId, val token: String)
@@ -93,6 +93,9 @@ data class PinRequest(val pin: String)
 
 @Serializable
 data class RoleRequest(val token: String, val role: Role)
+
+@Serializable
+data class WaterRequest(val token: String, val water: Boolean)
 
 @Serializable
 data class HostLoginResponse(val hostToken: String)

@@ -157,7 +157,7 @@ sealed interface TvGame
 data class GenericTv(val title: String, val lines: List<String>) : TvGame
 
 @Serializable
-data class PlayerSummary(val id: PlayerId, val name: String, val avatar: Avatar, val role: Role, val connected: Boolean)
+data class PlayerSummary(val id: PlayerId, val name: String, val avatar: Avatar, val role: Role, val connected: Boolean, val water: Boolean = false)
 
 @Serializable
 data class ScoreRow(val id: PlayerId, val name: String, val avatar: Avatar, val score: Int)

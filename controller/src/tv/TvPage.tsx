@@ -17,7 +17,8 @@ import { TurfCover } from './TurfArt'
 import { TurfStage } from './TurfStage'
 import { useCueDirector, useDeadline } from './director'
 import { nowPlaying, useSpotify } from './spotify'
-import { isTrivia } from './types'
+import { TIMER_NAMES, TIMER_SCALES, TimerScale } from './timerScale'
+import { isTrivia, type TriviaTv } from './types'
 import { Paused } from './Shared'
 import { SuitSprite } from './Suits'
 import { AvatarFace, Brainy, Burst, C, Crown, Keycap, Panel, Pop, Scene, Slam } from './toon'
@@ -72,12 +73,12 @@ function TvShow() {
  * Lobby settings live on the server so the TV and the captain's phone always agree. teams 0 = auto. Home Turf:
  * turfMode 0 auto / 1 solo / 2 teams, minutes = its game clock (0 = no limit).
  */
-interface Lobby { rounds: number; teams: number; drinks: boolean; game: number; phones: boolean; turfMode: number; minutes: number; vp: number }
+interface Lobby { rounds: number; teams: number; drinks: boolean; game: number; phones: boolean; turfMode: number; minutes: number; vp: number; timers: number }
 function lobbyOf(tv: TvState | null): Lobby {
   const s = tv?.settings ?? {}
   return {
     rounds: s.rounds ?? 5, teams: s.teams ?? 0, drinks: (s.drinks ?? 1) === 1, game: s.game ?? 0, phones: (s.captain ?? 1) === 1,
-    turfMode: s.turfMode ?? 0, minutes: s.minutes ?? 45, vp: s.vp ?? 8,
+    turfMode: s.turfMode ?? 0, minutes: s.minutes ?? 45, vp: s.vp ?? 8, timers: s.timers ?? 0,
   }
 }
 type SetOption = (key: OptionKey, value: number) => void
@@ -178,14 +179,14 @@ function Show({ session }: { session: TvSession }) {
         <motion.div key={stage ? `game-${stage.gameId}` : 'lobby'} style={{ position: 'absolute', inset: 0 }}
           initial={{ clipPath: 'circle(0% at 50% 50%)' }} animate={{ clipPath: 'circle(75% at 50% 50%)' }} exit={{ opacity: 0 }} transition={{ duration: 0.6, ease: [0.7, 0, 0.2, 1] }}>
           {!tv ? <Scene color={C.sun} /> : stage ? (
-            <>
+            <TimerScale.Provider value={TIMER_SCALES[lobby.timers] ?? 1}>
               {isTrivia(stage.gameId) ? <TriviaStage stage={stage} players={players} scores={tv.scores} clock={clock} />
                 : stage.gameId === 'blackjack' ? <GameScene game="blackjack"><BlackjackStage stage={stage} players={players} scores={tv.scores} clock={clock} /></GameScene>
                 : stage.gameId === 'turf' ? <GameScene game="turf"><TurfStage stage={stage} players={players} scores={tv.scores} clock={clock} /></GameScene>
                 : stage.gameId === 'sprawl' ? <GameScene game="sprawl"><SprawlStage stage={stage} players={players} scores={tv.scores} clock={clock} /></GameScene>
                 : <GameScene game="bluff"><BluffStage stage={stage} players={players} scores={tv.scores} clock={clock} /></GameScene>}
               {stage.paused && <Paused reason={stage.pauseReason} />}
-            </>
+            </TimerScale.Provider>
           ) : (
             <LobbyScreen tv={tv} session={session} games={games} lobby={lobby} setOption={setOption} onStart={start} keys={live && !overlay} />
           )}
@@ -258,6 +259,7 @@ function LobbyScreen({ tv, session, games, lobby, setOption, onStart, keys }: {
         setOption('turfMode', mode); if (mode === 2) setOption('teams', teams); sfx.focus()
       }
       else if (k === 'v' && sprawl) { setOption('vp', lobby.vp === 10 ? 8 : 10); sfx.focus() }
+      else if (k === 'r') { setOption('timers', (lobby.timers + 1) % TIMER_SCALES.length); sfx.focus() }
       else if (k === 't' && trivia) { setOption('teams', TEAM_CHOICES[(TEAM_CHOICES.indexOf(lobby.teams) + 1) % TEAM_CHOICES.length] ?? 0); sfx.focus() }
       else if (k === 'd' && (trivia || turf || sprawl)) { setOption('drinks', lobby.drinks ? 0 : 1); sfx.focus() }
       else if (e.key === 'Enter' && focused) onStart(focused)
@@ -300,6 +302,7 @@ function LobbyScreen({ tv, session, games, lobby, setOption, onStart, keys }: {
             {turf && <span className="stepper"><Keycap label="T" /> Play <b>{turfModeText(lobby)}</b></span>}
             {sprawl && <span className="stepper"><Keycap label="V" /> First to <b>{lobby.vp} POINTS</b></span>}
             {(trivia || turf || sprawl) && <span className="stepper"><Keycap label="D" /> Drink calls <b>{lobby.drinks ? 'ON' : 'OFF'}</b></span>}
+            <span className="stepper"><Keycap label="R" /> Timers <b>{TIMER_NAMES[lobby.timers] ?? TIMER_NAMES[0]}</b></span>
             <span style={{ flex: 1 }} />
             <span className="stepper"><Keycap label="←" /><Keycap label="→" /> pick <Keycap label="Enter" /> start</span>
           </div>
@@ -448,6 +451,7 @@ function HostOverlay({ tv, cmd, mix, setMix, lobby, setOption, onClose, spotify,
 }) {
   const stage = tv.stage
   const [confirmEnd, setConfirmEnd] = useState(false)
+  const teams = stage && isTrivia(stage.gameId) ? (stage.game as unknown as TriviaTv | undefined)?.teams ?? [] : []
   return (
     <div className="host-overlay" onClick={onClose}>
       <Slam from={1.2} tilt={-2}>
@@ -478,6 +482,21 @@ function HostOverlay({ tv, cmd, mix, setMix, lobby, setOption, onClose, spotify,
               {lobby.phones ? 'CAPTAIN CAN RUN THE SHOW' : 'TV ONLY'}
             </button>
           </div>
+          {teams.length > 0 && (
+            <>
+              <h2 style={{ fontSize: 32 }}>TEAM NAMES</h2>
+              <div className="host-players">
+                {teams.map((t) => (
+                  <div key={t.id}>
+                    <i className="team-swatch" style={{ background: t.color }} />
+                    <span className="name">{t.name}</span>
+                    {/* The host's veto: a typed name goes back to the team's kit name (and can be renamed in Team Up). */}
+                    <button className="tv-btn small quiet" onClick={() => cmd({ t: 'gameAction', action: `unname:${t.id}` })}>RESET NAME</button>
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
           <h2 style={{ fontSize: 32 }}>PLAYERS</h2>
           <div className="host-players">
             {tv.players.map((p) => (
