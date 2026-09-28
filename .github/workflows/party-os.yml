@@ -2,7 +2,7 @@ name: PARTY OS
 
 on:
   push:
-    branches: [main, party-os]
+    branches: [main, party-os, party-os-2]
     paths: ['tv/**', 'controller/**', '.github/workflows/party-os.yml']
   pull_request:
     paths: ['tv/**', 'controller/**', '.github/workflows/party-os.yml']
@@ -35,7 +35,8 @@ jobs:
           distribution: temurin
           java-version: 17
 
-      - uses: android-actions/setup-android@v3
+      # v4.0.2+ stops asking for the removed 'tools' package, which failed every v3 run.
+      - uses: android-actions/setup-android@v4
 
       - name: Install Android platform 37
         run: sdkmanager "platforms;android-37.0"
