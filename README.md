@@ -32,6 +32,13 @@ Made with [brag](https://github.com/latent-spaces/brag)'s lightweight `brag-slim
 
 | Change | What it means on game night |
 | --- | --- |
+| **Pick up where you left off** | If the Mac restarts or the Terminal closes mid-party, double-click the launcher again: same room code, same scores, the game paused, and phones rejoin on their own. |
+| **Selfies as faces** | Draw your face or snap a selfie or photo; the phone crops it and every screen shows it. Photos survive a restart too. |
+| **Every game has its own look** | Drunk Blackjack is an after-hours casino, Bluff Battle a tabloid front page, Write It Down a pub quiz, Home Turf and Sprawl get their own boards. Brain Drain keeps the cartoon show. |
+| **Timers: normal, relaxed, no rush** | Stretch every answer and decision timer 1.5× or 2× for a slower room (**R** on the TV or the captain's phone). Reveals keep their pace. |
+| **Water tonight** | A switch on each phone at join and between games. Drink calls stay the same, but yours are worded as water. |
+| **Phones stay awake** | Screens no longer dim and lock mid-question. |
+| **Team-name veto** | The host can send a typed team name back to its default (**Esc** → Team names), and the team gets to name itself again. |
 | **Sprawl** | The island-settling game on hexes named after the crew's places. Place settlements and roads on a mini-map on your phone, trade with anyone, and race to 8 points before the game clock runs out. |
 | **Home Turf** | The property game on the crew's own places. Buy, auction, build and trade from your phone. A game clock ends it in 30 to 90 minutes, and the richest wins. |
 | **Write It Down** | Type your team's answer with no multiple-choice hints. Close spelling counts. Play it inside Brain Drain or as its own pub quiz. |
@@ -59,6 +66,16 @@ Then double-click **`Start Party OS.command`** in this folder.
    get up. The TV keyboard works too.
 5. To stop: press **Ctrl+C** in the Terminal window (or close it), and **Cmd+Q** closes the TV window.
 
+**Restarted by accident?** Double-click the launcher again. Within six hours of the last move, the party comes back
+as it was: same room code, players, teams, scores and photos, with the game paused until the host carries on.
+Phones reconnect by themselves. To start a brand-new party instead:
+
+```bash
+PARTYOS_FRESH=1 ./"Start Party OS.command"
+```
+
+The party lives in `~/Library/Application Support/PartyOS/party.json` and photo faces in `.../PartyOS/photos`.
+
 If something's off:
 
 - **Phones can't join:** they must be on the same Wi-Fi as the Mac, and guest networks usually block this. If macOS
@@ -80,7 +97,8 @@ node controller/scripts/bots.mjs 12
 | ← → · Enter | pick a game · start it |
 | ↑ ↓ | questions per round (Brain Drain) or rounds (3–8) |
 | T · D | Brain Drain teams (auto, 2–6) · drink calls on/off |
-| Esc | host controls: pause, skip ahead, end, remove players, give the crown, phone control on/off, volume, Spotify |
+| R | timers: normal, relaxed (1.5×) or no rush (2×) |
+| Esc | host controls: pause, skip ahead, end, remove players, give the crown, reset team names, phone control on/off, volume, Spotify |
 | N | next song (when Spotify is playing) |
 | P · M · F | pause · mute · full screen |
 
@@ -144,7 +162,8 @@ ahead and end. The TV mirrors every choice. If their phone drops, the crown move
 comes back when they do; they can pass it on, and the TV's host controls can hand it to anyone or switch phone
 control off. Removing players stays on the TV.
 
-Scan, type a name, draw a face, play. Buttons are thumb-sized, every choice is colour **and** shape **and** text,
+Scan, type a name, draw a face (or take a selfie), play. Flip **Water tonight** on and your drink calls are
+worded as water; the screen stays awake while a game runs. Buttons are thumb-sized, every choice is colour **and** shape **and** text,
 teammates' faces show up on the answer they picked, and phones buzz on every tap and on your team's result. A
 refreshed or dropped phone rejoins as the same player.
 
@@ -224,6 +243,11 @@ award names. A test checks it when you run `./gradlew :engine:test`.
 - **Saturday Morning:** thick ink outlines, flat loud colour, halftone dots, comic bursts, hand-drawn faces instead
   of emoji. One token file ([`controller/src/theme/tokens.css`](controller/src/theme/tokens.css)) drives the TV
   and the phones. Fonts: Rammetto One for display, Figtree for reading.
+- **A room for each game:** the other games dress up on the TV and the phones alike. Drunk Blackjack plays in a dark
+  casino (emerald felt, mahogany rail, brass signs), Bluff Battle is a tabloid front page, Write It Down on its own is
+  a pub quiz with answer sheets, and Home Turf and Sprawl have their own boards. The themes live in
+  [`controller/src/theme/games.css`](controller/src/theme/games.css); `/tv?gallery=themes&game=blackjack` (or `bluff`,
+  `writeitdown`, `turf`, `sprawl`; add `&view=phone` for the phone) shows them from fixtures.
 - **Spotify instead:** with the Spotify app on the Mac, press **Esc** on the TV → **Music** → **Spotify**. The score
   goes quiet, Spotify starts playing (pick a playlist in Spotify first), the effects still play over it, and **N**
   skips a song. The first time, macOS asks whether `java` may control Spotify: click **OK**.
@@ -259,6 +283,7 @@ controller/    React + Vite: the phone controller and the web TV screen (/tv)
 
 ```bash
 cd tv && ./gradlew :devserver:installDist && devserver/build/install/devserver/bin/devserver --pin 1234 --static ../controller/dist
+# optional: --party party.json (resume after a restart) --photos photos/ (keep photo faces) --played played.json
 cd controller && npm run dev              # live reload; proxies /api and /ws to the devserver
 ```
 
