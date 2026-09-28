@@ -1,15 +1,33 @@
 package partyos.server
 
+import java.io.File
+import java.nio.file.Files
+import java.nio.file.StandardCopyOption
 import java.security.MessageDigest
 
 /**
  * Selfies and photos players use as their face (avatar face `i:<id>`). The phone crops and shrinks the picture to a
- * small square JPEG before uploading it; the id is a content hash, so the same photo twice is stored once. Photos live
- * in memory for the life of the server, capped at [maxPhotos] (oldest out first). A face whose photo is gone falls
- * back to a drawn preset on every screen.
+ * small square JPEG before uploading it; the id is a content hash, so the same photo twice is stored once. Only the
+ * newest [maxPhotos] are kept (oldest out first). With a [dir], each photo is also written there as `<id>.jpg` and read
+ * back when the server starts, so a restarted party keeps its faces; without one they last as long as the server. A
+ * face whose photo is gone falls back to a drawn preset on every screen.
  */
-class PhotoStore(private val maxPhotos: Int = 200) {
+class PhotoStore(
+    private val maxPhotos: Int = 200,
+    private val dir: File? = null,
+    private val onError: (String) -> Unit = {},
+) {
     private val photos = LinkedHashMap<String, ByteArray>()
+
+    init {
+        dir?.listFiles { f -> f.isFile && f.name.endsWith(".jpg") && ID.matches(f.name.removeSuffix(".jpg")) }
+            ?.sortedBy { it.lastModified() }
+            ?.forEach { f ->
+                runCatching { f.readBytes() }.getOrNull()?.takeIf { it.size <= MAX_BYTES && looksLikeJpeg(it) }
+                    ?.let { photos[f.name.removeSuffix(".jpg")] = it }
+            }
+        trim()
+    }
 
     /** Stores [jpeg] and returns its id. */
     @Synchronized
@@ -17,12 +35,28 @@ class PhotoStore(private val maxPhotos: Int = 200) {
         val id = idOf(jpeg)
         photos.remove(id)
         photos[id] = jpeg
-        while (photos.size > maxPhotos) photos.remove(photos.keys.first())
+        dir?.let { d ->
+            runCatching {
+                d.mkdirs()
+                val tmp = File(d, "$id.tmp")
+                tmp.writeBytes(jpeg)
+                Files.move(tmp.toPath(), File(d, "$id.jpg").toPath(), StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE)
+            }.onFailure { onError("couldn't save photo $id: ${it.message}") }
+        }
+        trim()
         return id
     }
 
     @Synchronized
     fun get(id: String): ByteArray? = photos[id]
+
+    private fun trim() {
+        while (photos.size > maxPhotos) {
+            val oldest = photos.keys.first()
+            photos.remove(oldest)
+            dir?.let { File(it, "$oldest.jpg").delete() }
+        }
+    }
 
     companion object {
         /** Well above a 256 px phone crop (~20-30 KB) and well below anything worth holding onto. */

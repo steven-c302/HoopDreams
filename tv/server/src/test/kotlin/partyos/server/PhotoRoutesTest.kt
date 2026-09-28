@@ -56,4 +56,14 @@ class PhotoRoutesTest {
         assertEquals(null, store.get(ids[0]))
         assertTrue(store.get(ids[1]) != null && store.get(ids[2]) != null)
     }
+
+    @Test fun photosInAFolderOutliveTheServer() {
+        val dir = java.nio.file.Files.createTempDirectory("photos").toFile()
+        val ids = (1..3).map { n -> PhotoStore(maxPhotos = 2, dir = dir).put(jpeg + byteArrayOf(n.toByte())) }
+        val restarted = PhotoStore(maxPhotos = 2, dir = dir)
+        assertTrue((jpeg + byteArrayOf(3)).contentEquals(restarted.get(ids[2])))
+        assertTrue(restarted.get(ids[1]) != null)
+        assertEquals(null, restarted.get(ids[0])) // the oldest went when the folder passed the cap
+        assertEquals(setOf("${ids[1]}.jpg", "${ids[2]}.jpg"), dir.list()!!.toSet())
+    }
 }

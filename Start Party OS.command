@@ -36,7 +36,12 @@ cd "$ROOT/tv"
 PIN="${PARTYOS_PIN:-$(( RANDOM % 9000 + 1000 ))}"
 # Questions already played are remembered here so they don't come up again. Delete the file to replay everything.
 PLAYED="$HOME/Library/Application Support/PartyOS/played-questions.json"
-"$ROOT/tv/devserver/build/install/devserver/bin/devserver" --port "$PORT" --pin "$PIN" --static "$ROOT/controller/dist" --played "$PLAYED" &
+# The party itself (players, scores, the game on screen) and photo faces, so a restart the same night picks up where
+# it left off: same room code, phones rejoin on their own. PARTYOS_FRESH=1 starts a new party instead.
+PARTY="$HOME/Library/Application Support/PartyOS/party.json"
+PHOTOS="$HOME/Library/Application Support/PartyOS/photos"
+[ "${PARTYOS_FRESH:-0}" = "1" ] && rm -f "$PARTY"
+"$ROOT/tv/devserver/build/install/devserver/bin/devserver" --port "$PORT" --pin "$PIN" --static "$ROOT/controller/dist" --played "$PLAYED" --party "$PARTY" --photos "$PHOTOS" &
 SERVER=$!
 trap 'echo; echo "Stopping PARTY OS…"; kill $SERVER 2>/dev/null; exit 0' INT TERM EXIT
 caffeinate -dimsu -w $SERVER &
