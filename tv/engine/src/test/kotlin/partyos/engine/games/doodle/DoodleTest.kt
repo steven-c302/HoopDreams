@@ -189,6 +189,17 @@ class DoodleTest {
         assertEquals(2, tv.missTotal)
     }
 
+    @Test fun aGuessThatContainsTheWordCountsAndNeverLeaksAsABubble() {
+        val ids = start(4)
+        val (drawer, word) = startDrawing()
+        val (a, b) = guessers(ids, drawer)
+        assertEquals(ActionResult.Ack, act(a, "guess", "text" to "is it a $word"))
+        assertTrue(guessScreen(a).solved)
+        assertEquals(ActionResult.Ack, act(b, "guess", "text" to "${word}s"))
+        assertTrue(guessScreen(b).solved)
+        assertTrue(tv.wrong.none { it.text.contains(word) }, "a bubble held the word")
+    }
+
     @Test fun aCorrectGuessNeverBecomesABubble() {
         val ids = start(4)
         val (drawer, word) = startDrawing()

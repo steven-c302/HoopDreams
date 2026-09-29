@@ -113,16 +113,17 @@ class InkRoutesTest {
         assertEquals(before, host.version.value)
     }
 
-    @Test fun aFloodOfInkIsCappedByTheRateLimit() = testApplication {
+    @Test fun aStallsWorthOfQueuedInkStillGetsThrough() = testApplication {
         val host = doodleHost()
         val p = drawing(host)
         createClient { install(WebSockets) }.webSocket("/ws?token=${p.tokens.getValue(p.drawer)}") {
             nextOf<ServerMsg.View>()
-            repeat(100) { i -> sendMsg(ClientMsg.Ink(p.round, listOf(InkOp.Start(i + 1, 0, 0, 10, 10, 50)))) }
+            repeat(150) { i -> sendMsg(ClientMsg.Ink(p.round, listOf(InkOp.Start(i + 1, 0, 0, 10, 10, 50)))) }
             kotlinx.coroutines.delay(600)
         }
         val strokes = host.inkSync().turns.single().strokes.size
-        assertTrue(strokes in 30..60, "$strokes of 100 batches got through") // a burst of 40, then 25 a second
+        // A couple of seconds of Wi-Fi stall arrives as one burst (the pad sends about 20 batches a second): none may be lost.
+        assertTrue(strokes >= 140, "$strokes of 150 batches got through")
     }
 
     @Test fun theDrawingsGoWhenTheGameEnds() = testApplication {

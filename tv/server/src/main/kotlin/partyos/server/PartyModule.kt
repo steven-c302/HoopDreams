@@ -235,7 +235,7 @@ private class PartySession(
 ) {
     @Volatile private var lastSeen = cfg.clock.now()
     private val bucket = TokenBucket(cfg.actionsPerSecond, cfg.actionsPerSecond.toDouble(), cfg.clock::now)
-    private val inkBucket = TokenBucket(40, 25.0, cfg.clock::now)
+    private val inkBucket = TokenBucket(200, 25.0, cfg.clock::now)
 
     suspend fun run() {
         val role = pid?.let { id -> host.read { player(id)?.role } }

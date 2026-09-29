@@ -91,7 +91,7 @@ export function Play({ session, onLeave }: { session: Session; onLeave(why: stri
       <section className="screen" key={view.screen.t === 'turf' || view.screen.t === 'sprawl' ? view.screen.t : `${view.round}-${view.screen.t}`}>
         {view.captain && !view.gameId
           ? <CaptainLobby view={view} games={games} host={host} />
-          : <ScreenView screen={view.screen} disabled={view.paused} onAction={send} meId={view.me.id} people={people} ink={{ online: status === 'online', send: sendInk }} />}
+          : <ScreenView screen={view.screen} disabled={view.paused} onAction={send} meId={view.me.id} people={people} ink={{ online: status === 'online' && !view.paused, send: sendInk }} />}
         {view.captain && inTeamUp(view) && <ShuffleTeams host={host} />}
         {view.me.role === 'SPECTATOR' && !view.gameId && (
           <button className="primary big" onClick={() => void takeSeat(session.token, setToast)}>Join as a player</button>

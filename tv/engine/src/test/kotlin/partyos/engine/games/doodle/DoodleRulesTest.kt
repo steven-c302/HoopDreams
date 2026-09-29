@@ -87,4 +87,15 @@ class DoodleRulesTest {
         assertFalse(DoodleRules.nearMiss("cot", "cat")) // too short to say
         assertTrue(DoodleRules.nearMiss("kqqqaroo", "kangaroo"))
     }
+
+    @Test fun aGuessThatNamesTheWordInAPhraseOrAsAPluralMentionsIt() {
+        assertTrue(DoodleRules.mentions("dogs", "dog"))
+        assertTrue(DoodleRules.mentions("is it a dog", "dog"))
+        assertTrue(DoodleRules.mentions("Is it pizza?", "pizza"))
+        assertTrue(DoodleRules.mentions("i think it is ice cream", "ice cream"))
+        assertTrue(DoodleRules.mentions("boxes", "box"))
+        assertFalse(DoodleRules.mentions("catapult", "cat"))
+        assertFalse(DoodleRules.mentions("concatenate", "cat"))
+        assertFalse(DoodleRules.mentions("a bird", "dog"))
+    }
 }

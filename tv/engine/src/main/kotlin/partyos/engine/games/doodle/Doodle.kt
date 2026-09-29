@@ -144,7 +144,7 @@ class Doodle(pack: DoodlePack = DoodlePack.core()) : GameModule<DoodleState>, In
     private fun guess(s: DoodleState, who: PlayerId, payload: JsonObject, ctx: GameContext): Step<DoodleState> {
         if (who == s.drawer || who.v in s.correct) throw Reject("NOT_GUESSING")
         val text = cleanText(payload["text"]?.jsonPrimitive?.content ?: "", MAX_GUESS) ?: throw Reject("BAD_TEXT")
-        if (!AnswerMatch.accepts(text, s.word)) {
+        if (!AnswerMatch.accepts(text, s.word) && !DoodleRules.mentions(text, s.word)) {
             return Step(
                 s.copy(
                     last = s.last + (who.v to text),

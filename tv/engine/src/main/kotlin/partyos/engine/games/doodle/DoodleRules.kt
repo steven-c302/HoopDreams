@@ -78,6 +78,24 @@ object DoodleRules {
         return editDistance(g, w) <= w.length / 3 + 1
     }
 
+    private fun tokens(text: String) = text.lowercase().split(Regex("[^a-z0-9]+")).filter { it.isNotEmpty() }
+
+    /**
+     * The guess says the word as whole words, alone or inside a phrase ("is it a dog"), or as its plural ("dogs").
+     * The fuzzy matcher is strict on short words, and a rejected guess goes up on the TV, so this catches what would leak.
+     */
+    fun mentions(guess: String, word: String): Boolean {
+        val g = tokens(guess)
+        val w = tokens(word)
+        if (w.isEmpty() || g.size < w.size) return false
+        return (0..g.size - w.size).any { i ->
+            w.indices.all { j ->
+                val t = g[i + j]
+                t == w[j] || (j == w.lastIndex && (t == w[j] + "s" || t == w[j] + "es"))
+            }
+        }
+    }
+
     internal fun editDistance(a: String, b: String): Int {
         var prev = IntArray(b.length + 1) { it }
         for (i in 1..a.length) {
