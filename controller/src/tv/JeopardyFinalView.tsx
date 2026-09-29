@@ -9,8 +9,8 @@ export function JeopardyFinalView({ g, players }: { g: JeopardyTv; players: Play
   const f = g.final!
   const who = new Map(players.map((p) => [p.id, p]))
   return (
-    <div className="jeo-finalwrap">
-      <Burst text="FINAL JEOPARDY" fill={C.sun} ink={C.ink} width={880} height={300} size={84} tilt={-3} />
+    <div className={`jeo-finalwrap ${g.phase === 'final_reveal' ? 'reveal' : ''}`}>
+      {g.phase !== 'final_reveal' && <Burst text="FINAL JEOPARDY" fill={C.sun} ink={C.ink} width={880} height={300} size={84} tilt={-3} />}
       <p className="jeo-final-cat">{f.category}</p>
       {g.phase === 'final_category' && <p className="jeo-note">Get your bets ready</p>}
       {g.phase === 'final_wager' && <p className="jeo-note">Place your bet on your phone. {f.wagers}/{f.expected} in</p>}
@@ -30,7 +30,7 @@ export function JeopardyFinalView({ g, players }: { g: JeopardyTv; players: Play
                     <span className="ans">{s.answer ?? 'no answer'}</span>
                     <span className="bet">bet ${s.wager}</span>
                     <strong>{signed(s.delta)}</strong>
-                    <span className="tot">${s.total}</span>
+                    <span className="tot">{s.total < 0 ? '-' : ''}${Math.abs(s.total)}</span>
                   </div>
                 </Deal>
               )

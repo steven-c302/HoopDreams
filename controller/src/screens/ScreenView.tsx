@@ -185,6 +185,8 @@ function inkOnHex(hex?: string): string {
 }
 
 const KEYS = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '.', '0', 'del']
+/** A wager is a whole number of dollars, so its pad swaps the decimal point for a blank. */
+const WAGER_KEYS = KEYS.map((k) => (k === '.' ? '' : k))
 
 function NumberEntry({ screen, disabled, people, onAction }: { screen: Extract<Screen, { t: 'number' }>; disabled: boolean; people: Map<string, ScoreRow>; onAction(p: ActionPayload): void }) {
   const [draft, setDraft] = useState(screen.value != null ? String(screen.value) : '')
@@ -201,14 +203,16 @@ function NumberEntry({ screen, disabled, people, onAction }: { screen: Extract<S
       <h1 className="prompt small">{screen.prompt}</h1>
       <div className="number-display"><b>{shown}</b>{screen.unit && <span>{screen.unit}</span>}</div>
       <div className="numpad">
-        {KEYS.map((k) => (
+        {(screen.kind === 'wager' ? WAGER_KEYS : KEYS).map((k) => k === '' ? <span key="gap" /> : (
           <button key={k} type="button" className="numkey" disabled={disabled} aria-label={k === 'del' ? 'Delete' : k} onClick={() => press(k)}>
             {k === 'del' ? <svg width="34" height="26" viewBox="0 0 34 26" aria-hidden="true"><path d="M11 2 H31 V24 H11 L2 13 Z" fill="none" stroke="currentColor" strokeWidth="3.5" strokeLinejoin="round" /><path d="M16 8 L25 18 M25 8 L16 18" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" /></svg> : k}
           </button>
         ))}
       </div>
       <button className="primary big" disabled={disabled || !valid || sent} onClick={() => { buzz(40); onAction({ kind: screen.kind, value }) }}>
-        {sent ? 'Guess sent' : screen.value != null ? 'Update guess' : 'Send guess'}
+        {screen.kind === 'wager'
+          ? (sent ? 'Wager locked' : screen.value != null ? 'Change wager' : 'Lock in wager')
+          : (sent ? 'Guess sent' : screen.value != null ? 'Update guess' : 'Send guess')}
       </button>
       {(screen.guesses?.length ?? 0) > 0 && (
         <div className="team-guesses">
