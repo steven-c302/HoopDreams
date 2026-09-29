@@ -63,7 +63,7 @@
 
 .dd-gallery-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 16px; min-height: 0; }
 .dd-gallery-title { font: 400 64px var(--font-display); color: var(--paper); -webkit-text-stroke: 10px var(--ink); paint-order: stroke fill; }
-.dd-gallery { display: grid; grid-template-columns: repeat(4, 1fr); gap: 22px 28px; width: 100%; max-width: 1760px; }
+.dd-gallery { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px 28px; width: 100%; max-width: 1360px; }
 .dd-shot { margin: 0; padding: 12px 12px 10px; background: #c98b4b; border: 5px solid var(--ink); border-radius: 10px; box-shadow: 7px 7px 0 var(--ink); display: flex; flex-direction: column; gap: 8px; }
 .dd-still { position: relative; aspect-ratio: 4 / 3; background: #fffaf0; border: 4px solid var(--ink); overflow: hidden; }
 .dd-still canvas { position: absolute; inset: 0; width: 100%; height: 100%; }

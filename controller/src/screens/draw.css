@@ -11,19 +11,20 @@
 .draw-word small { display: block; font: 800 12px var(--font-body); letter-spacing: .14em; opacity: .75; }
 .draw-word b { display: block; font: 400 34px/1.1 var(--font-display); overflow-wrap: anywhere; }
 .draw-paper {
-  width: 100%; aspect-ratio: 4 / 3; background: #fffaf0; border: 4px solid var(--ink); border-radius: 12px; box-shadow: 5px 5px 0 var(--ink);
+  flex: none; width: 100%; aspect-ratio: 4 / 3; background: #fffaf0; border: 4px solid var(--ink); border-radius: 12px; box-shadow: 5px 5px 0 var(--ink);
   background-image: radial-gradient(circle at 20% 30%, #0000000a 0 1px, transparent 2px), radial-gradient(circle at 70% 60%, #0000000a 0 1px, transparent 2px);
   background-size: 9px 9px, 13px 13px; overflow: hidden;
 }
 .draw-canvas { display: block; width: 100%; height: 100%; touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; cursor: crosshair; }
 .draw-tools { display: flex; flex-direction: column; gap: 10px; }
-.draw-crayons, .draw-brushes { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; justify-content: center; }
+.draw-crayons { display: grid; grid-template-columns: repeat(4, 44px); gap: 10px 18px; justify-content: center; }
+.draw-brushes { display: flex; align-items: center; gap: 8px; flex-wrap: nowrap; justify-content: center; }
 .crayon { flex: none; width: 44px; height: 44px; border-radius: 50%; border: 3px solid var(--ink); box-shadow: 2px 2px 0 var(--ink); padding: 0; }
 .crayon.on { transform: scale(1.15); outline: 4px solid var(--ink); outline-offset: 2px; }
-.brush { flex: none; width: 48px; height: 48px; display: grid; place-items: center; background: var(--white); border: 3px solid var(--ink); border-radius: 12px; padding: 0; }
+.brush { flex: none; width: 44px; height: 44px; display: grid; place-items: center; background: var(--white); border: 3px solid var(--ink); border-radius: 12px; padding: 0; }
 .brush span { display: block; border-radius: 50%; background: var(--ink); }
 .brush.on { background: var(--sun); box-shadow: 3px 3px 0 var(--ink); }
-.tool { min-height: 48px; padding: 0 16px; font: 800 16px var(--font-body); background: var(--paper); color: var(--ink); border: 3px solid var(--ink); border-radius: 12px; }
+.tool { flex: none; min-height: 44px; padding: 0 12px; font: 800 15px var(--font-body); background: var(--paper); color: var(--ink); border: 3px solid var(--ink); border-radius: 12px; }
 .tool:disabled { opacity: .4; }
 .draw-status { text-align: center; font: 800 15px var(--font-body); margin: 0; }
 
