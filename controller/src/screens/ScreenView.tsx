@@ -6,15 +6,16 @@ import { DrinkBet, Led } from '../tv/Casino'
 import { Brainy, Shape } from '../tv/toon'
 import { BoardScreen } from './BoardScreen'
 import { BuzzerScreen } from './BuzzerScreen'
+import { HuntScreen } from './HuntScreen'
 import { SecretCard } from './SecretCard'
 import { SprawlScreen } from './SprawlScreen'
 import { TurfScreen } from './TurfScreen'
 
 const buzz = (ms: number | number[]) => { try { navigator.vibrate?.(ms) } catch { /* not supported */ } }
 
-interface Props { screen: Screen; disabled: boolean; meId: string; people: Map<string, ScoreRow>; onAction(p: ActionPayload): void }
+interface Props { screen: Screen; disabled: boolean; meId: string; people: Map<string, ScoreRow>; seconds?: number | null; rejected?: { code: string; n: number } | null; onAction(p: ActionPayload): void }
 
-export function ScreenView({ screen, disabled, meId, people, onAction }: Props) {
+export function ScreenView({ screen, disabled, meId, people, seconds, rejected, onAction }: Props) {
   switch (screen.t) {
     case 'waiting': return <Waiting screen={screen} />
     case 'tutorial': return <Tutorial screen={screen} disabled={disabled} onAction={onAction} />
@@ -25,6 +26,7 @@ export function ScreenView({ screen, disabled, meId, people, onAction }: Props) 
     case 'scores': return <Scores title={screen.title} rows={screen.rows} meId={meId} />
     case 'cards': return <CardTable screen={screen} disabled={disabled} onAction={onAction} />
     case 'secret': return <SecretCard screen={screen} disabled={disabled} onAction={onAction} />
+    case 'hunt': return <HuntScreen screen={screen} disabled={disabled} seconds={seconds ?? null} rejected={rejected ?? null} onAction={onAction} />
     case 'board': return <BoardScreen screen={screen} disabled={disabled} onAction={onAction} />
     case 'buzzer': return <BuzzerScreen screen={screen} disabled={disabled} onAction={onAction} />
     case 'turf': return <TurfScreen screen={screen} disabled={disabled} onAction={onAction} />
