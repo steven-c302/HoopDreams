@@ -162,7 +162,9 @@ h2 { margin: 0; font-size: 1.2rem; }
 .crew button { display: flex; align-items: center; gap: 8px; padding: 6px 10px; text-align: left; overflow: hidden; }
 .crew button span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .crown-fab { position: fixed; right: 16px; bottom: calc(16px + env(safe-area-inset-bottom)); width: 64px; height: 64px; border-radius: 50%; padding: 0; display: grid; place-items: center; background: var(--paper); z-index: 5; }
-.sheet-scrim { position: fixed; inset: 0; background: color-mix(in oklab, var(--ink) 55%, transparent); display: flex; align-items: flex-end; z-index: 10; }
+/* Blurred as well as dimmed: the screen behind is vertically centred, so its edges (a heading, a button's top) end up
+   just above the sheet, and left sharp they read as things stuck behind it. */
+.sheet-scrim { position: fixed; inset: 0; background: color-mix(in oklab, var(--ink) 68%, transparent); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); display: flex; align-items: flex-end; z-index: 10; }
 .sheet { width: 100%; max-width: 520px; margin: 0 auto; background: var(--sun); border: var(--stroke-phone) solid var(--ink); border-bottom: 0; border-radius: 26px 26px 0 0; padding: 18px 16px calc(20px + env(safe-area-inset-bottom)); display: flex; flex-direction: column; gap: 12px; animation: rise var(--dur-base) var(--ease-out);
   /* A big crew makes the pass-the-crown list tall: scroll inside the sheet so Pause and Skip stay reachable. */
   max-height: calc(100dvh - 12px - env(safe-area-inset-top)); overflow-y: auto; overscroll-behavior: contain; }
