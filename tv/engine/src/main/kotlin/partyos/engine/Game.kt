@@ -60,6 +60,8 @@ class GameContext(
     val playedThisParty: Set<String> = usedContent,
     /** Time left on the current phase's deadline (frozen while paused), or null when it has none. */
     val remainingMs: Long? = null,
+    /** The player holding the crown (who may run the show from their phone), or null when phone control is off. */
+    val captain: PlayerId? = null,
 ) {
     fun player(id: PlayerId) = players.firstOrNull { it.id == id }
 

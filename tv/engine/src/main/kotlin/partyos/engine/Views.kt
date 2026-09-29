@@ -111,6 +111,37 @@ sealed interface Screen {
     ) : Screen
 
     /**
+     * Answer & Question's board: [categories] across, [cells] by column and row. The phone picks a cell locally and
+     * confirms it with `{ kind: "pick", cell }`. [canPick] is true for the player holding the board and for the
+     * captain, who then sees [pickFor], the name of the player they are picking for.
+     */
+    @Serializable @SerialName("board")
+    data class Board(
+        val prompt: String,
+        val categories: List<String>,
+        val cells: List<BoardCell>,
+        val canPick: Boolean,
+        val pickFor: String? = null,
+        val note: String? = null,
+    ) : Screen
+
+    /**
+     * The BUZZ button. [state]: `reading` (clue still being read), `open`, `locked` (rang in too early, [lockedMs] left),
+     * `beaten` (someone else has the floor, named in [detail]), `tried` (you already missed this clue) or `out`
+     * (you joined after it started). [live] is true while the buzz window is open, so a `locked` phone can open itself
+     * when the lockout runs out. A buzz sends `{ kind: "buzz" }`.
+     */
+    @Serializable @SerialName("buzzer")
+    data class Buzzer(
+        val state: String,
+        val category: String,
+        val value: Int,
+        val detail: String? = null,
+        val lockedMs: Int = 0,
+        val live: Boolean = false,
+    ) : Screen
+
+    /**
      * Home Turf: your token, the one thing to do now, your places (with what you can do to each), who you could
      * trade with, and any open trade or auction. Faces are ids only; phones already have everyone's from `scores`.
      */
@@ -166,6 +197,10 @@ sealed interface Screen {
 /** The clue field under Imposter's peek chip. */
 @Serializable
 data class SecretInput(val prompt: String, val maxLen: Int, val value: String?, val kind: String, val hint: String? = null)
+
+/** One square on the phone's board. */
+@Serializable
+data class BoardCell(val id: String, val col: Int, val row: Int, val value: Int, val used: Boolean)
 
 /** One playing card. rank 1 (ace) to 13 (king), suit 0..3 = spades, hearts, diamonds, clubs. rank 0 = face down. */
 @Serializable
