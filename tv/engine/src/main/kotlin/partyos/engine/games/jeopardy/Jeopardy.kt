@@ -160,6 +160,22 @@ class Jeopardy(private val pack: JeopardyPack = JeopardyPack.core()) : GameModul
                 if (who.v != s.controller && who != ctx.captain) throw Reject("NOT_YOUR_PICK")
                 pick(s, payload["cell"]?.jsonPrimitive?.content ?: "", ctx)
             }
+            s.phase == CLUE && kind == "buzz" -> {
+                // Ringing in before the clue has been read locks you out for a second; a Daily Double has no ringing in.
+                if (s.dailyDouble || who !in s.eligible) throw Reject("NOT_NOW")
+                Step(s.copy(lockedUntil = s.lockedUntil + (who.v to ctx.now + JeopardyRules.LOCKOUT_MS)))
+            }
+            s.phase == BUZZ && kind == "buzz" -> {
+                if (who !in s.eligible || who.v in s.tried) throw Reject("NOT_NOW")
+                if ((s.lockedUntil[who.v] ?: 0L) > ctx.now) throw Reject("LOCKED_OUT")
+                // The engine handles one action at a time, so the first buzz to arrive is the winner.
+                Step(s.copy(phase = ANSWER, floor = who.v), listOf(Effect.Phase(ctx.timer(ANSWER_MS))))
+            }
+            s.phase == ANSWER && kind == "answer" -> {
+                if (who.v != s.floor) throw Reject("NOT_NOW")
+                val text = cleanText(payload["text"]?.jsonPrimitive?.content ?: "") ?: throw Reject("BAD_TEXT")
+                judge(s, text, ctx)
+            }
             else -> throw Reject("NOT_NOW")
         }
     }
@@ -167,15 +183,46 @@ class Jeopardy(private val pack: JeopardyPack = JeopardyPack.core()) : GameModul
     override fun onDeadline(s: JeopardyState, ctx: GameContext): Step<JeopardyState> = when (s.phase) {
         INTRO -> toPick(s, ctx)
         PICK -> openClue(s, JeopardyRules.autoPick(cells(s).filter { it.id !in s.used }, ctx.random), ctx)
+        CLUE ->
+            if (s.dailyDouble) Step(s.copy(phase = ANSWER, floor = s.controller), listOf(Effect.Phase(ctx.timer(DD_ANSWER_MS))))
+            else Step(s.copy(phase = BUZZ), listOf(Effect.Phase(ctx.timer(BUZZ_MS))))
+        BUZZ -> reveal(s.copy(right = false), emptyList()) // nobody rang in
+        ANSWER -> judge(s, null, ctx) // time ran out with nothing typed
+        REVEAL -> afterReveal(s, ctx)
         else -> Step(s, listOf(Effect.Finish))
     }
 
     override fun waitingOn(s: JeopardyState): Set<PlayerId>? = when (s.phase) {
         PICK -> s.controller?.let { setOf(PlayerId(it)) }
+        BUZZ -> s.eligible.filter { it.v !in s.tried }.toSet()
+        ANSWER -> s.floor?.let { setOf(PlayerId(it)) }
         else -> null
     }
 
     override fun restorable(s: JeopardyState) = s.categories.all { it in categoryById } && s.finalId in finalById
+
+    /** Marks the floor holder's answer (null = they ran out of time). Right takes the board; wrong loses the stake. */
+    private fun judge(s: JeopardyState, text: String?, ctx: GameContext): Step<JeopardyState> {
+        val active = requireNotNull(s.active)
+        val floor = requireNotNull(s.floor)
+        val right = matches(text, clueById.getValue(active).answer)
+        val stake = if (s.dailyDouble) s.wager else cellOf(s, active).value
+        val delta = JeopardyRules.clueDelta(stake, right)
+        val deltas = s.deltas + (floor to ((s.deltas[floor] ?: 0) + delta))
+        val sips = if (right) s.sips else s.sips + (floor to (if (s.dailyDouble) 2 else 1))
+        val award = Effect.Award(PlayerId(floor), delta, if (right) "got it" else "missed")
+        if (right) return reveal(s.copy(controller = floor, right = true, deltas = deltas, sips = sips), listOf(award))
+        val tried = s.tried + floor
+        val next = s.copy(tried = tried, deltas = deltas, sips = sips, floor = null)
+        val others = !s.dailyDouble && s.eligible.any { it.v !in tried && ctx.isConnected(it) }
+        return if (others) Step(next.copy(phase = BUZZ), listOf(award, Effect.Phase(ctx.timer(REBUZZ_MS))))
+        else reveal(next.copy(right = false), listOf(award))
+    }
+
+    private fun reveal(s: JeopardyState, effects: List<Effect>): Step<JeopardyState> =
+        Step(s.copy(phase = REVEAL, used = s.used + requireNotNull(s.active), lockedUntil = emptyMap()), effects + Effect.Phase(REVEAL_MS))
+
+    private fun afterReveal(s: JeopardyState, ctx: GameContext): Step<JeopardyState> = toPick(s, ctx)
 
     // ---- views ----------------------------------------------------------------------------
 

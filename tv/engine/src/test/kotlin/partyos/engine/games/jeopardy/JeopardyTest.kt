@@ -3,6 +3,9 @@ package partyos.engine.games.jeopardy
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.buildJsonObject
 import partyos.engine.ActionResult
+import partyos.engine.Avatar
+import partyos.engine.JoinResult
+import partyos.engine.Role
 import partyos.engine.FakeClock
 import partyos.engine.GameRegistry
 import partyos.engine.HostCmd
@@ -31,10 +34,10 @@ class JeopardyTest {
     private var n = 0
 
     /** Starts Answer & Question with [count] players, the tutorial skipped, in the intro phase. */
-    private fun start(count: Int, show: Int = 0): List<PlayerId> {
+    private fun start(count: Int, show: Int = 0, extra: Map<String, Int> = emptyMap()): List<PlayerId> {
         e = PartyEngine(clock, SeededEntropy(7), GameRegistry(listOf(Jeopardy(pack()))))
         val ids = (1..count).map { e.add("P$it") }
-        assertEquals(ActionResult.Ack, e.host(HostCmd.StartGame("jeopardy", mapOf("show" to show))))
+        assertEquals(ActionResult.Ack, e.host(HostCmd.StartGame("jeopardy", mapOf("show" to show) + extra)))
         e.host(HostCmd.SkipPhase)
         return ids
     }
@@ -142,5 +145,184 @@ class JeopardyTest {
         assertEquals(ActionResult.Ack, e.host(HostCmd.StartGame("jeopardy", mapOf("show" to 0))))
         e.host(HostCmd.SkipPhase)
         assertTrue(first.intersect(tv.categories.toSet()).isEmpty(), "second night repeated $first vs ${tv.categories}")
+    }
+
+    private fun score(id: PlayerId) = e.tvState().scores.single { it.id == id }.score
+    private fun ansOf(cellId: String): String { val (cat, row) = cellId.removePrefix("c").split("-"); return "Ans${cat}x$row" }
+
+    /** Opens a cell on the cheapest row (which never hides a Daily Double) and reads it, ending in the buzz phase. */
+    private fun openPlain(col: Int = 0): String {
+        toPick()
+        val id = tv.cells.first { it.row == 0 && it.col == col && !it.used }.id
+        assertEquals(ActionResult.Ack, pickCell(id))
+        skip() // the clue has been read
+        assertEquals("buzz", tv.phase)
+        return id
+    }
+
+    @Test fun theClueIsReadBeforePhonesCanRingIn() {
+        val ids = start(3)
+        toPick()
+        pickCell(tv.cells.first { it.row == 0 }.id)
+        assertEquals("clue", tv.phase)
+        val reading = assertIs<Screen.Buzzer>(screen(ids[1]))
+        assertEquals("reading", reading.state)
+        assertFalse(reading.live)
+        skip()
+        assertTrue(tv.buzzOpen)
+        val open = assertIs<Screen.Buzzer>(screen(ids[1]))
+        assertEquals("open", open.state)
+        assertTrue(open.live)
+    }
+
+    @Test fun theFirstBuzzGetsTheFloorAndTheSecondIsRefused() {
+        val ids = start(3)
+        openPlain()
+        assertEquals(ActionResult.Ack, act(ids[1], "buzz"))
+        assertEquals(ActionResult.Rejected("NOT_NOW"), act(ids[2], "buzz"))
+        assertEquals("answer", tv.phase)
+        assertEquals(ids[1], tv.floor)
+        assertIs<Screen.TextEntry>(screen(ids[1])).also { assertEquals("answer", it.kind) }
+        val beaten = assertIs<Screen.Buzzer>(screen(ids[2]))
+        assertEquals("beaten", beaten.state)
+        assertTrue("P2" in beaten.detail.orEmpty(), beaten.detail)
+    }
+
+    @Test fun ringingInBeforeTheClueIsReadLocksYouOutForASecond() {
+        val ids = start(3)
+        toPick()
+        pickCell(tv.cells.first { it.row == 0 }.id)
+        assertEquals(ActionResult.Ack, act(ids[1], "buzz")) // far too early
+        val locked = assertIs<Screen.Buzzer>(screen(ids[1]))
+        assertEquals("locked", locked.state)
+        assertEquals(1000, locked.lockedMs)
+        skip() // the clue has been read; the lockout is still running
+        assertEquals(ActionResult.Rejected("LOCKED_OUT"), act(ids[1], "buzz"))
+        clock.advance(1001)
+        assertEquals(ActionResult.Ack, act(ids[1], "buzz"))
+        assertEquals(ids[1], tv.floor)
+    }
+
+    @Test fun aRightAnswerWinsTheValueAndTheBoard() {
+        val ids = start(3)
+        val id = openPlain(col = 1)
+        act(ids[2], "buzz")
+        assertEquals(ActionResult.Ack, act(ids[2], "answer", "text" to ansOf(id)))
+        assertEquals("reveal", tv.phase)
+        assertEquals(true, tv.right)
+        assertEquals(ansOf(id), tv.answer)
+        assertEquals(200, score(ids[2]))
+        skip()
+        assertEquals("pick", tv.phase)
+        assertEquals(ids[2], tv.controller)
+        assertTrue(assertIs<Screen.Board>(screen(ids[2])).canPick)
+    }
+
+    @Test fun theCaptainCanPickForWhoeverHoldsTheBoard() {
+        val ids = start(3)
+        val id = openPlain()
+        act(ids[2], "buzz"); act(ids[2], "answer", "text" to ansOf(id))
+        skip()
+        val captainsView = assertIs<Screen.Board>(screen(ids[0]))
+        assertTrue(captainsView.canPick)
+        assertEquals("P3", captainsView.pickFor)
+        assertEquals(ActionResult.Rejected("NOT_YOUR_PICK"), act(ids[1], "pick", "cell" to tv.cells.first { !it.used }.id))
+        assertEquals(ActionResult.Ack, act(ids[0], "pick", "cell" to tv.cells.first { !it.used }.id))
+        assertEquals("clue", tv.phase)
+    }
+
+    @Test fun answersGivenAsAQuestionCountLikeOnTheShow() {
+        for (lead in listOf("What is", "whats", "Who is", "WHERE ARE", "what was")) {
+            val ids = start(2)
+            val id = openPlain()
+            act(ids[1], "buzz")
+            act(ids[1], "answer", "text" to "$lead ${ansOf(id)}?")
+            assertEquals(true, tv.right, "'$lead' should count")
+            assertEquals(200, score(ids[1]), lead)
+        }
+    }
+
+    @Test fun aWrongAnswerCostsTheValueAndTheClueReopensForTheOthers() {
+        val ids = start(3)
+        val id = openPlain()
+        act(ids[1], "buzz")
+        assertEquals(ActionResult.Ack, act(ids[1], "answer", "text" to "nope"))
+        assertEquals(-200, score(ids[1])) // scores can go negative
+        assertEquals("buzz", tv.phase)
+        assertEquals(listOf(ids[1]), tv.tried)
+        assertEquals("tried", assertIs<Screen.Buzzer>(screen(ids[1])).state)
+        assertEquals(ActionResult.Rejected("NOT_NOW"), act(ids[1], "buzz"))
+        act(ids[2], "buzz")
+        act(ids[2], "answer", "text" to ansOf(id))
+        assertEquals(200, score(ids[2]))
+        assertEquals(-200, score(ids[1]))
+        assertEquals(ids[2], tv.controller)
+    }
+
+    @Test fun ifEveryoneAnswersWrongTheClueEndsAndTheBoardStaysPut() {
+        val ids = start(3)
+        openPlain()
+        for (p in listOf(ids[1], ids[2], ids[0])) { act(p, "buzz"); act(p, "answer", "text" to "nope") }
+        assertEquals("reveal", tv.phase)
+        assertEquals(false, tv.right)
+        assertTrue(ids.all { score(it) == -200 })
+        assertEquals(3, tv.drinks.size)
+        assertTrue(tv.drinks.all { it.text == "Drink 1 sip" })
+        skip()
+        assertEquals(ids[0], tv.controller)
+    }
+
+    @Test fun ifNobodyRingsInTheAnswerIsRevealedAndNothingChanges() {
+        val ids = start(3)
+        val id = openPlain()
+        skip() // the buzz window closes
+        assertEquals("reveal", tv.phase)
+        assertEquals(false, tv.right)
+        assertEquals(ansOf(id), tv.answer)
+        assertTrue(ids.all { score(it) == 0 })
+        skip()
+        assertEquals(ids[0], tv.controller)
+    }
+
+    @Test fun anAnswerThatTimesOutCountsAsWrong() {
+        val ids = start(3)
+        openPlain()
+        act(ids[1], "buzz")
+        skip()
+        assertEquals(-200, score(ids[1]))
+        assertEquals("buzz", tv.phase)
+    }
+
+    @Test fun drinkLinesFollowTheLobbySwitch() {
+        val ids = start(3, extra = mapOf("drinks" to 0))
+        openPlain()
+        for (p in listOf(ids[1], ids[2], ids[0])) { act(p, "buzz"); act(p, "answer", "text" to "nope") }
+        assertTrue(tv.drinks.isEmpty())
+    }
+
+    @Test fun drinkLinesAreWordedAsWaterForAPlayerOnWater() {
+        e = PartyEngine(clock, SeededEntropy(7), GameRegistry(listOf(Jeopardy(pack()))))
+        val a = e.add("P1")
+        val b = e.add("P2")
+        val wet = (e.join(e.roomCode, "Wet", Avatar("p:00", "#123456"), Role.PLAYER, water = true) as JoinResult.Joined).player.id
+        e.setPresence(wet, true)
+        e.host(HostCmd.StartGame("jeopardy", mapOf("show" to 0)))
+        e.host(HostCmd.SkipPhase)
+        openPlain()
+        for (p in listOf(wet, a, b)) { act(p, "buzz"); act(p, "answer", "text" to "nope") }
+        assertTrue(tv.drinks.single { it.id == wet }.text.endsWith("Drink 1 sip of water"))
+    }
+
+    @Test fun aPlayerWhoJoinsMidClueWatchesThatClueAndRingsInOnTheNext() {
+        val ids = start(3)
+        openPlain()
+        val late = e.add("Late")
+        assertEquals("out", assertIs<Screen.Buzzer>(screen(late)).state)
+        assertEquals(ActionResult.Rejected("NOT_NOW"), act(late, "buzz"))
+        skip() // nobody rang in
+        skip() // back to the board
+        val id = tv.cells.first { it.row == 0 && !it.used }.id
+        pickCell(id)
+        assertEquals("reading", assertIs<Screen.Buzzer>(screen(late)).state)
     }
 }
