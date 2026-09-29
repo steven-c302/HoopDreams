@@ -2097,6 +2097,322 @@
         }
     },
     {
+        "t": "view",
+        "seq": 30,
+        "view": {
+            "me": {
+                "id": "p-sam",
+                "name": "Sam",
+                "avatar": {
+                    "face": "p:01",
+                    "color": "#FF7A00"
+                },
+                "role": "PLAYER",
+                "connected": true,
+                "water": false
+            },
+            "roomCode": "KXQT",
+            "gameId": "jeopardy",
+            "gameTitle": "Answer & Question",
+            "round": 4,
+            "paused": false,
+            "remainingMs": 20000,
+            "screen": {
+                "t": "board",
+                "prompt": "Pick a clue",
+                "categories": [
+                    "Food & Drink",
+                    "Sports"
+                ],
+                "cells": [
+                    {
+                        "id": "food-200",
+                        "col": 0,
+                        "row": 0,
+                        "value": 200,
+                        "used": false
+                    },
+                    {
+                        "id": "sports-200",
+                        "col": 1,
+                        "row": 0,
+                        "value": 200,
+                        "used": true
+                    }
+                ],
+                "canPick": true
+            },
+            "scores": [
+                {
+                    "id": "p-sam",
+                    "name": "Sam",
+                    "avatar": {
+                        "face": "p:01",
+                        "color": "#FF7A00"
+                    },
+                    "score": 1500
+                },
+                {
+                    "id": "p-al",
+                    "name": "Al",
+                    "avatar": {
+                        "face": "p:02",
+                        "color": "#22AA55"
+                    },
+                    "score": 500
+                }
+            ],
+            "captain": false,
+            "settings": {},
+            "crew": []
+        }
+    },
+    {
+        "t": "view",
+        "seq": 31,
+        "view": {
+            "me": {
+                "id": "p-sam",
+                "name": "Sam",
+                "avatar": {
+                    "face": "p:01",
+                    "color": "#FF7A00"
+                },
+                "role": "PLAYER",
+                "connected": true,
+                "water": false
+            },
+            "roomCode": "KXQT",
+            "gameId": "jeopardy",
+            "gameTitle": "Answer & Question",
+            "round": 6,
+            "paused": false,
+            "remainingMs": 10000,
+            "screen": {
+                "t": "buzzer",
+                "state": "locked",
+                "category": "Sports",
+                "value": 400,
+                "detail": "Too early! Hold on...",
+                "lockedMs": 600,
+                "live": true
+            },
+            "scores": [
+                {
+                    "id": "p-sam",
+                    "name": "Sam",
+                    "avatar": {
+                        "face": "p:01",
+                        "color": "#FF7A00"
+                    },
+                    "score": 1500
+                },
+                {
+                    "id": "p-al",
+                    "name": "Al",
+                    "avatar": {
+                        "face": "p:02",
+                        "color": "#22AA55"
+                    },
+                    "score": 500
+                }
+            ],
+            "captain": false,
+            "settings": {},
+            "crew": []
+        }
+    },
+    {
+        "t": "tv",
+        "seq": 32,
+        "tv": {
+            "roomCode": "KXQT",
+            "players": [
+                {
+                    "id": "p-sam",
+                    "name": "Sam",
+                    "avatar": {
+                        "face": "p:01",
+                        "color": "#FF7A00"
+                    },
+                    "role": "PLAYER",
+                    "connected": true,
+                    "water": false
+                }
+            ],
+            "stage": {
+                "gameId": "jeopardy",
+                "title": "Answer & Question",
+                "phaseSeq": 7,
+                "deadlineAt": 1700000200000,
+                "remainingMs": 5000,
+                "paused": false,
+                "game": {
+                    "t": "jeopardy",
+                    "phase": "reveal",
+                    "round": 1,
+                    "boards": 2,
+                    "categories": [
+                        "Food & Drink",
+                        "Sports"
+                    ],
+                    "cells": [
+                        {
+                            "id": "food-200",
+                            "col": 0,
+                            "row": 0,
+                            "value": 200,
+                            "used": true
+                        },
+                        {
+                            "id": "sports-200",
+                            "col": 1,
+                            "row": 0,
+                            "value": 200,
+                            "used": false
+                        }
+                    ],
+                    "controller": "p-sam",
+                    "category": "Food & Drink",
+                    "value": 200,
+                    "clue": "This spread is made by mashing avocados.",
+                    "dailyDouble": false,
+                    "buzzOpen": false,
+                    "floor": "p-sam",
+                    "locked": [],
+                    "tried": [
+                        "p-al"
+                    ],
+                    "answer": "Guacamole",
+                    "right": true,
+                    "deltas": [
+                        {
+                            "id": "p-sam",
+                            "name": "Sam",
+                            "points": 200
+                        }
+                    ],
+                    "drinks": [
+                        {
+                            "id": "p-al",
+                            "name": "Al",
+                            "sips": 1,
+                            "text": "Drink 1 sip"
+                        }
+                    ]
+                }
+            },
+            "scores": [
+                {
+                    "id": "p-sam",
+                    "name": "Sam",
+                    "avatar": {
+                        "face": "p:01",
+                        "color": "#FF7A00"
+                    },
+                    "score": 1500
+                },
+                {
+                    "id": "p-al",
+                    "name": "Al",
+                    "avatar": {
+                        "face": "p:02",
+                        "color": "#22AA55"
+                    },
+                    "score": 500
+                }
+            ],
+            "gamesPlayed": 1,
+            "settings": {
+                "game": 6,
+                "show": 1,
+                "drinks": 1
+            }
+        }
+    },
+    {
+        "t": "tv",
+        "seq": 33,
+        "tv": {
+            "roomCode": "KXQT",
+            "players": [
+                {
+                    "id": "p-sam",
+                    "name": "Sam",
+                    "avatar": {
+                        "face": "p:01",
+                        "color": "#FF7A00"
+                    },
+                    "role": "PLAYER",
+                    "connected": true,
+                    "water": false
+                }
+            ],
+            "stage": {
+                "gameId": "jeopardy",
+                "title": "Answer & Question",
+                "phaseSeq": 12,
+                "deadlineAt": 1700000260000,
+                "remainingMs": 5000,
+                "paused": false,
+                "game": {
+                    "t": "jeopardy",
+                    "phase": "final_reveal",
+                    "round": 3,
+                    "boards": 2,
+                    "categories": [],
+                    "cells": [],
+                    "dailyDouble": false,
+                    "buzzOpen": false,
+                    "locked": [],
+                    "tried": [],
+                    "deltas": [],
+                    "drinks": [],
+                    "final": {
+                        "category": "World Capitals",
+                        "clue": "This capital on the Danube...",
+                        "answer": "Budapest",
+                        "wagers": 2,
+                        "expected": 2,
+                        "steps": [
+                            {
+                                "id": "p-sam",
+                                "name": "Sam",
+                                "answer": "Budapest",
+                                "wager": 400,
+                                "right": true,
+                                "delta": 400,
+                                "total": 1600
+                            }
+                        ]
+                    }
+                }
+            },
+            "scores": [
+                {
+                    "id": "p-sam",
+                    "name": "Sam",
+                    "avatar": {
+                        "face": "p:01",
+                        "color": "#FF7A00"
+                    },
+                    "score": 1500
+                },
+                {
+                    "id": "p-al",
+                    "name": "Al",
+                    "avatar": {
+                        "face": "p:02",
+                        "color": "#22AA55"
+                    },
+                    "score": 500
+                }
+            ],
+            "gamesPlayed": 1,
+            "settings": {}
+        }
+    },
+    {
         "t": "ack",
         "id": "a-1"
     },

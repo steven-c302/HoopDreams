@@ -16,6 +16,7 @@ export interface TutorialCard { title: string; body: string }
 export interface PlayingCard { rank: number; suit: number }
 /** The clue field under Imposter's peek chip. */
 export interface SecretInput { prompt: string; maxLen: number; value?: string; kind: string; hint?: string }
+export interface BoardCell { id: string; col: number; row: number; value: number; used: boolean }
 
 export type Screen =
   | { t: 'waiting'; title: string; detail?: string; tone?: 'win' | 'lose' | 'neutral'; team?: TeamTag }
@@ -27,6 +28,8 @@ export type Screen =
   | { t: 'scores'; title: string; rows: ScoreRow[] }
   | { t: 'cards'; title: string; hand: PlayingCard[]; total?: number; dealer: PlayingCard[]; actions: Choice[]; kind: string; note?: string; tone?: string; stack?: number }
   | { t: 'secret'; title: string; face: string; category: string; role: 'crew' | 'imposter'; note?: string; kind?: string; acknowledged: boolean; input?: SecretInput }
+  | { t: 'board'; prompt: string; categories: string[]; cells: BoardCell[]; canPick: boolean; pickFor?: string; note?: string }
+  | { t: 'buzzer'; state: 'reading' | 'open' | 'locked' | 'beaten' | 'tried' | 'out'; category: string; value: number; detail?: string; lockedMs: number; live: boolean }
   | TurfScreen
   | SprawlScreen
 
@@ -195,7 +198,7 @@ export type HostCommand =
  * Shared lobby settings. turfMode: Home Turf 0 auto, 1 solo, 2 teams; minutes: Home Turf's and Sprawl's game clock
  * (0 = no limit); vp: Sprawl's points to win (8 or 10).
  */
-export type OptionKey = 'rounds' | 'teams' | 'drinks' | 'game' | 'captain' | 'turfMode' | 'minutes' | 'vp' | 'timers'
+export type OptionKey = 'rounds' | 'teams' | 'drinks' | 'game' | 'captain' | 'turfMode' | 'minutes' | 'vp' | 'timers' | 'show'
 
 export type ActionPayload = { kind: string; [k: string]: string | number | boolean | string[] | number[] }
 
@@ -207,7 +210,7 @@ export type ClientMsg =
 
 export interface GameListing { id: string; title: string; tagline: string; minPlayers: number; maxPlayers: number }
 
-const SCREENS = new Set(['waiting', 'text', 'choice', 'number', 'multi', 'tutorial', 'scores', 'cards', 'turf', 'sprawl', 'secret'])
+const SCREENS = new Set(['waiting', 'text', 'choice', 'number', 'multi', 'tutorial', 'scores', 'cards', 'turf', 'sprawl', 'secret', 'board', 'buzzer'])
 const isObj = (v: unknown): v is Record<string, unknown> => typeof v === 'object' && v !== null
 
 /** Parses one server frame; returns null for anything malformed or unknown instead of throwing. */

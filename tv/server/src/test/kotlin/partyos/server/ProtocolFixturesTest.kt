@@ -4,6 +4,13 @@ import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
+import partyos.engine.BoardCell
+import partyos.engine.JeopardyCellTv
+import partyos.engine.JeopardyDelta
+import partyos.engine.JeopardyDrink
+import partyos.engine.JeopardyFinalStep
+import partyos.engine.JeopardyFinalTv
+import partyos.engine.JeopardyTv
 import partyos.engine.Avatar
 import partyos.engine.BluffDelta
 import partyos.engine.BluffReveal
@@ -317,6 +324,69 @@ class ProtocolFixturesTest {
                 gamesPlayed = 1,
             ),
         ),
+        ServerMsg.View(
+            seq = 30,
+            view = PhoneState(
+                me, "KXQT", "jeopardy", "Answer & Question", 4, false, null, 20_000,
+                Screen.Board(
+                    "Pick a clue", listOf("Food & Drink", "Sports"),
+                    listOf(BoardCell("food-200", 0, 0, 200, false), BoardCell("sports-200", 1, 0, 200, true)),
+                    canPick = true,
+                ),
+                rows,
+            ),
+        ),
+        ServerMsg.View(
+            seq = 31,
+            view = PhoneState(
+                me, "KXQT", "jeopardy", "Answer & Question", 6, false, null, 10_000,
+                Screen.Buzzer("locked", "Sports", 400, "Too early! Hold on...", lockedMs = 600, live = true),
+                rows,
+            ),
+        ),
+        ServerMsg.Tv(
+            32,
+            TvState(
+                roomCode = "KXQT",
+                players = listOf(me),
+                stage = StageInfo(
+                    "jeopardy", "Answer & Question", 7, 1_700_000_200_000, 5_000, false, null, null,
+                    game = JeopardyTv(
+                        phase = "reveal", round = 1, boards = 2,
+                        categories = listOf("Food & Drink", "Sports"),
+                        cells = listOf(JeopardyCellTv("food-200", 0, 0, 200, true), JeopardyCellTv("sports-200", 1, 0, 200, false)),
+                        controller = sam, category = "Food & Drink", value = 200, clue = "This spread is made by mashing avocados.",
+                        floor = sam, tried = listOf(PlayerId("p-al")), answer = "Guacamole", right = true,
+                        deltas = listOf(JeopardyDelta(sam, "Sam", 200)),
+                        drinks = listOf(JeopardyDrink(PlayerId("p-al"), "Al", 1, "Drink 1 sip")),
+                    ),
+                ),
+                scores = rows,
+                lastResult = null,
+                gamesPlayed = 1,
+                settings = mapOf("game" to 6, "show" to 1, "drinks" to 1),
+            ),
+        ),
+        ServerMsg.Tv(
+            33,
+            TvState(
+                roomCode = "KXQT",
+                players = listOf(me),
+                stage = StageInfo(
+                    "jeopardy", "Answer & Question", 12, 1_700_000_260_000, 5_000, false, null, null,
+                    game = JeopardyTv(
+                        phase = "final_reveal", round = 3, boards = 2,
+                        final = JeopardyFinalTv(
+                            "World Capitals", "This capital on the Danube...", "Budapest", 2, 2,
+                            listOf(JeopardyFinalStep(sam, "Sam", "Budapest", 400, true, 400, 1600)),
+                        ),
+                    ),
+                ),
+                scores = rows,
+                lastResult = null,
+                gamesPlayed = 1,
+            ),
+        ),
         ServerMsg.Ack("a-1"),
         ServerMsg.Reject("a-2", "TOO_TRUE"),
         ServerMsg.Pong,
@@ -373,6 +443,11 @@ class ProtocolFixturesTest {
         ClientMsg.Action("a-11", 2, JsonObject(mapOf("kind" to JsonPrimitive("seen")))),
         ClientMsg.Action("a-12", 3, JsonObject(mapOf("kind" to JsonPrimitive("clue"), "text" to JsonPrimitive("cheesy")))),
         ClientMsg.Action("a-13", 5, JsonObject(mapOf("kind" to JsonPrimitive("vote"), "option" to JsonPrimitive("p-al")))),
+        ClientMsg.Action("a-14", 4, JsonObject(mapOf("kind" to JsonPrimitive("pick"), "cell" to JsonPrimitive("food-200")))),
+        ClientMsg.Action("a-15", 6, JsonObject(mapOf("kind" to JsonPrimitive("buzz")))),
+        ClientMsg.Action("a-16", 8, JsonObject(mapOf("kind" to JsonPrimitive("wager"), "value" to JsonPrimitive(300)))),
+        ClientMsg.Host("h-15", HostCommand.SetOption("show", 1)),
+        ClientMsg.Host("h-16", HostCommand.GameAction("pick:food-200")),
         ClientMsg.Ping,
     )
 
