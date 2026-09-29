@@ -8,6 +8,7 @@ import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import io.ktor.server.testing.testApplication
+import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
@@ -82,5 +83,24 @@ class PhotoRoutesTest {
         } finally {
             dir.deleteRecursively()
         }
+    }
+
+    @Test fun theNewestPhotosSurviveARestartEvenWhenWrittenInTheSameInstant() {
+        // Back-to-back writes can share a last-modified tick, so this repeats the scenario to catch a tie.
+        repeat(300) {
+            val dir = java.nio.file.Files.createTempDirectory("photos").toFile()
+            val ids = (1..3).map { n -> PhotoStore(maxPhotos = 2, dir = dir).put(jpeg + byteArrayOf(n.toByte())) }
+            assertEquals(setOf("${ids[1]}.jpg", "${ids[2]}.jpg"), dir.list()!!.toSet(), "round $it")
+            dir.deleteRecursively()
+        }
+    }
+
+    @Test fun aNewPhotoIsNewerThanEverythingInTheFolderEvenIfTheClockWentBackwards() {
+        val dir = java.nio.file.Files.createTempDirectory("photos").toFile()
+        val a = PhotoStore(maxPhotos = 2, dir = dir).put(jpeg + byteArrayOf(1))
+        File(dir, "$a.jpg").setLastModified(System.currentTimeMillis() + 3_600_000) // stamped by a clock an hour ahead
+        val b = PhotoStore(maxPhotos = 2, dir = dir).put(jpeg + byteArrayOf(2))
+        val c = PhotoStore(maxPhotos = 2, dir = dir).put(jpeg + byteArrayOf(3))
+        assertEquals(setOf("$b.jpg", "$c.jpg"), dir.list()!!.toSet())
     }
 }

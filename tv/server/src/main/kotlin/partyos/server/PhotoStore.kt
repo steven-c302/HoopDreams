@@ -18,14 +18,16 @@ class PhotoStore(
     private val onError: (String) -> Unit = {},
 ) {
     private val photos = LinkedHashMap<String, ByteArray>()
-    private var lastSavedAt = 0L
+
+    /** Last-modified stamp given to the newest file; the next write gets a strictly larger one (see [put]). */
+    private var lastStamp = 0L
 
     init {
         require(maxPhotos > 0) { "maxPhotos must be positive" }
         dir?.listFiles { f -> f.isFile && f.name.endsWith(".jpg") && ID.matches(f.name.removeSuffix(".jpg")) }
-            ?.sortedBy { it.lastModified() }
+            ?.sortedWith(compareBy<File> { it.lastModified() }.thenBy { it.name })
             ?.forEach { f ->
-                lastSavedAt = maxOf(lastSavedAt, f.lastModified())
+                lastStamp = maxOf(lastStamp, f.lastModified())
                 runCatching { f.readBytes() }.getOrNull()?.takeIf { it.size <= MAX_BYTES && looksLikeJpeg(it) }
                     ?.let { photos[f.name.removeSuffix(".jpg")] = it }
             }
@@ -43,11 +45,11 @@ class PhotoStore(
                 d.mkdirs()
                 val tmp = File(d, "$id.tmp")
                 tmp.writeBytes(jpeg)
-                // Files written within one millisecond otherwise tie on restart, losing insertion order.
-                val savedAt = maxOf(System.currentTimeMillis(), lastSavedAt + 1)
-                Files.setLastModifiedTime(tmp.toPath(), java.nio.file.attribute.FileTime.fromMillis(savedAt))
+                // Age is the file's last-modified time when the folder is reloaded, and writes made in the same tick would
+                // tie, so each one is stamped strictly after the last (also after a clock that ran ahead or went back).
+                lastStamp = maxOf(System.currentTimeMillis(), lastStamp + 1)
+                tmp.setLastModified(lastStamp)
                 Files.move(tmp.toPath(), File(d, "$id.jpg").toPath(), StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE)
-                lastSavedAt = savedAt
             }.onFailure { onError("couldn't save photo $id: ${it.message}") }
         }
         trim()
