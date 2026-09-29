@@ -81,7 +81,7 @@ function Board({ board, cmd }: { board: JeopardyCellTv[]; cmd: (c: HostCommand) 
           })}
         </div>
       ))}
-      <p style={{ textAlign: 'center', color: 'var(--ink-soft)', marginTop: 10 }}>Arrow keys to move, Enter to pick a clue.</p>
+      <p style={{ textAlign: 'center', color: C.paper, opacity: 0.85, marginTop: 10, fontSize: 26, fontWeight: 700 }}>Arrow keys to move, Enter to pick a clue.</p>
     </div>
   )
 }
@@ -105,13 +105,13 @@ function Reveal({ g }: { g: JeopardyTv }) {
       </Panel>
       {g.correct.length > 0 ? (
         <div className="fooled-row">
-          <span className="display" style={{ fontSize: 26 }}>GOT IT</span>
+          <span className="display" style={{ fontSize: 26, color: C.paper }}>GOT IT</span>
           {g.correct.map((name, i) => (
             <Pop key={name} delay={0.2 + i * 0.1}><span className="name-pill">{name}</span></Pop>
           ))}
         </div>
       ) : (
-        <span className="display" style={{ fontSize: 24, color: 'var(--ink-soft)' }}>Nobody got it</span>
+        <span className="display" style={{ fontSize: 24, color: C.paper }}>Nobody got it</span>
       )}
       {g.deltas.length > 0 && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
