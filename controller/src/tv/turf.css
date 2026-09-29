@@ -36,6 +36,9 @@
   background: repeating-linear-gradient(135deg, transparent 0 9px, color-mix(in oklch, var(--ink) 22%, transparent) 9px 12px); }
 .turf-space .mortgage-tag { position: absolute; top: 2px; right: 3px; z-index: 1; font-family: var(--font-display); font-size: 16px; color: var(--white);
   background: var(--tomato); border: 2px solid var(--ink); border-radius: 6px; padding: 0 4px; line-height: 1.2; }
+/* Where a space's name hugs the top, the tag goes in a bottom corner instead, beside a resting piece rather than on the name. */
+.turf-space.side-b .mortgage-tag, .turf-space.side-r .mortgage-tag { top: auto; bottom: 2px; }
+.turf-space.side-l .mortgage-tag { top: auto; bottom: 2px; right: auto; left: 3px; }
 .turf-space.hot { z-index: 3; box-shadow: inset 0 0 0 5px var(--sun), 0 0 0 5px var(--ink); animation: turf-hot 1s ease-in-out infinite; }
 @keyframes turf-hot { 50% { box-shadow: inset 0 0 0 8px var(--sun), 0 0 0 5px var(--ink); } }
 .turf-space.corner { flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-align: center; padding: 6px; }
@@ -147,8 +150,10 @@
 .turf-card .badge { font-size: 22px; font-weight: 900; border: 3px solid var(--ink); border-radius: 999px; padding: 1px 12px; background: var(--paper-2); }
 .turf-card .badge.set { background: var(--lime); }
 .turf-card .badge.card { background: var(--sky); }
+.turf-card .badge.timeout { background: var(--blueberry); color: var(--white); }
 .turf-card.out { filter: grayscale(.8); opacity: .75; }
-.turf-card .corner-stamp { position: absolute; right: 12px; top: 10px; }
+/* Beside the cash line (a bankrupt's is $0), clear of the name. */
+.turf-card .corner-stamp { position: absolute; right: 18px; top: 104px; }
 
 /* ---- callouts ---- */
 .turf-flash { position: absolute; left: 50%; top: 50%; translate: -50% -50%; z-index: 30; pointer-events: none; }

@@ -12,16 +12,32 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms))
 const pick = (a) => a[Math.floor(Math.random() * a.length)]
 
 const tv = await fetch(`${base}/api/tv/session`).then((r) => r.json())
+// The server ignores an action id it has already seen this game, so ids from an earlier run must not repeat.
+const run = Date.now().toString(36)
+
+/** Joins as bot [i]. A resumed party still has the last run's bots, so a taken name gets a number instead. */
+async function join(i) {
+  const first = names[i % 16] + (i >= 16 ? i : '')
+  for (let k = 1; k <= 5; k++) {
+    const name = k === 1 ? first : `${first.slice(0, 13)} ${k}`
+    const r = await fetch(`${base}/api/join`, { method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ room: tv.room, name, avatar: { face: faces[i % 16], color: colors[i % 8] }, spectator: false }) })
+    const body = await r.json().catch(() => ({}))
+    if (body.token) return body.token
+    if (body.error !== 'NAME_TAKEN') { console.log(`${name} couldn't join: ${body.error ?? r.status}`); return null }
+  }
+  console.log(`${first} couldn't find a free name`)
+  return null
+}
+
 async function bot(i) {
   await sleep(i * 350)
-  const r = await fetch(`${base}/api/join`, { method: 'POST', headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ room: tv.room, name: names[i % 16] + (i >= 16 ? i : ''), avatar: { face: faces[i % 16], color: colors[i % 8] }, spectator: false }) })
-  const { token } = await r.json()
-  if (!token) return console.log('join failed', await r.text())
+  const token = await join(i)
+  if (!token) return
   const ws = new WebSocket(`${base.replace('http', 'ws')}/ws?token=${token}`)
   let n = 0
   let lastKey = ''
-  const act = (round, payload) => ws.send(JSON.stringify({ t: 'action', id: `${i}-${n++}`, round, payload }))
+  const act = (round, payload) => ws.send(JSON.stringify({ t: 'action', id: `${run}-${i}-${n++}`, round, payload }))
   ws.onopen = () => { ws.send(JSON.stringify({ t: 'hello', protocol: 1 })); setInterval(() => ws.send(JSON.stringify({ t: 'ping' })), 3000) }
   ws.onmessage = async (e) => {
     const m = JSON.parse(e.data)

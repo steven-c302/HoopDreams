@@ -6,7 +6,7 @@ import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react
 import { Connection, browserSocket, browserSocketUrl, type Status } from '../net/connection'
 import { rejectMessage, type GameListing, type HostCommand, type OptionKey, type PlayerSummary, type TvState } from '../protocol'
 import { GameScene } from '../theme/GameScene'
-import { audioRunning, loadMix, setMix, sfx, unlockAudio, type Mix } from './audio'
+import { loadMix, setMix, sfx, unlockAudio, whenAudioRuns, type Mix } from './audio'
 import { BlackjackStage } from './BlackjackStage'
 import { BluffStage } from './BluffStage'
 import { Gallery } from './Gallery'
@@ -136,7 +136,8 @@ function Show({ session }: { session: TvSession }) {
 
   const goLive = () => {
     unlockAudio()
-    setTimeout(() => setLive(audioRunning()), 60)
+    // A press that didn't unlock sound brings the gate back, but only once resume() has had time to finish.
+    void whenAudioRuns(1500).then((ok) => { if (!ok) setLive(false) })
     setLive(true)
     document.documentElement.requestFullscreen?.().catch(() => undefined)
     sfx.showOpen()
@@ -188,7 +189,7 @@ function Show({ session }: { session: TvSession }) {
               {stage.paused && <Paused reason={stage.pauseReason} />}
             </TimerScale.Provider>
           ) : (
-            <LobbyScreen tv={tv} session={session} games={games} lobby={lobby} setOption={setOption} onStart={start} keys={live && !overlay} />
+            <LobbyScreen tv={tv} session={session} games={games} lobby={lobby} setOption={setOption} onStart={start} keys={live && !overlay} playing={playing} />
           )}
         </motion.div>
       </AnimatePresence>
@@ -205,16 +206,14 @@ function Show({ session }: { session: TvSession }) {
       )}
       {overlay && tv && <HostOverlay tv={tv} cmd={cmd} mix={mix} setMix={updateMix} lobby={lobby} setOption={setOption} onClose={() => setOverlay(false)}
         spotify={spotify} toggleSpotify={toggleSpotify} />}
-      {/* Lobby only: during a game the corner belongs to the show (Ready row, team strip, table). The keys still work. */}
-      {live && !overlay && !stage && (
-        // Keyed on the song, so the fading hint comes back for each new track.
-        <div className="hint" key={playing ?? 'hint'}>
-          {playing && <span className="now-playing"><b>ON SPOTIFY</b> {playing} <Keycap label="N" /> next</span>}
-          <Keycap label="Esc" /> host <Keycap label="P" /> pause <Keycap label="M" /> mute <Keycap label="F" /> full screen
-        </div>
-      )}
     </div>
   )
+}
+
+/** The last game's headline, or its winner; nothing when it was ended before anyone scored. */
+function lastWord(r: NonNullable<TvState['lastResult']>) {
+  const top = r.standings[0]
+  return r.highlights[0] ?? (top && top.score > 0 ? `Winner: ${top.name}` : '')
 }
 
 function PartyLogo() {
@@ -223,11 +222,17 @@ function PartyLogo() {
 
 const TEAM_CHOICES = [0, 2, 3, 4, 5, 6]
 
-/** [keys]: the lobby is in front, so the TV keyboard drives it (not while the GO LIVE gate or host controls are up). */
-function LobbyScreen({ tv, session, games, lobby, setOption, onStart, keys }: {
+/**
+ * [keys]: the lobby is in front, so the TV keyboard drives it (not while the GO LIVE gate or host controls are up).
+ * [playing]: the Spotify song under the lobby, if any.
+ */
+function LobbyScreen({ tv, session, games, lobby, setOption, onStart, keys, playing }: {
   tv: TvState; session: TvSession; games: GameListing[]; lobby: Lobby; setOption: SetOption; onStart(g: GameListing): void; keys: boolean
+  playing: string | null
 }) {
   const gamePlayers = tv.players.filter((p) => p.role === 'PLAYER')
+  // Everyone has to fit above the game covers: two rows of big cards, three rows up to 12, then four rows of 4.
+  const crowd = gamePlayers.length > 12 ? 'packed' : gamePlayers.length > 8 ? 'dense' : ''
   const online = gamePlayers.filter((p) => p.connected).length
   const audience = tv.players.length - gamePlayers.length
   const qr = useRef<HTMLCanvasElement>(null)
@@ -269,7 +274,7 @@ function LobbyScreen({ tv, session, games, lobby, setOption, onStart, keys }: {
   })
   return (
     <Scene color={C.sun}>
-      <div className="lobby">
+      <div className={`lobby ${crowd}`}>
         <div className="lobby-left">
           <PartyLogo />
           <Panel className="qr-panel" fill={C.white} tilt={-2}>
@@ -284,15 +289,20 @@ function LobbyScreen({ tv, session, games, lobby, setOption, onStart, keys }: {
           <div className="lobby-head">
             <h1>{online === 0 ? 'WHO’S PLAYING?' : online === 1 ? '1 PLAYER' : `${online} PLAYERS`}</h1>
             {audience > 0 && <span className="aud">+ {audience} watching</span>}
+            {playing && <span className="now-playing"><b>ON SPOTIFY</b><span className="song">{playing}</span><Keycap label="N" /> next</span>}
           </div>
-          <div className={`cast ${gamePlayers.length > 8 ? 'dense' : ''}`}>
+          <div className="cast">
             {gamePlayers.length === 0 && (
               <div className="cast-empty"><Brainy size={200} /><Panel fill={C.paper} tilt={-1} style={{ padding: '22px 30px' }}>Scan the code, type your name, draw your face.</Panel></div>
             )}
-            {gamePlayers.map((p, i) => <CastCard key={p.id} p={p} i={i} small={gamePlayers.length > 8} captain={p.id === tv.captain} />)}
+            {gamePlayers.map((p, i) => <CastCard key={p.id} p={p} i={i} size={crowd} captain={p.id === tv.captain} />)}
           </div>
-          {captain && <p className="crown-note"><Crown size={40} /><span><b>{captain.name}</b> has the crown and can run the show from their phone.</span></p>}
-          {tv.lastResult && <p className="last-game">Last game: {tv.lastResult.title}. {tv.lastResult.highlights[0] ?? `Winner: ${tv.lastResult.standings[0]?.name ?? '-'}`}</p>}
+          {(captain || tv.lastResult) && (
+            <div className="lobby-notes">
+              {captain && <p className="crown-note"><Crown size={40} /><span><b>{captain.name}</b> has the crown and can run the show from their phone.</span></p>}
+              {tv.lastResult && <p className="last-game">Last game: {tv.lastResult.title}. {lastWord(tv.lastResult)}</p>}
+            </div>
+          )}
           <div className="controls-row">
             {focused?.id === 'blackjack'
               ? <span className="stepper">Everyone deals once: <b>one hand per player</b></span>
@@ -304,6 +314,8 @@ function LobbyScreen({ tv, session, games, lobby, setOption, onStart, keys }: {
             {(trivia || turf || sprawl) && <span className="stepper"><Keycap label="D" /> Drink calls <b>{lobby.drinks ? 'ON' : 'OFF'}</b></span>}
             <span className="stepper"><Keycap label="R" /> Timers <b>{TIMER_NAMES[lobby.timers] ?? TIMER_NAMES[0]}</b></span>
             <span style={{ flex: 1 }} />
+            {/* The TV's other keys (P pause, F full screen) are on the pause card and in the README. */}
+            <span className="stepper"><Keycap label="Esc" /> host <Keycap label="M" /> mute</span>
             <span className="stepper"><Keycap label="←" /><Keycap label="→" /> pick <Keycap label="Enter" /> start</span>
           </div>
           {/* Up to five games side by side; six or more go into rows of three. */}
@@ -329,12 +341,14 @@ function LobbyScreen({ tv, session, games, lobby, setOption, onStart, keys }: {
   )
 }
 
-function CastCard({ p, i, small, captain }: { p: PlayerSummary; i: number; small: boolean; captain: boolean }) {
+/** [size]: '' for up to 8 players, 'dense' up to 12, 'packed' up to 16. */
+function CastCard({ p, i, size, captain }: { p: PlayerSummary; i: number; size: '' | 'dense' | 'packed'; captain: boolean }) {
+  const [face, crown, crownTop] = size === 'packed' ? [42, 30, -18] : size === 'dense' ? [52, 34, -20] : [72, 44, -26]
   return (
     <Pop>
       <Panel className={`cast-card ${p.connected ? '' : 'away'} ${captain ? 'captain' : ''}`} fill={C.paper} tilt={[-2, 1.5, -1, 2][i % 4]}>
-        {captain && <Crown size={small ? 34 : 44} style={{ position: 'absolute', left: small ? 12 : 16, top: small ? -20 : -26, transform: 'rotate(-14deg)' }} />}
-        <AvatarFace avatar={p.avatar} size={small ? 52 : 72} dim={!p.connected} />
+        {captain && <Crown size={crown} style={{ position: 'absolute', left: size ? 12 : 16, top: crownTop, transform: 'rotate(-14deg)' }} />}
+        <AvatarFace avatar={p.avatar} size={face} dim={!p.connected} />
         <span>{p.name}</span>
       </Panel>
     </Pop>

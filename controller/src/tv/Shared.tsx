@@ -48,25 +48,29 @@ export function Tutorial({ cards, acked, players }: { cards: TutorialCard[]; ack
   )
 }
 
-/** Score rows: dealt in, gains pop, totals count up, the leader wears the crown. */
+/**
+ * Score rows: dealt in, gains pop, totals count up, the leader wears the crown. Up to six players get one column of big
+ * rows; a bigger party gets two columns of compact ones, so all sixteen fit on the TV and nobody is "+ 5 more".
+ */
 export function ScoreBoard({ scores, deltas, unit = '' }: { scores: ScoreRow[]; deltas: Record<string, number>; unit?: string }) {
+  const compact = scores.length > 6
+  const rows = scores.slice(0, 16)
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 14, marginTop: 24 }}>
-      {scores.slice(0, 8).map((r, i) => {
+    <div className={`score-board ${compact ? 'compact' : ''}`} style={compact ? { gridTemplateRows: `repeat(${Math.ceil(rows.length / 2)}, auto)` } : undefined}>
+      {rows.map((r, i) => {
         const d = deltas[r.id] ?? 0
         return (
           <Deal key={r.id} i={i}>
             <Panel className="score-row" fill={i === 0 ? C.sun : C.paper} tilt={i % 2 ? 0.4 : -0.4}>
               <span className="rank-dot">{i + 1}</span>
-              <AvatarFace avatar={r.avatar} size={64} />
-              <span style={{ flex: 1, display: 'flex', alignItems: 'center', gap: 14 }}>{r.name}{i === 0 && <Crown size={56} />}</span>
+              <AvatarFace avatar={r.avatar} size={compact ? 48 : 64} />
+              <span className="who"><span>{r.name}</span>{i === 0 && <Crown size={compact ? 40 : 56} />}</span>
               {d !== 0 && <Pop delay={0.3 + i * 0.09}><span className={`delta-pill ${d < 0 ? 'neg' : ''}`}>{d > 0 ? '+' : ''}{d.toLocaleString()}</span></Pop>}
               <span className="total"><CountUp from={r.score - d} to={r.score} delay={500 + i * 120} onStep={i < 3 ? (n) => sfx.countTick(n % 20) : undefined} />{unit}</span>
             </Panel>
           </Deal>
         )
       })}
-      {scores.length > 8 && <p style={{ fontSize: 32, fontWeight: 900 }}>+ {scores.length - 8} more</p>}
     </div>
   )
 }

@@ -49,6 +49,19 @@ export function unlockAudio(): boolean {
 }
 export const audioRunning = () => ctx?.state === 'running'
 
+/** Resolves true once sound is running, or false after [ms]: resume() is asynchronous and can take a moment. */
+export function whenAudioRuns(ms: number): Promise<boolean> {
+  const t0 = Date.now()
+  return new Promise((resolve) => {
+    const check = () => {
+      if (audioRunning()) resolve(true)
+      else if (Date.now() - t0 >= ms) resolve(false)
+      else setTimeout(check, 50)
+    }
+    check()
+  })
+}
+
 const midi = (m: number) => 440 * Math.pow(2, (m - 69) / 12)
 const jitter = (amount = 0.04) => 1 + (Math.random() * 2 - 1) * amount
 const semis = (n: number) => Math.pow(2, n / 12)

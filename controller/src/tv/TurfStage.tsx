@@ -243,11 +243,12 @@ function TokenCard({ g, i, people }: { g: TurfTv; i: number; people: Map<string,
         {owned.length === 0 && <span className="none">No places yet</span>}
       </div>
       <div className="badges">
+        {/* A badge, not a stamp over the name: a long name would disappear under it. */}
+        {t.jailed && !t.bankrupt && <span className="badge timeout">IN TIMEOUT</span>}
         {t.sets > 0 && <span className="badge set">{t.sets} SET{t.sets > 1 ? 'S' : ''}</span>}
         {t.jailCards > 0 && <span className="badge card">GET OUT ×{t.jailCards}</span>}
         <span className="badge worth">WORTH {money(t.worth)}</span>
       </div>
-      {t.jailed && !t.bankrupt && <Stamp text="TIMEOUT" color={C.blueberry} size={30} tilt={8} className="corner-stamp" />}
       {t.bankrupt && <Stamp text="OUT" color={C.tomato} size={44} tilt={-10} className="corner-stamp" />}
     </Panel>
   )

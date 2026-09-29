@@ -38,7 +38,8 @@ function restPoint(i: number, size: number) {
     case 't': return { x: r.x + r.w / 2, y: r.y + pad }
     case 'l': return { x: r.x + (r.w - 26) / 2, y: r.y + r.h - pad + 4 }
     case 'r': return { x: r.x + 26 + (r.w - 26) / 2, y: r.y + r.h - pad + 4 }
-    default: return spaceCenter(i)
+    // A corner's middle is its name: rest on the icon above it instead (in Timeout, that's behind the bars).
+    default: return { x: r.x + r.w / 2, y: r.y + 44 }
   }
 }
 

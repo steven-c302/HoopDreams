@@ -64,7 +64,8 @@ function Write({ g }: { g: BluffTv }) {
 function Pick({ g, seq }: { g: BluffTv; seq: number }) {
   const n = g.options.length
   const cols = n <= 4 ? 2 : n <= 9 ? 3 : 4
-  const dense = n > 9
+  // A full party writes up to 16 lies (60 characters each): five rows of four still have to fit under the prompt.
+  const dense = n > 12 ? 'dense packed' : n > 9 ? 'dense' : ''
   useEffect(() => {
     const ids = g.options.map((_, i) => setTimeout(() => sfx.deal(i), 80 + i * 70))
     return () => ids.forEach(clearTimeout)
@@ -75,7 +76,7 @@ function Pick({ g, seq }: { g: BluffTv; seq: number }) {
       <div className="play-cards" style={{ gridTemplateColumns: `repeat(${cols}, 1fr)`, gap: dense ? 18 : 28 }}>
         {g.options.map((o, i) => (
           <Deal key={o} i={i}>
-            <Panel className={`play-card ${dense ? 'dense' : ''}`} fill={C.paper} tilt={i % 2 ? 0.8 : -1}>
+            <Panel className={`play-card ${dense}`} fill={C.paper} tilt={i % 2 ? 0.8 : -1}>
               <span className="pip">{String.fromCharCode(65 + i)}</span>
               <span>{o}</span>
             </Panel>

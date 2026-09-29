@@ -90,6 +90,7 @@
 [data-game-theme='turf'] .turf-card .badge { font-size: 19px; border: 1px solid #bbc2b7; border-radius: 5px; padding: 4px 8px; }
 [data-game-theme='turf'] .turf-card .badge.set { background: #d4e6cc; }
 [data-game-theme='turf'] .turf-card .badge.card { background: #d9e9ed; }
+[data-game-theme='turf'] .turf-card .badge.timeout { background: #2b5ea8; border-color: #2b5ea8; color: #fff; }
 [data-game-theme='turf'] .turf-card .deed-pip { border-width: 1px; border-radius: 2px; }
 [data-game-theme='turf'] .turf-piece { filter: drop-shadow(0 3px 1px #132c3d33); }
 .game-scene[data-game-theme='turf'] .call { font-weight: 900; letter-spacing: -.025em; color: var(--ink); -webkit-text-stroke: 0; }
@@ -239,6 +240,10 @@ body:has(.play[data-game-theme])::before { display: none; }
 .bj-sign.ivory { background: var(--paper); color: var(--ink); }
 .bj-sign.bust { display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 34px 70px; background: var(--tomato); color: var(--paper); font-size: 104px; border-color: var(--paper); outline-color: var(--paper); }
 .bj-sign.bust small { font: 800 38px var(--font-body); letter-spacing: .16em; }
+/* A crowded table's sign sits in the strip between the dealer and the back row of seats. */
+.bj-banner.crowded .bj-sign { font-size: 40px; padding: 14px 34px; outline-offset: -8px; }
+.bj-banner.crowded .bj-sign.bust { font-size: 54px; padding: 14px 44px; gap: 6px; }
+.bj-banner.crowded .bj-sign.bust small { font-size: 22px; }
 [data-game-theme='blackjack'] .podium-block { border-width: 2px; }
 [data-game-theme='blackjack'] .podium-block[data-rank='1'] { background: var(--sun) !important; }
 [data-game-theme='blackjack'] .podium-block[data-rank='2'] { background: #c9c2b3 !important; }
@@ -306,8 +311,6 @@ body:has(.play[data-game-theme])::before { display: none; }
 [data-game-theme='writeitdown'] .show-title b + b { color: var(--sun); margin-left: 0; }
 [data-game-theme='writeitdown'] .show-title.small b { font-size: 46px; -webkit-text-stroke: 0; text-shadow: none; }
 [data-game-theme='writeitdown'] .show-title.small b + b { margin-left: 0; }
-/* styles.css's phone .small button class also matches this title; drop its shadow. */
-[data-game-theme='writeitdown'] .show-title.small { box-shadow: none; }
 [data-game-theme='writeitdown'] .answered { border-width: 2px; box-shadow: var(--game-shadow); }
 [data-game-theme='writeitdown'] .q-bubble { border: 0; border-radius: 6px; box-shadow: var(--game-shadow); font: 700 66px/1.14 var(--font-display);
   background: linear-gradient(90deg, transparent 58px, #c4453a77 58px 61px, transparent 61px), var(--paper); padding-left: 96px; }

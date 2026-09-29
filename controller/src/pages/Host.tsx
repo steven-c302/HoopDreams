@@ -103,7 +103,7 @@ function HostPanel({ token, onLogout }: { token: string; onLogout(): void }) {
         <ul className="players">
           {tv.players.map((p) => (
             <li key={p.id}>
-              <span className={`status ${p.connected ? 'on' : ''}`} />
+              <span className={`online-dot ${p.connected ? 'on' : ''}`} />
               <Face face={p.avatar.face} color={p.avatar.color} size={32} />
               <span className="name">{p.name}{p.role === 'SPECTATOR' ? ' (watching)' : ''}</span>
               <button className="ghost small" onClick={() => { if (confirm(`Remove ${p.name}?`)) cmd({ t: 'kick', playerId: p.id }) }}>Remove</button>

@@ -30,7 +30,7 @@ export function CaptainLobby({ view, games, host }: { view: PhoneState; games: G
   const sprawl = game?.id === 'sprawl'
   const set = (key: OptionKey, value: number) => { buzz(12); host({ t: 'setOption', key, value }) }
   const minuteAt = Math.max(0, TURF_MINUTES.indexOf(s.minutes))
-  const teamAt = Math.max(1, TEAM_CHOICES.indexOf(s.teams))
+  const teamAt = Math.max(0, TEAM_CHOICES.indexOf(s.teams))
   return (
     <div className="captain stack">
       <div className="captain-head">

@@ -30,10 +30,19 @@ function seatLayout(n: number) {
       const a = ((count === 1 ? (a0 + a1) / 2 : a0 + ((a1 - a0) * i) / (count - 1)) * Math.PI) / 180
       return { x: 960 + rx * Math.cos(a), y: cy + ry * Math.sin(a) }
     })
-  if (n <= 8) return { pos: place(n, 760, 520, 420, 150, 30), card: n <= 5 ? 104 : 88 }
-  const outer = Math.ceil(n / 2)
-  return { pos: [...place(outer, 840, 540, 430, 164, 16), ...place(n - outer, 470, 300, 430, 150, 30)], card: 66 }
+  if (n <= 8) return { pos: place(n, 760, 520, 420, 150, 30), card: n <= 5 ? 104 : 88, crowded: false }
+  // A crowded table: two rows right across the felt, so neighbours' cards, plates and calls never land on each other,
+  // with the dealer's sign (made smaller) between the dealer and the back row.
+  const row = (count: number, x0: number, x1: number, y: number, dip: number) => Array.from({ length: count }, (_, i) => {
+    const t = count === 1 ? 0 : (i / (count - 1)) * 2 - 1
+    return { x: (x0 + x1) / 2 + ((x1 - x0) / 2) * t, y: y + dip * (1 - t * t) }
+  })
+  const back = Math.floor(n / 2)
+  return { pos: [...row(back, 210, 1710, 712, 24), ...row(n - back, 150, 1770, 930, 36)], card: 66, crowded: true }
 }
+
+/** Where a seat's settle call hangs: centred over the seat, or tucked inwards at the screen's edges so it isn't cut off. */
+const callEdge = (x: number) => (x < 300 ? 'from-left' : x > 1620 ? 'from-right' : '')
 
 export function BlackjackStage({ stage, players, scores, clock }: { stage: StageInfo; players: PlayerSummary[]; scores: ScoreRow[]; clock: { deadline: number | null; frozen: number | null } }) {
   if (stage.tutorial) {
@@ -61,6 +70,8 @@ function Table({ g, stage, clock, players }: { g: BlackjackTv; stage: StageInfo;
   const water = new Set(players.filter((p) => p.water).map((p) => p.id))
   const dealerWater = g.dealerId != null && water.has(g.dealerId) ? ' OF WATER' : ''
   const layout = useMemo(() => seatLayout(g.seats.length), [g.seats.length])
+  const banner = `bj-banner ${layout.crowded ? 'crowded' : ''}`
+  const signTop = layout.crowded ? 452 : 520
   const n = g.seats.length
   const step = Math.min(0.13, 2.6 / (2 * n + 2))
   const dealDelay = (seatIndex: number, cardIndex: number) => (cardIndex < 2 ? (cardIndex * (n + 1) + seatIndex) * step + 0.25 : 0)
@@ -111,10 +122,10 @@ function Table({ g, stage, clock, players }: { g: BlackjackTv; stage: StageInfo;
           </Panel>
         )}
       </div>
-      {g.phase === 'bet' && <div className="bj-banner" style={{ top: 520 }}><Banner text={`BET AGAINST ${who}`} tone="brass" /></div>}
-      {g.phase === 'dealer' && <div className="bj-banner" style={{ top: 520 }}><Banner key="dealer" text={`${who} IS PLAYING`} tone="dark" /></div>}
+      {g.phase === 'bet' && <div className={banner} style={{ top: signTop }}><Banner text={`BET AGAINST ${who}`} tone="brass" /></div>}
+      {g.phase === 'dealer' && <div className={banner} style={{ top: signTop }}><Banner key="dealer" text={`${who} IS PLAYING`} tone="dark" /></div>}
       {g.phase === 'settle' && (
-        <div className="bj-banner" style={{ top: dealerBust ? 400 : 520 }}>
+        <div className={banner} style={{ top: layout.crowded ? signTop : dealerBust ? 400 : 520 }}>
           {dealerBust ? (
             <Slam from={1.6} tilt={-3} delay={0.1}><div className="bj-sign bust"><span>{who} BUSTS!</span><small>DRINK {sipLabel(g.dealerDrinks)}{dealerWater}</small></div></Slam>
           ) : (
@@ -150,12 +161,15 @@ function Seat({ s, water, phase, pos, cardW, delayFor }: { s: BjSeat; water: boo
   return (
     <div className="bj-seat" style={{ left: pos.x, top: pos.y }}>
       {settled && (
-        <Pop delay={0.9} style={{ position: 'absolute', top: -cardW * 0.58, zIndex: 6 }}>
-          <span className="bj-call" style={{ fontSize: callSize, background: drinks > 0 ? C.tomato : drinks < 0 ? C.sun : C.paper, color: drinks > 0 ? C.white : C.ink }}>
-            {drinks > 0 ? <MugIcon size={callSize * 1.25} /> : drinks < 0 ? <CheersIcon size={callSize * 1.25} /> : null}
-            <b>{drinks > 0 ? `DRINK ${sipLabel(drinks)}${water ? ' OF WATER' : ''}` : drinks < 0 ? `DEALER +${-drinks}` : 'SAFE'}</b>
-          </span>
-        </Pop>
+        <div className={`bj-call-slot ${callEdge(pos.x)}`} style={{ top: -cardW * 0.58 }}>
+          <Pop delay={0.9}>
+            <span className="bj-call" style={{ fontSize: callSize, background: drinks > 0 ? C.tomato : drinks < 0 ? C.sun : C.paper, color: drinks > 0 ? C.white : C.ink }}>
+              {drinks > 0 ? <MugIcon size={callSize * 1.25} /> : drinks < 0 ? <CheersIcon size={callSize * 1.25} /> : null}
+              {/* Seats are close together on a crowded table: the red pill and the mug already say DRINK. */}
+              <b>{drinks > 0 ? `${cardW < 80 ? '' : 'DRINK '}${sipLabel(drinks)}${water ? ' OF WATER' : ''}` : drinks < 0 ? `DEALER +${-drinks}` : 'SAFE'}</b>
+            </span>
+          </Pop>
+        </div>
       )}
       <div className="bj-hand" style={{ '--overlap': `${-cardW * 0.6}px`, height: cardW * 1.4 } as CSSProperties}>
         {s.cards.map((c, k) => (
@@ -166,7 +180,7 @@ function Seat({ s, water, phase, pos, cardW, delayFor }: { s: BjSeat; water: boo
       {s.cards.length > 0 && <Led value={s.total} tone={s.total > 21 ? 'red' : s.total === 21 ? 'gold' : 'green'} size={cardW * 0.3} />}
       <div className={`bj-plate ${deciding ? 'turn' : ''}`} style={{ fontSize: cardW * 0.28 }}>
         <AvatarFace avatar={s.avatar} size={cardW * 0.44} dim={phase === 'bet' && s.status === 'betting'} />
-        <span style={{ maxWidth: cardW * 1.7, overflow: 'hidden', textOverflow: 'ellipsis' }}>{s.name}</span>
+        <span style={{ maxWidth: cardW * (cardW < 80 ? 1.45 : 1.7), overflow: 'hidden', textOverflow: 'ellipsis' }}>{s.name}</span>
         {(s.status !== 'betting' || phase !== 'bet') && s.bet > 0 && (
           <Pop key={s.bet}><span className="row" style={{ gap: 4 }}><DrinkBet sips={s.bet} size={cardW * 0.38} />{s.doubled && <span className="bet-amt" style={{ fontSize: cardW * 0.22 }}>×2</span>}</span></Pop>
         )}
