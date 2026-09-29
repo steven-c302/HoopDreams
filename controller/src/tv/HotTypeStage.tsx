@@ -1,9 +1,9 @@
-import { AnimatePresence, motion } from 'motion/react'
+import { AnimatePresence, motion, useAnimationControls } from 'motion/react'
 import { useEffect, useState } from 'react'
 import type { PlayerSummary, ScoreRow, StageInfo } from '../protocol'
 import { sfx } from './audio'
 import { hostLine } from './hottypeHost'
-import { Tutorial } from './Shared'
+import { Tutorial, useStep } from './Shared'
 import { useTimerScale } from './timerScale'
 import { AvatarFace } from './toon'
 import type { HotTypeTv } from './types'
@@ -33,7 +33,7 @@ const fmt = (ms: number) => {
   return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`
 }
 
-export function HotTypeStage({ stage, players, clock }: { stage: StageInfo; players: PlayerSummary[]; scores: ScoreRow[]; clock: Clock }) {
+export function HotTypeStage({ stage, players, scores, clock }: { stage: StageInfo; players: PlayerSummary[]; scores: ScoreRow[]; clock: Clock }) {
   const scale = useTimerScale()
   if (stage.tutorial) {
     return (
@@ -47,10 +47,12 @@ export function HotTypeStage({ stage, players, clock }: { stage: StageInfo; play
   const who = new Map(players.map((p) => [p.id, p]))
   return (
     <div className="ht-stage" data-phase={g.phase}>
-      <PressBar g={g} clock={clock} total={total} />
+      {(g.phase === 'ready' || g.phase === 'hunt' || g.phase === 'press') && <PressBar g={g} clock={clock} total={total} />}
       {g.phase === 'ready' && <Ready clock={clock} total={total} />}
       {(g.phase === 'hunt' || g.phase === 'press') && <Hunt g={g} who={who} />}
-      {/* Reveal, scores and the podium render from Task 12 onward. */}
+      {g.phase === 'reveal' && <Reveal g={g} who={who} scores={scores} paused={stage.paused} />}
+      {g.phase === 'scores' && <Recap g={g} who={who} scores={scores} />}
+      {g.phase === 'podium' && <Final scores={scores} who={who} />}
       <HostBar line={hostLine(g, (id) => who.get(id)?.name ?? '?')} />
     </div>
   )
@@ -173,4 +175,126 @@ function BigFind({ g }: { g: HotTypeTv }) {
 function HostBar({ line }: { line: string }) {
   if (!line) return null
   return <div className="ht-host"><b>HOST</b><span>{line}</span></div>
+}
+
+const MAST = (g: HotTypeTv, sub: string) => (
+  <div className="ht-mast">
+    <span className="ht-mast-title">THE DAILY FORME</span>
+    <span className="ht-mast-sub">Round {g.round} of {g.totalRounds}<br />{sub}</span>
+  </div>
+)
+
+/** The words are stamped onto the front page one at a time, longest last, then the one that got away. */
+function Reveal({ g, who, scores, paused }: { g: HotTypeTv; who: Map<string, PlayerSummary>; scores: ScoreRow[]; paused: boolean }) {
+  const total = g.page.length
+  const shown = useStep(total + 1, `${g.round}`, 1400, 1700, paused)
+  const shake = useAnimationControls()
+  useEffect(() => { sfx.htPaper() }, [g.round])
+  useEffect(() => {
+    if (shown === 0 || shown > total) return
+    sfx.htStamp()
+    const w = g.page[shown - 1]
+    // A small screen shake, only for the longest word and any word of 7 or more letters.
+    if (w.longest || w.word.length >= 7) void shake.start({ x: [0, -8, 7, -4, 3, 0], y: [0, 4, -3, 2, 0, 0], transition: { duration: 0.24 } })
+  }, [shown]) // eslint-disable-line react-hooks/exhaustive-deps
+  const top = [...scores].sort((a, b) => b.score - a.score).slice(0, 3)
+  return (
+    <motion.div className="ht-front" animate={shake}>
+      {MAST(g, 'Words revealed')}
+      <div className="ht-cols">
+        <div className="ht-words">
+          {g.page.slice(0, shown).map((w) => <StampedWord key={w.word} w={w} who={who} />)}
+          {total === 0 && shown > 0 && <div className="ht-none">NO WORDS THIS ROUND</div>}
+        </div>
+        <aside className="ht-side">
+          {shown > total && g.missed && (
+            <motion.div className="ht-missed" initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ type: 'spring', stiffness: 300, damping: 24 }}>
+              <div className="ht-lab">The one that got away</div>
+              <div className="ht-missed-word">{g.missed.word.toUpperCase()}</div>
+              <div className="ht-missed-sub">{g.missed.word.length} letters. Right there the whole time.</div>
+            </motion.div>
+          )}
+          <div className="ht-lab">Scores</div>
+          {top.map((s, i) => <div key={s.id} className="ht-total"><span>{i + 1} {s.name}</span><span>{s.score.toLocaleString()}</span></div>)}
+        </aside>
+      </div>
+    </motion.div>
+  )
+}
+
+function StampedWord({ w, who }: { w: HotTypeTv['page'][number]; who: Map<string, PlayerSummary> }) {
+  const unique = w.bonus > 0
+  const finders = w.finders.map((id) => who.get(id))
+  return (
+    <div className={`ht-word ${unique ? 'unique' : 'shared'} ${w.longest ? 'longest' : ''}`}>
+      <span className="ht-word-text">{w.word.toUpperCase()}</span>
+      <span className="ht-word-pts">+{(w.points + w.bonus).toLocaleString()}</span>
+      <span className="ht-word-who">
+        {unique
+          ? <span className="ht-finder">{finders[0]?.name ?? '?'}</span>
+          : finders.map((p, i) => (p ? <span key={i} className="ht-stack"><AvatarFace avatar={p.avatar} size={52} /></span> : null))}
+        {unique && <span className="ht-stamp">ONLY YOU</span>}
+        {w.longest && <span className="ht-stamp long">LONGEST</span>}
+      </span>
+    </div>
+  )
+}
+
+/** The round's points, split into parts, with the running totals and any drink call. */
+function Recap({ g, who, scores }: { g: HotTypeTv; who: Map<string, PlayerSummary>; scores: ScoreRow[] }) {
+  const top = [...scores].sort((a, b) => b.score - a.score).slice(0, 8)
+  return (
+    <div className="ht-front">
+      {MAST(g, 'The round in figures')}
+      <div className="ht-cols">
+        <div className="ht-words">
+          {g.deltas.map((d) => {
+            const p = who.get(d.id)
+            return (
+              <div key={d.id} className="ht-drow">
+                {p ? <AvatarFace avatar={p.avatar} size={64} /> : <span className="ht-face">{d.name[0]}</span>}
+                <span className="nm">{d.name}</span>
+                <span className="parts">
+                  <span>{d.base.toLocaleString()}</span>
+                  {d.unique > 0 && <span className="u">+{d.unique.toLocaleString()} ONLY YOU</span>}
+                  {d.longest > 0 && <span className="l">+{d.longest.toLocaleString()} LONGEST</span>}
+                </span>
+                <span className="sum">{d.total.toLocaleString()}</span>
+              </div>
+            )
+          })}
+          {g.drinks.map((d) => <div key={d.id} className="ht-drink">{d.name}: {d.text}</div>)}
+        </div>
+        <aside className="ht-side">
+          <div className="ht-lab">Running total</div>
+          {top.map((s, i) => <div key={s.id} className="ht-total"><span>{i + 1} {s.name}</span><span>{s.score.toLocaleString()}</span></div>)}
+        </aside>
+      </div>
+    </div>
+  )
+}
+
+/** The final edition: the winner's face is ejected onto the front page. */
+function Final({ scores, who }: { scores: ScoreRow[]; who: Map<string, PlayerSummary> }) {
+  const ranked = [...scores].sort((a, b) => b.score - a.score)
+  const [winner, ...rest] = ranked
+  const face = winner ? who.get(winner.id) : undefined
+  return (
+    <div className="ht-front">
+      <div className="ht-mast">
+        <span className="ht-mast-title">THE DAILY FORME</span>
+        <span className="ht-mast-sub">Final edition<br />Every round, in print</span>
+      </div>
+      {winner && (
+        <div className="ht-final">
+          <motion.div initial={{ y: 500, rotate: -12, opacity: 0 }} animate={{ y: 0, rotate: 0, opacity: 1 }} transition={{ type: 'spring', stiffness: 160, damping: 14 }}>
+            {face ? <AvatarFace avatar={face.avatar} size={240} /> : <span className="ht-face">{winner.name[0]}</span>}
+          </motion.div>
+          <div className="ht-final-name">{winner.name}</div>
+          <div className="ht-final-score">TAKES THE FRONT PAGE WITH {winner.score.toLocaleString()}</div>
+          <div className="ht-final-rest">{rest.slice(0, 4).map((s, i) => <span key={s.id}>{i + 2} {s.name} {s.score.toLocaleString()}</span>)}</div>
+        </div>
+      )}
+    </div>
+  )
 }

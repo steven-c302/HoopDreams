@@ -53,3 +53,57 @@
 @media (prefers-reduced-motion: reduce) {
   .ht-press.hot .ht-bar-fill { animation: none; }
 }
+
+/* The front page: reveal, scores and the podium. */
+.ht-front { position: absolute; left: 96px; right: 96px; top: 54px; bottom: 150px; }
+.ht-mast { display: flex; justify-content: space-between; align-items: flex-end; height: 150px; border-bottom: 10px double var(--ink); }
+.ht-mast-title { white-space: nowrap; font: 400 118px var(--font-display); letter-spacing: 4px; line-height: 1; text-shadow: 6px 4px 0 rgba(42, 75, 168, 0.5); }
+.ht-mast-sub { white-space: nowrap; font: 800 30px var(--font-body); letter-spacing: 3px; text-transform: uppercase; text-align: right; padding-bottom: 12px; }
+.ht-cols { display: flex; gap: 60px; margin-top: 24px; }
+.ht-words { flex: 1.75; display: flex; flex-direction: column; }
+.ht-side { flex: 1; }
+.ht-lab { font: 800 30px var(--font-body); letter-spacing: 3px; text-transform: uppercase; }
+
+.ht-word { height: 78px; display: flex; align-items: center; gap: 24px; border-bottom: 4px dashed var(--ink); animation: ht-dip 220ms ease-out 120ms both; }
+.ht-word-text { font: 400 52px var(--font-display); letter-spacing: 3px; }
+.ht-word.shared .ht-word-text { text-decoration: line-through; text-decoration-thickness: 8px; opacity: 0.6; }
+.ht-word-pts { font: 400 40px var(--font-display); color: var(--type-blue); }
+.ht-word-who { margin-left: auto; display: flex; align-items: center; gap: 18px; padding-right: 8px; }
+.ht-finder { font: 800 30px var(--font-body); letter-spacing: 2px; color: var(--type-blue); text-transform: uppercase; }
+.ht-stack { display: inline-block; margin-right: -14px; }
+.ht-word.longest { height: 110px; background: var(--paper-2); border: 6px solid var(--ink); border-radius: 8px; padding: 0 24px; margin-top: 8px; }
+.ht-word.longest .ht-word-text { font-size: 72px; text-shadow: 5px 4px 0 rgba(42, 75, 168, 0.5); }
+.ht-none { font: 400 64px var(--font-display); padding: 40px 0; }
+@keyframes ht-dip { 0% { transform: translateY(0); } 25% { transform: translateY(4px); } 100% { transform: translateY(0); } }
+
+.ht-stamp { display: inline-block; font: 400 30px var(--font-display); letter-spacing: 2px; white-space: nowrap; color: var(--stamp-red); border: 5px solid var(--stamp-red); border-radius: 6px; padding: 0 14px; text-shadow: 4px 3px 0 rgba(42, 75, 168, 0.45); transform: rotate(-6deg); animation: ht-thunk 600ms cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+.ht-stamp.long { color: var(--ink); border-color: var(--ink); }
+@keyframes ht-thunk {
+  0% { transform: rotate(-6deg) scale(1.6); opacity: 0.35; }
+  20% { transform: rotate(-6deg) scale(1); opacity: 1; }
+  30% { transform: rotate(-6deg) scale(1); } /* the hit-stop: about 60ms held at full size */
+  55% { transform: rotate(-6deg) scale(1.1); }
+  100% { transform: rotate(-6deg) scale(1); }
+}
+
+.ht-missed { border: 8px dashed var(--ink); background: var(--paper-2); padding: 22px 28px; margin-bottom: 28px; }
+.ht-missed-word { font: 400 96px var(--font-display); letter-spacing: 3px; margin-top: 10px; overflow-wrap: anywhere; }
+.ht-missed-sub { font: 500 34px var(--font-body); margin-top: 6px; }
+.ht-total { display: flex; justify-content: space-between; font: 400 44px var(--font-display); line-height: 84px; }
+
+.ht-drow { display: flex; align-items: center; gap: 22px; height: 96px; border-bottom: 4px dashed var(--ink); }
+.ht-drow .nm { width: 300px; font: 400 44px var(--font-display); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ht-drow .parts { flex: 1; display: flex; gap: 20px; align-items: center; font: 800 32px var(--font-body); }
+.ht-drow .parts .u { color: var(--stamp-red); }
+.ht-drow .parts .l { color: var(--type-blue); }
+.ht-drow .sum { font: 400 52px var(--font-display); }
+.ht-drink { margin-top: 28px; padding: 14px 24px; border: 6px solid var(--stamp-red); color: var(--stamp-red); border-radius: 8px; font: 400 38px var(--font-display); transform: rotate(-1.5deg); text-shadow: 3px 2px 0 rgba(42, 75, 168, 0.4); }
+
+.ht-final { display: flex; flex-direction: column; align-items: center; gap: 12px; margin-top: 16px; }
+.ht-final-name { font: 400 96px var(--font-display); }
+.ht-final-score { font: 800 44px var(--font-body); letter-spacing: 3px; }
+.ht-final-rest { display: flex; gap: 60px; margin-top: 18px; font: 400 44px var(--font-display); }
+
+@media (prefers-reduced-motion: reduce) {
+  .ht-stamp, .ht-word { animation: none; }
+}

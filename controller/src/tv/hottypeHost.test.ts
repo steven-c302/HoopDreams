@@ -39,3 +39,34 @@ describe('hostLine during play', () => {
     expect(hostLine(g)).toBe('4 words found so far. Plenty left.')
   })
 })
+const named = (id: string) => ({ p0: 'Ava', p1: 'Ben', p2: 'Cleo' }[id] ?? '?')
+const word = (w: string, finders: string[], bonus: number, longest: boolean) => ({ word: w, points: 100, bonus, finders, longest })
+
+describe('hostLine at the reveal', () => {
+  it('names who found the longest word and counts the one-player words', () => {
+    const g = { ...base, phase: 'reveal' as const, page: [word('ton', ['p0', 'p1'], 0, false), word('stone', ['p0'], 800, true)] }
+    expect(hostLine(g, named)).toBe('Ava found STONE. 5 letters. One stamped word was found by one player only.')
+  })
+
+  it('joins several finders of the longest word', () => {
+    const g = { ...base, phase: 'reveal' as const, page: [word('stone', ['p0', 'p1'], 0, true)] }
+    expect(hostLine(g, named)).toBe('Ava and Ben found STONE. 5 letters. Everyone found the same words.')
+  })
+
+  it('says so when nobody found a word, and names the one that got away', () => {
+    const g = { ...base, phase: 'reveal' as const, page: [], missed: { word: 'tones', points: 800 } }
+    expect(hostLine(g, named)).toBe('Nobody found a thing. TONES was right there.')
+  })
+})
+
+describe('hostLine at the scores', () => {
+  it('names the round winner', () => {
+    const g = { ...base, phase: 'scores' as const, deltas: [{ id: 'p0', name: 'Ava', base: 1, unique: 0, longest: 0, total: 2300 }] }
+    expect(hostLine(g, named)).toBe('Ava takes the round with 2,300.')
+  })
+
+  it('is kind when nobody scored', () => {
+    const g = { ...base, phase: 'scores' as const, deltas: [{ id: 'p0', name: 'Ava', base: 0, unique: 0, longest: 0, total: 0 }] }
+    expect(hostLine(g, named)).toBe('Nobody scored. Tough crowd.')
+  })
+})

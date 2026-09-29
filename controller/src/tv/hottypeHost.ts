@@ -8,13 +8,31 @@ const longestOf = (lengths: number[]) => Math.max(0, ...lengths)
  * give a word away or say a word is unique.
  */
 export function hostLine(g: HotTypeTv, name: (id: string) => string = (id) => id): string {
-  void name
   switch (g.phase) {
     case 'ready': return 'Same board for everyone. Fingers ready.'
     case 'press': return 'Pencils down. Nothing more gets stamped.'
     case 'hunt': return huntLine(g)
+    case 'reveal': return revealLine(g, name)
+    case 'scores': return scoresLine(g)
     default: return ''
   }
+}
+
+const joinNames = (names: string[]) => (names.length <= 1 ? names.join('') : `${names.slice(0, -1).join(', ')} and ${names[names.length - 1]}`)
+
+function revealLine(g: HotTypeTv, name: (id: string) => string): string {
+  const longest = g.page.find((w) => w.longest)
+  if (!longest) return g.missed ? `Nobody found a thing. ${g.missed.word.toUpperCase()} was right there.` : 'Nobody found a thing.'
+  const uniques = g.page.filter((w) => w.bonus > 0).length
+  const tail = uniques === 0 ? 'Everyone found the same words.'
+    : uniques === 1 ? 'One stamped word was found by one player only.'
+    : `${uniques} stamped words were found by one player only.`
+  return `${joinNames(longest.finders.map(name))} found ${longest.word.toUpperCase()}. ${longest.word.length} letters. ${tail}`
+}
+
+function scoresLine(g: HotTypeTv): string {
+  const top = [...g.deltas].sort((a, b) => b.total - a.total)[0]
+  return top && top.total > 0 ? `${top.name} takes the round with ${top.total.toLocaleString()}.` : 'Nobody scored. Tough crowd.'
 }
 
 function huntLine(g: HotTypeTv): string {
