@@ -176,6 +176,12 @@ class Jeopardy(private val pack: JeopardyPack = JeopardyPack.core()) : GameModul
                 val text = cleanText(payload["text"]?.jsonPrimitive?.content ?: "") ?: throw Reject("BAD_TEXT")
                 judge(s, text, ctx)
             }
+            s.phase == WAGER && kind == "wager" -> {
+                if (who.v != s.controller) throw Reject("NOT_NOW")
+                val value = payload["value"]?.jsonPrimitive?.intOrNull ?: throw Reject("BAD_WAGER")
+                if (value !in JeopardyRules.wagerRange(ctx.scores[who] ?: 0, s.round)) throw Reject("BAD_WAGER")
+                placeWager(s, value)
+            }
             else -> throw Reject("NOT_NOW")
         }
     }
@@ -183,6 +189,7 @@ class Jeopardy(private val pack: JeopardyPack = JeopardyPack.core()) : GameModul
     override fun onDeadline(s: JeopardyState, ctx: GameContext): Step<JeopardyState> = when (s.phase) {
         INTRO -> toPick(s, ctx)
         PICK -> openClue(s, JeopardyRules.autoPick(cells(s).filter { it.id !in s.used }, ctx.random), ctx)
+        WAGER -> placeWager(s, JeopardyRules.MIN_WAGER) // no wager in time counts as the minimum
         CLUE ->
             if (s.dailyDouble) Step(s.copy(phase = ANSWER, floor = s.controller), listOf(Effect.Phase(ctx.timer(DD_ANSWER_MS))))
             else Step(s.copy(phase = BUZZ), listOf(Effect.Phase(ctx.timer(BUZZ_MS))))
@@ -194,12 +201,16 @@ class Jeopardy(private val pack: JeopardyPack = JeopardyPack.core()) : GameModul
 
     override fun waitingOn(s: JeopardyState): Set<PlayerId>? = when (s.phase) {
         PICK -> s.controller?.let { setOf(PlayerId(it)) }
+        WAGER -> s.controller?.let { setOf(PlayerId(it)) }
         BUZZ -> s.eligible.filter { it.v !in s.tried }.toSet()
         ANSWER -> s.floor?.let { setOf(PlayerId(it)) }
         else -> null
     }
 
     override fun restorable(s: JeopardyState) = s.categories.all { it in categoryById } && s.finalId in finalById
+
+    private fun placeWager(s: JeopardyState, value: Int): Step<JeopardyState> =
+        Step(s.copy(phase = CLUE, wager = value), listOf(Effect.Phase(JeopardyRules.readMs(clueById.getValue(requireNotNull(s.active)).clue))))
 
     /** Marks the floor holder's answer (null = they ran out of time). Right takes the board; wrong loses the stake. */
     private fun judge(s: JeopardyState, text: String?, ctx: GameContext): Step<JeopardyState> {

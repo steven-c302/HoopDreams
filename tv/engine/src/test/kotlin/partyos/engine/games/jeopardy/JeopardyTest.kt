@@ -325,4 +325,113 @@ class JeopardyTest {
         pickCell(id)
         assertEquals("reading", assertIs<Screen.Buzzer>(screen(late)).state)
     }
+
+    /** Skips a plain clue to its end and back to the board. */
+    private fun playOut() { repeat(8) { if (tv.phase in setOf("wager", "clue", "buzz", "answer", "reveal")) skip() } }
+
+    /** Opens cells in reading order (never row 0) until one is a Daily Double; returns its id with the phase at "wager". */
+    private fun toDailyDouble(): String {
+        toPick()
+        for (row in 1..4) for (col in 0..4) {
+            val cell = tv.cells.first { it.row == row && it.col == col }
+            if (cell.used) continue
+            pickCell(cell.id)
+            if (tv.phase == "wager") return cell.id
+            playOut()
+        }
+        error("no Daily Double found")
+    }
+
+    @Test fun aDailyDoubleAsksOnlyThePickerForAWagerAndHidesTheClue() {
+        val ids = start(3)
+        toDailyDouble()
+        assertEquals("wager", tv.phase)
+        assertTrue(tv.dailyDouble)
+        assertEquals(null, tv.clue)
+        assertEquals(null, tv.wager)
+        val mine = assertIs<Screen.NumberEntry>(screen(ids[0]))
+        assertEquals("wager", mine.kind)
+        assertEquals("Daily Double!", assertIs<Screen.Waiting>(screen(ids[1])).title)
+    }
+
+    @Test fun aWagerIsAtLeastFiveAndAtMostTheTopValueForAPlayerWithNothing() {
+        val ids = start(3)
+        toDailyDouble()
+        assertEquals(ActionResult.Rejected("BAD_WAGER"), act(ids[0], "wager", "value" to 4))
+        assertEquals(ActionResult.Rejected("BAD_WAGER"), act(ids[0], "wager", "value" to 1001))
+        assertEquals(ActionResult.Rejected("BAD_WAGER"), act(ids[0], "wager"))
+        assertEquals(ActionResult.Rejected("NOT_NOW"), act(ids[1], "wager", "value" to 100))
+        assertEquals(ActionResult.Ack, act(ids[0], "wager", "value" to 1000))
+        assertEquals("clue", tv.phase)
+        assertEquals(1000, tv.wager)
+    }
+
+    @Test fun noWagerInTimeCountsAsFive() {
+        start(3)
+        toDailyDouble()
+        skip()
+        assertEquals("clue", tv.phase)
+        assertEquals(5, tv.wager)
+    }
+
+    @Test fun aDailyDoubleHasNoRingingInAndOnlyThePickerAnswers() {
+        val ids = start(3)
+        toDailyDouble()
+        act(ids[0], "wager", "value" to 300)
+        assertEquals(ActionResult.Rejected("NOT_NOW"), act(ids[1], "buzz"))
+        skip() // the clue has been read
+        assertEquals("answer", tv.phase)
+        assertEquals(ids[0], tv.floor)
+        assertIs<Screen.TextEntry>(screen(ids[0]))
+        assertIs<Screen.Waiting>(screen(ids[1]))
+        assertEquals(ActionResult.Rejected("NOT_NOW"), act(ids[1], "answer", "text" to "anything"))
+    }
+
+    @Test fun aRightDailyDoubleWinsTheWagerAndKeepsTheBoard() {
+        val ids = start(3)
+        val id = toDailyDouble()
+        act(ids[0], "wager", "value" to 300)
+        skip()
+        act(ids[0], "answer", "text" to ansOf(id))
+        assertEquals(300, score(ids[0]))
+        assertEquals("reveal", tv.phase)
+        skip()
+        assertEquals(ids[0], tv.controller)
+    }
+
+    @Test fun aWrongDailyDoubleLosesTheWagerEndsTheClueAndCostsTwoSips() {
+        val ids = start(3)
+        toDailyDouble()
+        act(ids[0], "wager", "value" to 300)
+        skip()
+        act(ids[0], "answer", "text" to "nope")
+        assertEquals(-300, score(ids[0]))
+        assertEquals("reveal", tv.phase) // no reopening for the others
+        assertEquals(2, tv.drinks.single { it.id == ids[0] }.sips)
+        assertEquals("Drink 2 sips", tv.drinks.single { it.id == ids[0] }.text)
+    }
+
+    @Test fun aBoardHidesExactlyOneDailyDoubleAndNeverOnTheCheapRow() {
+        start(3)
+        toPick()
+        var doubles = 0
+        for (row in 0..4) for (col in 0..4) {
+            pickCell(tv.cells.first { it.row == row && it.col == col }.id)
+            if (tv.phase == "wager") { doubles++; assertTrue(row > 0, "Daily Double on the cheap row") }
+            playOut()
+        }
+        assertEquals(1, doubles)
+    }
+
+    @Test fun aPlayerBelowZeroMayStillWagerUpToTheTopValue() {
+        val ids = start(3)
+        openPlain()
+        act(ids[0], "buzz"); act(ids[0], "answer", "text" to "nope") // -200
+        skip() // nobody else rings in
+        skip() // back to the board
+        assertEquals(-200, score(ids[0]))
+        toDailyDouble()
+        assertEquals(ActionResult.Rejected("BAD_WAGER"), act(ids[0], "wager", "value" to 1001))
+        assertEquals(ActionResult.Ack, act(ids[0], "wager", "value" to 1000))
+    }
 }
