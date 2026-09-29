@@ -66,13 +66,22 @@ export const ROUND_RULES: Record<string, string> = {
 
 // ---- Jeopardy (tv/engine/.../JeopardyViews.kt) ----------------------------------------------
 
-export interface JeopardyCellTv { id: string; category: string; value: number; used: boolean }
+export interface JeopardyCellTv { id: string; col: number; row: number; value: number; used: boolean }
+export interface JeopardyFinalStep { id: string; name: string; answer?: string; wager: number; right: boolean; delta: number; total: number }
+export interface JeopardyFinalTv { category: string; clue?: string; answer?: string; wagers: number; expected: number; steps: JeopardyFinalStep[] }
 export interface JeopardyTv {
-  t: 'jeopardy'; phase: 'select' | 'answer' | 'reveal' | 'podium'
-  board: JeopardyCellTv[]
+  t: 'jeopardy'
+  phase: 'intro' | 'pick' | 'wager' | 'clue' | 'buzz' | 'answer' | 'reveal' | 'break' | 'final_category' | 'final_wager' | 'final_answer' | 'final_reveal' | 'podium'
+  round: number; boards: number
+  categories: string[]; cells: JeopardyCellTv[]
+  controller?: string
   category?: string; value?: number; clue?: string
-  submitted: number; expected: number
-  answer?: string; correct: string[]; deltas: { id: string; name: string; points: number }[]
+  dailyDouble: boolean; wager?: number
+  buzzOpen: boolean; floor?: string; locked: string[]; tried: string[]
+  answer?: string; right?: boolean
+  deltas: { id: string; name: string; points: number }[]
+  drinks: { id: string; name: string; sips: number; text: string }[]
+  final?: JeopardyFinalTv
 }
 
 // ---- Home Turf (tv/engine/.../TurfViews.kt) -------------------------------------------------

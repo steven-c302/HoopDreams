@@ -6,6 +6,7 @@ import { GameScene } from '../theme/GameScene'
 import { gameThemeOf, type GameTheme } from '../theme/gameTheme'
 import { BlackjackStage } from './BlackjackStage'
 import { BluffStage } from './BluffStage'
+import { JeopardyStage } from './JeopardyStage'
 import { ImposterStage } from './ImposterStage'
 import { SprawlStage } from './SprawlStage'
 import { TriviaStage } from './TriviaStage'
@@ -37,6 +38,7 @@ function Stage({ game, ...props }: StageProps & { game: GameTheme }) {
     case 'sprawl': return <GameScene game="sprawl"><SprawlStage {...props} /></GameScene>
     case 'blackjack': return <GameScene game="blackjack"><BlackjackStage {...props} /></GameScene>
     case 'bluff': return <GameScene game="bluff"><BluffStage {...props} /></GameScene>
+    case 'jeopardy': return <GameScene game="jeopardy"><JeopardyStage {...props} cmd={() => undefined} /></GameScene>
     case 'imposter': return <GameScene game="imposter"><ImposterStage {...props} /></GameScene>
     case 'writeitdown': return <TriviaStage {...props} />
   }

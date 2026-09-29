@@ -96,3 +96,72 @@ test('wagers and answers use the keypad and the text box already on the phone', 
   await page.goto(phoneView('answer'))
   await expect(page.getByRole('textbox')).toBeVisible()
 })
+
+test.describe('the TV stage', () => {
+  const fits = async (el: Locator) => {
+    const b = (await el.boundingBox())!
+    expect(b.x).toBeGreaterThanOrEqual(0)
+    expect(b.y).toBeGreaterThanOrEqual(0)
+    expect(b.x + b.width).toBeLessThanOrEqual(1280.5)
+    expect(b.y + b.height).toBeLessThanOrEqual(720.5)
+  }
+  const tvPage = async (page: import('@playwright/test').Page, beat: string) => {
+    await page.setViewportSize({ width: 1280, height: 720 })
+    await page.goto(gallery(beat))
+    await page.waitForTimeout(1400) // tiles settle
+  }
+
+  test('the board shows five categories, 25 squares and who has it, all on screen', async ({ page }) => {
+    await tvPage(page, 'board')
+    await expect(page.locator('.jeo-head')).toHaveCount(5)
+    await expect(page.locator('.jeo-cell')).toHaveCount(25)
+    await expect(page.locator('.jeo-cell.used')).toHaveCount(2)
+    for (const el of await page.locator('.jeo-head, .jeo-cell').all()) await fits(el)
+    await expect(page.getByText('Ana has the board')).toBeVisible()
+    expect(await brightness(page.locator('.jeo-note').first()), 'the pick hint is too dark on the stage').toBeGreaterThan(0.6)
+  })
+
+  test('the scoreboard strip shows everyone, the board holder and negative scores', async ({ page }) => {
+    await tvPage(page, 'board')
+    await expect(page.locator('.jeo-chip')).toHaveCount(6)
+    await expect(page.locator('.jeo-chip.holds')).toHaveCount(1)
+    await expect(page.locator('.jeo-chip', { hasText: 'Fay' })).toContainText('-$400')
+    for (const el of await page.locator('.jeo-chip').all()) await fits(el)
+  })
+
+  test('the clue is big, read-only until phones can ring in, then BUZZ IN pulses', async ({ page }) => {
+    await tvPage(page, 'reading')
+    await expect(page.locator('.jeo-clue')).toContainText('mashing avocados')
+    await fits(page.locator('.jeo-clue'))
+    await expect(page.locator('.jeo-buzz')).toHaveCount(0)
+    await tvPage(page, 'open')
+    await expect(page.locator('.jeo-buzz')).toContainText('BUZZ IN')
+  })
+
+  test('a Daily Double is announced and the clue stays hidden until the wager', async ({ page }) => {
+    await tvPage(page, 'dailydouble')
+    await expect(page.getByText('DAILY DOUBLE', { exact: false }).first()).toBeVisible()
+    await expect(page.getByText('Ana is placing a wager')).toBeVisible()
+    await expect(page.locator('.jeo-clue')).toHaveCount(0)
+  })
+
+  test('the reveal shows the answer, who scored or lost, and the drink calls', async ({ page }) => {
+    await tvPage(page, 'reveal')
+    await expect(page.locator('.jeo-answer')).toContainText('Guacamole')
+    await expect(page.locator('.jeo-delta', { hasText: 'Cleo' })).toContainText('+200')
+    await expect(page.locator('.jeo-delta', { hasText: 'Ben' })).toContainText('-200')
+    await expect(page.getByText('Drink 1 sip')).toBeVisible()
+    for (const el of await page.locator('.jeo-answer, .jeo-delta').all()) await fits(el)
+  })
+
+  test('Final Jeopardy counts the bets in and reveals answers from the lowest score up', async ({ page }) => {
+    await tvPage(page, 'finalwager')
+    await expect(page.getByText('World Capitals')).toBeVisible()
+    await expect(page.locator('.status-text', { hasText: '2/4' })).toBeVisible()
+    await tvPage(page, 'finalreveal')
+    await expect(page.locator('.jeo-step')).toHaveCount(2)
+    await expect(page.locator('.jeo-step').first()).toContainText('Eli')
+    await expect(page.getByText('Budapest').first()).toBeVisible()
+    for (const el of await page.locator('.jeo-step').all()) await fits(el)
+  })
+})

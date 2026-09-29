@@ -187,7 +187,7 @@ function Show({ session }: { session: TvSession }) {
                 : stage.gameId === 'blackjack' ? <GameScene game="blackjack"><BlackjackStage stage={stage} players={players} scores={tv.scores} clock={clock} /></GameScene>
                 : stage.gameId === 'turf' ? <GameScene game="turf"><TurfStage stage={stage} players={players} scores={tv.scores} clock={clock} /></GameScene>
                 : stage.gameId === 'sprawl' ? <GameScene game="sprawl"><SprawlStage stage={stage} players={players} scores={tv.scores} clock={clock} /></GameScene>
-                : stage.gameId === 'jeopardy' ? <JeopardyStage stage={stage} players={players} scores={tv.scores} clock={clock} cmd={cmd} />
+                : stage.gameId === 'jeopardy' ? <GameScene game="jeopardy"><JeopardyStage stage={stage} players={players} scores={tv.scores} clock={clock} cmd={cmd} /></GameScene>
                 : stage.gameId === 'imposter' ? <GameScene game="imposter"><ImposterStage stage={stage} players={players} scores={tv.scores} clock={clock} /></GameScene>
                 : <GameScene game="bluff"><BluffStage stage={stage} players={players} scores={tv.scores} clock={clock} /></GameScene>}
               {stage.paused && <Paused reason={stage.pauseReason} />}
