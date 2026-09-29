@@ -10,6 +10,8 @@ import { loadMix, setMix, sfx, unlockAudio, whenAudioRuns, type Mix } from './au
 import { BlackjackStage } from './BlackjackStage'
 import { BluffStage } from './BluffStage'
 import { Gallery } from './Gallery'
+import { InkStore } from '../ink/store'
+import { DoodleStage } from './DoodleStage'
 import { ImposterStage } from './ImposterStage'
 import { JeopardyStage } from './JeopardyStage'
 import { TriviaStage } from './TriviaStage'
@@ -103,6 +105,7 @@ function Show({ session }: { session: TvSession }) {
   const [mix, setMixState] = useState<Mix>(loadMix)
   const [idle, setIdle] = useState(false)
   const conn = useRef<Connection | null>(null)
+  const ink = useRef(new InkStore()).current
   const spotify = useSpotify(mix.spotify || overlay)
 
   useEffect(() => { fetch('/api/games').then((r) => r.json()).then(setGames).catch(() => setGames([])) }, [])
@@ -111,19 +114,24 @@ function Show({ session }: { session: TvSession }) {
       onStatus: setStatus,
       onMessage: (m) => {
         if (m.t === 'tv') setTv(m.tv)
+        if (m.t === 'ink') ink.applyEvent(m)
+        if (m.t === 'inkSync') ink.applySync(m)
         if (m.t === 'reject') { const t = rejectMessage(m.code); if (t) setToast(t) }
       },
     })
     conn.current = c
     c.start()
     return () => c.stop()
-  }, [session.hostToken])
+  }, [session.hostToken, ink])
   useEffect(() => { if (!toast) return; const id = setTimeout(() => setToast(null), 3200); return () => clearTimeout(id) }, [toast])
 
   const cmd = useCallback((c: HostCommand) => conn.current?.host(c), [])
   const setOption: SetOption = useCallback((key, value) => cmd({ t: 'setOption', key, value }), [cmd])
   const lobby = lobbyOf(tv)
   const clock = useDeadline(tv)
+  // The drawings belong to the game that just ended.
+  const gameOver = !!tv && !tv.stage
+  useEffect(() => { if (gameOver) ink.reset() }, [gameOver, ink])
   // Home Turf only counts down real decisions: a hop or a card reveal shouldn't tick.
   const untimed = (tv?.stage?.gameId === 'turf' || tv?.stage?.gameId === 'sprawl') && !(tv.stage.game as { timed?: boolean } | undefined)?.timed
   useCueDirector(live ? tv : null, untimed ? null : clock.deadline)
@@ -189,6 +197,7 @@ function Show({ session }: { session: TvSession }) {
                 : stage.gameId === 'sprawl' ? <GameScene game="sprawl"><SprawlStage stage={stage} players={players} scores={tv.scores} clock={clock} /></GameScene>
                 : stage.gameId === 'jeopardy' ? <JeopardyStage stage={stage} players={players} scores={tv.scores} clock={clock} cmd={cmd} />
                 : stage.gameId === 'imposter' ? <GameScene game="imposter"><ImposterStage stage={stage} players={players} scores={tv.scores} clock={clock} /></GameScene>
+                : stage.gameId === 'doodle' ? <GameScene game="doodle"><DoodleStage stage={stage} players={players} scores={tv.scores} clock={clock} ink={ink} /></GameScene>
                 : <GameScene game="bluff"><BluffStage stage={stage} players={players} scores={tv.scores} clock={clock} /></GameScene>}
               {stage.paused && <Paused reason={stage.pauseReason} />}
             </TimerScale.Provider>

@@ -2097,6 +2097,279 @@
         }
     },
     {
+        "t": "view",
+        "seq": 12,
+        "view": {
+            "me": {
+                "id": "p-sam",
+                "name": "Sam",
+                "avatar": {
+                    "face": "p:01",
+                    "color": "#FF7A00"
+                },
+                "role": "PLAYER",
+                "connected": true,
+                "water": false
+            },
+            "roomCode": "KXQT",
+            "gameId": "bluff",
+            "gameTitle": "Bluff Battle",
+            "round": 4,
+            "paused": false,
+            "remainingMs": 42000,
+            "screen": {
+                "t": "draw",
+                "word": "pizza",
+                "difficulty": 2,
+                "guessed": 1,
+                "expected": 4,
+                "tailMs": 45000,
+                "note": "Draw it! No letters or numbers."
+            },
+            "scores": [
+                {
+                    "id": "p-sam",
+                    "name": "Sam",
+                    "avatar": {
+                        "face": "p:01",
+                        "color": "#FF7A00"
+                    },
+                    "score": 1500
+                },
+                {
+                    "id": "p-al",
+                    "name": "Al",
+                    "avatar": {
+                        "face": "p:02",
+                        "color": "#22AA55"
+                    },
+                    "score": 500
+                }
+            ],
+            "captain": false,
+            "settings": {},
+            "crew": []
+        }
+    },
+    {
+        "t": "view",
+        "seq": 12,
+        "view": {
+            "me": {
+                "id": "p-sam",
+                "name": "Sam",
+                "avatar": {
+                    "face": "p:01",
+                    "color": "#FF7A00"
+                },
+                "role": "PLAYER",
+                "connected": true,
+                "water": false
+            },
+            "roomCode": "KXQT",
+            "gameId": "bluff",
+            "gameTitle": "Bluff Battle",
+            "round": 4,
+            "paused": false,
+            "remainingMs": 42000,
+            "screen": {
+                "t": "guess",
+                "drawer": "Al",
+                "blanks": "P _ _ _ A",
+                "kind": "guess",
+                "solved": false,
+                "close": true,
+                "last": "pizqq",
+                "guessed": 1,
+                "expected": 4,
+                "tailMs": 22500
+            },
+            "scores": [
+                {
+                    "id": "p-sam",
+                    "name": "Sam",
+                    "avatar": {
+                        "face": "p:01",
+                        "color": "#FF7A00"
+                    },
+                    "score": 1500
+                },
+                {
+                    "id": "p-al",
+                    "name": "Al",
+                    "avatar": {
+                        "face": "p:02",
+                        "color": "#22AA55"
+                    },
+                    "score": 500
+                }
+            ],
+            "captain": false,
+            "settings": {},
+            "crew": []
+        }
+    },
+    {
+        "t": "ink",
+        "turn": 1,
+        "n": 7,
+        "ops": [
+            {
+                "t": "start",
+                "s": 1,
+                "c": 2,
+                "w": 1,
+                "x": 100,
+                "y": 100,
+                "p": 50
+            },
+            {
+                "t": "pts",
+                "s": 1,
+                "pts": [
+                    110,
+                    105,
+                    50,
+                    120,
+                    110,
+                    60
+                ]
+            },
+            {
+                "t": "end",
+                "s": 1
+            },
+            {
+                "t": "undo"
+            },
+            {
+                "t": "clear"
+            }
+        ]
+    },
+    {
+        "t": "inkSync",
+        "turns": [
+            {
+                "turn": 1,
+                "strokes": [
+                    {
+                        "s": 1,
+                        "c": 2,
+                        "w": 1,
+                        "pts": [
+                            100,
+                            100,
+                            50,
+                            110,
+                            105,
+                            50
+                        ],
+                        "open": false
+                    },
+                    {
+                        "s": 2,
+                        "c": 0,
+                        "w": 0,
+                        "pts": [
+                            5,
+                            5,
+                            20
+                        ],
+                        "open": true
+                    }
+                ]
+            }
+        ],
+        "upTo": 7
+    },
+    {
+        "t": "tv",
+        "seq": 25,
+        "tv": {
+            "roomCode": "KXQT",
+            "players": [
+                {
+                    "id": "p-sam",
+                    "name": "Sam",
+                    "avatar": {
+                        "face": "p:01",
+                        "color": "#FF7A00"
+                    },
+                    "role": "PLAYER",
+                    "connected": true,
+                    "water": false
+                }
+            ],
+            "stage": {
+                "gameId": "doodle",
+                "title": "Doodle Dash",
+                "phaseSeq": 4,
+                "deadlineAt": 1700000200000,
+                "remainingMs": 30000,
+                "paused": false,
+                "game": {
+                    "t": "doodle",
+                    "phase": "draw",
+                    "turn": 1,
+                    "totalTurns": 5,
+                    "finalTurn": false,
+                    "drawer": "p-al",
+                    "drawerName": "Al",
+                    "difficulty": 2,
+                    "blanks": "_ _ _ _ _",
+                    "guessed": 1,
+                    "expected": 3,
+                    "drawMs": 75000,
+                    "tailMs": 45000,
+                    "solvers": [
+                        {
+                            "id": "p-sam",
+                            "name": "Sam"
+                        }
+                    ],
+                    "wrong": [
+                        {
+                            "id": "p-bo",
+                            "name": "Bo",
+                            "text": "pizzq"
+                        }
+                    ],
+                    "missTotal": 3,
+                    "drinks": [],
+                    "deltas": [],
+                    "gallery": []
+                }
+            },
+            "scores": [
+                {
+                    "id": "p-sam",
+                    "name": "Sam",
+                    "avatar": {
+                        "face": "p:01",
+                        "color": "#FF7A00"
+                    },
+                    "score": 1500
+                },
+                {
+                    "id": "p-al",
+                    "name": "Al",
+                    "avatar": {
+                        "face": "p:02",
+                        "color": "#22AA55"
+                    },
+                    "score": 500
+                }
+            ],
+            "gamesPlayed": 0,
+            "captain": "p-sam",
+            "settings": {
+                "rounds": 5,
+                "drinks": 1
+            }
+        }
+    },
+    {
         "t": "ack",
         "id": "a-1"
     },

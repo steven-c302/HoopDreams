@@ -1,4 +1,5 @@
 import { encodeClient, parseServerMsg, PROTOCOL_VERSION, type ActionPayload, type ClientMsg, type HostCommand, type ServerMsg } from '../protocol'
+import type { InkOp } from '../ink/types'
 import { backoffMs } from './backoff'
 import { Outbox } from './outbox'
 
@@ -52,6 +53,11 @@ export class Connection {
     this.outbox.add(m)
     this.send(m)
     return m.id
+  }
+
+  /** Strokes for the phase numbered [round]. Fire-and-forget: no id, no resend (the drawer's pad resends its drawing on reconnect). */
+  ink(round: number, ops: InkOp[]) {
+    this.send({ t: 'ink', round, ops })
   }
 
   host(cmd: HostCommand): string {

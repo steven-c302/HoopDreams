@@ -202,6 +202,13 @@ your phone. Name the imposter for points; the imposter scores for staying hidden
 Four to sixteen players (two imposters from nine), five rounds by default, the last one counts double. The vote comes with
 drink calls, and the lobby switch and Water tonight work as in the other games.
 
+**Doodle Dash.** Pictionary-style: one player at a time gets a word (pick easy, medium or hard) and draws it on their phone while
+the TV shows every stroke live, on a big easel. Everyone else types guesses on their phones; wrong guesses float across the TV
+as speech bubbles, a "so close!" is private, and hint letters appear as the clock runs down. Quick guessers score more, harder
+words score more, and the drawer scores when others get it. Everyone draws (five turns by default, the last counts double), then
+the TV replays each drawing as a time-lapse and hangs the whole night's drawings in a gallery. Three to sixteen players. Strokes
+travel over their own socket message (not game state), so drawing never slows the other phones.
+
 ### Rename the board
 
 The spaces are named after the crew's places. To rename them, edit

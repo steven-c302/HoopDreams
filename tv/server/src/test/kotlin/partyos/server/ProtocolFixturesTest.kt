@@ -30,6 +30,9 @@ import partyos.engine.TeamTag
 import partyos.engine.TriviaReveal
 import partyos.engine.TriviaTeam
 import partyos.engine.TriviaTv
+import partyos.engine.DoodleMissTv
+import partyos.engine.DoodleSolver
+import partyos.engine.DoodleTv
 import partyos.engine.DrinkCall
 import partyos.engine.TurfAuctionTv
 import partyos.engine.TurfBidPad
@@ -317,6 +320,31 @@ class ProtocolFixturesTest {
                 gamesPlayed = 1,
             ),
         ),
+        view(Screen.Draw("pizza", 2, 1, 4, 45_000, "Draw it! No letters or numbers."), round = 4),
+        view(Screen.Guess("Al", "P _ _ _ A", "guess", solved = false, close = true, last = "pizqq", guessed = 1, expected = 4, tailMs = 22_500), round = 4),
+        ServerMsg.Ink(1, 7, listOf(InkOp.Start(1, 2, 1, 100, 100, 50), InkOp.Pts(1, listOf(110, 105, 50, 120, 110, 60)), InkOp.End(1), InkOp.Undo, InkOp.Clear)),
+        ServerMsg.InkSync(listOf(InkTurn(1, listOf(InkStroke(1, 2, 1, listOf(100, 100, 50, 110, 105, 50), open = false), InkStroke(2, 0, 0, listOf(5, 5, 20), open = true)))), 7),
+        ServerMsg.Tv(
+            25,
+            TvState(
+                roomCode = "KXQT",
+                players = listOf(me),
+                stage = StageInfo(
+                    "doodle", "Doodle Dash", 4, 1_700_000_200_000, 30_000, false, null, null,
+                    game = DoodleTv(
+                        phase = "draw", turn = 1, totalTurns = 5, finalTurn = false, drawer = PlayerId("p-al"), drawerName = "Al", difficulty = 2,
+                        blanks = "_ _ _ _ _", guessed = 1, expected = 3, drawMs = 75_000, tailMs = 45_000,
+                        solvers = listOf(DoodleSolver(sam, "Sam")),
+                        wrong = listOf(DoodleMissTv(PlayerId("p-bo"), "Bo", "pizzq")), missTotal = 3,
+                    ),
+                ),
+                scores = rows,
+                lastResult = null,
+                gamesPlayed = 0,
+                captain = sam,
+                settings = mapOf("rounds" to 5, "drinks" to 1),
+            ),
+        ),
         ServerMsg.Ack("a-1"),
         ServerMsg.Reject("a-2", "TOO_TRUE"),
         ServerMsg.Pong,
@@ -374,6 +402,7 @@ class ProtocolFixturesTest {
         ClientMsg.Action("a-12", 3, JsonObject(mapOf("kind" to JsonPrimitive("clue"), "text" to JsonPrimitive("cheesy")))),
         ClientMsg.Action("a-13", 5, JsonObject(mapOf("kind" to JsonPrimitive("vote"), "option" to JsonPrimitive("p-al")))),
         ClientMsg.Ping,
+        ClientMsg.Ink(4, listOf(InkOp.Start(1, 2, 1, 100, 100, 50), InkOp.Pts(1, listOf(110, 105, 50)), InkOp.End(1), InkOp.Undo, InkOp.Clear)),
     )
 
     @Test fun serverFixturesMatch() = check("server-messages.json", pretty.encodeToString(ListSerializer(ServerMsg.serializer()), serverMessages))

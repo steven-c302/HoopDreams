@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react'
 import type { TvState } from '../protocol'
 import { setHurry, setMusic, sfx, type Mode } from './audio'
-import { isTrivia, type BlackjackTv, type BluffTv, type SprawlTv, type TriviaTv, type TurfTv } from './types'
+import { isTrivia, type BlackjackTv, type BluffTv, type DoodleTv, type SprawlTv, type TriviaTv, type TurfTv } from './types'
 
 type Game = BluffTv | BlackjackTv | TriviaTv | TurfTv | SprawlTv | undefined
 
@@ -38,6 +38,10 @@ function musicFor(tv: TvState): Mode {
       // Write It Down plays the retired Gauntlet's cue.
       default: return g.format === 'teamup' ? 'teamup' : g.format === 'write' ? 'gauntlet' : (g.format as Mode)
     }
+  }
+  if ((g as { t: string }).t === 'doodle') {
+    const p = (g as unknown as DoodleTv).phase
+    return p === 'podium' ? 'podium' : p === 'reveal' ? 'reveal' : p === 'scores' ? 'standings' : 'bluff'
   }
   switch (g.phase) {
     case 'write': case 'pick': return 'bluff'
@@ -81,6 +85,18 @@ export function useCueDirector(tv: TvState | null, deadline: number | null) {
     const ga = a.game as unknown as Game, gb = b.game as unknown as Game
     if (!gb) return
     const newPhase = a.phaseSeq !== b.phaseSeq || !ga || ga.t !== gb.t || ga.phase !== gb.phase
+
+    if ((gb as { t: string }).t === 'doodle') {
+      const d = gb as unknown as DoodleTv
+      const before = ga && (ga as { t: string }).t === 'doodle' ? (ga as unknown as DoodleTv) : null
+      if (newPhase) {
+        if (d.phase === 'draw') sfx.roundStart(d.finalTurn)
+        if (d.phase === 'reveal') sfx.whoosh()
+        if (d.phase === 'podium') sfx.drumroll(2.4)
+      } else if (before && d.guessed > before.guessed) {
+        sfx.ding()
+      }
+    }
 
     if (gb.t === 'bluff') {
       if (newPhase) {

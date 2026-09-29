@@ -111,6 +111,39 @@ sealed interface Screen {
     ) : Screen
 
     /**
+     * Doodle Dash, the drawer: the word to draw and how the room is doing. The pad itself is the phone's canvas; its
+     * strokes travel over the ink channel, not through this screen. [tailMs] is the draw time left after the current
+     * hint stage, added to the phone's stage countdown.
+     */
+    @Serializable @SerialName("draw")
+    data class Draw(
+        val word: String,
+        val difficulty: Int,
+        val guessed: Int,
+        val expected: Int,
+        val tailMs: Long,
+        val note: String? = null,
+    ) : Screen
+
+    /**
+     * Doodle Dash, a guesser: the blanks (revealed letters in capitals), whether you have it, and your last miss.
+     * [kind] names the guess action; [close] means your last miss was near.
+     */
+    @Serializable @SerialName("guess")
+    data class Guess(
+        val drawer: String,
+        val blanks: String,
+        val kind: String,
+        val solved: Boolean,
+        val points: Int? = null,
+        val close: Boolean = false,
+        val last: String? = null,
+        val guessed: Int,
+        val expected: Int,
+        val tailMs: Long,
+    ) : Screen
+
+    /**
      * Home Turf: your token, the one thing to do now, your places (with what you can do to each), who you could
      * trade with, and any open trade or auction. Faces are ids only; phones already have everyone's from `scores`.
      */

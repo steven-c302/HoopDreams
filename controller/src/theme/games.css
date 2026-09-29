@@ -53,6 +53,14 @@
   --game-bg: #2c3138;
   --game-accent: #d9a441;
 }
+[data-game-theme='doodle'] {
+  --ink: #3b2f2a;
+  --ink-soft: #6d5d54;
+  --paper: #fff7e6;
+  --paper-2: #f2e5c9;
+  --game-bg: #2f6f7e;
+  --game-accent: #f5851f;
+}
 .game-scene {
   position: absolute; inset: 0; overflow: hidden; background-color: var(--game-bg);
   background-image: linear-gradient(120deg, #ffffff06, transparent 65%);
@@ -67,6 +75,17 @@
 .game-scene[data-game-theme='imposter'] {
   background-image: repeating-linear-gradient(180deg, transparent 0 94px, #ffffff0d 94px 96px);
 }
+/* The Crayon Studio: a teal pegboard wall with the light coming from the left. */
+.game-scene[data-game-theme='doodle'] {
+  background-image:
+    radial-gradient(circle, #ffffff1c 2.5px, transparent 3.5px),
+    linear-gradient(100deg, #ffffff14, transparent 45%, #0000001f);
+  background-size: 38px 38px, 100% 100%;
+}
+/* The wall is dark, so text sitting straight on it reads in paper, never ink (as in the Imposter room). */
+[data-game-theme='doodle'] .status-text { color: var(--paper); }
+[data-game-theme='doodle'] .muted, [data-game-theme='doodle'] .draw-status, [data-game-theme='doodle'] .guess-note:not(.close) { color: var(--paper); opacity: .92; }
+[data-game-theme='doodle'] h1.prompt:not(.small) { color: var(--paper); }
 /* The room is dark, so text that sits straight on it (not inside a paper card) reads in paper, never ink. */
 [data-game-theme='imposter'] .status-text { color: var(--paper); }
 [data-game-theme='imposter'] .muted { color: var(--paper); opacity: .85; }

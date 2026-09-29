@@ -1,0 +1,38 @@
+{
+  "packId": "doodle-core",
+  "title": "Doodle core",
+  "game": "doodle",
+  "version": 1,
+  "items": [
+    {
+      "id": "person", "category": "Person or Job",
+      "easy": ["doctor", "teacher", "farmer", "pirate", "clown", "king", "chef", "cowboy", "witch", "baby", "firefighter", "police officer", "ghost", "snowman"],
+      "medium": ["dentist", "mermaid", "wizard", "ninja", "plumber", "magician", "lifeguard", "scarecrow", "superhero", "mailman", "painter", "photographer", "bodybuilder", "fairy"],
+      "hard": ["librarian", "accountant", "referee", "detective", "mad scientist", "tour guide", "lumberjack", "mime", "auctioneer", "therapist", "translator", "paparazzi"]
+    },
+    {
+      "id": "place", "category": "Place or Animal",
+      "easy": ["beach", "house", "mountain", "castle", "dog", "cat", "fish", "bird", "elephant", "snake", "pig", "cow", "rabbit", "zoo"],
+      "medium": ["lighthouse", "volcano", "igloo", "kangaroo", "octopus", "giraffe", "penguin", "jungle", "pyramid", "farm", "hospital", "desert island", "squirrel", "butterfly"],
+      "hard": ["aquarium", "skyscraper", "platypus", "flamingo", "chameleon", "hedgehog", "cathedral", "waterfall", "sloth", "campground", "observatory", "swamp"]
+    },
+    {
+      "id": "object", "category": "Object",
+      "easy": ["ball", "chair", "cup", "book", "hat", "shoe", "key", "clock", "phone", "spoon", "umbrella", "bed", "door", "sock"],
+      "medium": ["backpack", "skateboard", "telescope", "toothbrush", "vacuum", "candle", "hammer", "ladder", "trophy", "suitcase", "headphones", "sunglasses", "scissors", "balloon"],
+      "hard": ["microscope", "thermometer", "chandelier", "vending machine", "hourglass", "kaleidoscope", "bagpipes", "treadmill", "snow globe", "lawnmower", "harmonica", "fire hydrant"]
+    },
+    {
+      "id": "action", "category": "Action",
+      "easy": ["sleeping", "running", "jumping", "eating", "swimming", "crying", "laughing", "dancing", "singing", "reading", "sneezing", "waving", "clapping", "hugging"],
+      "medium": ["fishing", "painting", "skiing", "juggling", "brushing teeth", "sweeping", "yawning", "cooking", "surfing", "hiccuping", "knitting", "whistling", "marching", "tiptoeing"],
+      "hard": ["sleepwalking", "babysitting", "meditating", "procrastinating", "eavesdropping", "daydreaming", "skydiving", "moonwalking", "bargaining", "hitchhiking", "sunbathing", "arm wrestling"]
+    },
+    {
+      "id": "difficult", "category": "Difficult",
+      "easy": ["rainbow", "birthday", "sunburn", "fireworks", "thunderstorm", "haircut", "traffic jam", "road trip", "picnic", "bedtime", "homework", "sandcastle", "campfire", "treasure map"],
+      "medium": ["time travel", "jet lag", "stage fright", "brain freeze", "group project", "full moon", "gravity", "echo", "allergies", "karaoke", "double take", "awkward silence", "sibling rivalry", "photobomb"],
+      "hard": ["inflation", "democracy", "nostalgia", "sarcasm", "peer pressure", "midlife crisis", "identity theft", "global warming", "black hole", "jealousy", "freedom", "small talk"]
+    }
+  ]
+}

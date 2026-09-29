@@ -4,15 +4,18 @@ import { Face } from '../theme/Face'
 import { Card } from '../tv/Card'
 import { DrinkBet, Led } from '../tv/Casino'
 import { Brainy, Shape } from '../tv/toon'
+import type { InkOp } from '../ink/types'
+import { DrawPad } from './DrawPad'
+import { GuessPad } from './GuessPad'
 import { SecretCard } from './SecretCard'
 import { SprawlScreen } from './SprawlScreen'
 import { TurfScreen } from './TurfScreen'
 
 const buzz = (ms: number | number[]) => { try { navigator.vibrate?.(ms) } catch { /* not supported */ } }
 
-interface Props { screen: Screen; disabled: boolean; meId: string; people: Map<string, ScoreRow>; onAction(p: ActionPayload): void }
+interface Props { screen: Screen; disabled: boolean; meId: string; people: Map<string, ScoreRow>; onAction(p: ActionPayload): void; ink?: { online: boolean; send(ops: InkOp[]): void } }
 
-export function ScreenView({ screen, disabled, meId, people, onAction }: Props) {
+export function ScreenView({ screen, disabled, meId, people, onAction, ink }: Props) {
   switch (screen.t) {
     case 'waiting': return <Waiting screen={screen} />
     case 'tutorial': return <Tutorial screen={screen} disabled={disabled} onAction={onAction} />
@@ -23,6 +26,8 @@ export function ScreenView({ screen, disabled, meId, people, onAction }: Props) 
     case 'scores': return <Scores title={screen.title} rows={screen.rows} meId={meId} />
     case 'cards': return <CardTable screen={screen} disabled={disabled} onAction={onAction} />
     case 'secret': return <SecretCard screen={screen} disabled={disabled} onAction={onAction} />
+    case 'draw': return <DrawPad screen={screen} online={ink?.online ?? true} sendInk={ink?.send ?? (() => undefined)} />
+    case 'guess': return <GuessPad screen={screen} disabled={disabled} onAction={onAction} />
     case 'turf': return <TurfScreen screen={screen} disabled={disabled} onAction={onAction} />
     case 'sprawl': return <SprawlScreen screen={screen} disabled={disabled} onAction={onAction} />
   }
@@ -155,7 +160,10 @@ function ChoiceList({ screen, disabled, meId, people, onAction }: { screen: Extr
       <h1 className="prompt">{screen.prompt}</h1>
       <div className="choices">
         {screen.options.map((o) => (
-          <button key={o.id} className={`choice ${screen.selected === o.id ? 'on' : ''}`} disabled={disabled} onClick={() => pick(o)}>{o.text}</button>
+          <button key={o.id} className={`choice ${screen.selected === o.id ? 'on' : ''}`} disabled={disabled} onClick={() => pick(o)}>
+            {o.text}
+            {o.detail && <small className="choice-detail">{o.detail}</small>}
+          </button>
         ))}
       </div>
       {screen.selected && <p className="muted">You can change your pick until time runs out.</p>}

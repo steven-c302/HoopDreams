@@ -29,6 +29,8 @@ val PartyJson = Json {
 sealed interface ClientMsg {
     @Serializable @SerialName("hello") data class Hello(val protocol: Int) : ClientMsg
     @Serializable @SerialName("action") data class Action(val id: String, val round: Int, val payload: JsonObject) : ClientMsg
+    /** A drawer's strokes for the phase numbered [round]; fire-and-forget (no id, no ack, invalid batches are dropped). */
+    @Serializable @SerialName("ink") data class Ink(val round: Int, val ops: List<InkOp>) : ClientMsg
     @Serializable @SerialName("host") data class Host(val id: String, val cmd: HostCommand) : ClientMsg
     @Serializable @SerialName("ping") data object Ping : ClientMsg
 }
@@ -39,6 +41,10 @@ sealed interface ServerMsg {
     data class Welcome(val playerId: PlayerId?, val role: Role?, val host: Boolean, val protocol: Int = PROTOCOL_VERSION) : ServerMsg
     @Serializable @SerialName("view") data class View(val seq: Long, val view: PhoneState) : ServerMsg
     @Serializable @SerialName("tv") data class Tv(val seq: Long, val tv: TvState) : ServerMsg
+    /** Host (TV) sockets only. [n] is the server's running batch number, so a TV that just synced can skip what it has. */
+    @Serializable @SerialName("ink") data class Ink(val turn: Int, val n: Int, val ops: List<InkOp>) : ServerMsg
+    /** Host (TV) sockets only: everything drawn so far this game, sent when the socket connects. */
+    @Serializable @SerialName("inkSync") data class InkSync(val turns: List<InkTurn>, val upTo: Int) : ServerMsg
     @Serializable @SerialName("ack") data class Ack(val id: String) : ServerMsg
     @Serializable @SerialName("reject") data class Reject(val id: String, val code: String) : ServerMsg
     @Serializable @SerialName("pong") data object Pong : ServerMsg

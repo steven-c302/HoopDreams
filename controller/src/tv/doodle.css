@@ -1,0 +1,76 @@
+/* Doodle Dash TV stage: the Crayon Studio. A big wooden easel in the middle, the drawer on the left, who has it and every
+   wrong guess on the right. 1920 by 1080 stage; type stays large for a room across the floor. */
+.dd-center { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 56px; }
+.dd-cards { display: flex; gap: 40px; }
+.dd-card { width: 220px; height: 300px; display: grid; place-items: center; }
+.dd-card b { font: 400 150px/1 var(--font-display); color: var(--paper); -webkit-text-stroke: 12px var(--ink); paint-order: stroke fill; }
+.dd-picker { display: flex; align-items: center; gap: 28px; }
+.dd-line { font: 700 44px/1.2 var(--font-body); color: var(--paper); text-align: center; }
+.dd-line b { color: var(--game-accent); font-weight: 900; }
+
+.dd-draw { flex: 1; display: grid; grid-template-columns: 330px 1fr 460px; gap: 32px; align-items: start; min-height: 0; padding-top: 6px; }
+.dd-side { display: flex; flex-direction: column; gap: 22px; align-items: center; min-width: 0; }
+.dd-drawer { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 24px 18px; text-align: center; width: 100%; }
+.dd-drawer .label { font: 900 20px var(--font-body); letter-spacing: .16em; }
+.dd-drawer .name { font: 400 44px/1.1 var(--font-display); overflow-wrap: anywhere; }
+.dd-easel { display: flex; flex-direction: column; align-items: center; gap: 18px; min-width: 0; }
+
+.dd-blanks { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px 44px; min-height: 92px; }
+.dd-blanks .blank-word { display: inline-flex; gap: 10px; }
+.dd-blanks .blank-cell { width: 56px; height: 80px; display: grid; place-items: end center; border-bottom: 9px solid var(--paper); font: 400 66px/1 var(--font-display); color: var(--paper); }
+.dd-blanks .blank-cell.shown { color: var(--game-accent); animation: dd-pop .4s var(--ease-out, ease-out); }
+
+.dd-frame {
+  position: relative; padding: 22px; background: #c98b4b; border: 6px solid var(--ink); border-radius: 14px; box-shadow: 12px 12px 0 var(--ink);
+  background-image: repeating-linear-gradient(92deg, #ffffff12 0 3px, transparent 3px 12px);
+}
+.dd-frame::before, .dd-frame::after { /* washi tape on two corners */
+  content: ''; position: absolute; width: 130px; height: 38px; background: color-mix(in oklab, var(--bubblegum) 75%, transparent);
+  border: 3px solid color-mix(in oklab, var(--ink) 35%, transparent); z-index: 2;
+}
+.dd-frame::before { left: -40px; top: 18px; transform: rotate(-38deg); }
+.dd-frame::after { right: -40px; bottom: 18px; transform: rotate(-38deg); background: color-mix(in oklab, var(--sky) 75%, transparent); }
+.dd-paper { position: relative; width: 820px; aspect-ratio: 4 / 3; background: #fffaf0; border: 5px solid var(--ink); overflow: hidden; }
+.dd-paper canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+.dd-paper::after { /* paper grain over the crayon, so a line looks waxy rather than digital */
+  content: ''; position: absolute; inset: 0; pointer-events: none; opacity: .4; mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .36  0 0 0 0 .3  0 0 0 0 .25  0 0 0 .8 0'/></filter><rect width='160' height='160' filter='url(%23n)'/></svg>");
+}
+.pen-tip {
+  position: absolute; z-index: 1; width: 30px; height: 30px; margin: -15px 0 0 -15px; border-radius: 50%; pointer-events: none; opacity: 0;
+  background: radial-gradient(circle, #fff 0 18%, var(--game-accent) 19% 52%, transparent 62%); filter: drop-shadow(0 0 12px var(--game-accent));
+  transition: left 70ms linear, top 70ms linear, opacity .25s; animation: dd-twinkle .45s ease-in-out infinite alternate;
+}
+
+.dd-right { align-items: stretch; }
+.dd-solvers { display: flex; flex-wrap: wrap; gap: 14px; min-height: 84px; }
+.dd-solver { position: relative; }
+.dd-solver .sticker { position: absolute; left: 50%; bottom: -12px; transform: translateX(-50%) rotate(-6deg); padding: 2px 8px; background: var(--lime); border: 3px solid var(--ink); border-radius: 6px; font: 900 15px var(--font-body); letter-spacing: .06em; white-space: nowrap; }
+.dd-bubbles { display: flex; flex-direction: column; gap: 12px; }
+.dd-bubble { display: flex; align-items: center; gap: 12px; }
+.dd-bubble .bubble { font: 800 34px/1.15 var(--font-body); overflow-wrap: anywhere; }
+
+.dd-word { display: flex; flex-direction: column; align-items: center; padding: 22px 18px; gap: 4px; width: 100%; }
+.dd-word small { font: 900 22px var(--font-body); letter-spacing: .18em; }
+.dd-word b { font: 400 62px/1.05 var(--font-display); overflow-wrap: anywhere; text-align: center; }
+.dd-results { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px; width: 100%; }
+.dd-results li { display: flex; align-items: center; gap: 14px; padding: 8px 14px; background: var(--paper); border: 4px solid var(--ink); border-radius: 14px; box-shadow: 5px 5px 0 var(--ink); }
+.dd-results .who { flex: 1; font: 900 32px var(--font-body); }
+.dd-results .pts { font: 400 34px var(--font-display); color: var(--felt-deep, var(--ink)); }
+.dd-drinks { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
+.dd-drinks li { font: 700 28px/1.2 var(--font-body); color: var(--paper); }
+.dd-drinks b { color: var(--game-accent); }
+
+.dd-gallery-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 16px; min-height: 0; }
+.dd-gallery-title { font: 400 64px var(--font-display); color: var(--paper); -webkit-text-stroke: 10px var(--ink); paint-order: stroke fill; }
+.dd-gallery { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px 28px; width: 100%; max-width: 1360px; }
+.dd-shot { margin: 0; padding: 12px 12px 10px; background: #c98b4b; border: 5px solid var(--ink); border-radius: 10px; box-shadow: 7px 7px 0 var(--ink); display: flex; flex-direction: column; gap: 8px; }
+.dd-still { position: relative; aspect-ratio: 4 / 3; background: #fffaf0; border: 4px solid var(--ink); overflow: hidden; }
+.dd-still canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+.dd-shot figcaption { display: flex; flex-direction: column; align-items: center; color: var(--ink); }
+.dd-shot figcaption b { font: 400 30px/1.1 var(--font-display); color: var(--paper); -webkit-text-stroke: 6px var(--ink); paint-order: stroke fill; }
+.dd-shot figcaption small { font: 800 20px var(--font-body); color: var(--ink); }
+
+@keyframes dd-twinkle { from { transform: scale(.85); } to { transform: scale(1.15); } }
+@keyframes dd-pop { 0% { transform: scale(.4) rotate(-12deg); } 70% { transform: scale(1.2) rotate(4deg); } 100% { transform: none; } }
+@media (prefers-reduced-motion: reduce) { .pen-tip, .dd-blanks .blank-cell.shown { animation: none; } }
