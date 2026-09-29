@@ -64,6 +64,17 @@ export const ROUND_RULES: Record<string, string> = {
   gauntlet: 'Pick every answer that fits. Right picks move you forward, wrong ones back. First to the finish wins.',
 }
 
+// ---- Jeopardy (tv/engine/.../JeopardyViews.kt) ----------------------------------------------
+
+export interface JeopardyCellTv { id: string; category: string; value: number; used: boolean }
+export interface JeopardyTv {
+  t: 'jeopardy'; phase: 'select' | 'answer' | 'reveal' | 'podium'
+  board: JeopardyCellTv[]
+  category?: string; value?: number; clue?: string
+  submitted: number; expected: number
+  answer?: string; correct: string[]; deltas: { id: string; name: string; points: number }[]
+}
+
 // ---- Home Turf (tv/engine/.../TurfViews.kt) -------------------------------------------------
 
 /** kind: payday | street | railroad | utility | chance | chest | tax | jail | couch | gotojail */
