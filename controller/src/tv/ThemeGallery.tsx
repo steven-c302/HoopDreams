@@ -13,6 +13,7 @@ import { TurfStage } from './TurfStage'
 import blackjack from './fixtures/blackjack-theme.json'
 import bluff from './fixtures/bluff-theme.json'
 import imposter from './fixtures/imposter-theme'
+import jeopardy from './fixtures/jeopardy-theme'
 import sprawl from './fixtures/sprawl-theme.json'
 import turf from './fixtures/turf-theme.json'
 import writeitdown from './fixtures/writeitdown-theme.json'
@@ -22,7 +23,7 @@ import writeitdown from './fixtures/writeitdown-theme.json'
 interface Beat { stage: StageInfo; scores?: ScoreRow[]; phone: Pick<PhoneState, 'me' | 'screen'> }
 interface Fixture { players: PlayerSummary[]; beats: Record<string, Beat> }
 type Raw = { players: PlayerSummary[] } & ({ beats: Record<string, Beat> } | Beat)
-const raw = { turf, sprawl, blackjack, bluff, writeitdown, imposter } as unknown as Record<GameTheme, Raw>
+const raw = { turf, sprawl, blackjack, bluff, writeitdown, imposter, jeopardy } as unknown as Record<GameTheme, Raw>
 const fixtureOf = (game: GameTheme): Fixture => {
   const f = raw[game]
   return 'beats' in f ? f : { players: f.players, beats: { roll: { stage: f.stage, scores: f.scores, phone: f.phone } } }

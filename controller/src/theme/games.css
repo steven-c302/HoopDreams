@@ -53,6 +53,15 @@
   --game-bg: #2c3138;
   --game-accent: #d9a441;
 }
+[data-game-theme='jeopardy'] {
+  --ink: #15183f;
+  --ink-soft: #4a4f86;
+  --paper: #f8f1dc;
+  --paper-2: #e4dbbd;
+  --font-display: 'Anton', system-ui, sans-serif;
+  --game-bg: #1b1f57;
+  --game-accent: #f2c14e;
+}
 .game-scene {
   position: absolute; inset: 0; overflow: hidden; background-color: var(--game-bg);
   background-image: linear-gradient(120deg, #ffffff06, transparent 65%);
@@ -71,6 +80,14 @@
 [data-game-theme='imposter'] .status-text { color: var(--paper); }
 [data-game-theme='imposter'] .muted { color: var(--paper); opacity: .85; }
 [data-game-theme='imposter'] h1.prompt:not(.small) { color: var(--paper); }
+/* The Studio set: a spotlight from above on a deep indigo stage. */
+.game-scene[data-game-theme='jeopardy'] {
+  background-image: radial-gradient(ellipse 70% 55% at 50% -8%, #ffffff2e 0, transparent 70%), radial-gradient(ellipse 90% 40% at 50% 118%, #0000005c 0, transparent 70%);
+}
+/* The stage is dark, so text that sits straight on it (not inside a paper tile) reads in paper, never ink. */
+[data-game-theme='jeopardy'] .status-text { color: var(--paper); }
+[data-game-theme='jeopardy'] .muted { color: var(--paper); opacity: .85; }
+[data-game-theme='jeopardy'] h1.prompt:not(.small) { color: var(--paper); }
 .game-mark { padding: 4px 8px 18px; color: var(--paper); }
 .game-mark .edition { display: block; font: 750 15px var(--font-body); letter-spacing: .18em; opacity: .75; }
 .game-mark h1 { font: 900 54px/.95 var(--font-display); letter-spacing: -.055em; margin: 12px 0 10px; }

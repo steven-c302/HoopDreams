@@ -1,7 +1,7 @@
 import { createContext, useContext } from 'react'
 
 /** Games with their own environment (theme/games.css). Every other game keeps the Saturday Morning shell. */
-export const THEMED_GAMES = ['turf', 'sprawl', 'blackjack', 'bluff', 'writeitdown', 'imposter'] as const
+export const THEMED_GAMES = ['turf', 'sprawl', 'blackjack', 'bluff', 'writeitdown', 'imposter', 'jeopardy'] as const
 export type GameTheme = (typeof THEMED_GAMES)[number]
 
 export const gameThemeOf = (gameId?: string | null): GameTheme | undefined =>

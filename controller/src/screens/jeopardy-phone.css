@@ -1,0 +1,30 @@
+/* Answer & Question on the phone: the board and the BUZZ button, on the dark Studio stage. */
+.jb-board { display: grid; grid-template-columns: repeat(var(--cols, 5), minmax(0, 1fr)); gap: 6px; }
+.jb-head {
+  display: grid; place-items: center; min-height: 52px; padding: 4px 3px; text-align: center;
+  background: #2f3fb5; color: var(--paper); border: 3px solid var(--ink); border-radius: 10px;
+  font: 800 11px/1.1 var(--font-body, system-ui); letter-spacing: .04em; text-transform: uppercase; overflow-wrap: anywhere;
+}
+.jb-cell {
+  min-height: 52px; padding: 0; border: 3px solid var(--ink); border-radius: 10px; background: var(--paper); color: var(--ink);
+  font: 900 17px var(--font-display, system-ui); box-shadow: 0 4px 0 var(--ink);
+}
+.jb-cell.on { background: var(--game-accent); transform: translateY(2px); box-shadow: 0 2px 0 var(--ink); }
+.jb-cell.used { background: transparent; border-style: dashed; box-shadow: none; opacity: .4; }
+.jb-cell:disabled:not(.used) { opacity: .85; }
+
+.jz { align-items: center; gap: 18px; }
+.jz-clue { color: var(--paper); font: 800 22px var(--font-body, system-ui); text-align: center; }
+.jz-clue b { color: var(--game-accent); }
+.jz-buzz {
+  width: 100%; min-height: 46vh; border: 5px solid var(--ink); border-radius: 28px; padding: 12px;
+  font: 400 clamp(46px, 17vw, 88px)/1 var(--font-display, system-ui); letter-spacing: .04em; box-shadow: 0 9px 0 var(--ink);
+  background: var(--paper-2); color: var(--ink);
+}
+.jz-buzz.open { background: var(--lime, #7bd66a); animation: jz-pulse .9s ease-in-out infinite; }
+.jz-buzz.open:active { transform: translateY(6px); box-shadow: 0 3px 0 var(--ink); }
+.jz-buzz.locked { background: var(--tomato, #ff5a4a); color: var(--white, #fff); }
+.jz-buzz.reading { background: var(--game-accent); }
+.jz-buzz:disabled { box-shadow: 0 4px 0 var(--ink); opacity: .9; }
+.jz-detail { text-align: center; font-size: 22px; }
+@keyframes jz-pulse { 50% { transform: scale(1.02); } }

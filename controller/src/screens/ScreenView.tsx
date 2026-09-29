@@ -4,6 +4,8 @@ import { Face } from '../theme/Face'
 import { Card } from '../tv/Card'
 import { DrinkBet, Led } from '../tv/Casino'
 import { Brainy, Shape } from '../tv/toon'
+import { BoardScreen } from './BoardScreen'
+import { BuzzerScreen } from './BuzzerScreen'
 import { SecretCard } from './SecretCard'
 import { SprawlScreen } from './SprawlScreen'
 import { TurfScreen } from './TurfScreen'
@@ -23,6 +25,8 @@ export function ScreenView({ screen, disabled, meId, people, onAction }: Props) 
     case 'scores': return <Scores title={screen.title} rows={screen.rows} meId={meId} />
     case 'cards': return <CardTable screen={screen} disabled={disabled} onAction={onAction} />
     case 'secret': return <SecretCard screen={screen} disabled={disabled} onAction={onAction} />
+    case 'board': return <BoardScreen screen={screen} disabled={disabled} onAction={onAction} />
+    case 'buzzer': return <BuzzerScreen screen={screen} disabled={disabled} onAction={onAction} />
     case 'turf': return <TurfScreen screen={screen} disabled={disabled} onAction={onAction} />
     case 'sprawl': return <SprawlScreen screen={screen} disabled={disabled} onAction={onAction} />
   }
