@@ -126,6 +126,21 @@ sealed interface Screen {
     ) : Screen
 
     /**
+     * Answer & Question's board: [categories] across, [cells] by column and row. The phone picks a cell locally and
+     * confirms it with `{ kind: "pick", cell }`. [canPick] is true for the player holding the board and for the
+     * captain, who then sees [pickFor], the name of the player they are picking for.
+     */
+    @Serializable @SerialName("board")
+    data class Board(
+        val prompt: String,
+        val categories: List<String>,
+        val cells: List<BoardCell>,
+        val canPick: Boolean,
+        val pickFor: String? = null,
+        val note: String? = null,
+    ) : Screen
+
+    /**
      * Doodle Dash, a guesser: the blanks (revealed letters in capitals), whether you have it, and your last miss.
      * [kind] names the guess action; [close] means your last miss was near.
      */
@@ -141,6 +156,22 @@ sealed interface Screen {
         val guessed: Int,
         val expected: Int,
         val tailMs: Long,
+    ) : Screen
+
+    /**
+     * The BUZZ button. [state]: `reading` (clue still being read), `open`, `locked` (rang in too early, [lockedMs] left),
+     * `beaten` (someone else has the floor, named in [detail]), `tried` (you already missed this clue) or `out`
+     * (you joined after it started). [live] is true while the buzz window is open, so a `locked` phone can open itself
+     * when the lockout runs out. A buzz sends `{ kind: "buzz" }`.
+     */
+    @Serializable @SerialName("buzzer")
+    data class Buzzer(
+        val state: String,
+        val category: String,
+        val value: Int,
+        val detail: String? = null,
+        val lockedMs: Int = 0,
+        val live: Boolean = false,
     ) : Screen
 
     /**
@@ -194,11 +225,33 @@ sealed interface Screen {
         val drink: String? = null,
         val drinks: Boolean = true,
     ) : Screen
+
+    /**
+     * Hot Type: the board and your own found words, newest first. [phase] is ready | hunt | press | reveal | scores.
+     * [tiles] is empty until the hunt starts. [score] is your base total during the hunt and your round total after.
+     * In the reveal, each [found] word carries how many players found it and your unique bonus. A swipe is sent as
+     * `{ kind: "word", path: [tile index, ...] }`.
+     */
+    @Serializable @SerialName("hunt")
+    data class Hunt(
+        val phase: String,
+        val round: Int,
+        val totalRounds: Int,
+        val size: Int,
+        val tiles: List<String> = emptyList(),
+        val found: List<HuntFound> = emptyList(),
+        val score: Int = 0,
+        val note: String? = null,
+    ) : Screen
 }
 
 /** The clue field under Imposter's peek chip. */
 @Serializable
 data class SecretInput(val prompt: String, val maxLen: Int, val value: String?, val kind: String, val hint: String? = null)
+
+/** One square on the phone's board. */
+@Serializable
+data class BoardCell(val id: String, val col: Int, val row: Int, val value: Int, val used: Boolean)
 
 /** One playing card. rank 1 (ace) to 13 (king), suit 0..3 = spades, hearts, diamonds, clubs. rank 0 = face down. */
 @Serializable
@@ -296,3 +349,7 @@ sealed interface HostCmd {
     /** A show control the running game defines, e.g. Brain Drain's "shuffle" during Team Up. */
     data class GameAction(val action: String) : HostCmd
 }
+
+/** One word on a Hot Type phone. [finders] and [bonus] are 0 until the reveal. */
+@Serializable
+data class HuntFound(val word: String, val points: Int, val finders: Int = 0, val bonus: Int = 0)

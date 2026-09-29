@@ -66,13 +66,22 @@ export const ROUND_RULES: Record<string, string> = {
 
 // ---- Jeopardy (tv/engine/.../JeopardyViews.kt) ----------------------------------------------
 
-export interface JeopardyCellTv { id: string; category: string; value: number; used: boolean }
+export interface JeopardyCellTv { id: string; col: number; row: number; value: number; used: boolean }
+export interface JeopardyFinalStep { id: string; name: string; answer?: string; wager: number; right: boolean; delta: number; total: number }
+export interface JeopardyFinalTv { category: string; clue?: string; answer?: string; wagers: number; expected: number; steps: JeopardyFinalStep[] }
 export interface JeopardyTv {
-  t: 'jeopardy'; phase: 'select' | 'answer' | 'reveal' | 'podium'
-  board: JeopardyCellTv[]
+  t: 'jeopardy'
+  phase: 'intro' | 'pick' | 'wager' | 'clue' | 'buzz' | 'answer' | 'reveal' | 'break' | 'final_category' | 'final_wager' | 'final_answer' | 'final_reveal' | 'podium'
+  round: number; boards: number
+  categories: string[]; cells: JeopardyCellTv[]
+  controller?: string
   category?: string; value?: number; clue?: string
-  submitted: number; expected: number
-  answer?: string; correct: string[]; deltas: { id: string; name: string; points: number }[]
+  dailyDouble: boolean; wager?: number
+  buzzOpen: boolean; floor?: string; locked: string[]; tried: string[]
+  answer?: string; right?: boolean
+  deltas: { id: string; name: string; points: number }[]
+  drinks: { id: string; name: string; sips: number; text: string }[]
+  final?: JeopardyFinalTv
 }
 
 // ---- Home Turf (tv/engine/.../TurfViews.kt) -------------------------------------------------
@@ -205,4 +214,22 @@ export interface ImposterTv {
   guesses: { id: string; name: string; text: string; right: boolean }[]
   drinks: { id: string; name: string; sips: number; text: string }[]
   deltas: { id: string; name: string; points: number }[]
+}
+
+// ---- Hot Type (tv/engine/.../HotTypeViews.kt) ------------------------------------------------
+
+export interface HotTypeTv {
+  t: 'hottype'; phase: 'ready' | 'hunt' | 'press' | 'reveal' | 'scores' | 'podium'
+  round: number; totalRounds: number; finalRound: boolean; size: number
+  tiles: string[]
+  /** Hunt and press only. Counts and word lengths, never words. */
+  rail: { id: string; name: string; count: number; score: number; lengths: number[] }[]
+  wordsFound: number; longest: number
+  /** The latest word of 6 or more letters: a length, never the word. seq rises with each one. */
+  bigFind?: { seq: number; id: string; name: string; letters: number }
+  /** Reveal onward, in stamping order (rising points, longest last). */
+  page: { word: string; points: number; bonus: number; finders: string[]; longest: boolean }[]
+  missed?: { word: string; points: number }
+  deltas: { id: string; name: string; base: number; unique: number; longest: number; total: number }[]
+  drinks: { id: string; name: string; sips: number; text: string }[]
 }

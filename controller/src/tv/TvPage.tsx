@@ -13,6 +13,7 @@ import { Gallery } from './Gallery'
 import { InkStore } from '../ink/store'
 import { DoodleStage } from './DoodleStage'
 import { ImposterStage } from './ImposterStage'
+import { HotTypeStage } from './HotTypeStage'
 import { JeopardyStage } from './JeopardyStage'
 import { TriviaStage } from './TriviaStage'
 import { SprawlCover } from './SprawlArt'
@@ -77,12 +78,12 @@ function TvShow() {
  * Lobby settings live on the server so the TV and the captain's phone always agree. teams 0 = auto. Home Turf:
  * turfMode 0 auto / 1 solo / 2 teams, minutes = its game clock (0 = no limit).
  */
-interface Lobby { rounds: number; teams: number; drinks: boolean; game: number; phones: boolean; turfMode: number; minutes: number; vp: number; timers: number }
+interface Lobby { rounds: number; teams: number; drinks: boolean; game: number; phones: boolean; turfMode: number; minutes: number; vp: number; timers: number; show: number; grid: number }
 function lobbyOf(tv: TvState | null): Lobby {
   const s = tv?.settings ?? {}
   return {
     rounds: s.rounds ?? 5, teams: s.teams ?? 0, drinks: (s.drinks ?? 1) === 1, game: s.game ?? 0, phones: (s.captain ?? 1) === 1,
-    turfMode: s.turfMode ?? 0, minutes: s.minutes ?? 45, vp: s.vp ?? 8, timers: s.timers ?? 0,
+    turfMode: s.turfMode ?? 0, minutes: s.minutes ?? 45, vp: s.vp ?? 8, timers: s.timers ?? 0, show: s.show ?? 0, grid: s.grid ?? 0,
   }
 }
 type SetOption = (key: OptionKey, value: number) => void
@@ -195,9 +196,10 @@ function Show({ session }: { session: TvSession }) {
                 : stage.gameId === 'blackjack' ? <GameScene game="blackjack"><BlackjackStage stage={stage} players={players} scores={tv.scores} clock={clock} /></GameScene>
                 : stage.gameId === 'turf' ? <GameScene game="turf"><TurfStage stage={stage} players={players} scores={tv.scores} clock={clock} /></GameScene>
                 : stage.gameId === 'sprawl' ? <GameScene game="sprawl"><SprawlStage stage={stage} players={players} scores={tv.scores} clock={clock} /></GameScene>
-                : stage.gameId === 'jeopardy' ? <JeopardyStage stage={stage} players={players} scores={tv.scores} clock={clock} cmd={cmd} />
+                : stage.gameId === 'jeopardy' ? <GameScene game="jeopardy"><JeopardyStage stage={stage} players={players} scores={tv.scores} clock={clock} cmd={cmd} /></GameScene>
                 : stage.gameId === 'imposter' ? <GameScene game="imposter"><ImposterStage stage={stage} players={players} scores={tv.scores} clock={clock} /></GameScene>
                 : stage.gameId === 'doodle' ? <GameScene game="doodle"><DoodleStage stage={stage} players={players} scores={tv.scores} clock={clock} ink={ink} /></GameScene>
+                : stage.gameId === 'hottype' ? <GameScene game="hottype"><HotTypeStage stage={stage} players={players} scores={tv.scores} clock={clock} /></GameScene>
                 : <GameScene game="bluff"><BluffStage stage={stage} players={players} scores={tv.scores} clock={clock} /></GameScene>}
               {stage.paused && <Paused reason={stage.pauseReason} />}
             </TimerScale.Provider>
@@ -256,6 +258,8 @@ function LobbyScreen({ tv, session, games, lobby, setOption, onStart, keys, play
   const trivia = isTrivia(focused?.id)
   const turf = focused?.id === 'turf'
   const sprawl = focused?.id === 'sprawl'
+  const jeopardy = focused?.id === 'jeopardy'
+  const hottype = focused?.id === 'hottype'
   useEffect(() => {
     if (qr.current && session.joinUrl) QRCode.toCanvas(qr.current, session.joinUrl, { width: 360, margin: 4, errorCorrectionLevel: 'Q' })
   }, [session.joinUrl])
@@ -269,17 +273,19 @@ function LobbyScreen({ tv, session, games, lobby, setOption, onStart, keys, play
         const at = Math.max(0, TURF_MINUTES.indexOf(lobby.minutes))
         setOption('minutes', TURF_MINUTES[Math.min(TURF_MINUTES.length - 1, Math.max(0, at + (e.key === 'ArrowUp' ? 1 : -1)))]); sfx.focus()
       }
-      else if (e.key === 'ArrowUp' && focused?.id !== 'blackjack') { setOption('rounds', Math.min(8, lobby.rounds + 1)); sfx.focus() }
-      else if (e.key === 'ArrowDown' && focused?.id !== 'blackjack') { setOption('rounds', Math.max(3, lobby.rounds - 1)); sfx.focus() }
+      else if (e.key === 'ArrowUp' && focused?.id !== 'blackjack' && !jeopardy) { setOption('rounds', Math.min(8, lobby.rounds + 1)); sfx.focus() }
+      else if (e.key === 'ArrowDown' && focused?.id !== 'blackjack' && !jeopardy) { setOption('rounds', Math.max(3, lobby.rounds - 1)); sfx.focus() }
       else if (k === 't' && turf) {
         const at = TURF_MODES.findIndex(([m, t]) => m === lobby.turfMode && (m !== 2 || t === lobby.teams))
         const [mode, teams] = TURF_MODES[(at + 1) % TURF_MODES.length]
         setOption('turfMode', mode); if (mode === 2) setOption('teams', teams); sfx.focus()
       }
       else if (k === 'v' && sprawl) { setOption('vp', lobby.vp === 10 ? 8 : 10); sfx.focus() }
+      else if (k === 's' && jeopardy) { setOption('show', lobby.show ? 0 : 1); sfx.focus() }
+      else if (k === 'g' && hottype) { setOption('grid', lobby.grid === 1 ? 0 : 1); sfx.focus() }
       else if (k === 'r') { setOption('timers', (lobby.timers + 1) % TIMER_SCALES.length); sfx.focus() }
       else if (k === 't' && trivia) { setOption('teams', TEAM_CHOICES[(TEAM_CHOICES.indexOf(lobby.teams) + 1) % TEAM_CHOICES.length] ?? 0); sfx.focus() }
-      else if (k === 'd' && (trivia || turf || sprawl)) { setOption('drinks', lobby.drinks ? 0 : 1); sfx.focus() }
+      else if (k === 'd' && (trivia || turf || sprawl || jeopardy || hottype)) { setOption('drinks', lobby.drinks ? 0 : 1); sfx.focus() }
       else if (e.key === 'Enter' && focused) onStart(focused)
     }
     window.addEventListener('keydown', onKey)
@@ -320,11 +326,13 @@ function LobbyScreen({ tv, session, games, lobby, setOption, onStart, keys, play
             {focused?.id === 'blackjack'
               ? <span className="stepper">Everyone deals once: <b>one hand per player</b></span>
               : turf || sprawl ? <span className="stepper"><Keycap label="↑" /><Keycap label="↓" /> Game clock <b>{turfMinutesText(lobby.minutes)}</b></span>
+              : jeopardy ? <span className="stepper"><Keycap label="S" /> Show <b>{lobby.show ? 'FULL' : 'SHORT'}</b></span>
               : <span className="stepper"><Keycap label="↑" /><Keycap label="↓" /> {trivia ? 'Questions per round' : 'Rounds'} <b>{lobby.rounds}</b></span>}
             {trivia && <span className="stepper"><Keycap label="T" /> Teams <b>{lobby.teams === 0 ? 'AUTO' : lobby.teams}</b></span>}
             {turf && <span className="stepper"><Keycap label="T" /> Play <b>{turfModeText(lobby)}</b></span>}
             {sprawl && <span className="stepper"><Keycap label="V" /> First to <b>{lobby.vp} POINTS</b></span>}
-            {(trivia || turf || sprawl) && <span className="stepper"><Keycap label="D" /> Drink calls <b>{lobby.drinks ? 'ON' : 'OFF'}</b></span>}
+            {hottype && <span className="stepper"><Keycap label="G" /> Board <b>{lobby.grid === 1 ? '5×5' : '4×4'}</b></span>}
+            {(trivia || turf || sprawl || jeopardy || hottype) && <span className="stepper"><Keycap label="D" /> Drink calls <b>{lobby.drinks ? 'ON' : 'OFF'}</b></span>}
             <span className="stepper"><Keycap label="R" /> Timers <b>{TIMER_NAMES[lobby.timers] ?? TIMER_NAMES[0]}</b></span>
             <span style={{ flex: 1 }} />
             {/* The TV's other keys (P pause, F full screen) are on the pause card and in the README. */}

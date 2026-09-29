@@ -7,15 +7,18 @@ import { Brainy, Shape } from '../tv/toon'
 import type { InkOp } from '../ink/types'
 import { DrawPad } from './DrawPad'
 import { GuessPad } from './GuessPad'
+import { BoardScreen } from './BoardScreen'
+import { BuzzerScreen } from './BuzzerScreen'
+import { HuntScreen } from './HuntScreen'
 import { SecretCard } from './SecretCard'
 import { SprawlScreen } from './SprawlScreen'
 import { TurfScreen } from './TurfScreen'
 
 const buzz = (ms: number | number[]) => { try { navigator.vibrate?.(ms) } catch { /* not supported */ } }
 
-interface Props { screen: Screen; disabled: boolean; meId: string; people: Map<string, ScoreRow>; onAction(p: ActionPayload): void; ink?: { online: boolean; send(ops: InkOp[]): void } }
+interface Props { screen: Screen; disabled: boolean; meId: string; people: Map<string, ScoreRow>; seconds?: number | null; rejected?: { code: string; n: number } | null; onAction(p: ActionPayload): void; ink?: { online: boolean; send(ops: InkOp[]): void } }
 
-export function ScreenView({ screen, disabled, meId, people, onAction, ink }: Props) {
+export function ScreenView({ screen, disabled, meId, people, seconds, rejected, onAction, ink }: Props) {
   switch (screen.t) {
     case 'waiting': return <Waiting screen={screen} />
     case 'tutorial': return <Tutorial screen={screen} disabled={disabled} onAction={onAction} />
@@ -28,6 +31,9 @@ export function ScreenView({ screen, disabled, meId, people, onAction, ink }: Pr
     case 'secret': return <SecretCard screen={screen} disabled={disabled} onAction={onAction} />
     case 'draw': return <DrawPad screen={screen} online={ink?.online ?? true} sendInk={ink?.send ?? (() => undefined)} />
     case 'guess': return <GuessPad screen={screen} disabled={disabled} onAction={onAction} />
+    case 'hunt': return <HuntScreen screen={screen} disabled={disabled} seconds={seconds ?? null} rejected={rejected ?? null} onAction={onAction} />
+    case 'board': return <BoardScreen screen={screen} disabled={disabled} onAction={onAction} />
+    case 'buzzer': return <BuzzerScreen screen={screen} disabled={disabled} onAction={onAction} />
     case 'turf': return <TurfScreen screen={screen} disabled={disabled} onAction={onAction} />
     case 'sprawl': return <SprawlScreen screen={screen} disabled={disabled} onAction={onAction} />
   }

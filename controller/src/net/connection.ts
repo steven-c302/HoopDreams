@@ -37,6 +37,7 @@ export class Connection {
   constructor(private url: string, private factory: (url: string) => SocketLike, private h: Handlers) {}
 
   start() {
+    if (this.sock || this.retryTimer) return
     this.stopped = false
     this.open()
   }
@@ -44,7 +45,9 @@ export class Connection {
   stop() {
     this.stopped = true
     this.clearTimers()
-    this.sock?.close()
+    const s = this.sock
+    this.sock = null
+    s?.close()
     this.h.onStatus('closed')
   }
 
@@ -68,10 +71,13 @@ export class Connection {
   }
 
   private open() {
+    if (this.stopped) return
+    this.retryTimer = null
     this.h.onStatus('connecting')
     const s = this.factory(this.url)
     this.sock = s
     s.onopen = () => {
+      if (this.stopped || this.sock !== s) return
       this.attempt = 0
       this.lastHeard = Date.now()
       this.h.onStatus('online')
@@ -80,12 +86,13 @@ export class Connection {
       this.pingTimer = setInterval(() => this.heartbeat(), PING_MS)
     }
     s.onmessage = (e) => {
+      if (this.stopped || this.sock !== s) return
       this.lastHeard = Date.now()
       const m = parseServerMsg(e.data)
       if (!m) return
       if (m.t === 'ack' || m.t === 'reject') this.outbox.settle(m.id)
-      if (m.t === 'bye') this.stopped = true
       this.h.onMessage(m)
+      if (m.t === 'bye') this.stop()
     }
     s.onclose = () => {
       if (this.sock !== s) return

@@ -13,6 +13,7 @@ import partyos.engine.games.trivia.BrainDrain
 import partyos.engine.games.bluff.BluffBattle
 import partyos.engine.games.doodle.Doodle
 import partyos.engine.games.imposter.Imposter
+import partyos.engine.games.hottype.HotType
 import partyos.engine.games.jeopardy.Jeopardy
 import partyos.engine.games.sprawl.Sprawl
 import partyos.engine.games.turf.HomeTurf
@@ -50,7 +51,7 @@ fun main(args: Array<String>) {
     } else {
         null
     }
-    val games = GameRegistry(listOf(BrainDrain(feed = feed), BrainDrain(feed = feed, mode = BrainDrain.Mode.WRITE), BluffBattle(), DrunkBlackjack(), HomeTurf(), Sprawl(), Jeopardy(), Imposter(), Doodle()))
+    val games = GameRegistry(listOf(BrainDrain(feed = feed), BrainDrain(feed = feed, mode = BrainDrain.Mode.WRITE), BluffBattle(), DrunkBlackjack(), HomeTurf(), Sprawl(), Jeopardy(), Imposter(), Doodle(), HotType()))
     val partyFile = opts["party"]?.let { PartyFile(File(it), onError = { msg -> System.err.println("party: $msg") }) }
     val resumed = partyFile?.load(RESUME_WITHIN_MS)
     val engine = resumed?.let { PartyEngine.restore(it, SystemClock, SecureEntropy(), games) } ?: PartyEngine(SystemClock, SecureEntropy(), games)

@@ -65,6 +65,21 @@ import partyos.engine.games.turf.TBeat
 import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import partyos.engine.BoardCell
+import partyos.engine.JeopardyCellTv
+import partyos.engine.JeopardyDelta
+import partyos.engine.JeopardyDrink
+import partyos.engine.JeopardyFinalStep
+import partyos.engine.JeopardyFinalTv
+import partyos.engine.JeopardyTv
+import partyos.engine.HotTypeTv
+import partyos.engine.HuntBigFind
+import partyos.engine.HuntDelta
+import partyos.engine.HuntDrink
+import partyos.engine.HuntFound
+import partyos.engine.HuntMissed
+import partyos.engine.HuntPageWord
+import partyos.engine.HuntRail
 
 /**
  * Golden wire samples shared with the phone controller (controller/src/protocol/fixtures).
@@ -349,6 +364,130 @@ class ProtocolFixturesTest {
         ServerMsg.Reject("a-2", "TOO_TRUE"),
         ServerMsg.Pong,
         ServerMsg.Bye("KICKED"),
+        ServerMsg.View(
+            seq = 40,
+            view = PhoneState(
+                me, "KXQT", "hottype", "Hot Type", 3, false, null, 61_000,
+                Screen.Hunt("hunt", 1, 3, 4, "STRPLONAHECIDWKU".map { it.toString() }, listOf(HuntFound("stone", 800), HuntFound("ton", 100)), 900),
+                rows,
+            ),
+        ),
+        ServerMsg.View(
+            seq = 41,
+            view = PhoneState(
+                me, "KXQT", "hottype", "Hot Type", 5, false, null, 12_000,
+                Screen.Hunt("reveal", 1, 3, 4, "STRPLONAHECIDWKU".map { it.toString() }, listOf(HuntFound("stone", 800, 1, 800), HuntFound("ton", 100, 2, 0)), 2200),
+                rows,
+            ),
+        ),
+        ServerMsg.Tv(
+            42,
+            TvState(
+                roomCode = "KXQT",
+                players = listOf(me),
+                stage = StageInfo(
+                    "hottype", "Hot Type", 4, 1_700_000_200_000, 61_000, false, null, null,
+                    game = HotTypeTv(
+                        phase = "hunt", round = 1, totalRounds = 3, finalRound = false, size = 4,
+                        tiles = "STRPLONAHECIDWKU".map { it.toString() },
+                        rail = listOf(HuntRail(PlayerId("p-al"), "Al", 2, 900, listOf(5, 3)), HuntRail(sam, "Sam", 0, 0, emptyList())),
+                        wordsFound = 2, longest = 5, bigFind = HuntBigFind(1, PlayerId("p-al"), "Al", 6),
+                    ),
+                ),
+                scores = rows,
+                lastResult = null,
+                gamesPlayed = 1,
+                settings = mapOf("game" to 7, "rounds" to 3, "grid" to 0),
+            ),
+        ),
+        ServerMsg.Tv(
+            43,
+            TvState(
+                roomCode = "KXQT",
+                players = listOf(me),
+                stage = StageInfo(
+                    "hottype", "Hot Type", 6, 1_700_000_300_000, 8_000, false, null, null,
+                    game = HotTypeTv(
+                        phase = "scores", round = 1, totalRounds = 3, finalRound = false, size = 4,
+                        tiles = "STRPLONAHECIDWKU".map { it.toString() },
+                        page = listOf(HuntPageWord("ton", 100, 0, listOf(PlayerId("p-al"), sam), false), HuntPageWord("stone", 800, 800, listOf(PlayerId("p-al")), true)),
+                        missed = HuntMissed("clappers", 2200),
+                        deltas = listOf(HuntDelta(PlayerId("p-al"), "Al", 900, 800, 500, 2200), HuntDelta(sam, "Sam", 100, 0, 0, 100)),
+                        drinks = listOf(HuntDrink(sam, "Sam", 2, "Last place! Drink 2 sips")),
+                    ),
+                ),
+                scores = rows,
+                lastResult = null,
+                gamesPlayed = 1,
+            ),
+        ),
+        ServerMsg.View(
+            seq = 30,
+            view = PhoneState(
+                me, "KXQT", "jeopardy", "Answer & Question", 4, false, null, 20_000,
+                Screen.Board(
+                    "Pick a clue", listOf("Food & Drink", "Sports"),
+                    listOf(BoardCell("food-200", 0, 0, 200, false), BoardCell("sports-200", 1, 0, 200, true)),
+                    canPick = true,
+                ),
+                rows,
+            ),
+        ),
+        ServerMsg.View(
+            seq = 31,
+            view = PhoneState(
+                me, "KXQT", "jeopardy", "Answer & Question", 6, false, null, 10_000,
+                Screen.Buzzer("locked", "Sports", 400, "Too early! Hold on...", lockedMs = 600, live = true),
+                rows,
+            ),
+        ),
+        ServerMsg.Tv(
+            32,
+            TvState(
+                roomCode = "KXQT",
+                players = listOf(me),
+                stage = StageInfo(
+                    "jeopardy", "Answer & Question", 7, 1_700_000_200_000, 5_000, false, null, null,
+                    game = JeopardyTv(
+                        phase = "reveal", round = 1, boards = 2,
+                        categories = listOf("Food & Drink", "Sports"),
+                        cells = listOf(JeopardyCellTv("food-200", 0, 0, 200, true), JeopardyCellTv("sports-200", 1, 0, 200, false)),
+                        controller = sam, category = "Food & Drink", value = 200, clue = "This spread is made by mashing avocados.",
+                        floor = sam, tried = listOf(PlayerId("p-al")), answer = "Guacamole", right = true,
+                        deltas = listOf(JeopardyDelta(sam, "Sam", 200)),
+                        drinks = listOf(JeopardyDrink(PlayerId("p-al"), "Al", 1, "Drink 1 sip")),
+                    ),
+                ),
+                scores = rows,
+                lastResult = null,
+                gamesPlayed = 1,
+                settings = mapOf("game" to 6, "show" to 1, "drinks" to 1),
+            ),
+        ),
+        ServerMsg.Tv(
+            33,
+            TvState(
+                roomCode = "KXQT",
+                players = listOf(me),
+                stage = StageInfo(
+                    "jeopardy", "Answer & Question", 12, 1_700_000_260_000, 5_000, false, null, null,
+                    game = JeopardyTv(
+                        phase = "final_reveal", round = 3, boards = 2,
+                        final = JeopardyFinalTv(
+                            "World Capitals", "This capital on the Danube...", "Budapest", 2, 2,
+                            listOf(JeopardyFinalStep(sam, "Sam", "Budapest", 400, true, 400, 1600)),
+                        ),
+                    ),
+                ),
+                scores = rows,
+                lastResult = null,
+                gamesPlayed = 1,
+            ),
+        ),
+        ServerMsg.Ack("a-1"),
+        ServerMsg.Reject("a-2", "TOO_TRUE"),
+        ServerMsg.Pong,
+        ServerMsg.Bye("KICKED"),
     )
 
     private val clientMessages: List<ClientMsg> = listOf(
@@ -401,6 +540,13 @@ class ProtocolFixturesTest {
         ClientMsg.Action("a-11", 2, JsonObject(mapOf("kind" to JsonPrimitive("seen")))),
         ClientMsg.Action("a-12", 3, JsonObject(mapOf("kind" to JsonPrimitive("clue"), "text" to JsonPrimitive("cheesy")))),
         ClientMsg.Action("a-13", 5, JsonObject(mapOf("kind" to JsonPrimitive("vote"), "option" to JsonPrimitive("p-al")))),
+        ClientMsg.Action("a-14", 4, JsonObject(mapOf("kind" to JsonPrimitive("pick"), "cell" to JsonPrimitive("food-200")))),
+        ClientMsg.Action("a-15", 6, JsonObject(mapOf("kind" to JsonPrimitive("buzz")))),
+        ClientMsg.Action("a-16", 8, JsonObject(mapOf("kind" to JsonPrimitive("wager"), "value" to JsonPrimitive(300)))),
+        ClientMsg.Host("h-15", HostCommand.SetOption("show", 1)),
+        ClientMsg.Host("h-16", HostCommand.GameAction("pick:food-200")),
+        ClientMsg.Action("a-17", 4, JsonObject(mapOf("kind" to JsonPrimitive("word"), "path" to kotlinx.serialization.json.JsonArray(listOf(0, 1, 5, 6, 9).map { JsonPrimitive(it) })))),
+        ClientMsg.Host("h-17", HostCommand.SetOption("grid", 1)),
         ClientMsg.Ping,
         ClientMsg.Ink(4, listOf(InkOp.Start(1, 2, 1, 100, 100, 50), InkOp.Pts(1, listOf(110, 105, 50)), InkOp.End(1), InkOp.Undo, InkOp.Clear)),
     )

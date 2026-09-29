@@ -1,0 +1,109 @@
+/* Hot Type on the TV. Drawn for 1920x1080: nothing under 28px, 96px side and 54px top/bottom margins. */
+.ht-stage { position: absolute; inset: 0; font-family: var(--font-body); color: var(--ink); }
+.ht-pad { position: absolute; inset: 54px 96px; }
+
+.ht-press { position: absolute; left: 96px; right: 96px; top: 54px; }
+.ht-head { display: flex; justify-content: space-between; align-items: center; height: 64px; }
+.ht-label { font: 800 32px var(--font-body); letter-spacing: 3px; text-transform: uppercase; }
+.ht-time { font: 400 52px var(--font-display); }
+.ht-bar { height: 26px; border: 5px solid var(--ink); background: var(--paper-2); border-radius: 6px; overflow: hidden; }
+.ht-bar-fill { height: 100%; background: var(--ink); }
+.ht-press.hot .ht-bar { border-color: var(--stamp-red); }
+.ht-press.hot .ht-bar-fill { background: var(--stamp-red); animation: ht-pulse 1.2s ease-in-out infinite; }
+@keyframes ht-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.72; } }
+
+.ht-board { position: absolute; left: 96px; top: 168px; width: 768px; height: 768px; background: var(--forme); border-radius: 16px; perspective: 900px; }
+.ht-tile {
+  position: absolute; display: flex; align-items: center; justify-content: center;
+  background: var(--wood); border: 6px solid var(--ink); border-bottom-width: 14px; border-radius: 12px;
+  font-family: var(--font-display);
+}
+
+.ht-rail { position: absolute; left: 920px; top: 168px; width: 904px; display: flex; flex-direction: column; gap: 12px; }
+.ht-rail.compact { gap: 8px; }
+.ht-row { height: 132px; display: flex; align-items: center; gap: 22px; padding: 0 24px; background: var(--paper-2); border: 5px solid var(--ink); border-radius: 12px; }
+.ht-rail.compact .ht-row { height: 84px; padding: 0 20px; gap: 18px; }
+.ht-face { width: 88px; height: 88px; flex: none; border-radius: 50%; border: 5px solid var(--ink); background: var(--wood); display: flex; align-items: center; justify-content: center; font: 400 40px var(--font-display); }
+.ht-rail.compact .ht-face { width: 64px; height: 64px; font-size: 32px; }
+.ht-name { width: 210px; font: 400 44px var(--font-display); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ht-rail.compact .ht-name { width: 240px; font-size: 36px; }
+.ht-pills { display: flex; flex-wrap: wrap; gap: 6px; flex: 1; align-content: center; max-height: 56px; overflow: hidden; }
+.ht-pills i { display: block; height: 22px; background: var(--ink); border-radius: 4px; }
+.ht-count { flex: 1; font: 800 34px var(--font-body); letter-spacing: 2px; }
+.ht-score { width: 170px; text-align: right; font: 400 52px var(--font-display); }
+.ht-rail.compact .ht-score { font-size: 40px; }
+.ht-stats { position: absolute; left: 920px; top: 900px; width: 904px; text-align: right; font: 800 28px var(--font-body); letter-spacing: 3px; text-transform: uppercase; }
+
+.ht-burst {
+  position: absolute; left: 640px; top: 330px; width: 420px; height: 300px; background: var(--stamp-red); color: var(--paper-2);
+  clip-path: polygon(50% 0, 60% 16%, 80% 6%, 80% 26%, 100% 30%, 88% 48%, 100% 66%, 80% 70%, 82% 92%, 62% 84%, 50% 100%, 38% 84%, 18% 92%, 20% 70%, 0 66%, 12% 48%, 0 30%, 20% 26%, 20% 6%, 40% 16%);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
+}
+.ht-burst .big { font: 400 56px var(--font-display); text-shadow: 5px 4px 0 rgba(42, 75, 168, 0.5); }
+.ht-burst .sub { max-width: 240px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font: 800 30px var(--font-body); letter-spacing: 2px; text-transform: uppercase; }
+
+.ht-ready { position: absolute; inset: 168px 96px 120px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 24px; }
+.ht-ready-word { font: 400 200px var(--font-display); text-shadow: 8px 6px 0 rgba(42, 75, 168, 0.5); text-align: center; }
+.ht-ready-word.phrase { font-size: 120px; }
+.ht-ready-sub { font: 500 40px var(--font-body); }
+
+.ht-host { position: absolute; left: 96px; right: 96px; top: 940px; height: 86px; display: flex; align-items: center; gap: 24px; padding: 0 32px; background: var(--ink); color: var(--paper); border-radius: 8px; font: 500 34px var(--font-body); }
+.ht-host b { font: 800 28px var(--font-body); letter-spacing: 3px; background: var(--stamp-red); color: var(--paper-2); padding: 4px 14px; border-radius: 4px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .ht-press.hot .ht-bar-fill { animation: none; }
+}
+
+/* The front page: reveal, scores and the podium. */
+.ht-front { position: absolute; left: 96px; right: 96px; top: 54px; bottom: 150px; }
+.ht-mast { display: flex; justify-content: space-between; align-items: flex-end; height: 150px; border-bottom: 10px double var(--ink); }
+.ht-mast-title { white-space: nowrap; font: 400 118px var(--font-display); letter-spacing: 4px; line-height: 1; text-shadow: 6px 4px 0 rgba(42, 75, 168, 0.5); }
+.ht-mast-sub { white-space: nowrap; font: 800 30px var(--font-body); letter-spacing: 3px; text-transform: uppercase; text-align: right; padding-bottom: 12px; }
+.ht-cols { display: flex; gap: 60px; margin-top: 24px; }
+.ht-words { flex: 1.75; display: flex; flex-direction: column; }
+.ht-side { flex: 1; }
+.ht-lab { font: 800 30px var(--font-body); letter-spacing: 3px; text-transform: uppercase; }
+
+.ht-word { height: 78px; display: flex; align-items: center; gap: 24px; border-bottom: 4px dashed var(--ink); animation: ht-dip 220ms ease-out 120ms both; }
+.ht-word-text { font: 400 52px var(--font-display); letter-spacing: 3px; }
+.ht-word.shared .ht-word-text { text-decoration: line-through; text-decoration-thickness: 8px; opacity: 0.6; }
+.ht-word-pts { font: 400 40px var(--font-display); color: var(--type-blue); }
+.ht-word-who { margin-left: auto; display: flex; align-items: center; gap: 18px; padding-right: 8px; }
+.ht-finder { font: 800 30px var(--font-body); letter-spacing: 2px; color: var(--type-blue); text-transform: uppercase; }
+.ht-stack { display: inline-block; margin-right: -14px; }
+.ht-word.longest { height: 110px; background: var(--paper-2); border: 6px solid var(--ink); border-radius: 8px; padding: 0 24px; margin-top: 8px; }
+.ht-word.longest .ht-word-text { font-size: 72px; text-shadow: 5px 4px 0 rgba(42, 75, 168, 0.5); }
+.ht-none { font: 400 64px var(--font-display); padding: 40px 0; }
+@keyframes ht-dip { 0% { transform: translateY(0); } 25% { transform: translateY(4px); } 100% { transform: translateY(0); } }
+
+.ht-stamp { display: inline-block; font: 400 30px var(--font-display); letter-spacing: 2px; white-space: nowrap; color: var(--stamp-red); border: 5px solid var(--stamp-red); border-radius: 6px; padding: 0 14px; text-shadow: 4px 3px 0 rgba(42, 75, 168, 0.45); transform: rotate(-6deg); animation: ht-thunk 600ms cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+.ht-stamp.long { color: var(--ink); border-color: var(--ink); }
+@keyframes ht-thunk {
+  0% { transform: rotate(-6deg) scale(1.6); opacity: 0.35; }
+  20% { transform: rotate(-6deg) scale(1); opacity: 1; }
+  30% { transform: rotate(-6deg) scale(1); } /* the hit-stop: about 60ms held at full size */
+  55% { transform: rotate(-6deg) scale(1.1); }
+  100% { transform: rotate(-6deg) scale(1); }
+}
+
+.ht-missed { border: 8px dashed var(--ink); background: var(--paper-2); padding: 22px 28px; margin-bottom: 28px; }
+.ht-missed-word { font: 400 96px var(--font-display); letter-spacing: 3px; margin-top: 10px; overflow-wrap: anywhere; }
+.ht-missed-sub { font: 500 34px var(--font-body); margin-top: 6px; }
+.ht-total { display: flex; justify-content: space-between; font: 400 44px var(--font-display); line-height: 84px; }
+
+.ht-drow { display: flex; align-items: center; gap: 22px; height: 96px; border-bottom: 4px dashed var(--ink); }
+.ht-drow .nm { width: 300px; font: 400 44px var(--font-display); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ht-drow .parts { flex: 1; display: flex; gap: 20px; align-items: center; font: 800 32px var(--font-body); }
+.ht-drow .parts .u { color: var(--stamp-red); }
+.ht-drow .parts .l { color: var(--type-blue); }
+.ht-drow .sum { font: 400 52px var(--font-display); }
+.ht-drink { margin-top: 28px; padding: 14px 24px; border: 6px solid var(--stamp-red); color: var(--stamp-red); border-radius: 8px; font: 400 38px var(--font-display); transform: rotate(-1.5deg); text-shadow: 3px 2px 0 rgba(42, 75, 168, 0.4); }
+
+.ht-final { display: flex; flex-direction: column; align-items: center; gap: 12px; margin-top: 16px; }
+.ht-final-name { font: 400 96px var(--font-display); }
+.ht-final-score { font: 800 44px var(--font-body); letter-spacing: 3px; }
+.ht-final-rest { display: flex; gap: 60px; margin-top: 18px; font: 400 44px var(--font-display); }
+
+@media (prefers-reduced-motion: reduce) {
+  .ht-stamp, .ht-word { animation: none; }
+}

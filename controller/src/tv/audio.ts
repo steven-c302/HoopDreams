@@ -325,6 +325,14 @@ export const sfx = {
   fanfare: () => { duck(0.25, 2.2); play('fanfare', {}, synth.fanfare) },
   countTick: (step: number) => play('countTick', { rate: semis(step % 12), gain: 0.5 }, () => synth.countTick(step)),
   whoosh: () => play('whoosh', {}, synth.whoosh),
+  /** Hot Type: the split-flap tiles at the start of the hunt. */
+  htFlip: () => play('htFlip', {}, synth.whoosh),
+  /** Hot Type: a word stamped onto the front page. */
+  htStamp: () => { duck(0.5, 0.6); play('htStamp', {}, synth.crash) },
+  /** Hot Type: the press slams down when the hunt ends. */
+  htPlaten: () => { duck(0.4, 1); play('htPlaten', {}, synth.crash) },
+  /** Hot Type: the front page is laid down at the reveal. */
+  htPaper: () => play('htPaper', {}, synth.whoosh),
   pop: () => play('pop', {}, synth.pop),
   stamp: () => play('stamp', {}, synth.stamp),
   scratch: () => { duck(0.2, 1); play('scratch', {}, synth.scratch) },

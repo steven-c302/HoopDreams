@@ -29,6 +29,37 @@ function setup() {
 }
 
 describe('Connection', () => {
+  it('ignores delayed events after stop and after restarting with a new socket', () => {
+    const { c, sock, events } = setup()
+    const old = sock()
+    c.stop()
+    old.open()
+    old.recv({ t: 'bye', reason: 'KICKED' })
+    expect(old.sent).toEqual([])
+    expect(events).not.toContain('bye')
+    c.start()
+    const current = sock()
+    current.open()
+    old.open()
+    old.recv({ t: 'bye', reason: 'KICKED' })
+    vi.advanceTimersByTime(3_000)
+    expect(current.sentOf('ping')).toHaveLength(1)
+    expect(events).not.toContain('bye')
+    c.stop()
+    vi.useRealTimers()
+  })
+
+  it('starting twice keeps one socket and one heartbeat', () => {
+    const { c, sock } = setup()
+    c.start()
+    expect(FakeSocket.all).toHaveLength(1)
+    sock().open()
+    vi.advanceTimersByTime(3_000)
+    expect(sock().sentOf('ping')).toHaveLength(1)
+    c.stop()
+    vi.useRealTimers()
+  })
+
   it('says hello, then resends unacknowledged actions after a reconnect', () => {
     const { c, sock } = setup()
     sock().open()
@@ -84,6 +115,8 @@ describe('Connection', () => {
     vi.advanceTimersByTime(30_000)
     expect(FakeSocket.all).toHaveLength(1)
     expect(events).toContain('bye')
+    expect(events).toContain('status:closed')
+    expect(sock().sentOf('ping')).toEqual([])
     vi.useRealTimers()
   })
 })

@@ -1,0 +1,60 @@
+/* Answer & Question on the TV: the Studio set. Indigo stage, blue tiles with gold prices, cream clue cards. */
+.jeo { display: flex; flex-direction: column; gap: 16px; }
+.jeo-boardwrap, .jeo-cluewrap, .jeo-finalwrap { flex: 1; display: flex; flex-direction: column; gap: 18px; min-height: 0; }
+.jeo-cluewrap, .jeo-finalwrap { align-items: center; justify-content: center; text-align: center; }
+
+.jeo-board { flex: 1; display: grid; grid-template-columns: repeat(var(--cols, 5), minmax(0, 1fr)); grid-template-rows: auto repeat(5, minmax(0, 1fr)); gap: 12px; min-height: 0; }
+.jeo-head {
+  display: grid; place-items: center; min-height: 92px; padding: 10px 8px; text-align: center;
+  background: #232a86; color: var(--paper); border: 4px solid var(--ink); border-radius: 14px; box-shadow: 0 6px 0 var(--ink);
+  font: 400 34px/1.05 var(--font-display); letter-spacing: .04em; text-transform: uppercase;
+  animation: jeo-drop .5s both; animation-delay: calc(var(--i, 0) * .9s);
+}
+.jeo-cell {
+  display: grid; place-items: center; background: #2f3fb5; border: 4px solid var(--ink); border-radius: 14px; box-shadow: 0 6px 0 var(--ink);
+  color: var(--game-accent); font: 400 58px var(--font-display); text-shadow: 0 3px 0 var(--ink);
+}
+.jeo-cell.used { background: transparent; border-style: dashed; box-shadow: none; opacity: .3; }
+.jeo-cell.cursor { outline: 6px solid var(--paper); outline-offset: 3px; background: #4356e0; transform: translateY(-3px); }
+[data-phase='intro'] .jeo-cell { animation: jeo-fade .6s both; animation-delay: calc(4.5s + var(--i, 0) * .05s); }
+@keyframes jeo-drop { from { transform: translateY(-40px); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes jeo-fade { from { opacity: 0; } to { opacity: 1; } }
+
+.jeo-note { font: 700 32px/1.3 var(--font-body); color: var(--paper); text-align: center; max-width: 1500px; }
+.jeo-note b { color: var(--game-accent); font-weight: 900; }
+.jeo-note small { display: block; margin-top: 4px; font-size: 24px; opacity: .8; }
+.jeo-break { position: absolute; inset: 0; display: grid; place-items: center; background: #1b1f57e6; }
+
+.jeo-cat { display: flex; align-items: baseline; justify-content: center; gap: 22px; flex-wrap: wrap; color: var(--game-accent); }
+.jeo-cat span { font: 400 46px var(--font-display); letter-spacing: .05em; text-transform: uppercase; }
+.jeo-cat b { font: 400 56px var(--font-display); color: var(--paper); }
+.jeo-cat em { font: 800 30px var(--font-body); font-style: normal; letter-spacing: .1em; background: var(--game-accent); color: var(--ink); padding: 4px 16px; border-radius: 10px; }
+.jeo-clue { width: 100%; max-width: 1640px; padding: 52px 64px; font: 800 62px/1.2 var(--font-body); color: var(--ink); text-align: center; }
+.jeo-clue.small { font-size: 44px; padding: 32px 48px; }
+.jeo-buzzrow, .jeo-revealrow, .jeo-dd { display: flex; flex-direction: column; align-items: center; gap: 14px; }
+.jeo-buzz { font: 400 120px var(--font-display); letter-spacing: .06em; color: var(--game-accent); text-shadow: 0 6px 0 var(--ink); animation: jeo-pulse .9s ease-in-out infinite; }
+@keyframes jeo-pulse { 50% { transform: scale(1.06); } }
+.jeo-answer { padding: 24px 60px; font: 400 76px var(--font-display); color: var(--ink); text-transform: uppercase; }
+.jeo-deltas { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px 20px; }
+.jeo-delta { font: 900 38px var(--font-body); background: var(--paper); color: var(--ink); padding: 6px 22px; border: 4px solid var(--ink); border-radius: 12px; box-shadow: 0 5px 0 var(--ink); }
+.jeo-delta.neg { background: var(--tomato); color: var(--white); }
+.jeo-drinks { list-style: none; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px 28px; padding: 0; margin: 0; }
+.jeo-drinks li { font: 700 30px var(--font-body); color: var(--paper); }
+.jeo-drinks b { color: var(--game-accent); }
+
+.jeo-final-cat { font: 400 84px var(--font-display); letter-spacing: .05em; text-transform: uppercase; color: var(--paper); }
+.jeo-steps { display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 1500px; }
+.jeo-step { display: grid; grid-template-columns: 60px 200px 1fr 180px 130px 170px; align-items: center; gap: 14px; padding: 8px 18px; background: var(--paper); color: var(--ink); border: 4px solid var(--ink); border-radius: 14px; font: 800 30px var(--font-body); text-align: left; }
+.jeo-step.right strong { color: #1f7a2e; }
+.jeo-step.wrong strong { color: #b3261e; }
+.jeo-step .ans { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.jeo-strip { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px 14px; }
+.jeo-chip { display: flex; align-items: center; gap: 10px; padding: 6px 16px 6px 8px; background: var(--paper); color: var(--ink); border: 4px solid var(--ink); border-radius: 16px; box-shadow: 0 4px 0 var(--ink); font: 800 28px var(--font-body); }
+.jeo-chip.holds { outline: 5px solid var(--game-accent); outline-offset: 2px; }
+.jeo-chip.floor { background: var(--lime); }
+.jeo-chip.locked { background: var(--tomato); color: var(--white); }
+.jeo-chip.tried { opacity: .6; }
+.jeo-strip.many .jeo-chip { font-size: 20px; padding: 3px 10px 3px 5px; gap: 6px; }
+.jeo-score.neg { color: #b3261e; }
+.jeo-chip.locked .jeo-score.neg { color: var(--white); }

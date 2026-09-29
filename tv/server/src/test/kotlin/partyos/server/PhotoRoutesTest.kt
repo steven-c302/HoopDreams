@@ -66,4 +66,21 @@ class PhotoRoutesTest {
         assertEquals(null, restarted.get(ids[0])) // the oldest went when the folder passed the cap
         assertEquals(setOf("${ids[1]}.jpg", "${ids[2]}.jpg"), dir.list()!!.toSet())
     }
+
+    @Test fun rapidWritesAndReuploadsKeepTheirOrderAfterRestart() {
+        val dir = java.nio.file.Files.createTempDirectory("photos-order").toFile()
+        try {
+            val store = PhotoStore(maxPhotos = 2, dir = dir)
+            val first = store.put(jpeg + byteArrayOf(1))
+            val second = store.put(jpeg + byteArrayOf(2))
+            assertTrue(java.io.File(dir, "$first.jpg").lastModified() < java.io.File(dir, "$second.jpg").lastModified())
+            store.put(jpeg + byteArrayOf(1))
+            val restarted = PhotoStore(maxPhotos = 2, dir = dir)
+            val third = restarted.put(jpeg + byteArrayOf(3))
+            assertEquals(null, restarted.get(second))
+            assertTrue(restarted.get(first) != null && restarted.get(third) != null)
+        } finally {
+            dir.deleteRecursively()
+        }
+    }
 }

@@ -19,12 +19,12 @@ export class TokenStore {
     try { v = this.storage?.getItem(KEY) ?? null } catch { v = null }
     if (!v) {
       const hit = this.cookies.read().split('; ').find((c) => c.startsWith(`${KEY}=`))
-      v = hit ? decodeURIComponent(hit.slice(KEY.length + 1)) : null
+      try { v = hit ? decodeURIComponent(hit.slice(KEY.length + 1)) : null } catch { return null }
     }
     if (!v) return null
     try {
       const s = JSON.parse(v) as Session
-      return s && typeof s.token === 'string' && typeof s.room === 'string' ? s : null
+      return s && typeof s.token === 'string' && typeof s.room === 'string' && typeof s.playerId === 'string' ? s : null
     } catch { return null }
   }
 

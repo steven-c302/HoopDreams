@@ -2384,5 +2384,749 @@
     {
         "t": "bye",
         "reason": "KICKED"
+    },
+    {
+        "t": "view",
+        "seq": 40,
+        "view": {
+            "me": {
+                "id": "p-sam",
+                "name": "Sam",
+                "avatar": {
+                    "face": "p:01",
+                    "color": "#FF7A00"
+                },
+                "role": "PLAYER",
+                "connected": true,
+                "water": false
+            },
+            "roomCode": "KXQT",
+            "gameId": "hottype",
+            "gameTitle": "Hot Type",
+            "round": 3,
+            "paused": false,
+            "remainingMs": 61000,
+            "screen": {
+                "t": "hunt",
+                "phase": "hunt",
+                "round": 1,
+                "totalRounds": 3,
+                "size": 4,
+                "tiles": [
+                    "S",
+                    "T",
+                    "R",
+                    "P",
+                    "L",
+                    "O",
+                    "N",
+                    "A",
+                    "H",
+                    "E",
+                    "C",
+                    "I",
+                    "D",
+                    "W",
+                    "K",
+                    "U"
+                ],
+                "found": [
+                    {
+                        "word": "stone",
+                        "points": 800,
+                        "finders": 0,
+                        "bonus": 0
+                    },
+                    {
+                        "word": "ton",
+                        "points": 100,
+                        "finders": 0,
+                        "bonus": 0
+                    }
+                ],
+                "score": 900
+            },
+            "scores": [
+                {
+                    "id": "p-sam",
+                    "name": "Sam",
+                    "avatar": {
+                        "face": "p:01",
+                        "color": "#FF7A00"
+                    },
+                    "score": 1500
+                },
+                {
+                    "id": "p-al",
+                    "name": "Al",
+                    "avatar": {
+                        "face": "p:02",
+                        "color": "#22AA55"
+                    },
+                    "score": 500
+                }
+            ],
+            "captain": false,
+            "settings": {},
+            "crew": []
+        }
+    },
+    {
+        "t": "view",
+        "seq": 41,
+        "view": {
+            "me": {
+                "id": "p-sam",
+                "name": "Sam",
+                "avatar": {
+                    "face": "p:01",
+                    "color": "#FF7A00"
+                },
+                "role": "PLAYER",
+                "connected": true,
+                "water": false
+            },
+            "roomCode": "KXQT",
+            "gameId": "hottype",
+            "gameTitle": "Hot Type",
+            "round": 5,
+            "paused": false,
+            "remainingMs": 12000,
+            "screen": {
+                "t": "hunt",
+                "phase": "reveal",
+                "round": 1,
+                "totalRounds": 3,
+                "size": 4,
+                "tiles": [
+                    "S",
+                    "T",
+                    "R",
+                    "P",
+                    "L",
+                    "O",
+                    "N",
+                    "A",
+                    "H",
+                    "E",
+                    "C",
+                    "I",
+                    "D",
+                    "W",
+                    "K",
+                    "U"
+                ],
+                "found": [
+                    {
+                        "word": "stone",
+                        "points": 800,
+                        "finders": 1,
+                        "bonus": 800
+                    },
+                    {
+                        "word": "ton",
+                        "points": 100,
+                        "finders": 2,
+                        "bonus": 0
+                    }
+                ],
+                "score": 2200
+            },
+            "scores": [
+                {
+                    "id": "p-sam",
+                    "name": "Sam",
+                    "avatar": {
+                        "face": "p:01",
+                        "color": "#FF7A00"
+                    },
+                    "score": 1500
+                },
+                {
+                    "id": "p-al",
+                    "name": "Al",
+                    "avatar": {
+                        "face": "p:02",
+                        "color": "#22AA55"
+                    },
+                    "score": 500
+                }
+            ],
+            "captain": false,
+            "settings": {},
+            "crew": []
+        }
+    },
+    {
+        "t": "tv",
+        "seq": 42,
+        "tv": {
+            "roomCode": "KXQT",
+            "players": [
+                {
+                    "id": "p-sam",
+                    "name": "Sam",
+                    "avatar": {
+                        "face": "p:01",
+                        "color": "#FF7A00"
+                    },
+                    "role": "PLAYER",
+                    "connected": true,
+                    "water": false
+                }
+            ],
+            "stage": {
+                "gameId": "hottype",
+                "title": "Hot Type",
+                "phaseSeq": 4,
+                "deadlineAt": 1700000200000,
+                "remainingMs": 61000,
+                "paused": false,
+                "game": {
+                    "t": "hottype",
+                    "phase": "hunt",
+                    "round": 1,
+                    "totalRounds": 3,
+                    "finalRound": false,
+                    "size": 4,
+                    "tiles": [
+                        "S",
+                        "T",
+                        "R",
+                        "P",
+                        "L",
+                        "O",
+                        "N",
+                        "A",
+                        "H",
+                        "E",
+                        "C",
+                        "I",
+                        "D",
+                        "W",
+                        "K",
+                        "U"
+                    ],
+                    "rail": [
+                        {
+                            "id": "p-al",
+                            "name": "Al",
+                            "count": 2,
+                            "score": 900,
+                            "lengths": [
+                                5,
+                                3
+                            ]
+                        },
+                        {
+                            "id": "p-sam",
+                            "name": "Sam",
+                            "count": 0,
+                            "score": 0,
+                            "lengths": []
+                        }
+                    ],
+                    "wordsFound": 2,
+                    "longest": 5,
+                    "bigFind": {
+                        "seq": 1,
+                        "id": "p-al",
+                        "name": "Al",
+                        "letters": 6
+                    },
+                    "page": [],
+                    "deltas": [],
+                    "drinks": []
+                }
+            },
+            "scores": [
+                {
+                    "id": "p-sam",
+                    "name": "Sam",
+                    "avatar": {
+                        "face": "p:01",
+                        "color": "#FF7A00"
+                    },
+                    "score": 1500
+                },
+                {
+                    "id": "p-al",
+                    "name": "Al",
+                    "avatar": {
+                        "face": "p:02",
+                        "color": "#22AA55"
+                    },
+                    "score": 500
+                }
+            ],
+            "gamesPlayed": 1,
+            "settings": {
+                "game": 7,
+                "rounds": 3,
+                "grid": 0
+            }
+        }
+    },
+    {
+        "t": "tv",
+        "seq": 43,
+        "tv": {
+            "roomCode": "KXQT",
+            "players": [
+                {
+                    "id": "p-sam",
+                    "name": "Sam",
+                    "avatar": {
+                        "face": "p:01",
+                        "color": "#FF7A00"
+                    },
+                    "role": "PLAYER",
+                    "connected": true,
+                    "water": false
+                }
+            ],
+            "stage": {
+                "gameId": "hottype",
+                "title": "Hot Type",
+                "phaseSeq": 6,
+                "deadlineAt": 1700000300000,
+                "remainingMs": 8000,
+                "paused": false,
+                "game": {
+                    "t": "hottype",
+                    "phase": "scores",
+                    "round": 1,
+                    "totalRounds": 3,
+                    "finalRound": false,
+                    "size": 4,
+                    "tiles": [
+                        "S",
+                        "T",
+                        "R",
+                        "P",
+                        "L",
+                        "O",
+                        "N",
+                        "A",
+                        "H",
+                        "E",
+                        "C",
+                        "I",
+                        "D",
+                        "W",
+                        "K",
+                        "U"
+                    ],
+                    "rail": [],
+                    "wordsFound": 0,
+                    "longest": 0,
+                    "page": [
+                        {
+                            "word": "ton",
+                            "points": 100,
+                            "bonus": 0,
+                            "finders": [
+                                "p-al",
+                                "p-sam"
+                            ],
+                            "longest": false
+                        },
+                        {
+                            "word": "stone",
+                            "points": 800,
+                            "bonus": 800,
+                            "finders": [
+                                "p-al"
+                            ],
+                            "longest": true
+                        }
+                    ],
+                    "missed": {
+                        "word": "clappers",
+                        "points": 2200
+                    },
+                    "deltas": [
+                        {
+                            "id": "p-al",
+                            "name": "Al",
+                            "base": 900,
+                            "unique": 800,
+                            "longest": 500,
+                            "total": 2200
+                        },
+                        {
+                            "id": "p-sam",
+                            "name": "Sam",
+                            "base": 100,
+                            "unique": 0,
+                            "longest": 0,
+                            "total": 100
+                        }
+                    ],
+                    "drinks": [
+                        {
+                            "id": "p-sam",
+                            "name": "Sam",
+                            "sips": 2,
+                            "text": "Last place! Drink 2 sips"
+                        }
+                    ]
+                }
+            },
+            "scores": [
+                {
+                    "id": "p-sam",
+                    "name": "Sam",
+                    "avatar": {
+                        "face": "p:01",
+                        "color": "#FF7A00"
+                    },
+                    "score": 1500
+                },
+                {
+                    "id": "p-al",
+                    "name": "Al",
+                    "avatar": {
+                        "face": "p:02",
+                        "color": "#22AA55"
+                    },
+                    "score": 500
+                }
+            ],
+            "gamesPlayed": 1,
+            "settings": {}
+        }
+    },
+    {
+        "t": "view",
+        "seq": 30,
+        "view": {
+            "me": {
+                "id": "p-sam",
+                "name": "Sam",
+                "avatar": {
+                    "face": "p:01",
+                    "color": "#FF7A00"
+                },
+                "role": "PLAYER",
+                "connected": true,
+                "water": false
+            },
+            "roomCode": "KXQT",
+            "gameId": "jeopardy",
+            "gameTitle": "Answer & Question",
+            "round": 4,
+            "paused": false,
+            "remainingMs": 20000,
+            "screen": {
+                "t": "board",
+                "prompt": "Pick a clue",
+                "categories": [
+                    "Food & Drink",
+                    "Sports"
+                ],
+                "cells": [
+                    {
+                        "id": "food-200",
+                        "col": 0,
+                        "row": 0,
+                        "value": 200,
+                        "used": false
+                    },
+                    {
+                        "id": "sports-200",
+                        "col": 1,
+                        "row": 0,
+                        "value": 200,
+                        "used": true
+                    }
+                ],
+                "canPick": true
+            },
+            "scores": [
+                {
+                    "id": "p-sam",
+                    "name": "Sam",
+                    "avatar": {
+                        "face": "p:01",
+                        "color": "#FF7A00"
+                    },
+                    "score": 1500
+                },
+                {
+                    "id": "p-al",
+                    "name": "Al",
+                    "avatar": {
+                        "face": "p:02",
+                        "color": "#22AA55"
+                    },
+                    "score": 500
+                }
+            ],
+            "captain": false,
+            "settings": {},
+            "crew": []
+        }
+    },
+    {
+        "t": "view",
+        "seq": 31,
+        "view": {
+            "me": {
+                "id": "p-sam",
+                "name": "Sam",
+                "avatar": {
+                    "face": "p:01",
+                    "color": "#FF7A00"
+                },
+                "role": "PLAYER",
+                "connected": true,
+                "water": false
+            },
+            "roomCode": "KXQT",
+            "gameId": "jeopardy",
+            "gameTitle": "Answer & Question",
+            "round": 6,
+            "paused": false,
+            "remainingMs": 10000,
+            "screen": {
+                "t": "buzzer",
+                "state": "locked",
+                "category": "Sports",
+                "value": 400,
+                "detail": "Too early! Hold on...",
+                "lockedMs": 600,
+                "live": true
+            },
+            "scores": [
+                {
+                    "id": "p-sam",
+                    "name": "Sam",
+                    "avatar": {
+                        "face": "p:01",
+                        "color": "#FF7A00"
+                    },
+                    "score": 1500
+                },
+                {
+                    "id": "p-al",
+                    "name": "Al",
+                    "avatar": {
+                        "face": "p:02",
+                        "color": "#22AA55"
+                    },
+                    "score": 500
+                }
+            ],
+            "captain": false,
+            "settings": {},
+            "crew": []
+        }
+    },
+    {
+        "t": "tv",
+        "seq": 32,
+        "tv": {
+            "roomCode": "KXQT",
+            "players": [
+                {
+                    "id": "p-sam",
+                    "name": "Sam",
+                    "avatar": {
+                        "face": "p:01",
+                        "color": "#FF7A00"
+                    },
+                    "role": "PLAYER",
+                    "connected": true,
+                    "water": false
+                }
+            ],
+            "stage": {
+                "gameId": "jeopardy",
+                "title": "Answer & Question",
+                "phaseSeq": 7,
+                "deadlineAt": 1700000200000,
+                "remainingMs": 5000,
+                "paused": false,
+                "game": {
+                    "t": "jeopardy",
+                    "phase": "reveal",
+                    "round": 1,
+                    "boards": 2,
+                    "categories": [
+                        "Food & Drink",
+                        "Sports"
+                    ],
+                    "cells": [
+                        {
+                            "id": "food-200",
+                            "col": 0,
+                            "row": 0,
+                            "value": 200,
+                            "used": true
+                        },
+                        {
+                            "id": "sports-200",
+                            "col": 1,
+                            "row": 0,
+                            "value": 200,
+                            "used": false
+                        }
+                    ],
+                    "controller": "p-sam",
+                    "category": "Food & Drink",
+                    "value": 200,
+                    "clue": "This spread is made by mashing avocados.",
+                    "dailyDouble": false,
+                    "buzzOpen": false,
+                    "floor": "p-sam",
+                    "locked": [],
+                    "tried": [
+                        "p-al"
+                    ],
+                    "answer": "Guacamole",
+                    "right": true,
+                    "deltas": [
+                        {
+                            "id": "p-sam",
+                            "name": "Sam",
+                            "points": 200
+                        }
+                    ],
+                    "drinks": [
+                        {
+                            "id": "p-al",
+                            "name": "Al",
+                            "sips": 1,
+                            "text": "Drink 1 sip"
+                        }
+                    ]
+                }
+            },
+            "scores": [
+                {
+                    "id": "p-sam",
+                    "name": "Sam",
+                    "avatar": {
+                        "face": "p:01",
+                        "color": "#FF7A00"
+                    },
+                    "score": 1500
+                },
+                {
+                    "id": "p-al",
+                    "name": "Al",
+                    "avatar": {
+                        "face": "p:02",
+                        "color": "#22AA55"
+                    },
+                    "score": 500
+                }
+            ],
+            "gamesPlayed": 1,
+            "settings": {
+                "game": 6,
+                "show": 1,
+                "drinks": 1
+            }
+        }
+    },
+    {
+        "t": "tv",
+        "seq": 33,
+        "tv": {
+            "roomCode": "KXQT",
+            "players": [
+                {
+                    "id": "p-sam",
+                    "name": "Sam",
+                    "avatar": {
+                        "face": "p:01",
+                        "color": "#FF7A00"
+                    },
+                    "role": "PLAYER",
+                    "connected": true,
+                    "water": false
+                }
+            ],
+            "stage": {
+                "gameId": "jeopardy",
+                "title": "Answer & Question",
+                "phaseSeq": 12,
+                "deadlineAt": 1700000260000,
+                "remainingMs": 5000,
+                "paused": false,
+                "game": {
+                    "t": "jeopardy",
+                    "phase": "final_reveal",
+                    "round": 3,
+                    "boards": 2,
+                    "categories": [],
+                    "cells": [],
+                    "dailyDouble": false,
+                    "buzzOpen": false,
+                    "locked": [],
+                    "tried": [],
+                    "deltas": [],
+                    "drinks": [],
+                    "final": {
+                        "category": "World Capitals",
+                        "clue": "This capital on the Danube...",
+                        "answer": "Budapest",
+                        "wagers": 2,
+                        "expected": 2,
+                        "steps": [
+                            {
+                                "id": "p-sam",
+                                "name": "Sam",
+                                "answer": "Budapest",
+                                "wager": 400,
+                                "right": true,
+                                "delta": 400,
+                                "total": 1600
+                            }
+                        ]
+                    }
+                }
+            },
+            "scores": [
+                {
+                    "id": "p-sam",
+                    "name": "Sam",
+                    "avatar": {
+                        "face": "p:01",
+                        "color": "#FF7A00"
+                    },
+                    "score": 1500
+                },
+                {
+                    "id": "p-al",
+                    "name": "Al",
+                    "avatar": {
+                        "face": "p:02",
+                        "color": "#22AA55"
+                    },
+                    "score": 500
+                }
+            ],
+            "gamesPlayed": 1,
+            "settings": {}
+        }
+    },
+    {
+        "t": "ack",
+        "id": "a-1"
+    },
+    {
+        "t": "reject",
+        "id": "a-2",
+        "code": "TOO_TRUE"
+    },
+    {
+        "t": "pong"
+    },
+    {
+        "t": "bye",
+        "reason": "KICKED"
     }
 ]

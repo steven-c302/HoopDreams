@@ -1,58 +1,102 @@
 {
   "packId": "jeopardy-core",
-  "title": "HoopDreams Jeopardy",
+  "title": "Answer & Question core",
   "game": "jeopardy",
-  "version": 1,
+  "version": 2,
   "categories": [
-    {
-      "name": "Food & Drink",
-      "clues": [
-        { "id": "food-200", "value": 200, "clue": "This spread is made by mashing avocados with lime and salt.", "answer": "Guacamole" },
-        { "id": "food-400", "value": 400, "clue": "This Japanese dish is vinegared rice topped with raw fish.", "answer": "Sushi" },
-        { "id": "food-600", "value": 600, "clue": "This French cooking technique means to quickly cook food in a small amount of hot fat.", "answer": "Saute" },
-        { "id": "food-800", "value": 800, "clue": "This spice, made from a crocus flower, is the most expensive by weight in the world.", "answer": "Saffron" },
-        { "id": "food-1000", "value": 1000, "clue": "This fermented Korean side dish is usually made from cabbage and chili paste.", "answer": "Kimchi" }
-      ]
-    },
-    {
-      "name": "Sports",
-      "clues": [
-        { "id": "sports-200", "value": 200, "clue": "In basketball, this term describes a shot that goes in without touching the rim or backboard.", "answer": "Swish" },
-        { "id": "sports-400", "value": 400, "clue": "This NBA legend won 6 championships with the Chicago Bulls and never lost in the Finals.", "answer": "Michael Jordan" },
-        { "id": "sports-600", "value": 600, "clue": "In basketball, this is the term for grabbing the ball after a missed shot.", "answer": "Rebound" },
-        { "id": "sports-800", "value": 800, "clue": "This Los Angeles Laker wore number 24 and was nicknamed the Black Mamba.", "answer": "Kobe Bryant" },
-        { "id": "sports-1000", "value": 1000, "clue": "This is the only player in NBA history to average a triple-double for a full season more than once.", "answer": "Russell Westbrook" }
-      ]
-    },
-    {
-      "name": "Music",
-      "clues": [
-        { "id": "music-200", "value": 200, "clue": "This King of Pop released the best-selling album of all time, Thriller.", "answer": "Michael Jackson" },
-        { "id": "music-400", "value": 400, "clue": "This instrument has 88 black and white keys.", "answer": "Piano" },
-        { "id": "music-600", "value": 600, "clue": "This British rock band's members included Freddie Mercury, Brian May and Roger Taylor.", "answer": "Queen" },
-        { "id": "music-800", "value": 800, "clue": "This genre of music originated in Jamaica in the late 1960s and was popularized by Bob Marley.", "answer": "Reggae" },
-        { "id": "music-1000", "value": 1000, "clue": "This composer, deaf by the end of his life, wrote the Ninth Symphony.", "answer": "Beethoven" }
-      ]
-    },
-    {
-      "name": "General Knowledge",
-      "clues": [
-        { "id": "gk-200", "value": 200, "clue": "This is the largest planet in our solar system.", "answer": "Jupiter" },
-        { "id": "gk-400", "value": 400, "clue": "This is the longest river in the world.", "answer": "Nile" },
-        { "id": "gk-600", "value": 600, "clue": "This is the two-letter chemical symbol for gold.", "answer": "Au" },
-        { "id": "gk-800", "value": 800, "clue": "This country has the largest population in the world as of 2024.", "answer": "India" },
-        { "id": "gk-1000", "value": 1000, "clue": "This is the only mammal capable of true, sustained flight.", "answer": "Bat" }
-      ]
-    },
-    {
-      "name": "Potpourri",
-      "clues": [
-        { "id": "pot-200", "value": 200, "clue": "This is the name of Mickey Mouse's pet dog.", "answer": "Pluto" },
-        { "id": "pot-400", "value": 400, "clue": "This planet is known as the Red Planet.", "answer": "Mars" },
-        { "id": "pot-600", "value": 600, "clue": "This board game involves buying properties and charging rent.", "answer": "Monopoly" },
-        { "id": "pot-800", "value": 800, "clue": "This is the tallest mountain in the world, measured from sea level.", "answer": "Everest" },
-        { "id": "pot-1000", "value": 1000, "clue": "This is the only Ancient Wonder of the World still standing today.", "answer": "Pyramids" }
-      ]
-    }
+    { "id": "food", "name": "Food & Drink", "clues": [
+      { "id": "food-200", "clue": "This spread is made by mashing avocados with lime and salt.", "answer": "Guacamole" },
+      { "id": "food-400", "clue": "This Japanese dish is vinegared rice topped with raw fish.", "answer": "Sushi" },
+      { "id": "food-600", "clue": "This French cooking technique means to quickly cook food in a small amount of hot fat.", "answer": "Saute" },
+      { "id": "food-800", "clue": "This spice, made from a crocus flower, is the most expensive by weight in the world.", "answer": "Saffron" },
+      { "id": "food-1000", "clue": "This fermented Korean side dish is usually made from cabbage and chili paste.", "answer": "Kimchi" } ] },
+    { "id": "sports", "name": "Sports", "clues": [
+      { "id": "sports-200", "clue": "In basketball, this term describes a shot that goes in without touching the rim or backboard.", "answer": "Swish" },
+      { "id": "sports-400", "clue": "This NBA legend won 6 championships with the Chicago Bulls and never lost in the Finals.", "answer": "Michael Jordan" },
+      { "id": "sports-600", "clue": "In basketball, this is the term for grabbing the ball after a missed shot.", "answer": "Rebound" },
+      { "id": "sports-800", "clue": "This Los Angeles Laker wore number 24 and was nicknamed the Black Mamba.", "answer": "Kobe Bryant" },
+      { "id": "sports-1000", "clue": "This is the only player in NBA history to average a triple-double for a full season more than once.", "answer": "Russell Westbrook" } ] },
+    { "id": "music", "name": "Music", "clues": [
+      { "id": "music-200", "clue": "This King of Pop released the best-selling album of all time, Thriller.", "answer": "Michael Jackson" },
+      { "id": "music-400", "clue": "This instrument has 88 black and white keys.", "answer": "Piano" },
+      { "id": "music-600", "clue": "This British rock band's members included Freddie Mercury, Brian May and Roger Taylor.", "answer": "Queen" },
+      { "id": "music-800", "clue": "This genre of music originated in Jamaica in the late 1960s and was popularized by Bob Marley.", "answer": "Reggae" },
+      { "id": "music-1000", "clue": "This composer, deaf by the end of his life, wrote the Ninth Symphony.", "answer": "Beethoven" } ] },
+    { "id": "gk", "name": "General Knowledge", "clues": [
+      { "id": "gk-200", "clue": "This is the largest planet in our solar system.", "answer": "Jupiter" },
+      { "id": "gk-400", "clue": "This is the longest river in the world.", "answer": "Nile" },
+      { "id": "gk-600", "clue": "This is the two-letter chemical symbol for gold.", "answer": "Au" },
+      { "id": "gk-800", "clue": "This country has the largest population in the world as of 2024.", "answer": "India" },
+      { "id": "gk-1000", "clue": "This is the only mammal capable of true, sustained flight.", "answer": "Bat" } ] },
+    { "id": "potpourri", "name": "Potpourri", "clues": [
+      { "id": "pot-200", "clue": "This is the name of Mickey Mouse's pet dog.", "answer": "Pluto" },
+      { "id": "pot-400", "clue": "This planet is known as the Red Planet.", "answer": "Mars" },
+      { "id": "pot-600", "clue": "This board game involves buying properties and charging rent.", "answer": "Monopoly" },
+      { "id": "pot-800", "clue": "This is the tallest mountain in the world, measured from sea level.", "answer": "Everest" },
+      { "id": "pot-1000", "clue": "This is the only Ancient Wonder of the World still standing today.", "answer": "Pyramids" } ] },
+    { "id": "movies", "name": "Movies", "clues": [
+      { "id": "movies-1", "clue": "This 1997 film about a doomed ocean liner starred Leonardo DiCaprio and Kate Winslet.", "answer": "Titanic" },
+      { "id": "movies-2", "clue": "In this Disney film, a lion cub named Simba must reclaim his kingdom.", "answer": "The Lion King" },
+      { "id": "movies-3", "clue": "This director made Jaws, E.T. and Jurassic Park.", "answer": "Steven Spielberg" },
+      { "id": "movies-4", "clue": "Tom Hanks plays a kind man who says \"Life is like a box of chocolates\" in this 1994 film.", "answer": "Forrest Gump" },
+      { "id": "movies-5", "clue": "This 1972 Francis Ford Coppola crime film about the Corleone family won the Oscar for Best Picture.", "answer": "The Godfather" } ] },
+    { "id": "science", "name": "Science", "clues": [
+      { "id": "science-1", "clue": "H2O is the chemical formula for this liquid.", "answer": "Water" },
+      { "id": "science-2", "clue": "Plants take in this gas from the air during photosynthesis.", "answer": "Carbon dioxide" },
+      { "id": "science-3", "clue": "This is the lightest element, with atomic number 1.", "answer": "Hydrogen" },
+      { "id": "science-4", "clue": "This part of a cell is nicknamed its powerhouse.", "answer": "Mitochondria" },
+      { "id": "science-5", "clue": "This is the SI unit of force, named after the physicist famous for the laws of motion.", "answer": "Newton" } ] },
+    { "id": "history", "name": "History", "clues": [
+      { "id": "history-1", "clue": "This American president's face is on the U.S. penny.", "answer": "Abraham Lincoln" },
+      { "id": "history-2", "clue": "The Colosseum stands in this European capital.", "answer": "Rome" },
+      { "id": "history-3", "clue": "This wall, torn down in 1989, split this German city in two.", "answer": "Berlin" },
+      { "id": "history-4", "clue": "This queen ruled the United Kingdom for 63 years, from 1837 to 1901.", "answer": "Victoria" },
+      { "id": "history-5", "clue": "This 1215 charter, sealed by King John, limited the power of English kings.", "answer": "Magna Carta" } ] },
+    { "id": "animals", "name": "Animals", "clues": [
+      { "id": "animals-1", "clue": "This is the largest land animal on Earth.", "answer": "Elephant" },
+      { "id": "animals-2", "clue": "This black-and-white bear from China eats mostly bamboo.", "answer": "Panda" },
+      { "id": "animals-3", "clue": "This big cat is the fastest land animal, reaching about 60 miles per hour.", "answer": "Cheetah" },
+      { "id": "animals-4", "clue": "This flightless Australian bird is the second-tallest bird in the world.", "answer": "Emu" },
+      { "id": "animals-5", "clue": "Despite its name, this gentle giant is a fish, not a mammal, and is the largest fish in the ocean.", "answer": "Whale shark" } ] },
+    { "id": "space", "name": "Space", "clues": [
+      { "id": "space-1", "clue": "This is the star at the center of our solar system.", "answer": "The Sun" },
+      { "id": "space-2", "clue": "This planet, famous for its rings, is sixth from the Sun.", "answer": "Saturn" },
+      { "id": "space-3", "clue": "In 1969, Neil Armstrong became the first person to walk on this.", "answer": "The Moon" },
+      { "id": "space-4", "clue": "This is the name of the galaxy that contains our solar system.", "answer": "Milky Way" },
+      { "id": "space-5", "clue": "This space telescope, launched in 1990, is named after an American astronomer.", "answer": "Hubble" } ] },
+    { "id": "books", "name": "Books", "clues": [
+      { "id": "books-1", "clue": "This boy wizard with a lightning-bolt scar attends Hogwarts.", "answer": "Harry Potter" },
+      { "id": "books-2", "clue": "This English playwright wrote Romeo and Juliet.", "answer": "Shakespeare" },
+      { "id": "books-3", "clue": "Dr. Seuss created this green creature who tries to steal Christmas.", "answer": "The Grinch" },
+      { "id": "books-4", "clue": "George Orwell's dystopian novel is titled with this year.", "answer": "1984" },
+      { "id": "books-5", "clue": "This Herman Melville novel begins with the line \"Call me Ishmael.\"", "answer": "Moby Dick" } ] },
+    { "id": "geo", "name": "Geography", "clues": [
+      { "id": "geo-1", "clue": "The Eiffel Tower stands in this European capital city.", "answer": "Paris" },
+      { "id": "geo-2", "clue": "This is the largest country in the world by area.", "answer": "Russia" },
+      { "id": "geo-3", "clue": "This African desert is the largest hot desert in the world.", "answer": "Sahara" },
+      { "id": "geo-4", "clue": "This city is the capital of Australia, not Sydney or Melbourne.", "answer": "Canberra" },
+      { "id": "geo-5", "clue": "Counting its overseas territories, this country has the most time zones in the world.", "answer": "France" } ] },
+    { "id": "tech", "name": "Tech & Games", "clues": [
+      { "id": "tech-1", "clue": "Mario's taller brother, who wears green, has this name.", "answer": "Luigi" },
+      { "id": "tech-2", "clue": "This company makes the iPhone and the Mac.", "answer": "Apple" },
+      { "id": "tech-3", "clue": "This search engine's name became a verb meaning to look something up online.", "answer": "Google" },
+      { "id": "tech-4", "clue": "In this Mojang game, players mine blocks and craft items in a world made of cubes.", "answer": "Minecraft" },
+      { "id": "tech-5", "clue": "This programming language, popular in data science, is named after the comedy group Monty Python.", "answer": "Python" } ] },
+    { "id": "body", "name": "The Human Body", "clues": [
+      { "id": "body-1", "clue": "This organ pumps blood around your body.", "answer": "Heart" },
+      { "id": "body-2", "clue": "This is the largest organ of the human body.", "answer": "Skin" },
+      { "id": "body-3", "clue": "An adult human typically has this many bones.", "answer": "206" },
+      { "id": "body-4", "clue": "Your skin makes this vitamin in sunlight, and it helps you absorb calcium.", "answer": "Vitamin D" },
+      { "id": "body-5", "clue": "Its name is Latin for \"stirrup\", and it is the smallest bone in the human body.", "answer": "Stapes" } ] }
+  ],
+  "finals": [
+    { "id": "final-1", "category": "World Capitals", "clue": "This capital on the Danube was formed in 1873 by merging Buda, Obuda and Pest.", "answer": "Budapest" },
+    { "id": "final-2", "category": "U.S. Presidents", "clue": "He is the only U.S. president elected to four terms.", "answer": "Franklin Roosevelt" },
+    { "id": "final-3", "category": "Inventions", "clue": "In 1876, Alexander Graham Bell was granted a patent for this device.", "answer": "Telephone" },
+    { "id": "final-4", "category": "Elements", "clue": "This is the only metal that is liquid at room temperature.", "answer": "Mercury" },
+    { "id": "final-5", "category": "Rivers", "clue": "This river flows through the Iraqi capital, Baghdad.", "answer": "Tigris" },
+    { "id": "final-6", "category": "Art History", "clue": "This Italian Renaissance artist painted the ceiling of the Sistine Chapel.", "answer": "Michelangelo" },
+    { "id": "final-7", "category": "Famous Authors", "clue": "She wrote Pride and Prejudice.", "answer": "Jane Austen" },
+    { "id": "final-8", "category": "The Middle East", "clue": "The Dead Sea lies between Israel and this Arab kingdom to its east.", "answer": "Jordan" }
   ]
 }

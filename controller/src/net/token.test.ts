@@ -11,6 +11,18 @@ function memoryCookies(): CookieJar & { raw: string } {
 }
 
 describe('TokenStore', () => {
+  it('ignores a malformed encoded cookie', () => {
+    const cookies = memoryCookies()
+    cookies.raw = 'partyos.session=%broken'
+    expect(new TokenStore(null, cookies).load()).toBeNull()
+  })
+
+  it('ignores a stored session without a player ID', () => {
+    const storage = memoryStorage()
+    storage.setItem('partyos.session', JSON.stringify({ room: 'ABCD', token: 't' }))
+    expect(new TokenStore(storage, memoryCookies()).load()).toBeNull()
+  })
+
   it('stores the session in localStorage', () => {
     const s = new TokenStore(memoryStorage(), memoryCookies())
     s.save({ room: 'KXQT', token: 't1', playerId: 'p1' })

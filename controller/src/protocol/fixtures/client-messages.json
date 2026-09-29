@@ -265,6 +265,73 @@
         }
     },
     {
+        "t": "action",
+        "id": "a-14",
+        "round": 4,
+        "payload": {
+            "kind": "pick",
+            "cell": "food-200"
+        }
+    },
+    {
+        "t": "action",
+        "id": "a-15",
+        "round": 6,
+        "payload": {
+            "kind": "buzz"
+        }
+    },
+    {
+        "t": "action",
+        "id": "a-16",
+        "round": 8,
+        "payload": {
+            "kind": "wager",
+            "value": 300
+        }
+    },
+    {
+        "t": "host",
+        "id": "h-15",
+        "cmd": {
+            "t": "setOption",
+            "key": "show",
+            "value": 1
+        }
+    },
+    {
+        "t": "host",
+        "id": "h-16",
+        "cmd": {
+            "t": "gameAction",
+            "action": "pick:food-200"
+        }
+    },
+    {
+        "t": "action",
+        "id": "a-17",
+        "round": 4,
+        "payload": {
+            "kind": "word",
+            "path": [
+                0,
+                1,
+                5,
+                6,
+                9
+            ]
+        }
+    },
+    {
+        "t": "host",
+        "id": "h-17",
+        "cmd": {
+            "t": "setOption",
+            "key": "grid",
+            "value": 1
+        }
+    },
+    {
         "t": "ping"
     },
     {
