@@ -1,0 +1,47 @@
+/* Doodle Dash on the phone. Paper, crayons and big thumb targets; colours come from the theme tokens. */
+.draw-pad { display: flex; flex-direction: column; gap: 12px; width: 100%; }
+.draw-word {
+  position: relative; align-self: center; padding: 8px 22px 10px; background: var(--sun); color: var(--ink);
+  border: 3px solid var(--ink); border-radius: 6px; box-shadow: 4px 4px 0 var(--ink); transform: rotate(-1.5deg); text-align: center;
+}
+.draw-word::before { /* washi tape */
+  content: ''; position: absolute; left: 50%; top: -12px; width: 64px; height: 20px; transform: translateX(-50%) rotate(3deg);
+  background: color-mix(in oklab, var(--bubblegum) 70%, transparent); border: 2px solid color-mix(in oklab, var(--ink) 40%, transparent);
+}
+.draw-word small { display: block; font: 800 12px var(--font-body); letter-spacing: .14em; opacity: .75; }
+.draw-word b { display: block; font: 400 34px/1.1 var(--font-display); overflow-wrap: anywhere; }
+.draw-paper {
+  width: 100%; aspect-ratio: 4 / 3; background: #fffaf0; border: 4px solid var(--ink); border-radius: 12px; box-shadow: 5px 5px 0 var(--ink);
+  background-image: radial-gradient(circle at 20% 30%, #0000000a 0 1px, transparent 2px), radial-gradient(circle at 70% 60%, #0000000a 0 1px, transparent 2px);
+  background-size: 9px 9px, 13px 13px; overflow: hidden;
+}
+.draw-canvas { display: block; width: 100%; height: 100%; touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; cursor: crosshair; }
+.draw-tools { display: flex; flex-direction: column; gap: 10px; }
+.draw-crayons, .draw-brushes { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; justify-content: center; }
+.crayon { flex: none; width: 44px; height: 44px; border-radius: 50%; border: 3px solid var(--ink); box-shadow: 2px 2px 0 var(--ink); padding: 0; }
+.crayon.on { transform: scale(1.15); outline: 4px solid var(--ink); outline-offset: 2px; }
+.brush { flex: none; width: 48px; height: 48px; display: grid; place-items: center; background: var(--white); border: 3px solid var(--ink); border-radius: 12px; padding: 0; }
+.brush span { display: block; border-radius: 50%; background: var(--ink); }
+.brush.on { background: var(--sun); box-shadow: 3px 3px 0 var(--ink); }
+.tool { min-height: 48px; padding: 0 16px; font: 800 16px var(--font-body); background: var(--paper); color: var(--ink); border: 3px solid var(--ink); border-radius: 12px; }
+.tool:disabled { opacity: .4; }
+.draw-status { text-align: center; font: 800 15px var(--font-body); margin: 0; }
+
+.guess-pad input {
+  width: 100%; min-height: 60px; padding: 10px 16px; font: 800 26px var(--font-body); color: var(--ink);
+  background: var(--white); border: 4px solid var(--ink); border-radius: 14px; box-shadow: 4px 4px 0 var(--ink);
+}
+.blank-cells { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px 22px; padding: 6px 0; }
+.blank-word { display: inline-flex; gap: 6px; }
+.blank-cell { width: 28px; height: 40px; display: grid; place-items: end center; border-bottom: 5px solid var(--ink); font: 400 32px/1 var(--font-display); color: var(--ink); }
+.blank-cell.shown { color: var(--tomato); }
+.guess-note { min-height: 28px; margin: 0; text-align: center; font: 800 19px var(--font-body); color: var(--ink); }
+.guess-note.close { color: var(--tomato); font-size: 24px; animation: boing var(--dur-base, .3s) var(--ease-out, ease-out); }
+.guess-solved { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 20px; background: var(--lime); border: 4px solid var(--ink); border-radius: 18px; box-shadow: 5px 5px 0 var(--ink); }
+.guess-solved b { font: 400 34px var(--font-display); color: var(--ink); }
+.guess-solved span { font: 400 44px var(--font-display); color: var(--ink); }
+.guess-solved small { font: 800 15px var(--font-body); color: var(--ink); }
+@media (prefers-reduced-motion: reduce) { .guess-note.close { animation: none; } }
+
+/* The word pick list shows Easy, Medium or Hard under each word: harder words score more. */
+.choice-detail { display: block; margin-top: 2px; font: 800 13px var(--font-body); letter-spacing: .1em; text-transform: uppercase; opacity: .75; }

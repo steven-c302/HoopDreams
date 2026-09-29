@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState, type CSSProperties } from 'react'
 import { Connection, browserSocket, browserSocketUrl, type Status } from '../net/connection'
+import type { InkOp } from '../ink/types'
 import { rejectMessage, type ActionPayload, type GameListing, type HostCommand, type PhoneState } from '../protocol'
 import type { Session } from '../net/token'
 import { ScreenView, teamOf } from '../screens/ScreenView'
@@ -63,11 +64,14 @@ export function Play({ session, onLeave }: { session: Session; onLeave(why: stri
   const people = useMemo(() => new Map((view?.scores ?? []).map((r) => [r.id, r])), [view?.scores])
   const send = (payload: ActionPayload) => { if (view) conn.current?.act(view.round, payload) }
   const host = (c: HostCommand) => { conn.current?.host(c) }
+  const sendInk = (ops: InkOp[]) => { if (view) conn.current?.ink(view.round, ops) }
 
   if (!view) return <main className="page center"><div className="spinner" /><p>Connecting to the TV…</p></main>
   // Home Turf and Sprawl only count down real decisions; token hops and card reveals don't tick.
   const timed = (view.screen.t !== 'turf' && view.screen.t !== 'sprawl') || view.screen.prompt.timed
   const team = teamOf(view.screen)
+  // A draw runs in hint stages; the countdown shows the whole draw, not just the current stage.
+  const tail = view.screen.t === 'draw' || view.screen.t === 'guess' ? Math.ceil(view.screen.tailMs / 1000) : 0
 
   return (
     <main className="page play" data-game-theme={gameThemeOf(view.gameId)} style={team ? { '--team': team.color } as CSSProperties : undefined}>
@@ -77,7 +81,7 @@ export function Play({ session, onLeave }: { session: Session; onLeave(why: stri
           {view.me.name}
         </span>
         <span className="room-chip">{view.gameTitle ?? `Room ${view.roomCode}`}</span>
-        {seconds != null && view.gameId && timed && <span className={`timer ${seconds <= 5 ? 'hot' : ''}`}>{seconds}</span>}
+        {seconds != null && view.gameId && timed && <span className={`timer ${seconds + tail <= 5 ? 'hot' : ''}`}>{seconds + tail}</span>}
       </header>
       {team && <div className="team-band" style={{ background: team.color }}><span>{team.name}</span></div>}
       {status !== 'online' && <div className="banner warn">Reconnecting…</div>}
@@ -87,7 +91,7 @@ export function Play({ session, onLeave }: { session: Session; onLeave(why: stri
       <section className="screen" key={view.screen.t === 'turf' || view.screen.t === 'sprawl' ? view.screen.t : `${view.round}-${view.screen.t}`}>
         {view.captain && !view.gameId
           ? <CaptainLobby view={view} games={games} host={host} />
-          : <ScreenView screen={view.screen} disabled={view.paused} onAction={send} meId={view.me.id} people={people} />}
+          : <ScreenView screen={view.screen} disabled={view.paused} onAction={send} meId={view.me.id} people={people} ink={{ online: status === 'online', send: sendInk }} />}
         {view.captain && inTeamUp(view) && <ShuffleTeams host={host} />}
         {view.me.role === 'SPECTATOR' && !view.gameId && (
           <button className="primary big" onClick={() => void takeSeat(session.token, setToast)}>Join as a player</button>
