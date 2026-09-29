@@ -101,6 +101,11 @@ test('four phones play a round of Imposter: look, clue, discuss, vote, result', 
   await clearParty(host)
   const phones = await Promise.all(['Ana', 'Bo', 'Cy', 'Di'].map((n) => phone(browser, room, n)))
   await expect(host.locator('.players li')).toHaveCount(4)
+  // A real TV page watches the whole round, fed by live game state rather than the gallery.
+  const tv = await (await browser.newContext({ viewport: { width: 1280, height: 720 } })).newPage()
+  const tvErrors: string[] = []
+  tv.on('pageerror', (e) => tvErrors.push(e.message))
+  await tv.goto('/tv')
   await host.getByRole('button', { name: /Imposter/ }).click()
   for (const p of phones) await p.getByRole('button', { name: 'Ready!' }).click()
 
@@ -118,6 +123,10 @@ test('four phones play a round of Imposter: look, clue, discuss, vote, result', 
     await p.getByRole('button', { name: 'Lock it in' }).click()
   }
 
+  // The TV shows the clue wall: one placard per player, each with the clue they typed.
+  await expect(tv.locator('.imp-placard')).toHaveCount(4, { timeout: 30_000 })
+  for (const i of [0, 1, 2, 3]) await expect(tv.locator('.imp-clue', { hasText: `hint${i}` })).toBeVisible()
+
   // Discuss runs its 60 s, then everyone votes for the first face.
   for (const p of phones) await expect(p.getByRole('heading', { name: 'Who is the imposter?' })).toBeVisible({ timeout: 90_000 })
   for (const p of phones) await p.locator('.face-pick').first().click()
@@ -125,4 +134,8 @@ test('four phones play a round of Imposter: look, clue, discuss, vote, result', 
   for (const p of phones) {
     await expect(p.getByRole('heading', { name: /You fooled them|You were caught|You found the imposter|Wrong suspect/ })).toBeVisible({ timeout: 20_000 })
   }
+
+  // The TV names the outcome, and nothing threw while it rendered live state.
+  await expect(tv.getByText(/^(CAUGHT!|WRONG SUSPECT!|NOBODY GOT ACCUSED)$/)).toBeVisible({ timeout: 20_000 })
+  expect(tvErrors).toEqual([])
 })
