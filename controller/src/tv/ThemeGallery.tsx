@@ -7,6 +7,7 @@ import { gameThemeOf, type GameTheme } from '../theme/gameTheme'
 import { BlackjackStage } from './BlackjackStage'
 import { BluffStage } from './BluffStage'
 import { JeopardyStage } from './JeopardyStage'
+import { HotTypeStage } from './HotTypeStage'
 import { ImposterStage } from './ImposterStage'
 import { SprawlStage } from './SprawlStage'
 import { TriviaStage } from './TriviaStage'
@@ -15,6 +16,7 @@ import blackjack from './fixtures/blackjack-theme.json'
 import bluff from './fixtures/bluff-theme.json'
 import imposter from './fixtures/imposter-theme'
 import jeopardy from './fixtures/jeopardy-theme'
+import hottype from './fixtures/hottype-theme'
 import sprawl from './fixtures/sprawl-theme.json'
 import turf from './fixtures/turf-theme.json'
 import writeitdown from './fixtures/writeitdown-theme.json'
@@ -24,7 +26,7 @@ import writeitdown from './fixtures/writeitdown-theme.json'
 interface Beat { stage: StageInfo; scores?: ScoreRow[]; phone: Pick<PhoneState, 'me' | 'screen'> }
 interface Fixture { players: PlayerSummary[]; beats: Record<string, Beat> }
 type Raw = { players: PlayerSummary[] } & ({ beats: Record<string, Beat> } | Beat)
-const raw = { turf, sprawl, blackjack, bluff, writeitdown, imposter, jeopardy } as unknown as Record<GameTheme, Raw>
+const raw = { turf, sprawl, blackjack, bluff, writeitdown, imposter, jeopardy, hottype } as unknown as Record<GameTheme, Raw>
 const fixtureOf = (game: GameTheme): Fixture => {
   const f = raw[game]
   return 'beats' in f ? f : { players: f.players, beats: { roll: { stage: f.stage, scores: f.scores, phone: f.phone } } }
@@ -39,6 +41,7 @@ function Stage({ game, ...props }: StageProps & { game: GameTheme }) {
     case 'blackjack': return <GameScene game="blackjack"><BlackjackStage {...props} /></GameScene>
     case 'bluff': return <GameScene game="bluff"><BluffStage {...props} /></GameScene>
     case 'jeopardy': return <GameScene game="jeopardy"><JeopardyStage {...props} cmd={() => undefined} /></GameScene>
+    case 'hottype': return <GameScene game="hottype"><HotTypeStage {...props} /></GameScene>
     case 'imposter': return <GameScene game="imposter"><ImposterStage {...props} /></GameScene>
     case 'writeitdown': return <TriviaStage {...props} />
   }

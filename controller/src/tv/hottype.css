@@ -1,0 +1,55 @@
+/* Hot Type on the TV. Drawn for 1920x1080: nothing under 28px, 96px side and 54px top/bottom margins. */
+.ht-stage { position: absolute; inset: 0; font-family: var(--font-body); color: var(--ink); }
+.ht-pad { position: absolute; inset: 54px 96px; }
+
+.ht-press { position: absolute; left: 96px; right: 96px; top: 54px; }
+.ht-head { display: flex; justify-content: space-between; align-items: center; height: 64px; }
+.ht-label { font: 800 32px var(--font-body); letter-spacing: 3px; text-transform: uppercase; }
+.ht-time { font: 400 52px var(--font-display); }
+.ht-bar { height: 26px; border: 5px solid var(--ink); background: var(--paper-2); border-radius: 6px; overflow: hidden; }
+.ht-bar-fill { height: 100%; background: var(--ink); }
+.ht-press.hot .ht-bar { border-color: var(--stamp-red); }
+.ht-press.hot .ht-bar-fill { background: var(--stamp-red); animation: ht-pulse 1.2s ease-in-out infinite; }
+@keyframes ht-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.72; } }
+
+.ht-board { position: absolute; left: 96px; top: 168px; width: 768px; height: 768px; background: var(--forme); border-radius: 16px; perspective: 900px; }
+.ht-tile {
+  position: absolute; display: flex; align-items: center; justify-content: center;
+  background: var(--wood); border: 6px solid var(--ink); border-bottom-width: 14px; border-radius: 12px;
+  font-family: var(--font-display);
+}
+
+.ht-rail { position: absolute; left: 920px; top: 168px; width: 904px; display: flex; flex-direction: column; gap: 12px; }
+.ht-rail.compact { gap: 8px; }
+.ht-row { height: 132px; display: flex; align-items: center; gap: 22px; padding: 0 24px; background: var(--paper-2); border: 5px solid var(--ink); border-radius: 12px; }
+.ht-rail.compact .ht-row { height: 84px; padding: 0 20px; gap: 18px; }
+.ht-face { width: 88px; height: 88px; flex: none; border-radius: 50%; border: 5px solid var(--ink); background: var(--wood); display: flex; align-items: center; justify-content: center; font: 400 40px var(--font-display); }
+.ht-rail.compact .ht-face { width: 64px; height: 64px; font-size: 32px; }
+.ht-name { width: 210px; font: 400 44px var(--font-display); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ht-rail.compact .ht-name { width: 240px; font-size: 36px; }
+.ht-pills { display: flex; flex-wrap: wrap; gap: 6px; flex: 1; align-content: center; max-height: 56px; overflow: hidden; }
+.ht-pills i { display: block; height: 22px; background: var(--ink); border-radius: 4px; }
+.ht-count { flex: 1; font: 800 34px var(--font-body); letter-spacing: 2px; }
+.ht-score { width: 170px; text-align: right; font: 400 52px var(--font-display); }
+.ht-rail.compact .ht-score { font-size: 40px; }
+.ht-stats { position: absolute; left: 920px; top: 900px; width: 904px; text-align: right; font: 800 28px var(--font-body); letter-spacing: 3px; text-transform: uppercase; }
+
+.ht-burst {
+  position: absolute; left: 640px; top: 330px; width: 420px; height: 300px; background: var(--stamp-red); color: var(--paper-2);
+  clip-path: polygon(50% 0, 60% 16%, 80% 6%, 80% 26%, 100% 30%, 88% 48%, 100% 66%, 80% 70%, 82% 92%, 62% 84%, 50% 100%, 38% 84%, 18% 92%, 20% 70%, 0 66%, 12% 48%, 0 30%, 20% 26%, 20% 6%, 40% 16%);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
+}
+.ht-burst .big { font: 400 56px var(--font-display); text-shadow: 5px 4px 0 rgba(42, 75, 168, 0.5); }
+.ht-burst .sub { max-width: 240px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font: 800 30px var(--font-body); letter-spacing: 2px; text-transform: uppercase; }
+
+.ht-ready { position: absolute; inset: 168px 96px 120px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 24px; }
+.ht-ready-word { font: 400 200px var(--font-display); text-shadow: 8px 6px 0 rgba(42, 75, 168, 0.5); text-align: center; }
+.ht-ready-word.phrase { font-size: 120px; }
+.ht-ready-sub { font: 500 40px var(--font-body); }
+
+.ht-host { position: absolute; left: 96px; right: 96px; top: 940px; height: 86px; display: flex; align-items: center; gap: 24px; padding: 0 32px; background: var(--ink); color: var(--paper); border-radius: 8px; font: 500 34px var(--font-body); }
+.ht-host b { font: 800 28px var(--font-body); letter-spacing: 3px; background: var(--stamp-red); color: var(--paper-2); padding: 4px 14px; border-radius: 4px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .ht-press.hot .ht-bar-fill { animation: none; }
+}
