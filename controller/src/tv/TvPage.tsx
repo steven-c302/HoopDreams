@@ -322,9 +322,10 @@ function LobbyScreen({ tv, session, games, lobby, setOption, onStart, keys, play
             <span className="stepper"><Keycap label="Esc" /> host <Keycap label="M" /> mute</span>
             <span className="stepper"><Keycap label="←" /><Keycap label="→" /> pick <Keycap label="Enter" /> start</span>
           </div>
-          {/* Up to five games side by side; six or more go into rows of three. */}
+          {/* Up to five games side by side, six in two rows of three, and seven or more in two rows: a third row would
+              squeeze the players onto the settings above it. */}
           <div className={`picker ${games.length > 3 ? 'four' : ''} ${games.length === 5 ? 'five' : ''} ${games.length > 5 ? 'six' : ''}`}
-            style={{ gridTemplateColumns: `repeat(${games.length > 5 ? 3 : Math.max(1, games.length)}, minmax(0, 1fr))` }}>
+            style={{ gridTemplateColumns: `repeat(${games.length > 6 ? Math.ceil(games.length / 2) : games.length > 5 ? 3 : Math.max(1, games.length)}, minmax(0, 1fr))` }}>
             {games.map((g, i) => {
               const enough = online >= g.minPlayers
               return (
