@@ -10,6 +10,13 @@ import partyos.engine.BluffReveal
 import partyos.engine.BluffTv
 import partyos.engine.Choice
 import partyos.engine.GameResult
+import partyos.engine.ImposterClue
+import partyos.engine.ImposterDelta
+import partyos.engine.ImposterDrink
+import partyos.engine.ImposterGuess
+import partyos.engine.ImposterTv
+import partyos.engine.ImposterVote
+import partyos.engine.SecretInput
 import partyos.engine.PhoneState
 import partyos.engine.PlayerId
 import partyos.engine.PlayerSummary
@@ -242,6 +249,74 @@ class ProtocolFixturesTest {
                 settings = mapOf("game" to 5, "vp" to 8, "minutes" to 45, "drinks" to 1),
             ),
         ),
+        ServerMsg.View(
+            seq = 20,
+            view = PhoneState(
+                me, "KXQT", "imposter", "Imposter", 2, false, null, 15_000,
+                Screen.Secret("Round 1", "PIZZA", "Food", "crew", "Don't let the imposter find out the word.", "seen", false),
+                rows,
+            ),
+        ),
+        ServerMsg.View(
+            seq = 21,
+            view = PhoneState(
+                me, "KXQT", "imposter", "Imposter", 3, false, null, 45_000,
+                Screen.Secret(
+                    "Round 1", "IMPOSTER", "Food", "imposter", null, null, false,
+                    SecretInput("One word that fits Food", 20, "cheesy", "clue", "Locked in. You can still change it until time's up."),
+                ),
+                rows,
+            ),
+        ),
+        ServerMsg.View(
+            seq = 22,
+            view = PhoneState(
+                me, "KXQT", "imposter", "Imposter", 5, false, null, 30_000,
+                Screen.ChoiceList("Who is the imposter?", listOf(Choice("p-al", "Al"), Choice("p-bo", "Bo")), "p-al", "vote", style = "faces"),
+                rows,
+            ),
+        ),
+        ServerMsg.Tv(
+            23,
+            TvState(
+                roomCode = "KXQT",
+                players = listOf(me),
+                stage = StageInfo(
+                    "imposter", "Imposter", 6, 1_700_000_100_000, 6_000, false, null, null,
+                    game = ImposterTv(
+                        phase = "result", round = 2, totalRounds = 5, finalRound = false, category = "Food",
+                        submitted = 4, expected = 4, imposterCount = 1,
+                        clues = listOf(ImposterClue(PlayerId("p-al"), "Al", "cheesy"), ImposterClue(sam, "Sam", null)),
+                        imposters = listOf(PlayerId("p-al")), accused = listOf(PlayerId("p-al")),
+                        votes = listOf(ImposterVote(sam, PlayerId("p-al"))),
+                        drinks = listOf(ImposterDrink(PlayerId("p-al"), "Al", 2, "Caught! Drink 2 sips")),
+                    ),
+                ),
+                scores = rows,
+                lastResult = null,
+                gamesPlayed = 1,
+                settings = mapOf("game" to 6, "rounds" to 5, "drinks" to 1),
+            ),
+        ),
+        ServerMsg.Tv(
+            24,
+            TvState(
+                roomCode = "KXQT",
+                players = listOf(me),
+                stage = StageInfo(
+                    "imposter", "Imposter", 8, 1_700_000_110_000, 8_000, false, null, null,
+                    game = ImposterTv(
+                        phase = "scores", round = 2, totalRounds = 5, finalRound = false, category = "Food",
+                        submitted = 0, expected = 4, imposterCount = 1, word = "pizza",
+                        guesses = listOf(ImposterGuess(PlayerId("p-al"), "Al", "pizzza", true)),
+                        deltas = listOf(ImposterDelta(PlayerId("p-al"), "Al", 1000)),
+                    ),
+                ),
+                scores = rows,
+                lastResult = null,
+                gamesPlayed = 1,
+            ),
+        ),
         ServerMsg.Ack("a-1"),
         ServerMsg.Reject("a-2", "TOO_TRUE"),
         ServerMsg.Pong,
@@ -295,6 +370,9 @@ class ProtocolFixturesTest {
                 ),
             ),
         ),
+        ClientMsg.Action("a-11", 2, JsonObject(mapOf("kind" to JsonPrimitive("seen")))),
+        ClientMsg.Action("a-12", 3, JsonObject(mapOf("kind" to JsonPrimitive("clue"), "text" to JsonPrimitive("cheesy")))),
+        ClientMsg.Action("a-13", 5, JsonObject(mapOf("kind" to JsonPrimitive("vote"), "option" to JsonPrimitive("p-al")))),
         ClientMsg.Ping,
     )
 

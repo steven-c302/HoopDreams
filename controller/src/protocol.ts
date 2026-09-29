@@ -14,16 +14,19 @@ export interface TeamTag { id: string; name: string; color: string }
 export interface TutorialCard { title: string; body: string }
 /** rank 1 (ace)..13 (king), suit 0..3 = spades, hearts, diamonds, clubs; rank 0 = face down. */
 export interface PlayingCard { rank: number; suit: number }
+/** The clue field under Imposter's peek chip. */
+export interface SecretInput { prompt: string; maxLen: number; value?: string; kind: string; hint?: string }
 
 export type Screen =
   | { t: 'waiting'; title: string; detail?: string; tone?: 'win' | 'lose' | 'neutral'; team?: TeamTag }
   | { t: 'text'; prompt: string; maxLen: number; value?: string; kind: string; hint?: string; team?: TeamTag }
-  | { t: 'choice'; prompt: string; options: Choice[]; selected?: string; kind: string; style?: 'shapes' | 'sides' | 'teams'; votes?: Record<string, string[]>; team?: TeamTag }
+  | { t: 'choice'; prompt: string; options: Choice[]; selected?: string; kind: string; style?: 'shapes' | 'sides' | 'teams' | 'faces'; votes?: Record<string, string[]>; team?: TeamTag }
   | { t: 'number'; prompt: string; unit?: string; value?: number; kind: string; guesses?: { id: string; value: number }[]; team?: TeamTag }
   | { t: 'multi'; prompt: string; options: Choice[]; selected: string[]; locked: boolean; kind: string; eliminated?: string[]; votes?: Record<string, string[]>; team?: TeamTag }
   | { t: 'tutorial'; cards: TutorialCard[]; acknowledged: boolean }
   | { t: 'scores'; title: string; rows: ScoreRow[] }
   | { t: 'cards'; title: string; hand: PlayingCard[]; total?: number; dealer: PlayingCard[]; actions: Choice[]; kind: string; note?: string; tone?: string; stack?: number }
+  | { t: 'secret'; title: string; face: string; category: string; role: 'crew' | 'imposter'; note?: string; kind?: string; acknowledged: boolean; input?: SecretInput }
   | TurfScreen
   | SprawlScreen
 
@@ -204,7 +207,7 @@ export type ClientMsg =
 
 export interface GameListing { id: string; title: string; tagline: string; minPlayers: number; maxPlayers: number }
 
-const SCREENS = new Set(['waiting', 'text', 'choice', 'number', 'multi', 'tutorial', 'scores', 'cards', 'turf', 'sprawl'])
+const SCREENS = new Set(['waiting', 'text', 'choice', 'number', 'multi', 'tutorial', 'scores', 'cards', 'turf', 'sprawl', 'secret'])
 const isObj = (v: unknown): v is Record<string, unknown> => typeof v === 'object' && v !== null
 
 /** Parses one server frame; returns null for anything malformed or unknown instead of throwing. */

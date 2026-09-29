@@ -1736,6 +1736,367 @@
         }
     },
     {
+        "t": "view",
+        "seq": 20,
+        "view": {
+            "me": {
+                "id": "p-sam",
+                "name": "Sam",
+                "avatar": {
+                    "face": "p:01",
+                    "color": "#FF7A00"
+                },
+                "role": "PLAYER",
+                "connected": true,
+                "water": false
+            },
+            "roomCode": "KXQT",
+            "gameId": "imposter",
+            "gameTitle": "Imposter",
+            "round": 2,
+            "paused": false,
+            "remainingMs": 15000,
+            "screen": {
+                "t": "secret",
+                "title": "Round 1",
+                "face": "PIZZA",
+                "category": "Food",
+                "role": "crew",
+                "note": "Don't let the imposter find out the word.",
+                "kind": "seen",
+                "acknowledged": false
+            },
+            "scores": [
+                {
+                    "id": "p-sam",
+                    "name": "Sam",
+                    "avatar": {
+                        "face": "p:01",
+                        "color": "#FF7A00"
+                    },
+                    "score": 1500
+                },
+                {
+                    "id": "p-al",
+                    "name": "Al",
+                    "avatar": {
+                        "face": "p:02",
+                        "color": "#22AA55"
+                    },
+                    "score": 500
+                }
+            ],
+            "captain": false,
+            "settings": {},
+            "crew": []
+        }
+    },
+    {
+        "t": "view",
+        "seq": 21,
+        "view": {
+            "me": {
+                "id": "p-sam",
+                "name": "Sam",
+                "avatar": {
+                    "face": "p:01",
+                    "color": "#FF7A00"
+                },
+                "role": "PLAYER",
+                "connected": true,
+                "water": false
+            },
+            "roomCode": "KXQT",
+            "gameId": "imposter",
+            "gameTitle": "Imposter",
+            "round": 3,
+            "paused": false,
+            "remainingMs": 45000,
+            "screen": {
+                "t": "secret",
+                "title": "Round 1",
+                "face": "IMPOSTER",
+                "category": "Food",
+                "role": "imposter",
+                "acknowledged": false,
+                "input": {
+                    "prompt": "One word that fits Food",
+                    "maxLen": 20,
+                    "value": "cheesy",
+                    "kind": "clue",
+                    "hint": "Locked in. You can still change it until time's up."
+                }
+            },
+            "scores": [
+                {
+                    "id": "p-sam",
+                    "name": "Sam",
+                    "avatar": {
+                        "face": "p:01",
+                        "color": "#FF7A00"
+                    },
+                    "score": 1500
+                },
+                {
+                    "id": "p-al",
+                    "name": "Al",
+                    "avatar": {
+                        "face": "p:02",
+                        "color": "#22AA55"
+                    },
+                    "score": 500
+                }
+            ],
+            "captain": false,
+            "settings": {},
+            "crew": []
+        }
+    },
+    {
+        "t": "view",
+        "seq": 22,
+        "view": {
+            "me": {
+                "id": "p-sam",
+                "name": "Sam",
+                "avatar": {
+                    "face": "p:01",
+                    "color": "#FF7A00"
+                },
+                "role": "PLAYER",
+                "connected": true,
+                "water": false
+            },
+            "roomCode": "KXQT",
+            "gameId": "imposter",
+            "gameTitle": "Imposter",
+            "round": 5,
+            "paused": false,
+            "remainingMs": 30000,
+            "screen": {
+                "t": "choice",
+                "prompt": "Who is the imposter?",
+                "options": [
+                    {
+                        "id": "p-al",
+                        "text": "Al"
+                    },
+                    {
+                        "id": "p-bo",
+                        "text": "Bo"
+                    }
+                ],
+                "selected": "p-al",
+                "kind": "vote",
+                "style": "faces",
+                "votes": {}
+            },
+            "scores": [
+                {
+                    "id": "p-sam",
+                    "name": "Sam",
+                    "avatar": {
+                        "face": "p:01",
+                        "color": "#FF7A00"
+                    },
+                    "score": 1500
+                },
+                {
+                    "id": "p-al",
+                    "name": "Al",
+                    "avatar": {
+                        "face": "p:02",
+                        "color": "#22AA55"
+                    },
+                    "score": 500
+                }
+            ],
+            "captain": false,
+            "settings": {},
+            "crew": []
+        }
+    },
+    {
+        "t": "tv",
+        "seq": 23,
+        "tv": {
+            "roomCode": "KXQT",
+            "players": [
+                {
+                    "id": "p-sam",
+                    "name": "Sam",
+                    "avatar": {
+                        "face": "p:01",
+                        "color": "#FF7A00"
+                    },
+                    "role": "PLAYER",
+                    "connected": true,
+                    "water": false
+                }
+            ],
+            "stage": {
+                "gameId": "imposter",
+                "title": "Imposter",
+                "phaseSeq": 6,
+                "deadlineAt": 1700000100000,
+                "remainingMs": 6000,
+                "paused": false,
+                "game": {
+                    "t": "imposter",
+                    "phase": "result",
+                    "round": 2,
+                    "totalRounds": 5,
+                    "finalRound": false,
+                    "category": "Food",
+                    "submitted": 4,
+                    "expected": 4,
+                    "imposterCount": 1,
+                    "clues": [
+                        {
+                            "id": "p-al",
+                            "name": "Al",
+                            "text": "cheesy"
+                        },
+                        {
+                            "id": "p-sam",
+                            "name": "Sam"
+                        }
+                    ],
+                    "imposters": [
+                        "p-al"
+                    ],
+                    "accused": [
+                        "p-al"
+                    ],
+                    "votes": [
+                        {
+                            "voter": "p-sam",
+                            "suspect": "p-al"
+                        }
+                    ],
+                    "guesses": [],
+                    "drinks": [
+                        {
+                            "id": "p-al",
+                            "name": "Al",
+                            "sips": 2,
+                            "text": "Caught! Drink 2 sips"
+                        }
+                    ],
+                    "deltas": []
+                }
+            },
+            "scores": [
+                {
+                    "id": "p-sam",
+                    "name": "Sam",
+                    "avatar": {
+                        "face": "p:01",
+                        "color": "#FF7A00"
+                    },
+                    "score": 1500
+                },
+                {
+                    "id": "p-al",
+                    "name": "Al",
+                    "avatar": {
+                        "face": "p:02",
+                        "color": "#22AA55"
+                    },
+                    "score": 500
+                }
+            ],
+            "gamesPlayed": 1,
+            "settings": {
+                "game": 6,
+                "rounds": 5,
+                "drinks": 1
+            }
+        }
+    },
+    {
+        "t": "tv",
+        "seq": 24,
+        "tv": {
+            "roomCode": "KXQT",
+            "players": [
+                {
+                    "id": "p-sam",
+                    "name": "Sam",
+                    "avatar": {
+                        "face": "p:01",
+                        "color": "#FF7A00"
+                    },
+                    "role": "PLAYER",
+                    "connected": true,
+                    "water": false
+                }
+            ],
+            "stage": {
+                "gameId": "imposter",
+                "title": "Imposter",
+                "phaseSeq": 8,
+                "deadlineAt": 1700000110000,
+                "remainingMs": 8000,
+                "paused": false,
+                "game": {
+                    "t": "imposter",
+                    "phase": "scores",
+                    "round": 2,
+                    "totalRounds": 5,
+                    "finalRound": false,
+                    "category": "Food",
+                    "submitted": 0,
+                    "expected": 4,
+                    "imposterCount": 1,
+                    "clues": [],
+                    "word": "pizza",
+                    "imposters": [],
+                    "accused": [],
+                    "votes": [],
+                    "guesses": [
+                        {
+                            "id": "p-al",
+                            "name": "Al",
+                            "text": "pizzza",
+                            "right": true
+                        }
+                    ],
+                    "drinks": [],
+                    "deltas": [
+                        {
+                            "id": "p-al",
+                            "name": "Al",
+                            "points": 1000
+                        }
+                    ]
+                }
+            },
+            "scores": [
+                {
+                    "id": "p-sam",
+                    "name": "Sam",
+                    "avatar": {
+                        "face": "p:01",
+                        "color": "#FF7A00"
+                    },
+                    "score": 1500
+                },
+                {
+                    "id": "p-al",
+                    "name": "Al",
+                    "avatar": {
+                        "face": "p:02",
+                        "color": "#22AA55"
+                    },
+                    "score": 500
+                }
+            ],
+            "gamesPlayed": 1,
+            "settings": {}
+        }
+    },
+    {
         "t": "ack",
         "id": "a-1"
     },

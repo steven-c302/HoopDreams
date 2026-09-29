@@ -239,6 +239,32 @@
         }
     },
     {
+        "t": "action",
+        "id": "a-11",
+        "round": 2,
+        "payload": {
+            "kind": "seen"
+        }
+    },
+    {
+        "t": "action",
+        "id": "a-12",
+        "round": 3,
+        "payload": {
+            "kind": "clue",
+            "text": "cheesy"
+        }
+    },
+    {
+        "t": "action",
+        "id": "a-13",
+        "round": 5,
+        "payload": {
+            "kind": "vote",
+            "option": "p-al"
+        }
+    },
+    {
         "t": "ping"
     }
 ]
