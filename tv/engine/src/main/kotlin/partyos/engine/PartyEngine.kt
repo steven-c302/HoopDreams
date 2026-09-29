@@ -266,6 +266,21 @@ class PartyEngine private constructor(
         return ActionResult.Ack
     }
 
+    /**
+     * The drawing turn [id] may ink on in the phase numbered [round], or null: not a player, not the drawer, wrong or
+     * old phase, paused, in the tutorial, or the game doesn't draw.
+     */
+    fun inkTurn(id: PlayerId, round: Int): Int? {
+        if (player(id)?.role != Role.PLAYER) return null
+        val g = active ?: return null
+        if (g.paused || g.tutorialAcks != null || round != g.phaseSeq) return null
+        return inkTurnOf(g, id)
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    private fun <S : Any> inkTurnOf(g: ActiveGame<S>, id: PlayerId): Int? =
+        (g.module as? InkAware<S>)?.let { m -> g.state?.let { m.inkTurn(it, id) } }
+
     /** Fires the current deadline if it has passed. Call at [nextDeadline]. */
     fun tick() {
         val g = active ?: return

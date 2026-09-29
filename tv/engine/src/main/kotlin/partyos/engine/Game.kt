@@ -110,6 +110,12 @@ interface GameModule<S : Any> {
     fun phaseFree(payload: JsonObject): Boolean = false
 }
 
+/** A game whose players draw live: the server relays their strokes (outside game state) once the game says who may. */
+interface InkAware<S : Any> {
+    /** The turn number [who] may draw on right now, or null when they may not. */
+    fun inkTurn(s: S, who: PlayerId): Int?
+}
+
 class GameRegistry(modules: List<GameModule<*>>) {
     private val byId = modules.associateBy { it.info.id }
     val all: List<GameModule<*>> = modules
