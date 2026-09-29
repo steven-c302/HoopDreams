@@ -172,6 +172,25 @@ export interface SprawlTv {
 }
 
 
+// ---- Doodle Dash (tv/engine/.../DoodleViews.kt) ---------------------------------------------
+
+export interface DoodleTv {
+  t: 'doodle'; phase: 'pick' | 'draw' | 'reveal' | 'scores' | 'podium'
+  turn: number; totalTurns: number; finalTurn: boolean
+  drawer?: string; drawerName: string; difficulty: number
+  /** Draw only: "_ _ _ _ _" with any revealed letters in capitals. */
+  blanks: string
+  guessed: number; expected: number
+  /** The whole draw time, and the part of it after the current hint stage. */
+  drawMs: number; tailMs: number
+  solvers: { id: string; name: string; points?: number }[]
+  wrong: { id: string; name: string; text: string }[]; missTotal: number
+  word?: string
+  drinks: { id: string; name: string; sips: number; text: string }[]
+  deltas: { id: string; name: string; points: number }[]
+  gallery: { turn: number; word: string; drawer: string; drawerName: string; first?: string; firstName?: string }[]
+}
+
 // ---- Imposter (tv/engine/.../ImposterViews.kt) ----------------------------------------------
 
 export interface ImposterTv {
