@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 // Rehearsal bots: join the party like phones do and play whatever is on their screen.
 // Usage: node controller/scripts/bots.mjs [count=5] [http://127.0.0.1:8080]
+import { readFileSync } from 'node:fs'
 const count = Number(process.argv[2] ?? 5)
 const base = process.argv[3] ?? 'http://127.0.0.1:8080'
 const names = ['Ava', 'Ben', 'Cleo', 'Dev', 'Eli', 'Fin', 'Gus', 'Hana', 'Ivy', 'Jay', 'Kai', 'Lu', 'Mo', 'Nia', 'Oz', 'Pip']
@@ -10,6 +11,37 @@ const teamNames = ['The Quizzards', 'Smarty Pints', 'Brain Freeze', 'Trivia Newt
 const fakes = ['a very old goat', 'the moon', 'spaghetti', 'Belgium', 'four', 'a rubber duck', 'Nicolas Cage', 'soup', 'jazz', 'the year 1812']
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms))
 const pick = (a) => a[Math.floor(Math.random() * a.length)]
+
+// Hot Type: bots find real words by tracing the board against the game's own word list.
+let WORDS, PREFIXES
+function loadWords() {
+  if (WORDS) return
+  const text = readFileSync(new URL('../../tv/engine/src/main/resources/hottype/words.txt', import.meta.url), 'utf8')
+  WORDS = new Set(text.split('\n').filter(Boolean))
+  PREFIXES = new Set()
+  for (const w of WORDS) for (let i = 1; i <= w.length; i++) PREFIXES.add(w.slice(0, i))
+}
+const solveCache = new Map()
+function solveBoard(tiles, size) {
+  const key = tiles.join('') + size
+  if (solveCache.has(key)) return solveCache.get(key)
+  loadWords()
+  const found = new Map()
+  const used = new Array(tiles.length).fill(false)
+  const path = []
+  const near = (a, b) => a !== b && Math.abs(Math.floor(a / size) - Math.floor(b / size)) <= 1 && Math.abs((a % size) - (b % size)) <= 1
+  const walk = (at, prefix) => {
+    const word = prefix + tiles[at].toLowerCase()
+    if (!PREFIXES.has(word)) return
+    used[at] = true; path.push(at)
+    if (word.length >= 3 && WORDS.has(word) && !found.has(word)) found.set(word, [...path])
+    for (let n = 0; n < tiles.length; n++) if (!used[n] && near(at, n)) walk(n, word)
+    path.pop(); used[at] = false
+  }
+  for (let i = 0; i < tiles.length; i++) walk(i, '')
+  solveCache.set(key, found)
+  return found
+}
 
 const tv = await fetch(`${base}/api/tv/session`).then((r) => r.json())
 // The server ignores an action id it has already seen this game, so ids from an earlier run must not repeat.
@@ -44,6 +76,7 @@ async function bot(i) {
     if (m.t !== 'view') return
     const { screen, round, paused } = m.view
     if (screen.t === 'turf') return turf(screen, round)
+    if (screen.t === 'hunt') return hunt(screen, round)
     if (screen.t === 'sprawl') return sprawl(screen, round)
     const key = `${round}:${screen.t}:${screen.kind ?? ''}:${(screen.hand ?? []).length}:${screen.actions?.length ?? ''}:${screen.acknowledged ?? ''}:${screen.value ?? ''}:${screen.selected ?? ''}:${screen.locked ?? ''}`
     if (paused || key === lastKey) return
@@ -123,6 +156,20 @@ async function bot(i) {
         if (screen.trade) act(round, { kind: 'tradeReply', trade: screen.trade.id, option: Math.random() < 0.5 ? 'accept' : 'reject' })
         break
     }
+  }
+
+  let huntKey = ''
+  async function hunt(screen, round) {
+    if (screen.phase !== 'hunt' || !screen.tiles.length || screen.found.length >= 8) return
+    const key = `${round}:${screen.found.length}`
+    if (key === huntKey) return
+    huntKey = key
+    const mine = new Set(screen.found.map((f) => f.word))
+    const options = [...solveBoard(screen.tiles, screen.size)].filter(([w]) => !mine.has(w))
+    if (!options.length) return
+    await new Promise((r) => setTimeout(r, 600 + Math.random() * 1500))
+    const [, path] = pick(options)
+    act(round, { kind: 'word', path })
   }
 
   // Sprawl: the prompt is the act-once key too (a trade or a Windfall pick keeps the round).

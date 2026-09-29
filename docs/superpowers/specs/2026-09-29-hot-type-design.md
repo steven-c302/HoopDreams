@@ -25,7 +25,7 @@ Decisions the user made (2026-09-29):
 | Theme | **Hot Type**, a letterpress print shop (picked from three options, then approved after two mockup rounds) |
 | Direction | Ink, blue, red and cream, with wood-type tiles, a lowering press as the timer, and a stamped newspaper reveal |
 
-Assumed, not asked (flag if wrong): the game id `hottype`; 2 to 8 players, solo only; 3 rounds of 90 s on a 4×4
+Assumed, not asked (flag if wrong): the game id `hottype`; 2 to 8 players, solo only; 5 rounds of 90 s (the lobby default) on a 4×4
 board with a 5×5 lobby option; the scoring in "Scoring"; a drink call for last place; the dictionary source; a tutorial;
 a per-game theme.
 
@@ -55,7 +55,7 @@ a per-game theme.
 | `scores` | 8 s | Each player's round points, split into parts, and the running leaderboard |
 | `podium` | 15 s | After the last round |
 
-The number of rounds comes from the existing `rounds` lobby setting (3 to 8). The default is **3** when unset. The
+The number of rounds comes from the existing `rounds` lobby setting (3 to 8). The default is **5**: the lobby shows 5 rounds until someone changes it, and ↓ shortens it. The
 final round counts double, as in Bluff and Imposter.
 
 ### Submitting a word
@@ -197,10 +197,10 @@ scaling. Nothing flashes more than three times a second.
 
 ### Audio
 
-Real sampled foley, in the existing sample bank (`controller/scripts/audio/cues.json`): type clack per tile, a rising
-pitch per letter in a word, a soft thud for a stamp, a platen slam at `press`, paper rustle at the reveal. There is no
-synthesized music. The plan sources the samples (recorded, or CC0 with the licence checked); a synthesized fallback
-exists for any cue without a sample, as the audio module already does.
+Sampled foley played by the TV only (phones have no audio engine), generated through the existing ElevenLabs sample
+pipeline (`controller/scripts/audio/cues.json`): a split-flap flip at the start of the hunt, a stamp thud for each
+stamp, a platen slam at `press`, and paper rustle at the reveal. There is no synthesized music; a synthesized fallback
+exists for any cue without a sample, as the audio module already does. Phones use haptics only.
 
 ## Phone input
 

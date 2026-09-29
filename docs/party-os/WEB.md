@@ -21,6 +21,7 @@ Without Chrome it opens your default browser; click **GO LIVE** once for full sc
 | ← → and Enter | pick a game and start it (lobby); the captain can do the same from their phone |
 | ↑ ↓ | rounds, or questions per round for Brain Drain (3–8) |
 | T · D | Brain Drain: teams (auto, 2–6) · drink calls on/off |
+| G | Hot Type: 4×4 or 5×5 board |
 | Esc | host controls: pause, skip, end, remove players, sound and music volume |
 | P | pause / resume |
 | M | mute |
