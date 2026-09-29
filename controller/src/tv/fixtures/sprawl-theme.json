@@ -1,0 +1,3268 @@
+{
+  "players": [
+    {
+      "id": "aecf95449ce4",
+      "name": "Ava",
+      "avatar": {
+        "face": "p:00",
+        "color": "#FF4B3E"
+      },
+      "role": "PLAYER",
+      "connected": true
+    },
+    {
+      "id": "5d6d4aed681c",
+      "name": "Ben",
+      "avatar": {
+        "face": "p:01",
+        "color": "#FF8A2B"
+      },
+      "role": "PLAYER",
+      "connected": true
+    },
+    {
+      "id": "e25d7291c1ad",
+      "name": "Cleo",
+      "avatar": {
+        "face": "p:02",
+        "color": "#FFD23F"
+      },
+      "role": "PLAYER",
+      "connected": true
+    },
+    {
+      "id": "4e43abce289e",
+      "name": "Dev",
+      "avatar": {
+        "face": "p:03",
+        "color": "#2FBF55"
+      },
+      "role": "PLAYER",
+      "connected": true
+    },
+    {
+      "id": "31d4f1ae890f",
+      "name": "Eli",
+      "avatar": {
+        "face": "p:04",
+        "color": "#7FD3FF"
+      },
+      "role": "PLAYER",
+      "connected": true
+    },
+    {
+      "id": "532db00eaa1a",
+      "name": "Fin",
+      "avatar": {
+        "face": "p:05",
+        "color": "#2F6BFF"
+      },
+      "role": "PLAYER",
+      "connected": true
+    }
+  ],
+  "stage": {
+    "gameId": "sprawl",
+    "title": "Sprawl",
+    "phaseSeq": 26,
+    "deadlineAt": 1790548532294,
+    "remainingMs": 20000,
+    "paused": false,
+    "game": {
+      "t": "sprawl",
+      "phase": "roll",
+      "map": {
+        "size": 1,
+        "hexes": [
+          {
+            "x": -174,
+            "y": -450,
+            "terrain": 4,
+            "number": 8,
+            "name": "The Arcade"
+          },
+          {
+            "x": 0,
+            "y": -450,
+            "terrain": 1,
+            "number": 11,
+            "name": "The Dive Bar"
+          },
+          {
+            "x": 174,
+            "y": -450,
+            "terrain": 3,
+            "number": 4,
+            "name": "The Bowling Alley"
+          },
+          {
+            "x": -261,
+            "y": -300,
+            "terrain": 0,
+            "number": 4,
+            "name": "The Laundromat"
+          },
+          {
+            "x": -87,
+            "y": -300,
+            "terrain": 1,
+            "number": 10,
+            "name": "The Late-Night Diner"
+          },
+          {
+            "x": 87,
+            "y": -300,
+            "terrain": 2,
+            "number": 3,
+            "name": "The Food Court"
+          },
+          {
+            "x": 261,
+            "y": -300,
+            "terrain": 0,
+            "number": 6,
+            "name": "Charlie's Hot Tub"
+          },
+          {
+            "x": -348,
+            "y": -150,
+            "terrain": 5,
+            "number": 0,
+            "name": "The Couch"
+          },
+          {
+            "x": -174,
+            "y": -150,
+            "terrain": 5,
+            "number": 0,
+            "name": "The Futon"
+          },
+          {
+            "x": 0,
+            "y": -150,
+            "terrain": 4,
+            "number": 2,
+            "name": "The Rooftop Bar"
+          },
+          {
+            "x": 174,
+            "y": -150,
+            "terrain": 1,
+            "number": 12,
+            "name": "The Club"
+          },
+          {
+            "x": 348,
+            "y": -150,
+            "terrain": 2,
+            "number": 4,
+            "name": "The Gas Station"
+          },
+          {
+            "x": -435,
+            "y": 0,
+            "terrain": 1,
+            "number": 12,
+            "name": "Steven's Garage"
+          },
+          {
+            "x": -261,
+            "y": 0,
+            "terrain": 3,
+            "number": 10,
+            "name": "Sunhye's Studio"
+          },
+          {
+            "x": -87,
+            "y": 0,
+            "terrain": 2,
+            "number": 8,
+            "name": "Ethan's Dorm"
+          },
+          {
+            "x": 87,
+            "y": 0,
+            "terrain": 2,
+            "number": 3,
+            "name": "The Beach House"
+          },
+          {
+            "x": 261,
+            "y": 0,
+            "terrain": 4,
+            "number": 9,
+            "name": "Alex's Backyard"
+          },
+          {
+            "x": 435,
+            "y": 0,
+            "terrain": 2,
+            "number": 3,
+            "name": "The Bodega"
+          },
+          {
+            "x": -348,
+            "y": 150,
+            "terrain": 0,
+            "number": 9,
+            "name": "Amanda's Balcony"
+          },
+          {
+            "x": -174,
+            "y": 150,
+            "terrain": 4,
+            "number": 5,
+            "name": "The Karaoke Bar"
+          },
+          {
+            "x": 0,
+            "y": 150,
+            "terrain": 0,
+            "number": 11,
+            "name": "Junha's Kitchen"
+          },
+          {
+            "x": 174,
+            "y": 150,
+            "terrain": 4,
+            "number": 9,
+            "name": "The Penthouse"
+          },
+          {
+            "x": 348,
+            "y": 150,
+            "terrain": 1,
+            "number": 8,
+            "name": "The Corner Store"
+          },
+          {
+            "x": -261,
+            "y": 300,
+            "terrain": 3,
+            "number": 10,
+            "name": "Izzy's Rooftop"
+          },
+          {
+            "x": -87,
+            "y": 300,
+            "terrain": 3,
+            "number": 5,
+            "name": "The Taco Truck"
+          },
+          {
+            "x": 87,
+            "y": 300,
+            "terrain": 3,
+            "number": 5,
+            "name": "John's Living Room"
+          },
+          {
+            "x": 261,
+            "y": 300,
+            "terrain": 2,
+            "number": 2,
+            "name": "The Other Daniel's"
+          },
+          {
+            "x": -174,
+            "y": 450,
+            "terrain": 3,
+            "number": 6,
+            "name": "Anna's Porch"
+          },
+          {
+            "x": 0,
+            "y": 450,
+            "terrain": 0,
+            "number": 11,
+            "name": "The Pizza Place"
+          },
+          {
+            "x": 174,
+            "y": 450,
+            "terrain": 1,
+            "number": 6,
+            "name": "Kaishun's Basement"
+          }
+        ],
+        "vertices": [
+          [
+            -174,
+            -550
+          ],
+          [
+            0,
+            -550
+          ],
+          [
+            174,
+            -550
+          ],
+          [
+            -261,
+            -500
+          ],
+          [
+            -87,
+            -500
+          ],
+          [
+            87,
+            -500
+          ],
+          [
+            261,
+            -500
+          ],
+          [
+            -261,
+            -400
+          ],
+          [
+            -87,
+            -400
+          ],
+          [
+            87,
+            -400
+          ],
+          [
+            261,
+            -400
+          ],
+          [
+            -348,
+            -350
+          ],
+          [
+            -174,
+            -350
+          ],
+          [
+            0,
+            -350
+          ],
+          [
+            174,
+            -350
+          ],
+          [
+            348,
+            -350
+          ],
+          [
+            -348,
+            -250
+          ],
+          [
+            -174,
+            -250
+          ],
+          [
+            0,
+            -250
+          ],
+          [
+            174,
+            -250
+          ],
+          [
+            348,
+            -250
+          ],
+          [
+            -435,
+            -200
+          ],
+          [
+            -261,
+            -200
+          ],
+          [
+            -87,
+            -200
+          ],
+          [
+            87,
+            -200
+          ],
+          [
+            261,
+            -200
+          ],
+          [
+            435,
+            -200
+          ],
+          [
+            -435,
+            -100
+          ],
+          [
+            -261,
+            -100
+          ],
+          [
+            -87,
+            -100
+          ],
+          [
+            87,
+            -100
+          ],
+          [
+            261,
+            -100
+          ],
+          [
+            435,
+            -100
+          ],
+          [
+            -522,
+            -50
+          ],
+          [
+            -348,
+            -50
+          ],
+          [
+            -174,
+            -50
+          ],
+          [
+            0,
+            -50
+          ],
+          [
+            174,
+            -50
+          ],
+          [
+            348,
+            -50
+          ],
+          [
+            522,
+            -50
+          ],
+          [
+            -522,
+            50
+          ],
+          [
+            -348,
+            50
+          ],
+          [
+            -174,
+            50
+          ],
+          [
+            0,
+            50
+          ],
+          [
+            174,
+            50
+          ],
+          [
+            348,
+            50
+          ],
+          [
+            522,
+            50
+          ],
+          [
+            -435,
+            100
+          ],
+          [
+            -261,
+            100
+          ],
+          [
+            -87,
+            100
+          ],
+          [
+            87,
+            100
+          ],
+          [
+            261,
+            100
+          ],
+          [
+            435,
+            100
+          ],
+          [
+            -435,
+            200
+          ],
+          [
+            -261,
+            200
+          ],
+          [
+            -87,
+            200
+          ],
+          [
+            87,
+            200
+          ],
+          [
+            261,
+            200
+          ],
+          [
+            435,
+            200
+          ],
+          [
+            -348,
+            250
+          ],
+          [
+            -174,
+            250
+          ],
+          [
+            0,
+            250
+          ],
+          [
+            174,
+            250
+          ],
+          [
+            348,
+            250
+          ],
+          [
+            -348,
+            350
+          ],
+          [
+            -174,
+            350
+          ],
+          [
+            0,
+            350
+          ],
+          [
+            174,
+            350
+          ],
+          [
+            348,
+            350
+          ],
+          [
+            -261,
+            400
+          ],
+          [
+            -87,
+            400
+          ],
+          [
+            87,
+            400
+          ],
+          [
+            261,
+            400
+          ],
+          [
+            -261,
+            500
+          ],
+          [
+            -87,
+            500
+          ],
+          [
+            87,
+            500
+          ],
+          [
+            261,
+            500
+          ],
+          [
+            -174,
+            550
+          ],
+          [
+            0,
+            550
+          ],
+          [
+            174,
+            550
+          ]
+        ],
+        "edges": [
+          [
+            0,
+            3
+          ],
+          [
+            0,
+            4
+          ],
+          [
+            1,
+            4
+          ],
+          [
+            1,
+            5
+          ],
+          [
+            2,
+            5
+          ],
+          [
+            2,
+            6
+          ],
+          [
+            3,
+            7
+          ],
+          [
+            4,
+            8
+          ],
+          [
+            5,
+            9
+          ],
+          [
+            6,
+            10
+          ],
+          [
+            7,
+            11
+          ],
+          [
+            7,
+            12
+          ],
+          [
+            8,
+            12
+          ],
+          [
+            8,
+            13
+          ],
+          [
+            9,
+            13
+          ],
+          [
+            9,
+            14
+          ],
+          [
+            10,
+            14
+          ],
+          [
+            10,
+            15
+          ],
+          [
+            11,
+            16
+          ],
+          [
+            12,
+            17
+          ],
+          [
+            13,
+            18
+          ],
+          [
+            14,
+            19
+          ],
+          [
+            15,
+            20
+          ],
+          [
+            16,
+            21
+          ],
+          [
+            16,
+            22
+          ],
+          [
+            17,
+            22
+          ],
+          [
+            17,
+            23
+          ],
+          [
+            18,
+            23
+          ],
+          [
+            18,
+            24
+          ],
+          [
+            19,
+            24
+          ],
+          [
+            19,
+            25
+          ],
+          [
+            20,
+            25
+          ],
+          [
+            20,
+            26
+          ],
+          [
+            21,
+            27
+          ],
+          [
+            22,
+            28
+          ],
+          [
+            23,
+            29
+          ],
+          [
+            24,
+            30
+          ],
+          [
+            25,
+            31
+          ],
+          [
+            26,
+            32
+          ],
+          [
+            27,
+            33
+          ],
+          [
+            27,
+            34
+          ],
+          [
+            28,
+            34
+          ],
+          [
+            28,
+            35
+          ],
+          [
+            29,
+            35
+          ],
+          [
+            29,
+            36
+          ],
+          [
+            30,
+            36
+          ],
+          [
+            30,
+            37
+          ],
+          [
+            31,
+            37
+          ],
+          [
+            31,
+            38
+          ],
+          [
+            32,
+            38
+          ],
+          [
+            32,
+            39
+          ],
+          [
+            33,
+            40
+          ],
+          [
+            34,
+            41
+          ],
+          [
+            35,
+            42
+          ],
+          [
+            36,
+            43
+          ],
+          [
+            37,
+            44
+          ],
+          [
+            38,
+            45
+          ],
+          [
+            39,
+            46
+          ],
+          [
+            40,
+            47
+          ],
+          [
+            41,
+            47
+          ],
+          [
+            41,
+            48
+          ],
+          [
+            42,
+            48
+          ],
+          [
+            42,
+            49
+          ],
+          [
+            43,
+            49
+          ],
+          [
+            43,
+            50
+          ],
+          [
+            44,
+            50
+          ],
+          [
+            44,
+            51
+          ],
+          [
+            45,
+            51
+          ],
+          [
+            45,
+            52
+          ],
+          [
+            46,
+            52
+          ],
+          [
+            47,
+            53
+          ],
+          [
+            48,
+            54
+          ],
+          [
+            49,
+            55
+          ],
+          [
+            50,
+            56
+          ],
+          [
+            51,
+            57
+          ],
+          [
+            52,
+            58
+          ],
+          [
+            53,
+            59
+          ],
+          [
+            54,
+            59
+          ],
+          [
+            54,
+            60
+          ],
+          [
+            55,
+            60
+          ],
+          [
+            55,
+            61
+          ],
+          [
+            56,
+            61
+          ],
+          [
+            56,
+            62
+          ],
+          [
+            57,
+            62
+          ],
+          [
+            57,
+            63
+          ],
+          [
+            58,
+            63
+          ],
+          [
+            59,
+            64
+          ],
+          [
+            60,
+            65
+          ],
+          [
+            61,
+            66
+          ],
+          [
+            62,
+            67
+          ],
+          [
+            63,
+            68
+          ],
+          [
+            64,
+            69
+          ],
+          [
+            65,
+            69
+          ],
+          [
+            65,
+            70
+          ],
+          [
+            66,
+            70
+          ],
+          [
+            66,
+            71
+          ],
+          [
+            67,
+            71
+          ],
+          [
+            67,
+            72
+          ],
+          [
+            68,
+            72
+          ],
+          [
+            69,
+            73
+          ],
+          [
+            70,
+            74
+          ],
+          [
+            71,
+            75
+          ],
+          [
+            72,
+            76
+          ],
+          [
+            73,
+            77
+          ],
+          [
+            74,
+            77
+          ],
+          [
+            74,
+            78
+          ],
+          [
+            75,
+            78
+          ],
+          [
+            75,
+            79
+          ],
+          [
+            76,
+            79
+          ]
+        ],
+        "harbours": [
+          {
+            "edge": 91,
+            "kind": 1
+          },
+          {
+            "edge": 70,
+            "kind": 0
+          },
+          {
+            "edge": 39,
+            "kind": 4
+          },
+          {
+            "edge": 10,
+            "kind": -1
+          },
+          {
+            "edge": 1,
+            "kind": 3
+          },
+          {
+            "edge": 5,
+            "kind": 2
+          },
+          {
+            "edge": 22,
+            "kind": -1
+          },
+          {
+            "edge": 57,
+            "kind": -1
+          },
+          {
+            "edge": 85,
+            "kind": -1
+          },
+          {
+            "edge": 108,
+            "kind": 2
+          },
+          {
+            "edge": 105,
+            "kind": -1
+          }
+        ],
+        "resources": [
+          "Brick",
+          "Wood",
+          "Sheep",
+          "Wheat",
+          "Ore"
+        ],
+        "landlord": "The Landlord",
+        "dev": {
+          "knight": "Bouncer",
+          "road": "Road Trip",
+          "plenty": "Windfall",
+          "mono": "Shakedown",
+          "vp": "Clout"
+        },
+        "awards": {
+          "road": "Longest Road",
+          "army": "Most Bouncers"
+        }
+      },
+      "robber": 7,
+      "vOwner": [
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        1,
+        -1,
+        5,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        2,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        0,
+        0,
+        -1,
+        -1,
+        2,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        3,
+        5,
+        4,
+        3,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        1,
+        4,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1
+      ],
+      "vLevel": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "eOwner": [
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        1,
+        -1,
+        -1,
+        -1,
+        5,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        2,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        0,
+        0,
+        -1,
+        -1,
+        2,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        3,
+        5,
+        4,
+        3,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        1,
+        -1,
+        4,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1
+      ],
+      "seats": [
+        {
+          "name": "Dev",
+          "color": "#FF4B3E",
+          "player": "4e43abce289e",
+          "cards": 3,
+          "dev": 0,
+          "vp": 2,
+          "knights": 0,
+          "road": 1,
+          "longest": false,
+          "army": false,
+          "gone": false,
+          "discard": 0
+        },
+        {
+          "name": "Cleo",
+          "color": "#2F6BFF",
+          "player": "e25d7291c1ad",
+          "cards": 3,
+          "dev": 0,
+          "vp": 2,
+          "knights": 0,
+          "road": 1,
+          "longest": false,
+          "army": false,
+          "gone": false,
+          "discard": 0
+        },
+        {
+          "name": "Ava",
+          "color": "#2FBF55",
+          "player": "aecf95449ce4",
+          "cards": 3,
+          "dev": 0,
+          "vp": 2,
+          "knights": 0,
+          "road": 1,
+          "longest": false,
+          "army": false,
+          "gone": false,
+          "discard": 0
+        },
+        {
+          "name": "Ben",
+          "color": "#8B4DFF",
+          "player": "5d6d4aed681c",
+          "cards": 3,
+          "dev": 0,
+          "vp": 2,
+          "knights": 0,
+          "road": 1,
+          "longest": false,
+          "army": false,
+          "gone": false,
+          "discard": 0
+        },
+        {
+          "name": "Eli",
+          "color": "#FF8A2B",
+          "player": "31d4f1ae890f",
+          "cards": 3,
+          "dev": 0,
+          "vp": 2,
+          "knights": 0,
+          "road": 1,
+          "longest": false,
+          "army": false,
+          "gone": false,
+          "discard": 0
+        },
+        {
+          "name": "Fin",
+          "color": "#FF6FB5",
+          "player": "532db00eaa1a",
+          "cards": 3,
+          "dev": 0,
+          "vp": 2,
+          "knights": 0,
+          "road": 1,
+          "longest": false,
+          "army": false,
+          "gone": false,
+          "discard": 0
+        }
+      ],
+      "turn": 0,
+      "setupRound": 0,
+      "dice": [],
+      "peek": -1,
+      "bank": [
+        19,
+        21,
+        22,
+        19,
+        21
+      ],
+      "deckLeft": 34,
+      "clockLeftMs": 2697823,
+      "phaseMs": 20000,
+      "lastRound": false,
+      "timed": true,
+      "vpTarget": 8,
+      "drinks": true,
+      "beats": [
+        {
+          "seq": 40,
+          "kind": "setup",
+          "seat": 2,
+          "other": -1,
+          "target": -1,
+          "amount": 0,
+          "dice": [],
+          "seats": [],
+          "targets": [],
+          "gains": [],
+          "sips": 0
+        },
+        {
+          "seq": 41,
+          "kind": "settle",
+          "seat": 2,
+          "other": -1,
+          "target": 25,
+          "amount": 0,
+          "dice": [],
+          "seats": [],
+          "targets": [],
+          "gains": [],
+          "sips": 0
+        },
+        {
+          "seq": 42,
+          "kind": "harvest",
+          "seat": 2,
+          "other": -1,
+          "target": -1,
+          "amount": 0,
+          "dice": [],
+          "seats": [],
+          "targets": [],
+          "gains": [
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              1,
+              1,
+              1,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          ],
+          "sips": 0
+        },
+        {
+          "seq": 43,
+          "kind": "setup",
+          "seat": 2,
+          "other": -1,
+          "target": -1,
+          "amount": 0,
+          "dice": [],
+          "seats": [],
+          "targets": [],
+          "gains": [],
+          "sips": 0
+        },
+        {
+          "seq": 44,
+          "kind": "road",
+          "seat": 2,
+          "other": -1,
+          "target": 30,
+          "amount": 0,
+          "dice": [],
+          "seats": [],
+          "targets": [],
+          "gains": [],
+          "sips": 0
+        },
+        {
+          "seq": 45,
+          "kind": "setup",
+          "seat": 1,
+          "other": -1,
+          "target": -1,
+          "amount": 0,
+          "dice": [],
+          "seats": [],
+          "targets": [],
+          "gains": [],
+          "sips": 0
+        },
+        {
+          "seq": 46,
+          "kind": "settle",
+          "seat": 1,
+          "other": -1,
+          "target": 70,
+          "amount": 0,
+          "dice": [],
+          "seats": [],
+          "targets": [],
+          "gains": [],
+          "sips": 0
+        },
+        {
+          "seq": 47,
+          "kind": "harvest",
+          "seat": 1,
+          "other": -1,
+          "target": -1,
+          "amount": 0,
+          "dice": [],
+          "seats": [],
+          "targets": [],
+          "gains": [
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              1,
+              0,
+              0,
+              2,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          ],
+          "sips": 0
+        },
+        {
+          "seq": 48,
+          "kind": "setup",
+          "seat": 1,
+          "other": -1,
+          "target": -1,
+          "amount": 0,
+          "dice": [],
+          "seats": [],
+          "targets": [],
+          "gains": [],
+          "sips": 0
+        },
+        {
+          "seq": 49,
+          "kind": "road",
+          "seat": 1,
+          "other": -1,
+          "target": 93,
+          "amount": 0,
+          "dice": [],
+          "seats": [],
+          "targets": [],
+          "gains": [],
+          "sips": 0
+        },
+        {
+          "seq": 50,
+          "kind": "setup",
+          "seat": 0,
+          "other": -1,
+          "target": -1,
+          "amount": 0,
+          "dice": [],
+          "seats": [],
+          "targets": [],
+          "gains": [],
+          "sips": 0
+        },
+        {
+          "seq": 51,
+          "kind": "settle",
+          "seat": 0,
+          "other": -1,
+          "target": 41,
+          "amount": 0,
+          "dice": [],
+          "seats": [],
+          "targets": [],
+          "gains": [],
+          "sips": 0
+        },
+        {
+          "seq": 52,
+          "kind": "harvest",
+          "seat": 0,
+          "other": -1,
+          "target": -1,
+          "amount": 0,
+          "dice": [],
+          "seats": [],
+          "targets": [],
+          "gains": [
+            [
+              1,
+              1,
+              0,
+              1,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          ],
+          "sips": 0
+        },
+        {
+          "seq": 53,
+          "kind": "setup",
+          "seat": 0,
+          "other": -1,
+          "target": -1,
+          "amount": 0,
+          "dice": [],
+          "seats": [],
+          "targets": [],
+          "gains": [],
+          "sips": 0
+        },
+        {
+          "seq": 54,
+          "kind": "road",
+          "seat": 0,
+          "other": -1,
+          "target": 52,
+          "amount": 0,
+          "dice": [],
+          "seats": [],
+          "targets": [],
+          "gains": [],
+          "sips": 0
+        },
+        {
+          "seq": 55,
+          "kind": "turn",
+          "seat": 0,
+          "other": -1,
+          "target": -1,
+          "amount": 0,
+          "dice": [],
+          "seats": [],
+          "targets": [],
+          "gains": [],
+          "sips": 0
+        }
+      ],
+      "ticker": [
+        "6 players, 8 points to win",
+        "Setup done. Roll 'em!"
+      ],
+      "winner": -1,
+      "tally": []
+    }
+  },
+  "phone": {
+    "screen": {
+      "t": "sprawl",
+      "me": {
+        "index": 0,
+        "name": "Dev",
+        "color": "#FF4B3E",
+        "hand": [
+          1,
+          1,
+          0,
+          1,
+          0
+        ],
+        "vp": 2,
+        "dev": [],
+        "pieces": [
+          13,
+          3,
+          4
+        ],
+        "ratios": [
+          4,
+          4,
+          4,
+          4,
+          4
+        ],
+        "mine": true
+      },
+      "prompt": {
+        "kind": "roll",
+        "title": "Your roll!",
+        "actions": [
+          {
+            "id": "roll",
+            "text": "ROLL"
+          }
+        ],
+        "timed": true
+      },
+      "map": {
+        "size": 1,
+        "hexes": [
+          {
+            "x": -174,
+            "y": -450,
+            "terrain": 4,
+            "number": 8,
+            "name": "The Arcade"
+          },
+          {
+            "x": 0,
+            "y": -450,
+            "terrain": 1,
+            "number": 11,
+            "name": "The Dive Bar"
+          },
+          {
+            "x": 174,
+            "y": -450,
+            "terrain": 3,
+            "number": 4,
+            "name": "The Bowling Alley"
+          },
+          {
+            "x": -261,
+            "y": -300,
+            "terrain": 0,
+            "number": 4,
+            "name": "The Laundromat"
+          },
+          {
+            "x": -87,
+            "y": -300,
+            "terrain": 1,
+            "number": 10,
+            "name": "The Late-Night Diner"
+          },
+          {
+            "x": 87,
+            "y": -300,
+            "terrain": 2,
+            "number": 3,
+            "name": "The Food Court"
+          },
+          {
+            "x": 261,
+            "y": -300,
+            "terrain": 0,
+            "number": 6,
+            "name": "Charlie's Hot Tub"
+          },
+          {
+            "x": -348,
+            "y": -150,
+            "terrain": 5,
+            "number": 0,
+            "name": "The Couch"
+          },
+          {
+            "x": -174,
+            "y": -150,
+            "terrain": 5,
+            "number": 0,
+            "name": "The Futon"
+          },
+          {
+            "x": 0,
+            "y": -150,
+            "terrain": 4,
+            "number": 2,
+            "name": "The Rooftop Bar"
+          },
+          {
+            "x": 174,
+            "y": -150,
+            "terrain": 1,
+            "number": 12,
+            "name": "The Club"
+          },
+          {
+            "x": 348,
+            "y": -150,
+            "terrain": 2,
+            "number": 4,
+            "name": "The Gas Station"
+          },
+          {
+            "x": -435,
+            "y": 0,
+            "terrain": 1,
+            "number": 12,
+            "name": "Steven's Garage"
+          },
+          {
+            "x": -261,
+            "y": 0,
+            "terrain": 3,
+            "number": 10,
+            "name": "Sunhye's Studio"
+          },
+          {
+            "x": -87,
+            "y": 0,
+            "terrain": 2,
+            "number": 8,
+            "name": "Ethan's Dorm"
+          },
+          {
+            "x": 87,
+            "y": 0,
+            "terrain": 2,
+            "number": 3,
+            "name": "The Beach House"
+          },
+          {
+            "x": 261,
+            "y": 0,
+            "terrain": 4,
+            "number": 9,
+            "name": "Alex's Backyard"
+          },
+          {
+            "x": 435,
+            "y": 0,
+            "terrain": 2,
+            "number": 3,
+            "name": "The Bodega"
+          },
+          {
+            "x": -348,
+            "y": 150,
+            "terrain": 0,
+            "number": 9,
+            "name": "Amanda's Balcony"
+          },
+          {
+            "x": -174,
+            "y": 150,
+            "terrain": 4,
+            "number": 5,
+            "name": "The Karaoke Bar"
+          },
+          {
+            "x": 0,
+            "y": 150,
+            "terrain": 0,
+            "number": 11,
+            "name": "Junha's Kitchen"
+          },
+          {
+            "x": 174,
+            "y": 150,
+            "terrain": 4,
+            "number": 9,
+            "name": "The Penthouse"
+          },
+          {
+            "x": 348,
+            "y": 150,
+            "terrain": 1,
+            "number": 8,
+            "name": "The Corner Store"
+          },
+          {
+            "x": -261,
+            "y": 300,
+            "terrain": 3,
+            "number": 10,
+            "name": "Izzy's Rooftop"
+          },
+          {
+            "x": -87,
+            "y": 300,
+            "terrain": 3,
+            "number": 5,
+            "name": "The Taco Truck"
+          },
+          {
+            "x": 87,
+            "y": 300,
+            "terrain": 3,
+            "number": 5,
+            "name": "John's Living Room"
+          },
+          {
+            "x": 261,
+            "y": 300,
+            "terrain": 2,
+            "number": 2,
+            "name": "The Other Daniel's"
+          },
+          {
+            "x": -174,
+            "y": 450,
+            "terrain": 3,
+            "number": 6,
+            "name": "Anna's Porch"
+          },
+          {
+            "x": 0,
+            "y": 450,
+            "terrain": 0,
+            "number": 11,
+            "name": "The Pizza Place"
+          },
+          {
+            "x": 174,
+            "y": 450,
+            "terrain": 1,
+            "number": 6,
+            "name": "Kaishun's Basement"
+          }
+        ],
+        "vertices": [
+          [
+            -174,
+            -550
+          ],
+          [
+            0,
+            -550
+          ],
+          [
+            174,
+            -550
+          ],
+          [
+            -261,
+            -500
+          ],
+          [
+            -87,
+            -500
+          ],
+          [
+            87,
+            -500
+          ],
+          [
+            261,
+            -500
+          ],
+          [
+            -261,
+            -400
+          ],
+          [
+            -87,
+            -400
+          ],
+          [
+            87,
+            -400
+          ],
+          [
+            261,
+            -400
+          ],
+          [
+            -348,
+            -350
+          ],
+          [
+            -174,
+            -350
+          ],
+          [
+            0,
+            -350
+          ],
+          [
+            174,
+            -350
+          ],
+          [
+            348,
+            -350
+          ],
+          [
+            -348,
+            -250
+          ],
+          [
+            -174,
+            -250
+          ],
+          [
+            0,
+            -250
+          ],
+          [
+            174,
+            -250
+          ],
+          [
+            348,
+            -250
+          ],
+          [
+            -435,
+            -200
+          ],
+          [
+            -261,
+            -200
+          ],
+          [
+            -87,
+            -200
+          ],
+          [
+            87,
+            -200
+          ],
+          [
+            261,
+            -200
+          ],
+          [
+            435,
+            -200
+          ],
+          [
+            -435,
+            -100
+          ],
+          [
+            -261,
+            -100
+          ],
+          [
+            -87,
+            -100
+          ],
+          [
+            87,
+            -100
+          ],
+          [
+            261,
+            -100
+          ],
+          [
+            435,
+            -100
+          ],
+          [
+            -522,
+            -50
+          ],
+          [
+            -348,
+            -50
+          ],
+          [
+            -174,
+            -50
+          ],
+          [
+            0,
+            -50
+          ],
+          [
+            174,
+            -50
+          ],
+          [
+            348,
+            -50
+          ],
+          [
+            522,
+            -50
+          ],
+          [
+            -522,
+            50
+          ],
+          [
+            -348,
+            50
+          ],
+          [
+            -174,
+            50
+          ],
+          [
+            0,
+            50
+          ],
+          [
+            174,
+            50
+          ],
+          [
+            348,
+            50
+          ],
+          [
+            522,
+            50
+          ],
+          [
+            -435,
+            100
+          ],
+          [
+            -261,
+            100
+          ],
+          [
+            -87,
+            100
+          ],
+          [
+            87,
+            100
+          ],
+          [
+            261,
+            100
+          ],
+          [
+            435,
+            100
+          ],
+          [
+            -435,
+            200
+          ],
+          [
+            -261,
+            200
+          ],
+          [
+            -87,
+            200
+          ],
+          [
+            87,
+            200
+          ],
+          [
+            261,
+            200
+          ],
+          [
+            435,
+            200
+          ],
+          [
+            -348,
+            250
+          ],
+          [
+            -174,
+            250
+          ],
+          [
+            0,
+            250
+          ],
+          [
+            174,
+            250
+          ],
+          [
+            348,
+            250
+          ],
+          [
+            -348,
+            350
+          ],
+          [
+            -174,
+            350
+          ],
+          [
+            0,
+            350
+          ],
+          [
+            174,
+            350
+          ],
+          [
+            348,
+            350
+          ],
+          [
+            -261,
+            400
+          ],
+          [
+            -87,
+            400
+          ],
+          [
+            87,
+            400
+          ],
+          [
+            261,
+            400
+          ],
+          [
+            -261,
+            500
+          ],
+          [
+            -87,
+            500
+          ],
+          [
+            87,
+            500
+          ],
+          [
+            261,
+            500
+          ],
+          [
+            -174,
+            550
+          ],
+          [
+            0,
+            550
+          ],
+          [
+            174,
+            550
+          ]
+        ],
+        "edges": [
+          [
+            0,
+            3
+          ],
+          [
+            0,
+            4
+          ],
+          [
+            1,
+            4
+          ],
+          [
+            1,
+            5
+          ],
+          [
+            2,
+            5
+          ],
+          [
+            2,
+            6
+          ],
+          [
+            3,
+            7
+          ],
+          [
+            4,
+            8
+          ],
+          [
+            5,
+            9
+          ],
+          [
+            6,
+            10
+          ],
+          [
+            7,
+            11
+          ],
+          [
+            7,
+            12
+          ],
+          [
+            8,
+            12
+          ],
+          [
+            8,
+            13
+          ],
+          [
+            9,
+            13
+          ],
+          [
+            9,
+            14
+          ],
+          [
+            10,
+            14
+          ],
+          [
+            10,
+            15
+          ],
+          [
+            11,
+            16
+          ],
+          [
+            12,
+            17
+          ],
+          [
+            13,
+            18
+          ],
+          [
+            14,
+            19
+          ],
+          [
+            15,
+            20
+          ],
+          [
+            16,
+            21
+          ],
+          [
+            16,
+            22
+          ],
+          [
+            17,
+            22
+          ],
+          [
+            17,
+            23
+          ],
+          [
+            18,
+            23
+          ],
+          [
+            18,
+            24
+          ],
+          [
+            19,
+            24
+          ],
+          [
+            19,
+            25
+          ],
+          [
+            20,
+            25
+          ],
+          [
+            20,
+            26
+          ],
+          [
+            21,
+            27
+          ],
+          [
+            22,
+            28
+          ],
+          [
+            23,
+            29
+          ],
+          [
+            24,
+            30
+          ],
+          [
+            25,
+            31
+          ],
+          [
+            26,
+            32
+          ],
+          [
+            27,
+            33
+          ],
+          [
+            27,
+            34
+          ],
+          [
+            28,
+            34
+          ],
+          [
+            28,
+            35
+          ],
+          [
+            29,
+            35
+          ],
+          [
+            29,
+            36
+          ],
+          [
+            30,
+            36
+          ],
+          [
+            30,
+            37
+          ],
+          [
+            31,
+            37
+          ],
+          [
+            31,
+            38
+          ],
+          [
+            32,
+            38
+          ],
+          [
+            32,
+            39
+          ],
+          [
+            33,
+            40
+          ],
+          [
+            34,
+            41
+          ],
+          [
+            35,
+            42
+          ],
+          [
+            36,
+            43
+          ],
+          [
+            37,
+            44
+          ],
+          [
+            38,
+            45
+          ],
+          [
+            39,
+            46
+          ],
+          [
+            40,
+            47
+          ],
+          [
+            41,
+            47
+          ],
+          [
+            41,
+            48
+          ],
+          [
+            42,
+            48
+          ],
+          [
+            42,
+            49
+          ],
+          [
+            43,
+            49
+          ],
+          [
+            43,
+            50
+          ],
+          [
+            44,
+            50
+          ],
+          [
+            44,
+            51
+          ],
+          [
+            45,
+            51
+          ],
+          [
+            45,
+            52
+          ],
+          [
+            46,
+            52
+          ],
+          [
+            47,
+            53
+          ],
+          [
+            48,
+            54
+          ],
+          [
+            49,
+            55
+          ],
+          [
+            50,
+            56
+          ],
+          [
+            51,
+            57
+          ],
+          [
+            52,
+            58
+          ],
+          [
+            53,
+            59
+          ],
+          [
+            54,
+            59
+          ],
+          [
+            54,
+            60
+          ],
+          [
+            55,
+            60
+          ],
+          [
+            55,
+            61
+          ],
+          [
+            56,
+            61
+          ],
+          [
+            56,
+            62
+          ],
+          [
+            57,
+            62
+          ],
+          [
+            57,
+            63
+          ],
+          [
+            58,
+            63
+          ],
+          [
+            59,
+            64
+          ],
+          [
+            60,
+            65
+          ],
+          [
+            61,
+            66
+          ],
+          [
+            62,
+            67
+          ],
+          [
+            63,
+            68
+          ],
+          [
+            64,
+            69
+          ],
+          [
+            65,
+            69
+          ],
+          [
+            65,
+            70
+          ],
+          [
+            66,
+            70
+          ],
+          [
+            66,
+            71
+          ],
+          [
+            67,
+            71
+          ],
+          [
+            67,
+            72
+          ],
+          [
+            68,
+            72
+          ],
+          [
+            69,
+            73
+          ],
+          [
+            70,
+            74
+          ],
+          [
+            71,
+            75
+          ],
+          [
+            72,
+            76
+          ],
+          [
+            73,
+            77
+          ],
+          [
+            74,
+            77
+          ],
+          [
+            74,
+            78
+          ],
+          [
+            75,
+            78
+          ],
+          [
+            75,
+            79
+          ],
+          [
+            76,
+            79
+          ]
+        ],
+        "harbours": [
+          {
+            "edge": 91,
+            "kind": 1
+          },
+          {
+            "edge": 70,
+            "kind": 0
+          },
+          {
+            "edge": 39,
+            "kind": 4
+          },
+          {
+            "edge": 10,
+            "kind": -1
+          },
+          {
+            "edge": 1,
+            "kind": 3
+          },
+          {
+            "edge": 5,
+            "kind": 2
+          },
+          {
+            "edge": 22,
+            "kind": -1
+          },
+          {
+            "edge": 57,
+            "kind": -1
+          },
+          {
+            "edge": 85,
+            "kind": -1
+          },
+          {
+            "edge": 108,
+            "kind": 2
+          },
+          {
+            "edge": 105,
+            "kind": -1
+          }
+        ],
+        "resources": [
+          "Brick",
+          "Wood",
+          "Sheep",
+          "Wheat",
+          "Ore"
+        ],
+        "landlord": "The Landlord",
+        "dev": {
+          "knight": "Bouncer",
+          "road": "Road Trip",
+          "plenty": "Windfall",
+          "mono": "Shakedown",
+          "vp": "Clout"
+        },
+        "awards": {
+          "road": "Longest Road",
+          "army": "Most Bouncers"
+        }
+      },
+      "robber": 7,
+      "vOwner": [
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        1,
+        -1,
+        5,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        2,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        0,
+        0,
+        -1,
+        -1,
+        2,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        3,
+        5,
+        4,
+        3,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        1,
+        4,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1
+      ],
+      "vLevel": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "eOwner": [
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        1,
+        -1,
+        -1,
+        -1,
+        5,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        2,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        0,
+        0,
+        -1,
+        -1,
+        2,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        3,
+        5,
+        4,
+        3,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        1,
+        -1,
+        4,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1
+      ],
+      "colors": [
+        "#FF4B3E",
+        "#2F6BFF",
+        "#2FBF55",
+        "#8B4DFF",
+        "#FF8A2B",
+        "#FF6FB5"
+      ],
+      "spots": [],
+      "build": {
+        "roads": [],
+        "settlements": [],
+        "cities": [],
+        "dev": false
+      },
+      "victims": [],
+      "partners": [
+        {
+          "index": 1,
+          "name": "Cleo",
+          "color": "#2F6BFF",
+          "cards": 3
+        },
+        {
+          "index": 2,
+          "name": "Ava",
+          "color": "#2FBF55",
+          "cards": 3
+        },
+        {
+          "index": 3,
+          "name": "Ben",
+          "color": "#8B4DFF",
+          "cards": 3
+        },
+        {
+          "index": 4,
+          "name": "Eli",
+          "color": "#FF8A2B",
+          "cards": 3
+        },
+        {
+          "index": 5,
+          "name": "Fin",
+          "color": "#FF6FB5",
+          "cards": 3
+        }
+      ],
+      "canTrade": false,
+      "bank": [
+        19,
+        21,
+        22,
+        19,
+        21
+      ],
+      "discard": 0,
+      "drinks": true
+    },
+    "me": {
+      "id": "4e43abce289e",
+      "name": "Dev",
+      "avatar": {
+        "face": "p:03",
+        "color": "#2FBF55"
+      },
+      "role": "PLAYER",
+      "connected": true
+    }
+  }
+}

@@ -1,0 +1,170 @@
+/* Arcade surface for /tv, /play and /host. Scoped so Steven's pastel hat page is untouched. */
+body[data-surface="arcade"] {
+  --arena-900: #06070d;
+  --arena-800: #0d1020;
+  --arena-700: #171b33;
+  --arena-600: #242a4d;
+  --led: #ffb000;
+  --led-dim: #3b2a05;
+  --hot: #ff4d00;
+  --fire: #ffd000;
+  --ink-hi: #f7f3ea;
+  --ink-lo: #9aa0b8;
+  --good: #35e07f;
+  --bad: #ff3b5c;
+  --font-display: "Bungee", system-ui, sans-serif;
+  --font-pixel: "Press Start 2P", ui-monospace, monospace;
+
+  margin: 0;
+  color: var(--ink-hi);
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  background: radial-gradient(ellipse at 50% -20%, #232a55 0%, var(--arena-900) 65%) fixed;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.arcade {
+  min-height: 100%;
+}
+
+.display {
+  font-family: var(--font-display);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.pixel {
+  font-family: var(--font-pixel);
+  font-size: 0.7em;
+  line-height: 1.6;
+}
+
+.avatar {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  box-sizing: border-box;
+  border-radius: 50%;
+  border: 3px solid var(--ink-lo);
+  background: var(--arena-700);
+  overflow: hidden;
+  line-height: 1;
+}
+
+.avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.avatar--fire {
+  animation: flicker 0.5s infinite alternate;
+}
+
+@keyframes flicker {
+  from { box-shadow: 0 0 0 3px var(--fire), 0 0 18px 4px var(--hot); }
+  to { box-shadow: 0 0 0 3px var(--hot), 0 0 34px 12px var(--fire); }
+}
+
+.btn {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  border: none;
+  border-radius: 14px;
+  padding: 0.8rem 1.1rem;
+  min-height: 56px;
+  color: var(--arena-900);
+  background: var(--led);
+  box-shadow: 0 5px 0 #a86f00;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.btn:active {
+  transform: translateY(3px);
+  box-shadow: 0 2px 0 #a86f00;
+}
+
+.btn:disabled {
+  opacity: 0.45;
+}
+
+.btn--ghost {
+  background: var(--arena-600);
+  color: var(--ink-hi);
+  box-shadow: 0 5px 0 var(--arena-800);
+}
+
+.btn--danger {
+  background: var(--bad);
+  color: #fff;
+  box-shadow: 0 5px 0 #a3182f;
+}
+
+.btn--good {
+  background: var(--good);
+  box-shadow: 0 5px 0 #168a48;
+}
+
+.btn--small {
+  min-height: 40px;
+  padding: 0.4rem 0.8rem;
+  font-size: 0.85rem;
+}
+
+.input {
+  font: inherit;
+  font-size: 1.2rem;
+  padding: 0.8rem 1rem;
+  border-radius: 12px;
+  border: 2px solid var(--arena-600);
+  background: var(--arena-800);
+  color: var(--ink-hi);
+}
+
+.led {
+  display: block;
+}
+
+.banner {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 60;
+  padding: 0.5rem;
+  text-align: center;
+  font-weight: 700;
+  background: var(--bad);
+  color: #fff;
+}
+
+.toast-stack {
+  position: fixed;
+  left: 12px;
+  right: 12px;
+  bottom: 12px;
+  z-index: 40;
+  display: grid;
+  gap: 8px;
+}
+
+.toast {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: var(--arena-600);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 50%);
+}
+
+.toast .btn {
+  min-height: 44px;
+  padding: 0.5rem 0.8rem;
+}
+
+.toast__text {
+  flex: 1;
+}
+
+.toast--error {
+  background: #4a1020;
+}

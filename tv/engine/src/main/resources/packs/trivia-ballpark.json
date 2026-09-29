@@ -1,0 +1,486 @@
+[
+ {
+  "id": "tbp001",
+  "category": "Body",
+  "prompt": "How many bones are in the adult human body?",
+  "answer": 206,
+  "unit": "bones",
+  "fact": "Babies are born with around 300. Some fuse as you grow."
+ },
+ {
+  "id": "tbp002",
+  "category": "Places",
+  "prompt": "How tall is the Eiffel Tower, in meters, to the tip?",
+  "answer": 330,
+  "unit": "m",
+  "fact": "It was only supposed to stand for 20 years."
+ },
+ {
+  "id": "tbp003",
+  "category": "History",
+  "prompt": "In what year did the Titanic sink?",
+  "answer": 1912,
+  "fact": "It sank on its first voyage, four days in.",
+  "year": true
+ },
+ {
+  "id": "tbp004",
+  "category": "World",
+  "prompt": "How many member states are in the United Nations?",
+  "answer": 193,
+  "unit": "members",
+  "fact": "South Sudan was the most recent to join, in 2011."
+ },
+ {
+  "id": "tbp005",
+  "category": "Sports",
+  "prompt": "How many minutes long is a regulation NBA game?",
+  "answer": 48,
+  "unit": "minutes",
+  "fact": "Four 12-minute quarters. College games are 40."
+ },
+ {
+  "id": "tbp006",
+  "category": "World",
+  "prompt": "How many time zones does Russia span?",
+  "answer": 11,
+  "unit": "time zones"
+ },
+ {
+  "id": "tbp007",
+  "category": "World",
+  "prompt": "What's the population of Canada, in millions?",
+  "answer": 41,
+  "unit": "million",
+  "fact": "Canada has about a tenth of the US population in a bigger country."
+ },
+ {
+  "id": "tbp008",
+  "category": "Screen Time",
+  "prompt": "How many episodes of Friends were made?",
+  "answer": 236,
+  "unit": "episodes",
+  "fact": "Ten seasons, from 1994 to 2004."
+ },
+ {
+  "id": "tbp009",
+  "category": "Space",
+  "prompt": "How far away is the Moon, on average, in miles?",
+  "answer": 238855,
+  "unit": "miles",
+  "fact": "You could fit every other planet in the solar system in that gap."
+ },
+ {
+  "id": "tbp010",
+  "category": "Science",
+  "prompt": "How many seconds are in a day?",
+  "answer": 86400,
+  "unit": "seconds"
+ },
+ {
+  "id": "tbp011",
+  "category": "Tech",
+  "prompt": "In what year was YouTube founded?",
+  "answer": 2005,
+  "fact": "The first video went up in April 2005.",
+  "year": true
+ },
+ {
+  "id": "tbp012",
+  "category": "Food & Drink",
+  "prompt": "The Nathan's hot dog contest record, set by Joey Chestnut in 2021, is how many hot dogs in 10 minutes?",
+  "answer": 76,
+  "unit": "hot dogs",
+  "fact": "Buns included."
+ },
+ {
+  "id": "tbp013",
+  "category": "Places",
+  "prompt": "How tall is the Statue of Liberty, ground to torch, in feet?",
+  "answer": 305,
+  "unit": "feet"
+ },
+ {
+  "id": "tbp014",
+  "category": "Screen Time",
+  "prompt": "How many Oscars did Titanic win?",
+  "answer": 11,
+  "unit": "Oscars",
+  "fact": "A record it shares with Ben-Hur and The Return of the King."
+ },
+ {
+  "id": "tbp015",
+  "category": "World",
+  "prompt": "Roughly how many languages are spoken in the world today?",
+  "answer": 7000,
+  "unit": "languages",
+  "fact": "About 40% of them are endangered."
+ },
+ {
+  "id": "tbp016",
+  "category": "Places",
+  "prompt": "How long is the Great Wall of China, counting every branch, in miles?",
+  "answer": 13171,
+  "unit": "miles",
+  "fact": "A 2012 survey measured 21,196 km of wall."
+ },
+ {
+  "id": "tbp017",
+  "category": "Places",
+  "prompt": "Formula Rossa in Abu Dhabi is the fastest roller coaster. What's its top speed in mph?",
+  "answer": 149,
+  "unit": "mph",
+  "fact": "It hits 149 mph in under 5 seconds."
+ },
+ {
+  "id": "tbp018",
+  "category": "Food & Drink",
+  "prompt": "About how many Starbucks stores are there worldwide?",
+  "answer": 40000,
+  "unit": "stores",
+  "fact": "More than 40,000 as of 2024."
+ },
+ {
+  "id": "tbp019",
+  "category": "Sports",
+  "prompt": "In what year was the first Super Bowl played?",
+  "answer": 1967,
+  "fact": "The Packers beat the Chiefs.",
+  "year": true
+ },
+ {
+  "id": "tbp020",
+  "category": "Games",
+  "prompt": "How many squares are on a chessboard?",
+  "answer": 64,
+  "unit": "squares"
+ },
+ {
+  "id": "tbp021",
+  "category": "Science",
+  "prompt": "How many elements are on the periodic table?",
+  "answer": 118,
+  "unit": "elements",
+  "fact": "The last four were named in 2016."
+ },
+ {
+  "id": "tbp022",
+  "category": "Body",
+  "prompt": "How many weeks is a typical full-term pregnancy?",
+  "answer": 40,
+  "unit": "weeks"
+ },
+ {
+  "id": "tbp023",
+  "category": "Music",
+  "prompt": "How old was Mozart when he died?",
+  "answer": 35,
+  "unit": "years old",
+  "fact": "He wrote over 600 works anyway."
+ },
+ {
+  "id": "tbp024",
+  "category": "Games",
+  "prompt": "How many Pokémon were in the original Red and Blue games?",
+  "answer": 151,
+  "unit": "Pokémon",
+  "fact": "Mew was the 151st, hidden as a secret."
+ },
+ {
+  "id": "tbp025",
+  "category": "Animals",
+  "prompt": "How many teeth does an adult dog have?",
+  "answer": 42,
+  "unit": "teeth",
+  "fact": "Ten more than an adult human."
+ },
+ {
+  "id": "tbp026",
+  "category": "Science",
+  "prompt": "What's the boiling point of water at sea level, in °F?",
+  "answer": 212,
+  "unit": "°F"
+ },
+ {
+  "id": "tbp027",
+  "category": "Places",
+  "prompt": "How many US states border Canada?",
+  "answer": 13,
+  "unit": "states",
+  "fact": "Alaska has the longest stretch of border."
+ },
+ {
+  "id": "tbp028",
+  "category": "Space",
+  "prompt": "How many people have walked on the Moon?",
+  "answer": 12,
+  "unit": "people",
+  "fact": "All between 1969 and 1972."
+ },
+ {
+  "id": "tbp029",
+  "category": "Space",
+  "prompt": "How many Earth days does it take Mars to orbit the Sun?",
+  "answer": 687,
+  "unit": "days"
+ },
+ {
+  "id": "tbp030",
+  "category": "Screen Time",
+  "prompt": "How many movies are in the main Fast & Furious series, through Fast X (2023)?",
+  "answer": 10,
+  "unit": "movies",
+  "fact": "Family."
+ },
+ {
+  "id": "tbp031",
+  "category": "Places",
+  "prompt": "What's the population of North Carolina, in millions?",
+  "answer": 11,
+  "unit": "million",
+  "fact": "It passed 11 million in 2024."
+ },
+ {
+  "id": "tbp032",
+  "category": "Food & Drink",
+  "prompt": "How many grams of sugar are in a 12 oz can of Coca-Cola?",
+  "answer": 39,
+  "unit": "grams",
+  "fact": "That's close to 10 teaspoons."
+ },
+ {
+  "id": "tbp033",
+  "category": "Food & Drink",
+  "prompt": "How many gallons of beer are in a standard US keg?",
+  "answer": 15.5,
+  "unit": "gallons",
+  "fact": "That's about 165 twelve-ounce cups."
+ },
+ {
+  "id": "tbp034",
+  "category": "Food & Drink",
+  "prompt": "How many standard 1.5 oz shots are in a 750 ml bottle?",
+  "answer": 17,
+  "unit": "shots"
+ },
+ {
+  "id": "tbp035",
+  "category": "Places",
+  "prompt": "How tall is Mount Everest, in feet?",
+  "answer": 29032,
+  "unit": "feet",
+  "fact": "China and Nepal agreed on the number in 2020."
+ },
+ {
+  "id": "tbp036",
+  "category": "Books",
+  "prompt": "In what year was the first Harry Potter book published in the UK?",
+  "answer": 1997,
+  "fact": "Twelve publishers turned it down first.",
+  "year": true
+ },
+ {
+  "id": "tbp037",
+  "category": "Games",
+  "prompt": "How many dots are on a standard six-sided die, added up?",
+  "answer": 21,
+  "unit": "dots",
+  "fact": "1 + 2 + 3 + 4 + 5 + 6."
+ },
+ {
+  "id": "tbp038",
+  "category": "Sports",
+  "prompt": "How many players does a rugby union team have on the field?",
+  "answer": 15,
+  "unit": "players"
+ },
+ {
+  "id": "tbp039",
+  "category": "Music",
+  "prompt": "How many Grammys has Beyoncé won, as of 2025?",
+  "answer": 35,
+  "unit": "Grammys",
+  "fact": "The most of any artist ever."
+ },
+ {
+  "id": "tbp040",
+  "category": "Screen Time",
+  "prompt": "How many Oscar nominations has Meryl Streep received?",
+  "answer": 21,
+  "unit": "nominations",
+  "fact": "The most of any actor, with three wins."
+ },
+ {
+  "id": "tbp041",
+  "category": "Tech",
+  "prompt": "How many hours of video are uploaded to YouTube every minute, as of 2019?",
+  "answer": 500,
+  "unit": "hours"
+ },
+ {
+  "id": "tbp042",
+  "category": "Places",
+  "prompt": "How many main islands make up Hawaii?",
+  "answer": 8,
+  "unit": "islands"
+ },
+ {
+  "id": "tbp043",
+  "category": "Places",
+  "prompt": "How tall is the Burj Khalifa, in feet?",
+  "answer": 2717,
+  "unit": "feet",
+  "fact": "It's 828 meters: the tallest building in the world."
+ },
+ {
+  "id": "tbp044",
+  "category": "History",
+  "prompt": "In what year was the Eiffel Tower finished?",
+  "answer": 1889,
+  "fact": "It was built for the 1889 World's Fair in Paris.",
+  "year": true
+ },
+ {
+  "id": "tbp045",
+  "category": "World",
+  "prompt": "How many countries are in Africa?",
+  "answer": 54,
+  "unit": "countries",
+  "fact": "The newest is South Sudan, independent since 2011."
+ },
+ {
+  "id": "tbp046",
+  "category": "Animals",
+  "prompt": "How many bones are in a giraffe's neck?",
+  "answer": 7,
+  "unit": "bones",
+  "fact": "The same number as in yours: they're just much longer."
+ },
+ {
+  "id": "tbp047",
+  "category": "Screen Time",
+  "prompt": "How many episodes of The Office (US) were made?",
+  "answer": 201,
+  "unit": "episodes",
+  "fact": "It ran for nine seasons, from 2005 to 2013."
+ },
+ {
+  "id": "tbp048",
+  "category": "Sports",
+  "prompt": "How long is an Olympic swimming pool, in meters?",
+  "answer": 50,
+  "unit": "meters",
+  "fact": "It holds about 2.5 million liters of water."
+ },
+ {
+  "id": "tbp049",
+  "category": "Screen Time",
+  "prompt": "How many official James Bond films were made through No Time to Die (2021)?",
+  "answer": 25,
+  "unit": "films",
+  "fact": "Roger Moore made the most official Bond films: seven."
+ },
+ {
+  "id": "tbp050",
+  "category": "History",
+  "prompt": "In what year was the US Declaration of Independence adopted?",
+  "answer": 1776,
+  "fact": "It was adopted on July 4 in Philadelphia.",
+  "year": true
+ },
+ {
+  "id": "tbp051",
+  "category": "Games",
+  "prompt": "How many cards are in a standard deck, without jokers?",
+  "answer": 52,
+  "unit": "cards",
+  "fact": "Four suits of 13."
+ },
+ {
+  "id": "tbp052",
+  "category": "History",
+  "prompt": "In what year did the Wright brothers make the first powered flight?",
+  "answer": 1903,
+  "fact": "The first flight lasted 12 seconds, at Kitty Hawk, North Carolina.",
+  "year": true
+ },
+ {
+  "id": "tbp053",
+  "category": "World",
+  "prompt": "Joe Biden was which number US president?",
+  "answer": 46,
+  "fact": "Grover Cleveland counts twice, as the 22nd and 24th."
+ },
+ {
+  "id": "tbp054",
+  "category": "World",
+  "prompt": "How many stripes are on the US flag?",
+  "answer": 13,
+  "unit": "stripes",
+  "fact": "One for each of the original 13 colonies."
+ },
+ {
+  "id": "tbp055",
+  "category": "Games",
+  "prompt": "How many colored stickers are on a standard Rubik's Cube?",
+  "answer": 54,
+  "unit": "stickers",
+  "fact": "Nine on each of its six faces."
+ },
+ {
+  "id": "tbp056",
+  "category": "Places",
+  "prompt": "How tall is the Empire State Building to its tip, in feet?",
+  "answer": 1454,
+  "unit": "feet",
+  "fact": "It was the world's tallest building for nearly 40 years."
+ },
+ {
+  "id": "tbp057",
+  "category": "Screen Time",
+  "prompt": "In what year did the first Star Wars movie come out?",
+  "answer": 1977,
+  "fact": "It opened in May 1977.",
+  "year": true
+ },
+ {
+  "id": "tbp058",
+  "category": "World",
+  "prompt": "What was the US population in the 2020 census, in millions?",
+  "answer": 331,
+  "unit": "million",
+  "fact": "The next census is in 2030."
+ },
+ {
+  "id": "tbp059",
+  "category": "History",
+  "prompt": "How many years did the Hundred Years' War actually last?",
+  "answer": 116,
+  "unit": "years",
+  "fact": "It ran from 1337 to 1453."
+ },
+ {
+  "id": "tbp060",
+  "category": "Sports",
+  "prompt": "How many minutes is a soccer match, not counting stoppage time?",
+  "answer": 90,
+  "unit": "minutes",
+  "fact": "Two halves of 45 minutes."
+ },
+ {
+  "id": "tbp061",
+  "category": "Science",
+  "prompt": "How many seconds are in an hour?",
+  "answer": 3600,
+  "unit": "seconds",
+  "fact": "60 minutes of 60 seconds."
+ },
+ {
+  "id": "tbp062",
+  "category": "Places",
+  "prompt": "About how long is the Nile, in miles?",
+  "answer": 4132,
+  "unit": "miles",
+  "fact": "About 6,650 km, ending in the Mediterranean."
+ }
+]

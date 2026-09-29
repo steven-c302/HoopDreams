@@ -1,0 +1,387 @@
+/* Per-game environments. Identity/answer colors deliberately remain in tokens.css.
+   Every override is scoped, including gallery, tutorial and phone surfaces. */
+@import '@fontsource/playfair-display/700.css';
+@import '@fontsource/playfair-display/900.css';
+@import '@fontsource/anton';
+@import '@fontsource/zilla-slab/600.css';
+@import '@fontsource/zilla-slab/700.css';
+[data-game-theme] {
+  --stroke-tv: 2px;
+  --stroke-phone: 2px;
+  --shadow-tv: 0px;
+  --shadow-phone: 0px;
+  --radius-tv: 16px;
+  --radius-phone: 12px;
+  --game-line: #c9c4b6;
+  --game-accent: #a46642;
+  --game-shadow: 0 12px 30px #081b2526;
+  color: var(--ink);
+  /* Anton has one weight and the slab/serif faces two: never fake a bolder cut. */
+  font-synthesis: none;
+}
+[data-game-theme='turf'] {
+  --ink: #1d3443;
+  --ink-soft: #50616a;
+  --paper: #fbf6e9;
+  --paper-2: #eae3d3;
+  --font-display: 'Figtree Variable', system-ui, sans-serif;
+  --game-bg: #203b48;
+  --game-accent: #b6684c;
+}
+[data-game-theme='sprawl'] {
+  --ink: #233e3b;
+  --ink-soft: #51665e;
+  --paper: #faf3df;
+  --paper-2: #e6ddc5;
+  --font-display: Georgia, 'Times New Roman', serif;
+  --game-bg: #163f4a;
+  --game-accent: #b89051;
+  --sp-hills: #cd9272;
+  --sp-forest: #60896e;
+  --sp-pasture: #bdd098;
+  --sp-fields: #e4c77c;
+  --sp-mountains: #a6b2b5;
+  --sp-desert: #e1d0a6;
+  --sp-jetty: #ba9772;
+}
+.game-scene {
+  position: absolute; inset: 0; overflow: hidden; background-color: var(--game-bg);
+  background-image: linear-gradient(120deg, #ffffff06, transparent 65%);
+}
+.game-scene[data-game-theme='turf'] {
+  background-image: linear-gradient(#ffffff04 1px, transparent 1px), linear-gradient(90deg, #ffffff04 1px, transparent 1px);
+  background-size: 64px 64px;
+}
+.game-scene[data-game-theme='sprawl'] {
+  background-image: repeating-radial-gradient(ellipse at 50% 55%, transparent 0 88px, #9ed8d506 89px 90px, transparent 91px 125px);
+}
+.game-mark { padding: 4px 8px 18px; color: var(--paper); }
+.game-mark .edition { display: block; font: 750 15px var(--font-body); letter-spacing: .18em; opacity: .75; }
+.game-mark h1 { font: 900 54px/.95 var(--font-display); letter-spacing: -.055em; margin: 12px 0 10px; }
+.game-mark h1 span { color: #e7b493; margin-left: 8px; }
+.game-mark p { font: 500 20px/1.4 var(--font-body); opacity: .8; }
+[data-game-theme='sprawl'] .game-mark h1 { font-size: 64px; font-weight: 700; letter-spacing: -.045em; }
+[data-game-theme] .game-dial { flex: none; animation: none; border: 0; background: transparent; box-shadow: none; }
+[data-game-theme] .game-dial span { font: 800 30px var(--font-body); -webkit-text-stroke: 0; color: var(--ink); }
+[data-game-theme] .game-dial.hot { animation: none; }
+/* The original countdown/pause calculation stays shared; only its housing changes. */
+[data-game-theme] .game-dial svg { filter: drop-shadow(0 2px 0 #ffffff55); }
+[data-game-theme] .game-dial svg > circle:last-child { stroke-width: 3; }
+
+/* HOME TURF / neighborhood & deeds */
+[data-game-theme='turf'] .turf-stage { padding: 32px; gap: 28px; }
+[data-game-theme='turf'] .turf-rail { gap: 16px; }
+[data-game-theme='turf'] .turf-viewport { border: 6px solid #c9b99b; border-radius: 12px; box-shadow: 0 8px 0 #0f2530, 0 24px 60px #081b2566; }
+[data-game-theme='turf'] .turf-space { border-color: #a9b0a7; }
+[data-game-theme='turf'] .turf-space .band { border-color: #1d344355; }
+[data-game-theme='turf'] .turf-space.corner { background: #e7e1ce; }
+[data-game-theme='turf'] .turf-space.corner .label { font-weight: 900; font-size: 19px; }
+[data-game-theme='turf'] .turf-space .label { font-weight: 850; }
+[data-game-theme='turf'] .well { border: 1px solid #c7c0ab; border-radius: 2px; padding: 10px; background: linear-gradient(150deg, #fbf6e9, #eee6d4); }
+[data-game-theme='turf'] .well-head { border-bottom: 1px solid #c7c0ab; gap: 10px; }
+[data-game-theme='turf'] .well-head .turn b { font-weight: 900; font-size: 32px; letter-spacing: -.035em; }
+[data-game-theme='turf'] .ticker { border-top: 1px solid #c7c0ab; }
+[data-game-theme='turf'] .ticker p { font-weight: 550; }
+[data-game-theme='turf'] .ticker p.latest { font-weight: 800; }
+[data-game-theme='turf'] .turf-card { padding: 18px 22px; border: 1px solid #ffffff50; border-radius: 12px; box-shadow: var(--game-shadow) !important; gap: 8px; }
+[data-game-theme='turf'] .turf-card.active { border-left: 7px solid var(--game-accent); background: #fff9eb !important; }
+[data-game-theme='turf'] .turf-card h3 { font-weight: 850; letter-spacing: -.02em; }
+[data-game-theme='turf'] .turf-card .cash { font-weight: 850; font-variant-numeric: tabular-nums; letter-spacing: -.05em; }
+[data-game-theme='turf'] .turf-card .badge { font-size: 19px; border: 1px solid #bbc2b7; border-radius: 5px; padding: 4px 8px; }
+[data-game-theme='turf'] .turf-card .badge.set { background: #d4e6cc; }
+[data-game-theme='turf'] .turf-card .badge.card { background: #d9e9ed; }
+[data-game-theme='turf'] .turf-card .deed-pip { border-width: 1px; border-radius: 2px; }
+[data-game-theme='turf'] .turf-piece { filter: drop-shadow(0 3px 1px #132c3d33); }
+.game-scene[data-game-theme='turf'] .call { font-weight: 900; letter-spacing: -.025em; color: var(--ink); -webkit-text-stroke: 0; }
+[data-game-theme='turf'] .deed-card { border: 2px solid #9eacaa; border-radius: 6px; box-shadow: 0 8px 0 #d9d1bd, 0 15px 25px #1d34431a; }
+[data-game-theme='turf'] .deed-band { border-bottom: 2px solid #1d344344; }
+[data-game-theme='turf'] .deed-band span { font-weight: 850; }
+[data-game-theme='turf'] .deed-band small { font-size: 17px; letter-spacing: .18em; }
+[data-game-theme='turf'] .deed-foot { border-top: 1px solid #c7c0ab; }
+[data-game-theme='turf'] .deed-foot b { font-weight: 850; }
+[data-game-theme='turf'] .game-card { border-radius: 8px; box-shadow: var(--game-shadow); }
+[data-game-theme='turf'] .game-card .deck { color: var(--ink); -webkit-text-stroke: 0; font-weight: 900; }
+[data-game-theme='turf'] .neighborhood { width: 560px; max-width: 100%; height: 175px; flex: none; }
+[data-game-theme='turf'] .auction-bid .label { font-weight: 850; }
+
+/* SPRAWL / parchment rails, navigable ocean & wooden pieces */
+[data-game-theme='sprawl'] .sp-stage { padding: 28px; gap: 22px; }
+[data-game-theme='sprawl'] .sp-rail { gap: 14px; }
+[data-game-theme='sprawl'] .sp-board { border: 1px solid #c6dbc64d; border-radius: 38% 38% 30% 30% / 16% 16% 20% 20%; background-color: #28606a; box-shadow: inset 0 0 100px #102e3755, 0 16px 40px #0c2d3433;
+  background-image: repeating-radial-gradient(ellipse at 50% 48%, transparent 0 52px, #b2e0d212 53px 54px, transparent 55px 84px); background-size: auto; }
+[data-game-theme='sprawl'] .sp-seat { padding: 14px 16px; border: 1px solid #c9bfa5; border-top: 5px solid var(--seat) !important; border-radius: 10px; box-shadow: var(--game-shadow) !important; }
+[data-game-theme='sprawl'] .sp-seat.active { background: #fff9e8 !important; outline: 2px solid #d8b975; outline-offset: 3px; }
+[data-game-theme='sprawl'] .sp-seat h3 { font-size: 29px; font-weight: 700; }
+[data-game-theme='sprawl'] .sp-seat .now { font-size: 15px; letter-spacing: .13em; color: var(--ink-soft); }
+[data-game-theme='sprawl'] .sp-seat .vp { font-size: 48px; font-weight: 700; }
+[data-game-theme='sprawl'] .sp-seat .vp small { font: 800 14px var(--font-body); letter-spacing: .1em; }
+[data-game-theme='sprawl'] .sp-seat .stat { font: 800 25px var(--font-body); }
+[data-game-theme='sprawl'] .sp-seat .ribbon { background: #dce5c3; border: 1px solid #9eb68d; border-radius: 4px; }
+[data-game-theme='sprawl'] .sp-turn { border: 1px solid #c9bfa5; border-left: 5px solid var(--seat); border-radius: 10px; box-shadow: var(--game-shadow); padding: 12px; }
+[data-game-theme='sprawl'] .sp-turn .who b { font: 800 26px/1.15 var(--font-body); }
+[data-game-theme='sprawl'] .sp-turn .sum { font: 800 42px var(--font-body); color: var(--ink); -webkit-text-stroke: 0; }
+[data-game-theme='sprawl'] .sp-clockcard { border: 1px solid #c9bfa5; border-radius: 10px; box-shadow: var(--game-shadow); }
+[data-game-theme='sprawl'] .sp-clockcard .goal { font: 850 19px var(--font-body); padding: 8px; color: var(--paper); border-radius: 4px; }
+[data-game-theme='sprawl'] .sp-ticker { border: 0; border-top: 1px solid #d6e3d933; padding: 14px 6px 0; border-radius: 0; background: transparent; }
+[data-game-theme='sprawl'] .sp-ticker p { color: #e3ece3; font-size: 19px; font-weight: 500; opacity: .75; }
+[data-game-theme='sprawl'] .sp-ticker p.latest { font-size: 21px; font-weight: 750; opacity: 1; }
+[data-game-theme='sprawl'] .sp-num { font-family: var(--font-body); font-weight: 900; }
+[data-game-theme='sprawl'] .sp-ratio { font-family: var(--font-body); font-weight: 850; }
+[data-game-theme='sprawl'] .sp-place { font-weight: 750; stroke-width: 3px; }
+[data-game-theme='sprawl'] .sp-hex > polygon:first-child { stroke: #efe1b8; stroke-width: 4px; }
+[data-game-theme='sprawl'] .sp-road, [data-game-theme='sprawl'] .sp-building { filter: drop-shadow(0 4px 1px #163b3a55); }
+[data-game-theme='sprawl'] .sp-overlay .panel { border: 2px solid #b19b73; border-radius: 12px; box-shadow: 0 16px 70px #082c4266 !important; }
+[data-game-theme='sprawl'] .sp-overlay .call { color: var(--ink); -webkit-text-stroke: 0; font-weight: 700; }
+[data-game-theme='sprawl'] .sp-overlay .call.white { color: var(--white); }
+[data-game-theme='sprawl'] .sp-tv-tile { border-width: 1px; border-radius: 6px; }
+
+/* Phone environments. The background resets automatically when the game ends. */
+body:has(.play[data-game-theme]) { background: #182f3a; }
+body:has(.play[data-game-theme='blackjack']) { background: #0e0a08; }
+body:has(.play[data-game-theme='bluff']) { background: #d9d3c5; }
+body:has(.play[data-game-theme='writeitdown']) { background: #172e24; }
+body:has(.play[data-game-theme])::before { display: none; }
+.play[data-game-theme] { background: var(--game-bg); max-width: 560px; min-height: 100dvh; }
+.play[data-game-theme] .topbar { color: var(--paper); min-height: 52px; padding-bottom: 12px; border-bottom: 1px solid #ffffff26; }
+.play[data-game-theme] .me { font-size: .9rem; overflow: hidden; }
+.play[data-game-theme] .me-face { flex: none; }
+.play[data-game-theme] .room-chip { background: transparent; border: 1px solid #ffffff40; color: var(--paper); border-radius: 5px; font: 800 .72rem var(--font-body); padding: 7px 9px; max-width: 40vw; }
+.play[data-game-theme] .timer { color: var(--ink); box-shadow: none; border: 2px solid #b9ad8c; font-family: var(--font-body); }
+.play[data-game-theme] .timer.hot { background: var(--tomato); color: var(--white); }
+.play[data-game-theme] :is(h1,h2,h3,.turf-key,.sp-key,.sp-build b,.turf-band .who b,.sp-band .who b,.turf-bid .lot b,.sp-dev .top b) { font-weight: 850; -webkit-text-stroke: 0; }
+.play[data-game-theme='sprawl'] :is(h1,h2,h3,.sp-key) { font-weight: 700; }
+.play[data-game-theme] :is(.turf-card-phone,.sp-card,.turf-deed,.sp-dev,.turf-bid,.sp-placer-head,.turf-gamecard,.turf-trade section,.sp-trade section) { border-color: #c7bfa9; border-radius: 10px; box-shadow: 0 5px 15px #0c20252b; }
+.play[data-game-theme] :is(.turf-roll,.sp-roll) { background: var(--paper); color: var(--ink); -webkit-text-stroke: 0; border: 1px solid #c7bfa9; border-radius: 12px; box-shadow: 0 5px 15px #0c202533; font-weight: 850; }
+.play[data-game-theme] :is(.turf-key,.sp-key,.sp-build,.sp-chip,.turf-chip,.turf-deed .op,.sp-step button) { border-radius: 7px; box-shadow: 0 3px 0 #102b3444; border-width: 1px; }
+.play[data-game-theme] :is(.turf-key.buy,.turf-key.pay,.sp-key.buy,.sp-build.ok) { background: #d1e4bc; color: var(--ink); }
+.play[data-game-theme] :is(.turf-key.end,.sp-key.end) { background: #345a71; color: #fff; border-color: #90abbc; }
+.play[data-game-theme] :is(.sp-key.go,.turf-key.go,.turf-key.raise) { background: #eed394; }
+.play[data-game-theme] :is(.sp-tile,.sp-step) { border-width: 1px; border-color: #b2af9e; border-radius: 6px; }
+.play[data-game-theme] .sp-tile b { font: 850 1.4rem var(--font-body); }
+.play[data-game-theme] .sp-mapbox { background: #28606a; border: 1px solid #9eaf99; border-radius: 12px; box-shadow: none; }
+.play[data-game-theme] :is(.sp-note,.turf-note,.turf-worth) { color: #e3e6d5; }
+.play[data-game-theme] :is(.sp-card,.turf-card-phone,.sp-trade section,.turf-trade section) :is(.sp-note,.turf-note,.turf-worth) { color: var(--ink-soft); }
+.play[data-game-theme] :is(.sp-tabs,.turf-tabs) { background: #102d36; border: 1px solid #aebca455; border-radius: 10px; box-shadow: 0 -4px 20px #102d3666; }
+.play[data-game-theme] :is(.sp-tabs,.turf-tabs) button { background: #284752; color: #faf3df; border-radius: 5px; }
+.play[data-game-theme] :is(.sp-tabs,.turf-tabs) button.on { background: var(--paper); color: var(--ink); }
+.play[data-game-theme] .turf-places h2 { color: var(--paper); }
+.play[data-game-theme] .turf-places .set { color: var(--ink); }
+.play[data-game-theme] .sp-build:not(.ok) { background: var(--paper-2); }
+.play[data-game-theme] .banner { color: var(--ink); }
+/* Kept out of the shared surface rule above so the player-colour stripe is never repainted neutral. */
+.play[data-game-theme] :is(.sp-band,.turf-band) { border-color: #c7bfa9; border-left-color: var(--me); border-radius: 10px; box-shadow: 0 5px 15px #0c20252b; }
+.play[data-game-theme] :is(.sp-card.go,.turf-card-phone.go) { background: #eae0c6; }
+.play[data-game-theme] :is(.sp-tabs,.turf-tabs) button { min-height: 44px; }
+.play[data-game-theme] :is(.sp-links,.turf-links) button { background: #d8e4de; border-radius: 6px; box-shadow: 0 3px 0 #102b3444; }
+.play[data-game-theme] button:focus-visible { outline: 3px solid #ffe5a1; outline-offset: 3px; }
+@media (prefers-reduced-motion: reduce) {
+  [data-game-theme] .game-dial.hot, .play[data-game-theme] .timer.hot { animation: none; }
+}
+
+.theme-preview-note { text-align: center; font-size: .75rem; color: #e3e6d5; margin: 6px 0; }
+.play[data-game-theme='bluff'] .theme-preview-note { color: var(--ink-soft); }
+
+/* ======================================================================================================
+   The rooms below share one vocabulary: the theme redefines ink/paper and the kit's accent tokens (never
+   player or answer colours), thins the cartoon strokes, and swaps the headline face. */
+
+/* Text set straight on a dark room reads light; panels, cards and bubbles set their own ink. */
+.game-scene:is([data-game-theme='blackjack'], [data-game-theme='writeitdown']) { color: var(--paper); }
+[data-game-theme] :is(.bj-call, .answered, .write-team) { color: var(--ink); }
+[data-game-theme] .chip-label { border-width: 2px; border-radius: 6px; font: 800 24px var(--font-body); letter-spacing: .12em; padding: 8px 18px; }
+[data-game-theme] .stamp { border-width: 5px; border-radius: 6px; box-shadow: none; }
+[data-game-theme] .game-header h1 { -webkit-text-stroke: 0; }
+[data-game-theme] .tutorial-cards .panel { box-shadow: var(--game-shadow) !important; }
+[data-game-theme] .tutorial-cards .num { border-width: 3px; background: var(--game-accent) !important; color: var(--paper); }
+[data-game-theme] .ready-row .label { font: 800 28px var(--font-body); letter-spacing: .12em; }
+[data-game-theme] .score-row { box-shadow: var(--game-shadow) !important; }
+[data-game-theme] .delta-pill { border-width: 2px; }
+
+/* DRUNK BLACKJACK / after hours: emerald felt, mahogany rail, brass and ivory */
+[data-game-theme='blackjack'] {
+  --ink: #17120f;
+  --ink-soft: #5d5046;
+  --paper: #f3e9d2;
+  --paper-2: #e2d3b2;
+  --sun: #d8ae57;
+  --tomato: #c8463b;
+  --felt: #1f5d46;
+  --felt-deep: #10382a;
+  --mahogany: #4a1c17;
+  --font-display: 'Playfair Display', Georgia, serif;
+  --game-bg: #120d0b;
+  --game-accent: #a9412f;
+  --game-shadow: 0 14px 34px #000000a0;
+}
+.game-scene[data-game-theme='blackjack'] { background-image: radial-gradient(ellipse 80% 60% at 50% 18%, #3b211a 0%, transparent 70%); }
+[data-game-theme='blackjack'] .game-header h1 { font: 900 64px/1 var(--font-display); color: var(--sun); letter-spacing: .05em; text-shadow: 0 3px 0 #000; }
+[data-game-theme='blackjack'] .status-text { font: 700 34px var(--font-display); color: var(--paper); }
+[data-game-theme='blackjack'] .bj-table { border-color: var(--mahogany);
+  background: radial-gradient(ellipse 60% 45% at 50% 30%, #2a7556 0%, var(--felt) 45%, var(--felt-deep) 100%);
+  box-shadow: 0 0 0 4px #d8ae5799, inset 0 0 0 6px #0b2a1f, inset 0 0 0 9px #d8ae5766, 0 40px 120px #000c; }
+[data-game-theme='blackjack'] .bj-table::before { background-image: radial-gradient(circle, #ffffff0a 1px, transparent 1.6px); background-size: 7px 7px; opacity: 1; }
+[data-game-theme='blackjack'] .felt-print text { font-family: var(--font-display); font-weight: 700; }
+[data-game-theme='blackjack'] .felt-print ellipse { stroke: var(--sun); stroke-opacity: .55; stroke-width: 3px; stroke-dasharray: none; }
+[data-game-theme='blackjack'] .bj-shoe { border: 2px solid #000; box-shadow: 0 16px 34px #000b; }
+[data-game-theme='blackjack'] .bj-shoe::after { background: var(--tomato); border: 2px solid #000; }
+[data-game-theme='blackjack'] .bj-plate { border: 1px solid #0006; box-shadow: 0 8px 18px #000a; }
+[data-game-theme='blackjack'] .bj-plate.turn { background: var(--sun); outline: 2px solid var(--paper); outline-offset: 3px; }
+[data-game-theme='blackjack'] .bj-call { border-width: 2px; border-radius: 8px; box-shadow: 0 10px 24px #000a; }
+[data-game-theme='blackjack'] .dealer-name { border-width: 2px; border-radius: 6px; box-shadow: 0 8px 18px #000a; font-weight: 900; letter-spacing: .06em; }
+[data-game-theme='blackjack'] .on-the-line, [data-game-theme='blackjack'] .bj-rule { box-shadow: var(--game-shadow) !important; }
+[data-game-theme='blackjack'] :is(.on-the-line, .bj-rule) small { font: 800 18px var(--font-body); letter-spacing: .16em; }
+[data-game-theme='blackjack'] .bj-rule h3 { font-weight: 900; font-size: 34px; }
+[data-game-theme='blackjack'] .led7 { border-width: 2px; box-shadow: 0 6px 14px #0009; }
+.bj-sign { font: 900 54px/1 var(--font-display); letter-spacing: .05em; white-space: nowrap; padding: 22px 48px; border: 3px solid var(--sun);
+  outline: 1px solid var(--sun); outline-offset: -11px; border-radius: 4px; box-shadow: 0 24px 60px #000c; }
+.bj-sign.brass { background: var(--sun); color: var(--ink); border-color: #7a5a1f; outline-color: #7a5a1f; }
+.bj-sign.dark { background: #1a1310; color: var(--sun); }
+.bj-sign.ivory { background: var(--paper); color: var(--ink); }
+.bj-sign.bust { display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 34px 70px; background: var(--tomato); color: var(--paper); font-size: 104px; border-color: var(--paper); outline-color: var(--paper); }
+.bj-sign.bust small { font: 800 38px var(--font-body); letter-spacing: .16em; }
+[data-game-theme='blackjack'] .podium-block { border-width: 2px; }
+[data-game-theme='blackjack'] .podium-block[data-rank='1'] { background: var(--sun) !important; }
+[data-game-theme='blackjack'] .podium-block[data-rank='2'] { background: #c9c2b3 !important; }
+[data-game-theme='blackjack'] .podium-block[data-rank='3'] { background: #b27a4e !important; }
+[data-game-theme='blackjack'] .podium-block span { font: 900 120px var(--font-display); }
+[data-game-theme='blackjack'] .podium .display { font-weight: 700; color: var(--sun); }
+
+/* BLUFF BATTLE / the tabloid: newsprint, charcoal, warning red, a highlighter */
+[data-game-theme='bluff'] {
+  --ink: #1c1c1e;
+  --ink-soft: #54524d;
+  --paper: #f6f2e8;
+  --paper-2: #e3ddcf;
+  --sun: #f3e23b;
+  --tomato: #d42b20;
+  --font-display: 'Anton', Impact, 'Arial Narrow', sans-serif;
+  --game-bg: #e7e1d3;
+  --game-accent: #d42b20;
+  --game-shadow: 0 10px 26px #1c1c1e2e;
+}
+.game-scene[data-game-theme='bluff'] {
+  background-image: radial-gradient(circle, #1c1c1e12 1px, transparent 1.5px), repeating-linear-gradient(90deg, transparent 0 382px, #1c1c1e14 382px 384px);
+  background-size: 6px 6px, auto;
+}
+[data-game-theme='bluff'] .game-header { border-bottom: 8px double var(--ink); padding-bottom: 14px; margin-bottom: 10px; min-height: 160px; }
+[data-game-theme='bluff'] .game-header .titles::before { content: 'ALL THE NEWS THAT\2019S FIT TO FAKE'; font: 800 20px var(--font-body); letter-spacing: .24em; color: var(--tomato); }
+[data-game-theme='bluff'] .game-header h1 { font: 400 88px/.95 var(--font-display); color: var(--ink); letter-spacing: .01em; }
+[data-game-theme='bluff'] .status-text { font: 400 38px var(--font-display); letter-spacing: .02em; }
+[data-game-theme='bluff'] .prompt-bubble { background: transparent; border: 0; border-top: 5px solid var(--ink); border-bottom: 2px solid var(--ink); border-radius: 0;
+  box-shadow: none; font: 400 86px/1.04 var(--font-display); text-transform: uppercase; letter-spacing: .005em; padding: 34px 10px; }
+[data-game-theme='bluff'] .prompt-bubble.small { font-size: 52px; padding: 16px 6px; }
+.editor-note { background: var(--sun); color: var(--ink); padding: 22px 34px 26px; max-width: 1100px; rotate: -1.5deg; box-shadow: 0 16px 34px #1c1c1e33; }
+.editor-note small { display: block; font: 800 20px var(--font-body); letter-spacing: .22em; color: var(--tomato); }
+.editor-note p { font: 900 46px/1.2 var(--font-body); margin-top: 6px; }
+[data-game-theme='bluff'] .chip-dot { width: 46px; height: 58px; border-width: 2px; border-radius: 3px; box-shadow: none; }
+[data-game-theme='bluff'] .play-card { border-radius: 3px; box-shadow: var(--game-shadow) !important; font-weight: 800; }
+[data-game-theme='bluff'] .play-card .pip { font-family: var(--font-display); color: var(--tomato); }
+[data-game-theme='bluff'] .reveal-card { border-radius: 3px; box-shadow: var(--game-shadow) !important; }
+[data-game-theme='bluff'] .fooled-row .display { letter-spacing: .03em; }
+[data-game-theme='bluff'] .past-chip { border-width: 2px; border-radius: 3px; }
+[data-game-theme='bluff'] .past-chip s { text-decoration-color: var(--tomato); }
+[data-game-theme='bluff'] .rank-dot { font-family: var(--font-display); }
+[data-game-theme='bluff'] .total { font-family: var(--font-display); }
+[data-game-theme='bluff'] .podium-block { border-width: 2px; }
+[data-game-theme='bluff'] .podium-block[data-rank='1'] { background: var(--sun) !important; }
+[data-game-theme='bluff'] .podium-block[data-rank='2'] { background: var(--paper) !important; }
+[data-game-theme='bluff'] .podium-block[data-rank='3'] { background: #c9c2b1 !important; }
+
+/* WRITE IT DOWN / the pub quiz: a dark green room, answer sheets, a pencil and a quizmaster */
+[data-game-theme='writeitdown'] {
+  --ink: #1f2a24;
+  --ink-soft: #56615a;
+  --paper: #f6efdb;
+  --paper-2: #e8ddc1;
+  --sun: #e8b84a;
+  --tomato: #c4453a;
+  --font-display: 'Zilla Slab', Georgia, serif;
+  --game-bg: #1d392d;
+  --game-accent: #b8862d;
+  --game-shadow: 0 16px 34px #0a1a1266;
+}
+.game-scene[data-game-theme='writeitdown'] { background-image: radial-gradient(ellipse 70% 55% at 30% 15%, #ffffff0d, transparent 70%), radial-gradient(circle, #ffffff07 1px, transparent 1.6px); background-size: auto, 8px 8px; }
+[data-game-theme='writeitdown'] .show-title { transform: none; line-height: .9; }
+[data-game-theme='writeitdown'] .show-title b { font: 700 78px/.9 var(--font-display); color: var(--paper); -webkit-text-stroke: 0; text-shadow: none; letter-spacing: -.01em; }
+[data-game-theme='writeitdown'] .show-title b + b { color: var(--sun); margin-left: 0; }
+[data-game-theme='writeitdown'] .show-title.small b { font-size: 46px; -webkit-text-stroke: 0; text-shadow: none; }
+[data-game-theme='writeitdown'] .show-title.small b + b { margin-left: 0; }
+/* styles.css's phone .small button class also matches this title; drop its shadow. */
+[data-game-theme='writeitdown'] .show-title.small { box-shadow: none; }
+[data-game-theme='writeitdown'] .answered { border-width: 2px; box-shadow: var(--game-shadow); }
+[data-game-theme='writeitdown'] .q-bubble { border: 0; border-radius: 6px; box-shadow: var(--game-shadow); font: 700 66px/1.14 var(--font-display);
+  background: linear-gradient(90deg, transparent 58px, #c4453a77 58px 61px, transparent 61px), var(--paper); padding-left: 96px; }
+[data-game-theme='writeitdown'] .q-bubble.small { font-size: 44px; }
+[data-game-theme='writeitdown'] .unit-card { box-shadow: var(--game-shadow) !important; }
+[data-game-theme='writeitdown'] .unit-card b { font-weight: 700; }
+[data-game-theme='writeitdown'] .write-answer { box-shadow: var(--game-shadow) !important; }
+[data-game-theme='writeitdown'] .write-answer b { font-weight: 700; }
+[data-game-theme='writeitdown'] .write-team { border-width: 1px; border-radius: 6px; box-shadow: var(--game-shadow); }
+[data-game-theme='writeitdown'] .write-mark { border-width: 2px; }
+[data-game-theme='writeitdown'] .flag { border-width: 2px; border-radius: 6px; box-shadow: none; }
+[data-game-theme='writeitdown'] .team-badge { box-shadow: var(--game-shadow) !important; }
+[data-game-theme='writeitdown'] .pips i { border-width: 2px; border-color: var(--paper); background: transparent; }
+[data-game-theme='writeitdown'] .team-delta span { border-width: 2px; box-shadow: none; }
+[data-game-theme='writeitdown'] .fact { box-shadow: var(--game-shadow) !important; }
+[data-game-theme='writeitdown'] .fact b { font: 800 20px var(--font-body); letter-spacing: .12em; border-width: 1px; }
+.host-says.quizmaster { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; max-width: 1200px; padding: 20px 30px 24px; background: var(--paper); color: var(--ink);
+  border-left: 10px solid var(--sun); border-radius: 4px; box-shadow: var(--game-shadow); text-align: left; }
+.host-says.quizmaster small { font: 800 18px var(--font-body); letter-spacing: .22em; color: var(--ink-soft); }
+.host-says.quizmaster span { font: 600 40px/1.2 var(--font-display); }
+[data-game-theme='writeitdown'] .reveal-talk .quizmaster { max-width: 760px; }
+[data-game-theme='writeitdown'] .reveal-talk .quizmaster span { font-size: 34px; }
+.round-card { font: 700 150px/1 var(--font-display); color: var(--paper); padding: 30px 90px 40px; border-top: 3px solid var(--sun); border-bottom: 3px solid var(--sun); letter-spacing: -.01em; }
+[data-game-theme='writeitdown'] .teamup-col { box-shadow: var(--game-shadow) !important; }
+[data-game-theme='writeitdown'] .teamup-col h2 { font-weight: 700; }
+[data-game-theme='writeitdown'] .shuffle-hint { color: #c4cfc6; }
+[data-game-theme='writeitdown'] .standings-title { font: 700 96px var(--font-display); color: var(--paper); -webkit-text-stroke: 0; text-shadow: none; }
+[data-game-theme='writeitdown'] .bar { border-width: 2px; box-shadow: var(--game-shadow); }
+[data-game-theme='writeitdown'] .bar-score { font-weight: 700; }
+[data-game-theme='writeitdown'] .rank-dot { background: var(--paper); color: var(--ink); font-weight: 700; }
+[data-game-theme='writeitdown'] .award { box-shadow: var(--game-shadow) !important; }
+[data-game-theme='writeitdown'] .award-title { font: 700 44px/1.05 var(--font-display); color: var(--game-accent); padding: 6px 0 12px; border-bottom: 2px solid currentColor; }
+[data-game-theme='writeitdown'] .award.roast .award-title { color: var(--paper); }
+[data-game-theme='writeitdown'] .award-name { font-weight: 700; }
+[data-game-theme='writeitdown'] .award.roast .award-name { -webkit-text-stroke: 0; }
+[data-game-theme='writeitdown'] .podium-block { border-width: 2px; }
+[data-game-theme='writeitdown'] .podium-block span { font: 700 120px var(--font-display); }
+
+/* The three rooms on the phone. Text straight on a dark page reads light; cards keep their ink. */
+.play[data-game-theme='blackjack'], .play[data-game-theme='writeitdown'] { --page-text: var(--paper); }
+.play:is([data-game-theme='blackjack'], [data-game-theme='writeitdown']) .screen :is(h1, .muted) { color: var(--page-text); }
+.play:is([data-game-theme='blackjack'], [data-game-theme='writeitdown']) .screen .prompt.small,
+.play:is([data-game-theme='blackjack'], [data-game-theme='writeitdown']) .screen .waiting:not(.tone-lose) h1 { color: var(--ink); }
+.play:is([data-game-theme='blackjack'], [data-game-theme='writeitdown']) .screen .waiting.tone-lose h1 { color: var(--white); }
+.play:is([data-game-theme='blackjack'], [data-game-theme='bluff'], [data-game-theme='writeitdown']) .waiting .brainy { display: none; }
+.play:is([data-game-theme='blackjack'], [data-game-theme='bluff'], [data-game-theme='writeitdown']) :is(.waiting, .cards li, .scores li, .choice, input, textarea, .prompt.small, .number-display, .team-guesses span) { box-shadow: 0 5px 14px #0000002e; }
+.play:is([data-game-theme='blackjack'], [data-game-theme='bluff'], [data-game-theme='writeitdown']) :is(.waiting, .cards li, .scores li) { border-radius: 8px; }
+.play:is([data-game-theme='blackjack'], [data-game-theme='bluff'], [data-game-theme='writeitdown']) textarea { color: var(--ink); }
+.play:is([data-game-theme='blackjack'], [data-game-theme='bluff'], [data-game-theme='writeitdown']) .primary { border-radius: 8px; box-shadow: 0 5px 0 #0000004d; }
+
+.play[data-game-theme='blackjack'] .cardtable h1 { font-weight: 900; color: var(--sun); }
+.play[data-game-theme='blackjack'] :is(.dealer-strip, .my-hand) { border: 1px solid #d8ae5780; border-radius: 12px; box-shadow: inset 0 0 40px #0006;
+  background: radial-gradient(ellipse at 50% 30%, #2a7556, var(--felt) 50%, var(--felt-deep)); }
+.play[data-game-theme='blackjack'] .dealer-strip .label { font-weight: 900; color: var(--sun); -webkit-text-stroke: 0; letter-spacing: .08em; }
+.play[data-game-theme='blackjack'] .note { border-width: 1px; border-radius: 8px; }
+.play[data-game-theme='blackjack'] .key { border-width: 1px; border-color: #0008; border-radius: 10px; box-shadow: 0 6px 0 #000c; font-weight: 900; }
+.play[data-game-theme='blackjack'] .key:active:not(:disabled) { box-shadow: 0 1px 0 #000c; }
+.play[data-game-theme='blackjack'] .casino-chip { background: radial-gradient(circle, var(--paper) 0 52%, var(--tomato) 53%); border: 3px solid #000a;
+  outline: 5px dashed var(--paper); outline-offset: -13px; box-shadow: 0 6px 0 #000c; }
+.play[data-game-theme='blackjack'] .casino-chip .bet-label { font-weight: 900; }
+
+.play[data-game-theme='bluff'] .topbar { color: var(--ink); border-bottom: 5px double var(--ink); }
+.play[data-game-theme='bluff'] .room-chip { color: var(--ink); border-color: var(--ink); font-family: var(--font-display); font-weight: 400; letter-spacing: .06em; font-size: .85rem; }
+.play[data-game-theme='bluff'] .prompt:not(.small) { font: 400 2rem/1.05 var(--font-display); text-transform: uppercase; border-top: 4px solid var(--ink); border-bottom: 2px solid var(--ink); padding: 10px 0; }
+.play[data-game-theme='bluff'] textarea { border-width: 2px; border-radius: 3px; background: #fff; }
+.play[data-game-theme='bluff'] .primary { font-weight: 400; letter-spacing: .05em; font-size: 1.45rem; }
+.play[data-game-theme='bluff'] .choice { border-width: 2px; border-radius: 3px; background: #fff; }
+.play[data-game-theme='bluff'] .choice.on { background: var(--sun); }
+.play[data-game-theme='bluff'] :is(.waiting, .cards li, .scores li) { border-width: 2px; }
+.play[data-game-theme='bluff'] :is(h1, h2) { font-weight: 400; letter-spacing: .02em; }
+
+.play[data-game-theme='writeitdown'] .team-band { margin: 0; border: 0; border-radius: 6px; }
+.play[data-game-theme='writeitdown'] .team-band span { font-weight: 700; -webkit-text-stroke: 0; color: var(--ink); background: var(--paper); padding: 2px 10px; border-radius: 4px; }
+.play[data-game-theme='writeitdown'] h1 { font-weight: 700; }
+.play[data-game-theme='writeitdown'] textarea { border-width: 1px; border-radius: 6px; background: linear-gradient(90deg, transparent 30px, #c4453a77 30px 32px, transparent 32px), #fffaf0; padding-left: 44px; }
+.play[data-game-theme='writeitdown'] :is(.choice, .choice.team) { border-width: 2px; border-radius: 8px; }
+.play[data-game-theme='writeitdown'] .choice.team.on { outline-color: var(--paper); }

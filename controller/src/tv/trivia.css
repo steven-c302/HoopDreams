@@ -1,0 +1,175 @@
+/* BRAIN DRAIN screens. Tokens: theme/tokens.css. Kit classes (.panel, .bubble, .burst...) live in tv.css. */
+.stage-pad.trivia { gap: 22px; }
+.show-title { display: flex; flex-direction: column; line-height: .86; transform: rotate(-4deg); flex: none; }
+.show-title b { font-family: var(--font-display); font-weight: 400; font-size: 76px; color: var(--paper); -webkit-text-stroke: 11px var(--ink); paint-order: stroke fill; text-shadow: 7px 7px 0 var(--ink); }
+.show-title b + b { color: var(--bubblegum); margin-left: 34px; }
+.show-title.small b { font-size: 46px; -webkit-text-stroke: 8px var(--ink); text-shadow: 5px 5px 0 var(--ink); }
+.show-title.small b + b { margin-left: 20px; }
+.trivia-header { display: flex; align-items: center; gap: 28px; min-height: 150px; }
+.answered { font-size: 32px; font-weight: 900; background: var(--paper); border: 5px solid var(--ink); border-radius: 18px; padding: 8px 18px; box-shadow: 5px 5px 0 var(--ink); }
+.answered b { font-family: var(--font-display); font-weight: 400; font-size: 40px; }
+
+/* question bubble + answers */
+.q-bubble { font-size: 66px; line-height: 1.14; text-align: center; padding: 34px 60px; align-self: stretch; }
+.q-bubble.small { font-size: 42px; padding: 20px 44px; }
+.answers { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px 30px; }
+.answer { position: relative; display: flex; align-items: center; gap: 24px; min-height: 176px; padding: 18px 34px; background: var(--ans); color: var(--white);
+  border: var(--stroke-tv) solid var(--ink); border-radius: 26px; box-shadow: var(--shadow-tv) var(--shadow-tv) 0 var(--ink); font-size: 52px; font-weight: 900; line-height: 1.1;
+  transition: filter var(--dur-slow) var(--ease-out), transform var(--dur-slow) var(--ease-boing); }
+.answer-text { flex: 1; min-width: 0; text-shadow: 3px 3px 0 color-mix(in oklab, var(--ink) 55%, transparent); }
+.answer.wrong { background: var(--paper-2); color: color-mix(in oklab, var(--ink) 55%, transparent); transform: scale(.96); }
+.answer.wrong .answer-text { text-shadow: none; }
+.answer.right { transform: scale(1.04) rotate(-1deg); z-index: 2; }
+.answer-teams { position: absolute; left: 110px; bottom: -22px; display: flex; gap: 8px; }
+.flag { font-size: 22px; font-weight: 900; padding: 4px 14px; border: 4px solid var(--ink); border-radius: 12px; white-space: nowrap; box-shadow: 3px 3px 0 var(--ink); }
+/* RIGHT! sits on the right end of the correct tile, which keeps its text clear of it; never up over the question. */
+.answer-burst { position: absolute !important; right: -44px; top: 50%; margin-top: -80px; z-index: 3; }
+.answer.right { padding-right: 230px; }
+.scribble { position: absolute; left: 90px; right: 40px; top: 18%; height: 64%; width: calc(100% - 130px); pointer-events: none; overflow: visible; }
+
+/* foot: host line, fun fact, teams */
+/* Room above the team strip for the +points pills, so they never land on the fun fact or Brainy's line. */
+.trivia-foot { margin-top: auto; display: flex; flex-direction: column; gap: 44px; }
+.reveal-talk { display: flex; align-items: center; gap: 30px; }
+.reveal-talk .host-says { flex: none; }
+.reveal-talk .host-says .bubble { font-size: 34px; padding: 16px 28px; max-width: 760px; }
+.fact { flex: 1; font-size: 28px; font-weight: 800; line-height: 1.25; padding: 16px 22px; }
+.fact b { font-family: var(--font-display); font-weight: 400; font-size: 22px; background: var(--sun); border: 3px solid var(--ink); border-radius: 8px; padding: 1px 8px; margin-right: 8px; }
+.team-strip { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 22px; }
+.strip-team { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.team-badge { display: flex; align-items: center; gap: 14px; padding: 8px 16px; min-width: 0; }
+.team-badge .team-name { font-weight: 900; font-size: 30px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; flex: 1; }
+.team-badge .team-score { font-family: var(--font-display); font-size: 30px; font-variant-numeric: tabular-nums; }
+.team-badge.md { padding: 12px 22px; } .team-badge.md .team-name { font-size: 38px; } .team-badge.md .team-score { font-size: 38px; }
+.team-badge.lg { padding: 18px 30px; gap: 14px 20px; flex-wrap: wrap; } .team-badge.lg .team-name { font-size: 54px; flex-basis: 100%; } .team-badge.lg .team-score { font-size: 54px; margin-left: auto; }
+/* Sits on the badge's top edge, clear of the score below it and the fun fact above. */
+.team-delta { position: absolute; right: 10px; bottom: calc(100% - 6px); line-height: 1; }
+.team-delta span { display: inline-block; font-family: var(--font-display); font-size: 28px; color: var(--ink); background: var(--lime); border: 4px solid var(--ink); border-radius: 999px; padding: 2px 16px; box-shadow: 3px 3px 0 var(--ink); }
+.team-delta span.neg { background: var(--tomato); color: var(--white); }
+.team-badge.lg .team-delta span { font-size: 44px; }
+.pips { display: flex; gap: 6px; padding-left: 10px; }
+.pips i { width: 22px; height: 22px; border-radius: 50%; border: 4px solid var(--ink); background: var(--paper); transition: background var(--dur-base) var(--ease-out), transform var(--dur-base) var(--ease-boing); }
+.pips i.on { background: var(--team); transform: scale(1.15); }
+
+/* team up */
+.teamup-grid { flex: 1; display: grid; gap: 30px; grid-auto-rows: minmax(0, 1fr); min-height: 0; }
+.teamup-col { height: 100%; padding: 26px 30px; display: flex; flex-direction: column; gap: 20px; }
+.teamup-col h2 { font-family: var(--font-display); font-weight: 400; font-size: 54px; line-height: 1; }
+.teamup-faces { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 16px; }
+.teamup-member { display: flex; align-items: center; gap: 14px; font-size: 38px; font-weight: 900; min-width: 0; }
+.teamup-member span { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.teamup-col .empty { grid-column: 1 / -1; font-size: 30px; font-weight: 800; opacity: .8; }
+.teamup-foot { display: flex; align-items: center; gap: 22px; font-size: 34px; font-weight: 900; min-height: 70px; }
+.shuffle-hint { margin-left: auto; display: inline-flex; align-items: center; gap: 12px; font-size: 26px; font-weight: 800; color: var(--ink-soft); white-space: nowrap; }
+
+/* ---------- awards ---------- */
+.awards { flex: 1; display: grid; gap: 36px; align-items: center; padding: 10px 20px 30px; }
+.award { display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 22px 24px 30px; text-align: center; min-height: 560px; }
+.award .burst { margin: -70px 0 -6px; }
+.award-name { font-family: var(--font-display); font-weight: 400; font-size: 46px; line-height: 1.05; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.award p { font-size: 32px; font-weight: 900; line-height: 1.2; }
+.award.roast { color: var(--white); }
+.award.roast .award-name { -webkit-text-stroke: 8px var(--ink); paint-order: stroke fill; }
+
+/* round intro */
+.intro { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 26px; }
+.intro .host-says .bubble { font-size: 40px; max-width: 1200px; }
+
+/* ballpark */
+/* Write It Down reveal: the answer on the left, each team's written answer stamped on the right. */
+.write-reveal { flex: 1; display: flex; align-items: center; justify-content: center; gap: 60px; min-height: 0; }
+.write-answer { display: flex; flex-direction: column; gap: 6px; padding: 26px 44px; max-width: 760px; }
+.write-answer small { font-size: 26px; font-weight: 900; letter-spacing: 0.08em; color: var(--ink-soft); }
+.write-answer b { font-size: 72px; font-weight: 400; line-height: 1.05; overflow-wrap: anywhere; }
+.write-teams { display: flex; flex-direction: column; gap: 14px; min-width: 0; max-width: 860px; }
+.write-team { display: flex; align-items: center; gap: 16px; background: var(--paper); border: 5px solid var(--ink); border-radius: 18px; padding: 10px 16px; box-shadow: 5px 5px 0 var(--ink); }
+.write-team.wrong { opacity: 0.8; }
+.write-team .flag { flex: none; }
+.write-text { flex: 1; min-width: 0; font-size: 34px; font-weight: 900; overflow-wrap: anywhere; }
+.write-team.wrong .write-text { text-decoration: line-through; text-decoration-thickness: 4px; }
+.write-mark { flex: none; display: grid; place-items: center; width: 56px; height: 56px; border: 4px solid var(--ink); border-radius: 50%; background: var(--white); }
+.write-team.right .write-mark { background: var(--lime); }
+.write-team.wrong .write-mark { background: var(--tomato); }
+.ballpark-wait { flex: 1; display: flex; align-items: center; justify-content: center; gap: 80px; }
+.unit-card { display: flex; flex-direction: column; gap: 10px; padding: 34px 50px; font-size: 40px; }
+.unit-card b { font-size: 76px; font-weight: 400; }
+.unit-card small { font-size: 28px; color: var(--ink-soft); }
+.numberline { position: relative; flex: 1; margin: 0 110px; min-height: 360px; }
+.nl-axis { position: absolute; left: 0; right: 0; bottom: 70px; height: 16px; background: var(--ink); border-radius: 8px; }
+.nl-flag { position: absolute; transform: translateX(-50%); display: flex; flex-direction: column-reverse; align-items: center; z-index: 2; }
+.nl-flag .pole { width: 8px; background: var(--ink); display: block; }
+.nl-team { display: flex; align-items: center; gap: 10px; font-size: 28px; font-weight: 900; padding: 6px 16px; border: 5px solid var(--ink); border-radius: 14px; white-space: nowrap; box-shadow: 4px 4px 0 var(--ink); }
+.nl-team em { font-style: normal; font-family: var(--font-display); font-size: 24px; background: var(--paper); color: var(--ink); border-radius: 8px; padding: 0 8px; border: 3px solid var(--ink); }
+.nl-truth { position: absolute; bottom: 20px; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; z-index: 3; }
+.nl-truth b { font-size: 40px; font-weight: 400; background: var(--sun); border: 5px solid var(--ink); border-radius: 14px; padding: 4px 18px; box-shadow: 5px 5px 0 var(--ink); margin-top: -6px; white-space: nowrap; }
+/* BULLSEYE! stamps, then clears so the fun fact under it can be read. */
+.nl-bull { position: absolute !important; right: -40px; bottom: -150px; z-index: 4; animation: stamp-away .4s ease 4s forwards; }
+@keyframes stamp-away { to { opacity: 0; visibility: hidden; } }
+
+/* pick a side */
+.sides { position: relative; flex: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 60px; }
+.side-col { display: flex; flex-direction: column; align-items: center; gap: 20px; }
+.side-col h2 { font-family: var(--font-display); font-weight: 400; font-size: 82px; color: var(--paper); -webkit-text-stroke: 12px var(--ink); paint-order: stroke fill; text-shadow: 8px 8px 0 var(--ink); text-align: center; line-height: 1; }
+.side-pile { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; max-width: 700px; }
+.side-pile span { font-size: 28px; font-weight: 900; background: var(--paper); border: 4px solid var(--ink); border-radius: 14px; padding: 6px 16px; box-shadow: 4px 4px 0 var(--ink); }
+.side-card { position: absolute; left: 50%; top: 52%; margin-left: -300px; margin-top: -150px; width: 600px; z-index: 3; }
+.side-card-inner { display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 36px 30px; text-align: center; }
+.side-card-inner small { font-size: 24px; font-weight: 900; color: var(--ink-soft); }
+.side-card-inner b { font-size: 72px; font-weight: 900; line-height: 1.05; }
+.side-teams { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+
+/* heist */
+.heist { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 24px; }
+.targets { display: flex; gap: 40px; }
+.target { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+.steal { flex: 1; display: flex; align-items: center; justify-content: space-between; padding: 0 30px; position: relative; }
+.steal .team-badge { width: 600px; }
+.sack-fly { position: absolute; left: 50%; top: 45%; margin-left: -85px; margin-top: -85px; z-index: 5; }
+.steal-foot { display: flex; align-items: center; justify-content: center; gap: 40px; }
+.drink-call { position: absolute; z-index: 10; }
+.drink-call .panel { display: flex; align-items: center; gap: 24px; padding: 22px 34px; }
+.drink-call b { font-size: 80px; font-weight: 400; color: var(--paper); -webkit-text-stroke: 9px var(--ink); paint-order: stroke fill; }
+.drink-call p { font-size: 34px; font-weight: 900; }
+.drink-call small { font-size: 24px; font-weight: 800; opacity: .9; }
+.glass { flex: none; }
+
+/* gauntlet */
+.g-options { display: flex; gap: 24px; justify-content: center; }
+.g-option { position: relative; font-size: 48px; font-weight: 900; background: var(--paper); border: var(--stroke-tv) solid var(--ink); border-radius: 22px; padding: 18px 34px; box-shadow: 8px 8px 0 var(--ink);
+  display: flex; align-items: center; gap: 12px; transition: background var(--dur-slow) var(--ease-out), transform var(--dur-slow) var(--ease-boing); }
+.g-option.fit { background: var(--lime); transform: rotate(-1.5deg) scale(1.05); }
+.g-option.miss { background: var(--paper-2); opacity: .75; text-decoration: line-through; text-decoration-thickness: 5px; }
+.g-option .mark { display: grid; place-items: center; width: 56px; height: 56px; border-radius: 50%; background: var(--white); border: 4px solid var(--ink); }
+.track { display: flex; flex-direction: column; gap: 16px; margin-top: 16px; }
+.track.compact { width: 1400px; gap: 8px; }
+.lane { display: grid; grid-template-columns: 300px 1fr; gap: 16px; align-items: center; }
+/* Team names run to 20 characters: wrap to a second line rather than cut the pun off. */
+.lane-name { font-size: 28px; line-height: 1.05; font-weight: 900; padding: 6px 14px; border: 5px solid var(--ink); border-radius: 14px; overflow-wrap: anywhere; box-shadow: 4px 4px 0 var(--ink); }
+.lane-cells { position: relative; display: grid; gap: 8px; height: 96px; }
+.track.compact .lane-cells { height: 58px; }
+.lane-cells i { background: color-mix(in oklab, var(--paper) 85%, var(--team)); border: 4px solid var(--ink); border-radius: 12px; }
+.lane-cells i.finish { background: repeating-conic-gradient(var(--ink) 0 25%, var(--paper) 0 50%) 0 0 / 22px 22px; }
+.runner { position: absolute; top: 0; bottom: 0; display: grid; place-items: center; z-index: 2; }
+.moved { position: absolute; top: -26px; right: -20px; }
+.moved span { font-family: var(--font-display); font-size: 26px; background: var(--lime); border: 4px solid var(--ink); border-radius: 999px; padding: 0 12px; }
+.moved.neg span { background: var(--tomato); color: var(--white); }
+.g-talk { margin-top: auto; min-height: 110px; display: flex; align-items: center; }
+.g-talk .host-says .bubble { font-size: 34px; }
+.g-help { font-size: 34px; font-weight: 900; color: var(--paper); -webkit-text-stroke: 7px var(--ink); paint-order: stroke fill; }
+
+/* standings */
+.standings-title { font-size: 96px; color: var(--sun); -webkit-text-stroke: 12px var(--ink); paint-order: stroke fill; text-shadow: 9px 9px 0 var(--ink); margin: -10px 0 6px; }
+.bars { display: flex; flex-direction: column; gap: 18px; }
+.bar-row { display: grid; grid-template-columns: 64px 1fr 220px 80px; align-items: center; gap: 22px; }
+.bar-track { height: 96px; }
+/* min-width: a team on 0 still shows its whole name rather than a clipped stub. */
+.bar { height: 100%; min-width: max-content; display: flex; align-items: center; gap: 18px; padding: 0 24px; border: var(--stroke-tv) solid var(--ink); border-radius: 24px; box-shadow: 8px 8px 0 var(--ink); overflow: hidden; }
+.bar-name { font-size: 40px; font-weight: 900; white-space: nowrap; }
+.bar-score { font-size: 54px; text-align: right; }
+
+/* podium */
+.podium-slot { display: flex; flex-direction: column; align-items: center; gap: 14px; }
+.podium-faces { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; max-width: 420px; }
+.podium-faces.winner > * { animation: hop .6s var(--ease-out) infinite alternate; }
+.podium-faces.winner > *:nth-child(2n) { animation-delay: .3s; }
+@keyframes hop { from { transform: translateY(0); } to { transform: translateY(-16px); } }

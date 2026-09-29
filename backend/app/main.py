@@ -9,6 +9,7 @@ from sqlalchemy.orm import Session
 from . import models, schemas, trivia
 from .database import Base, SessionLocal, engine, get_db
 from .seed_data import SEED_GAMES
+from .party.web import mount_party, party_lifespan
 
 Base.metadata.create_all(bind=engine)
 
@@ -25,7 +26,7 @@ def seed_games_if_empty() -> None:
 
 seed_games_if_empty()
 
-app = FastAPI(title="HoopDreams API")
+app = FastAPI(title="HoopDreams API", lifespan=party_lifespan)
 
 app.add_middleware(
     CORSMiddleware,
@@ -100,3 +101,7 @@ async def trivia_question(difficulty: str | None = None):
 @app.get("/api/health")
 def health():
     return {"status": "ok"}
+
+
+# Keep this last: it adds the Socket.IO mount and, in party mode, the catch-all SPA mount.
+mount_party(app)

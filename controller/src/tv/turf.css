@@ -1,0 +1,159 @@
+/* Home Turf on the TV: board centred, players on rails, the action in the board's middle. Values from theme/tokens.css. */
+
+.turf-stage { position: absolute; inset: 0; display: grid; grid-template-columns: minmax(0, 1fr) 1000px minmax(0, 1fr); gap: 22px; padding: 22px 22px; align-items: center; }
+.turf-rail { display: flex; flex-direction: column; gap: 22px; justify-content: center; height: 100%; min-width: 0; }
+.turf-board-wrap { position: relative; width: 1000px; height: 1000px; }
+
+/* ---- the board ---- */
+.turf-viewport { position: relative; overflow: hidden; border: var(--stroke-tv) solid var(--ink); border-radius: 22px; background: var(--paper);
+  box-shadow: 12px 14px 0 var(--ink); box-sizing: border-box; }
+.turf-board { position: absolute; left: -6px; top: -6px; }
+.turf-space { position: absolute; box-sizing: border-box; border: 2px solid var(--ink); background: var(--paper); display: flex; overflow: hidden; }
+.turf-space.side-b { flex-direction: column; }
+.turf-space.side-t { flex-direction: column-reverse; }
+.turf-space.side-l { flex-direction: row-reverse; }
+.turf-space.side-r { flex-direction: row; }
+.turf-space .band { flex: none; display: flex; align-items: center; justify-content: center; gap: 1px; border: 0 solid var(--ink); }
+.turf-space.side-b .band { height: 26px; border-bottom-width: 3px; }
+.turf-space.side-t .band { height: 26px; border-top-width: 3px; }
+.turf-space.side-l .band { width: 26px; border-left-width: 3px; flex-direction: column; }
+.turf-space.side-r .band { width: 26px; border-right-width: 3px; flex-direction: column; }
+.turf-space .body { flex: 1; min-width: 0; min-height: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; padding: 3px 4px; text-align: center; }
+.turf-space .label { font-weight: 850; font-size: 15px; line-height: 1.02; letter-spacing: -.01em; overflow-wrap: break-word; hyphens: manual; }
+.turf-space .price { font-weight: 800; font-size: 14px; color: var(--ink-soft); }
+.turf-space .glyph { flex: none; }
+.turf-space .glyph.q { font-family: var(--font-display); font-size: 30px; line-height: 1; color: var(--tomato); -webkit-text-stroke: 2px var(--ink); }
+.turf-space .owner-coin { flex: none; }
+/* The name hugs the colour band so a resting piece in the outer strip never covers it. */
+.turf-space.side-b .body { justify-content: flex-start; padding-top: 5px; }
+.turf-space.side-t .body { justify-content: flex-end; padding-bottom: 5px; }
+.turf-space.side-l .body, .turf-space.side-r .body { justify-content: flex-start; padding-top: 4px; gap: 1px; }
+.turf-space.side-l .body:has(.glyph), .turf-space.side-r .body:has(.glyph) { flex-direction: row; flex-wrap: wrap; justify-content: center; align-content: flex-start; column-gap: 4px; }
+.turf-space.side-l .glyph, .turf-space.side-r .glyph { width: 26px; }
+.turf-space.side-l .glyph.q, .turf-space.side-r .glyph.q { width: auto; font-size: 22px; }
+.turf-space.mortgaged .body { opacity: .5; }
+.turf-space.mortgaged::after { content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: repeating-linear-gradient(135deg, transparent 0 9px, color-mix(in oklch, var(--ink) 22%, transparent) 9px 12px); }
+.turf-space .mortgage-tag { position: absolute; top: 2px; right: 3px; z-index: 1; font-family: var(--font-display); font-size: 16px; color: var(--white);
+  background: var(--tomato); border: 2px solid var(--ink); border-radius: 6px; padding: 0 4px; line-height: 1.2; }
+.turf-space.hot { z-index: 3; box-shadow: inset 0 0 0 5px var(--sun), 0 0 0 5px var(--ink); animation: turf-hot 1s ease-in-out infinite; }
+@keyframes turf-hot { 50% { box-shadow: inset 0 0 0 8px var(--sun), 0 0 0 5px var(--ink); } }
+.turf-space.corner { flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-align: center; padding: 6px; }
+.turf-space.corner .label { font-family: var(--font-display); font-weight: 400; font-size: 17px; }
+.turf-space.corner .sub { font-size: 14px; font-weight: 800; color: var(--ink-soft); }
+.turf-buildings { display: inline-flex; gap: 1px; align-items: center; }
+.side-l .turf-buildings, .side-r .turf-buildings { flex-direction: column; }
+
+.turf-well { position: absolute; }
+.turf-token { position: absolute; z-index: 5; width: 42px; height: 42px; }
+.turf-token.active { z-index: 6; filter: drop-shadow(0 0 0 var(--ink)); }
+.turf-token.active .turf-piece { transform: scale(1.12); }
+.turf-token .bars { position: absolute; inset: 2px; border-radius: 50%; pointer-events: none;
+  background: repeating-linear-gradient(90deg, transparent 0 7px, var(--ink) 7px 11px); opacity: .75; }
+
+/* ---- the middle of the board ---- */
+.well { position: absolute; inset: 14px; display: flex; flex-direction: column; border-radius: 18px;
+  background: radial-gradient(color-mix(in oklch, var(--sun) 30%, transparent) 2.6px, transparent 3.2px) 0 0 / 22px 22px, var(--paper); }
+.well-head { display: flex; align-items: center; gap: 18px; min-height: 104px; padding: 4px 8px; }
+.well-head .turn { flex: 1; display: flex; align-items: center; gap: 14px; min-width: 0; }
+.well-head .turn b { font-family: var(--font-display); font-weight: 400; font-size: 34px; line-height: 1; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 360px; }
+.well-head .turn small { font-size: 24px; font-weight: 800; color: var(--ink-soft); }
+.turf-clock .led7 { background: var(--ink); border-radius: 12px; }
+.turf-lastlap { font-family: var(--font-display); font-size: 30px; color: var(--white); background: var(--tomato); border: 5px solid var(--ink); border-radius: 14px; padding: 6px 14px; transform: rotate(-3deg); }
+.turf-clock-label { font-family: var(--font-display); font-size: 22px; }
+.well-body { flex: 1; min-height: 0; position: relative; }
+.well-panel { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
+.ticker { min-height: 96px; padding: 8px 12px 0; border-top: 4px dashed color-mix(in oklch, var(--ink) 30%, transparent); }
+.ticker p { font-size: 22px; font-weight: 750; line-height: 1.3; color: var(--ink-soft); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ticker p.latest { color: var(--ink); font-weight: 900; font-size: 24px; }
+
+.stack-center { display: flex; flex-direction: column; align-items: center; gap: 14px; text-align: center; max-width: 100%; }
+.stack-center .call, .trade .call, .tally .call { font-family: var(--font-display); font-size: 42px; line-height: 1.05; color: var(--paper); -webkit-text-stroke: 9px var(--ink); paint-order: stroke fill; }
+.stack-center .hint, .auction .hint, .trade .hint, .tally .hint { font-size: 24px; font-weight: 800; color: var(--ink-soft); }
+.dice { display: flex; gap: 22px; align-items: center; }
+
+.deed-card { width: 420px; background: var(--paper); border: var(--stroke-tv) solid var(--ink); border-radius: 18px; box-shadow: 10px 10px 0 var(--ink); overflow: hidden; }
+.deed-card.compact { width: 330px; }
+.deed-band { padding: 12px 18px 14px; border-bottom: 5px solid var(--ink); display: flex; flex-direction: column; align-items: center; text-align: center; }
+.deed-band small { font-size: 22px; font-weight: 900; letter-spacing: .08em; opacity: .85; }
+.deed-band span { font-family: var(--font-display); font-size: 34px; line-height: 1.05; }
+.deed-card.compact .deed-band span { font-size: 28px; }
+.deed-rows { padding: 10px 22px; display: grid; gap: 2px; }
+.deed-rows div { display: flex; justify-content: space-between; font-size: 24px; font-weight: 750; }
+.deed-rows b { font-weight: 900; }
+.deed-foot { display: flex; justify-content: space-between; align-items: center; padding: 10px 22px 14px; border-top: 4px solid var(--ink); font-size: 22px; font-weight: 850; }
+.deed-foot b { font-family: var(--font-display); font-weight: 400; font-size: 40px; }
+
+.auction { display: flex; align-items: center; gap: 30px; }
+.auction-bid { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.auction-bid .label { font-family: var(--font-display); font-size: 30px; }
+.auction-bid .led7 { background: var(--ink); border-radius: 14px; }
+.auction-bid .leader { display: flex; align-items: center; gap: 12px; font-size: 30px; }
+
+.game-card { width: 580px; min-height: 320px; border: var(--stroke-tv) solid var(--ink); border-radius: 26px; box-shadow: 12px 12px 0 var(--ink);
+  padding: 26px 34px; display: flex; flex-direction: column; gap: 18px; align-items: center; justify-content: center; text-align: center; transform-style: preserve-3d; }
+.game-card .deck { font-family: var(--font-display); font-size: 34px; color: var(--paper); -webkit-text-stroke: 8px var(--ink); paint-order: stroke fill; }
+.game-card p { font-size: 36px; font-weight: 850; line-height: 1.2; }
+.game-card .sips { font-family: var(--font-display); font-size: 26px; background: var(--ink); color: var(--sun); border-radius: 12px; padding: 4px 14px; }
+.debt-meter { display: flex; align-items: center; gap: 16px; font-family: var(--font-display); font-size: 26px; }
+.debt-meter .led7 { background: var(--ink); border-radius: 12px; }
+
+.trade { display: flex; flex-direction: column; align-items: center; gap: 16px; width: 100%; }
+.trade-cols { display: grid; grid-template-columns: minmax(0, 1fr) 80px minmax(0, 1fr); gap: 14px; align-items: center; width: 100%; padding: 0 10px; }
+.trade-side { display: flex; flex-direction: column; gap: 10px; align-items: flex-start; min-width: 0; }
+.trade-who { display: flex; align-items: center; gap: 10px; font-size: 26px; }
+.trade-deed { display: inline-block; max-width: 100%; box-sizing: border-box; font-size: 22px; font-weight: 850; background: var(--paper); border: 4px solid var(--ink); border-left: 16px solid var(--band, var(--ink));
+  border-radius: 10px; padding: 4px 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.trade-deed.card { border-left-color: var(--sky); }
+.trade-cash { font-family: var(--font-display); font-size: 32px; background: var(--lime); border: 4px solid var(--ink); border-radius: 12px; padding: 2px 14px; }
+
+.tally { display: flex; flex-direction: column; gap: 8px; width: 100%; padding: 0 16px; }
+.tally .call { text-align: center; }
+.tally-row { display: grid; grid-template-columns: 50px 220px 1fr 150px; gap: 14px; align-items: center; font-size: 26px; min-height: 52px; }
+.tally-row .name { display: flex; align-items: center; gap: 8px; font-weight: 900; white-space: nowrap; overflow: hidden; }
+.tally-row .bar { height: 30px; border: 4px solid var(--ink); border-radius: 10px; background: var(--paper-2); overflow: hidden; }
+.tally-row .bar span { display: block; height: 100%; }
+.tally-row b { font-family: var(--font-display); font-weight: 400; font-size: 30px; text-align: right; }
+.tally .hint { text-align: center; }
+
+.teams { display: flex; flex-wrap: wrap; gap: 16px; justify-content: center; max-width: 100%; }
+.team { border: 6px solid; border-radius: 18px; background: var(--paper); overflow: hidden; width: 216px; }
+.team > b { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-family: var(--font-display); font-weight: 400; font-size: 22px; padding: 6px 14px; border-bottom: 4px solid var(--ink); }
+.team .faces { display: flex; flex-direction: column; gap: 4px; padding: 8px 12px; font-size: 22px; font-weight: 850; }
+.team .faces span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.team .faces span { display: flex; align-items: center; gap: 10px; }
+.piece-grid { display: grid; grid-template-columns: repeat(3, 150px); gap: 16px 28px; }
+.piece-slot { display: flex; flex-direction: column; align-items: center; gap: 6px; font-size: 22px; font-weight: 900; text-align: center; }
+.piece-slot.free .turf-piece { animation: bob 1.4s ease-in-out infinite; opacity: .85; }
+.dealt { display: flex; flex-direction: column; gap: 10px; align-items: flex-start; }
+.dealt-row { display: flex; align-items: center; gap: 12px; font-size: 24px; }
+
+/* ---- rails ---- */
+.turf-card { padding: 16px 18px 14px; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.turf-card .top { display: flex; align-items: center; gap: 14px; min-width: 0; }
+.turf-card .who { min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+.turf-card h3 { font-family: var(--font-display); font-weight: 400; font-size: 30px; line-height: 1.05; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.turf-card .members { display: flex; align-items: center; gap: 2px; flex-wrap: wrap; }
+.turf-card .seat { font-size: 22px; font-weight: 850; color: var(--ink-soft); }
+.turf-card .cash { display: flex; align-items: center; gap: 12px; font-family: var(--font-display); font-size: 50px; line-height: 1; }
+.turf-card .cash::before { content: '$'; }
+.turf-card .delta { font-family: var(--font-body); font-weight: 900; font-size: 24px; background: var(--lime); border: 4px solid var(--ink); border-radius: 999px; padding: 2px 12px; }
+.turf-card .delta.neg { background: var(--tomato); color: var(--white); }
+.turf-card .deeds { display: flex; flex-wrap: wrap; gap: 4px; min-height: 30px; align-items: center; }
+.turf-card .deed-pip { width: 20px; height: 28px; border: 3px solid var(--ink); border-radius: 5px; }
+.turf-card .deed-pip.mortgaged { opacity: .4; }
+.turf-card .none { font-size: 22px; font-weight: 800; color: var(--ink-soft); }
+.turf-card .badges { display: flex; flex-wrap: wrap; gap: 8px; }
+.turf-card .badge { font-size: 22px; font-weight: 900; border: 3px solid var(--ink); border-radius: 999px; padding: 1px 12px; background: var(--paper-2); }
+.turf-card .badge.set { background: var(--lime); }
+.turf-card .badge.card { background: var(--sky); }
+.turf-card.out { filter: grayscale(.8); opacity: .75; }
+.turf-card .corner-stamp { position: absolute; right: 12px; top: 10px; }
+
+/* ---- callouts ---- */
+.turf-flash { position: absolute; left: 50%; top: 50%; translate: -50% -50%; z-index: 30; pointer-events: none; }
+.turf-flash.small { top: 22%; }
+
+@media (prefers-reduced-motion: reduce) {
+  .turf-space.hot, .piece-slot.free .turf-piece { animation: none; }
+}

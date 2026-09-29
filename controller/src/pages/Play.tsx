@@ -1,0 +1,106 @@
+import { useEffect, useMemo, useRef, useState, type CSSProperties } from 'react'
+import { Connection, browserSocket, browserSocketUrl, type Status } from '../net/connection'
+import { rejectMessage, type ActionPayload, type GameListing, type HostCommand, type PhoneState } from '../protocol'
+import type { Session } from '../net/token'
+import { ScreenView, teamOf } from '../screens/ScreenView'
+import { Face } from '../theme/Face'
+import { gameThemeOf } from '../theme/gameTheme'
+import { Crown } from '../tv/toon'
+import { CaptainControls, CaptainLobby, ShuffleTeams, inTeamUp } from './Captain'
+import { useCountdown } from './useCountdown'
+import { useNoSleep } from './useNoSleep'
+
+const BYE: Record<string, string> = {
+  KICKED: 'The host removed you from the party.',
+  BAD_TOKEN: 'That party has ended or the TV restarted. Join again!',
+}
+
+/** Water tonight, on or off: the TV and this phone word this player's drink calls as water. */
+async function setWater(token: string, water: boolean, report: (m: string) => void) {
+  const r = await fetch('/api/water', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ token, water }) }).catch(() => null)
+  if (!r?.ok) report("Couldn't switch that right now.")
+}
+
+async function takeSeat(token: string, report: (m: string) => void) {
+  const r = await fetch('/api/role', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ token, role: 'PLAYER' }) })
+    .catch(() => null)
+  if (r?.ok) return
+  const code = (await r?.json().catch(() => ({})))?.error
+  report(code === 'FULL' ? 'All 16 player seats are taken.' : code === 'GAME_RUNNING' ? 'You can join when this game ends.' : "Couldn't switch right now.")
+}
+
+export function Play({ session, onLeave }: { session: Session; onLeave(why: string): void }) {
+  const [view, setView] = useState<PhoneState | null>(null)
+  const [seq, setSeq] = useState(0)
+  const [status, setStatus] = useState<Status>('connecting')
+  const [toast, setToast] = useState<string | null>(null)
+  const [games, setGames] = useState<GameListing[]>([])
+  const conn = useRef<Connection | null>(null)
+  useEffect(() => { fetch('/api/games').then((r) => r.json()).then(setGames).catch(() => setGames([])) }, [])
+
+  useEffect(() => {
+    const c = new Connection(browserSocketUrl(`token=${encodeURIComponent(session.token)}`), browserSocket, {
+      onStatus: setStatus,
+      onMessage: (m) => {
+        if (m.t === 'view') { setView(m.view); setSeq(m.seq) }
+        if (m.t === 'reject') { const text = rejectMessage(m.code); if (text) setToast(text) }
+        if (m.t === 'bye') onLeave(BYE[m.reason] ?? 'You left the party.')
+      },
+    })
+    conn.current = c
+    c.start()
+    return () => c.stop()
+  }, [session.token, onLeave])
+
+  useEffect(() => {
+    if (!toast) return
+    const t = setTimeout(() => setToast(null), 3_000)
+    return () => clearTimeout(t)
+  }, [toast])
+
+  const seconds = useCountdown(view?.remainingMs, seq, view?.paused ?? false)
+  useNoSleep(!!view?.gameId)
+  const people = useMemo(() => new Map((view?.scores ?? []).map((r) => [r.id, r])), [view?.scores])
+  const send = (payload: ActionPayload) => { if (view) conn.current?.act(view.round, payload) }
+  const host = (c: HostCommand) => { conn.current?.host(c) }
+
+  if (!view) return <main className="page center"><div className="spinner" /><p>Connecting to the TV…</p></main>
+  // Home Turf and Sprawl only count down real decisions; token hops and card reveals don't tick.
+  const timed = (view.screen.t !== 'turf' && view.screen.t !== 'sprawl') || view.screen.prompt.timed
+  const team = teamOf(view.screen)
+
+  return (
+    <main className="page play" data-game-theme={gameThemeOf(view.gameId)} style={team ? { '--team': team.color } as CSSProperties : undefined}>
+      <header className="topbar">
+        <span className="me">
+          <span className="me-face"><Face face={view.me.avatar.face} color={view.me.avatar.color} size={40} />{view.captain && <Crown size={26} style={{ position: 'absolute', left: 7, top: -15, transform: 'rotate(-12deg)' }} />}</span>
+          {view.me.name}
+        </span>
+        <span className="room-chip">{view.gameTitle ?? `Room ${view.roomCode}`}</span>
+        {seconds != null && view.gameId && timed && <span className={`timer ${seconds <= 5 ? 'hot' : ''}`}>{seconds}</span>}
+      </header>
+      {team && <div className="team-band" style={{ background: team.color }}><span>{team.name}</span></div>}
+      {status !== 'online' && <div className="banner warn">Reconnecting…</div>}
+      {view.paused && <div className="banner">{view.pauseReason === 'WAITING_FOR_PLAYERS' ? 'Paused: waiting for players' : 'Paused'}</div>}
+      {/* Each new round remounts the screen, except Home Turf's and Sprawl's: the board moves on every few seconds and a
+          half-built trade or an open tab must survive other players' turns. */}
+      <section className="screen" key={view.screen.t === 'turf' || view.screen.t === 'sprawl' ? view.screen.t : `${view.round}-${view.screen.t}`}>
+        {view.captain && !view.gameId
+          ? <CaptainLobby view={view} games={games} host={host} />
+          : <ScreenView screen={view.screen} disabled={view.paused} onAction={send} meId={view.me.id} people={people} />}
+        {view.captain && inTeamUp(view) && <ShuffleTeams host={host} />}
+        {view.me.role === 'SPECTATOR' && !view.gameId && (
+          <button className="primary big" onClick={() => void takeSeat(session.token, setToast)}>Join as a player</button>
+        )}
+        {!view.gameId && view.me.role === 'PLAYER' && (
+          <div className="setting-row water-row">
+            <span>Water tonight<small>Your drink calls say water</small></span>
+            <button className={`toggle ${view.me.water ? 'on' : ''}`} role="switch" aria-checked={!!view.me.water} onClick={() => void setWater(session.token, !view.me.water, setToast)}>{view.me.water ? 'On' : 'Off'}</button>
+          </div>
+        )}
+      </section>
+      {view.captain && view.gameId && <CaptainControls view={view} host={host} />}
+      {toast && <div className="toast" role="status">{toast}</div>}
+    </main>
+  )
+}

@@ -1,0 +1,72 @@
+/* Hallmark · genre: playful · theme: custom "Saturday Morning" · vibe: loud flat cartoon, ink outlines, halftone
+ * paper oklch(97.7% 0.028 88.7) · accent oklch(87.9% 0.162 90.9) sun · display Rammetto One + body Figtree
+ * axes: light / display-heavy / warm
+ *
+ * Party OS 2.0 design tokens. The only place colours, fonts, strokes and easings are defined: the TV (tv/*.css),
+ * the phone (styles.css) and inline SVG (fill="var(--tomato)") all read these.
+ */
+@import '@fontsource/rammetto-one';
+@import '@fontsource-variable/figtree';
+
+:root {
+  /* ink and paper */
+  --ink: oklch(19.1% 0.017 307.5);
+  --ink-soft: oklch(34% 0.02 307.5);
+  --paper: oklch(97.7% 0.028 88.7);
+  --paper-2: oklch(93% 0.04 88.7);
+  --white: oklch(100% 0 0);
+
+  /* the cartoon box of crayons */
+  --sun: oklch(87.9% 0.162 90.9);
+  --tomato: oklch(66.9% 0.218 28.5);
+  --blueberry: oklch(58.1% 0.229 263.9);
+  --lime: oklch(70.8% 0.189 147.6);
+  --grape: oklch(59.3% 0.247 293.3);
+  --bubblegum: oklch(73.6% 0.189 352.4);
+  --tangerine: oklch(74.9% 0.173 53.8);
+  --sky: oklch(83% 0.103 232.7);
+  --felt: oklch(56.3% 0.12 158.5);
+  --felt-deep: oklch(40% 0.09 158.5);
+  --mahogany: oklch(38.3% 0.091 35);
+
+  /* answers: colour + shape, identical on TV and phone */
+  --ans-a: var(--tomato);
+  --ans-b: var(--blueberry);
+  --ans-c: var(--lime);
+  --ans-d: var(--grape);
+
+  /* meaning */
+  --right: var(--lime);
+  --wrong: var(--tomato);
+
+  /* type */
+  --font-display: 'Rammetto One', 'Figtree Variable', system-ui, sans-serif;
+  --font-body: 'Figtree Variable', ui-rounded, system-ui, -apple-system, sans-serif;
+
+  /* shape language */
+  --stroke-tv: 6px;
+  --stroke-phone: 3px;
+  --shadow-tv: 10px;
+  --shadow-phone: 5px;
+  --radius-tv: 28px;
+  --radius-phone: 18px;
+
+  /* 4pt spacing */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+  --space-16: 64px;
+
+  /* motion */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in: cubic-bezier(0.64, 0, 0.78, 0);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-boing: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --dur-fast: 120ms;
+  --dur-base: 220ms;
+  --dur-slow: 480ms;
+}

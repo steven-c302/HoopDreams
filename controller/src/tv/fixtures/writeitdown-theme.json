@@ -1,0 +1,792 @@
+{
+  "players": [
+    {
+      "id": "3d516812ad00",
+      "name": "Ava",
+      "avatar": {
+        "face": "p:00",
+        "color": "#FF4B3E"
+      },
+      "role": "PLAYER",
+      "connected": true
+    },
+    {
+      "id": "303b406cb5c2",
+      "name": "Ben",
+      "avatar": {
+        "face": "p:01",
+        "color": "#FF8A2B"
+      },
+      "role": "PLAYER",
+      "connected": true
+    },
+    {
+      "id": "40d33d5d6bca",
+      "name": "Cleo",
+      "avatar": {
+        "face": "p:02",
+        "color": "#FFD23F"
+      },
+      "role": "PLAYER",
+      "connected": true
+    },
+    {
+      "id": "97c6faef680a",
+      "name": "Dev",
+      "avatar": {
+        "face": "p:03",
+        "color": "#2FBF55"
+      },
+      "role": "PLAYER",
+      "connected": true
+    },
+    {
+      "id": "28fc5cf6dd8e",
+      "name": "Eli",
+      "avatar": {
+        "face": "p:04",
+        "color": "#7FD3FF"
+      },
+      "role": "PLAYER",
+      "connected": true
+    },
+    {
+      "id": "a966246b6140",
+      "name": "Fin",
+      "avatar": {
+        "face": "p:05",
+        "color": "#2F6BFF"
+      },
+      "role": "PLAYER",
+      "connected": true
+    }
+  ],
+  "beats": {
+    "teamup": {
+      "stage": {
+        "gameId": "writeitdown",
+        "title": "Write It Down",
+        "phaseSeq": 2,
+        "deadlineAt": 1790550159665,
+        "remainingMs": 43520,
+        "paused": false,
+        "game": {
+          "t": "trivia",
+          "phase": "teamup",
+          "format": "teamup",
+          "round": 0,
+          "totalRounds": 3,
+          "q": 0,
+          "qTotal": 0,
+          "durationMs": 45000,
+          "prompt": "Team up!",
+          "options": [],
+          "teams": [
+            {
+              "id": "T1",
+              "name": "Smarty Pints",
+              "color": "#FF4B3E",
+              "members": [
+                "3d516812ad00",
+                "40d33d5d6bca",
+                "28fc5cf6dd8e"
+              ],
+              "score": 0,
+              "answered": 0,
+              "position": 0,
+              "headStart": 0
+            },
+            {
+              "id": "T2",
+              "name": "Les Quizerables",
+              "color": "#2F6BFF",
+              "members": [
+                "303b406cb5c2",
+                "97c6faef680a"
+              ],
+              "score": 0,
+              "answered": 0,
+              "position": 0,
+              "headStart": 0
+            }
+          ],
+          "answered": 0,
+          "expected": 5,
+          "hostLine": "Pick your people wisely.",
+          "finishLine": 10,
+          "podium": [],
+          "awards": []
+        }
+      },
+      "scores": [
+        {
+          "id": "3d516812ad00",
+          "name": "Ava",
+          "avatar": {
+            "face": "p:00",
+            "color": "#FF4B3E"
+          },
+          "score": 0
+        },
+        {
+          "id": "303b406cb5c2",
+          "name": "Ben",
+          "avatar": {
+            "face": "p:01",
+            "color": "#FF8A2B"
+          },
+          "score": 0
+        },
+        {
+          "id": "40d33d5d6bca",
+          "name": "Cleo",
+          "avatar": {
+            "face": "p:02",
+            "color": "#FFD23F"
+          },
+          "score": 0
+        },
+        {
+          "id": "97c6faef680a",
+          "name": "Dev",
+          "avatar": {
+            "face": "p:03",
+            "color": "#2FBF55"
+          },
+          "score": 0
+        },
+        {
+          "id": "28fc5cf6dd8e",
+          "name": "Eli",
+          "avatar": {
+            "face": "p:04",
+            "color": "#7FD3FF"
+          },
+          "score": 0
+        },
+        {
+          "id": "a966246b6140",
+          "name": "Fin",
+          "avatar": {
+            "face": "p:05",
+            "color": "#2F6BFF"
+          },
+          "score": 0
+        }
+      ],
+      "phone": {
+        "me": {
+          "id": "a966246b6140",
+          "name": "Fin",
+          "avatar": {
+            "face": "p:05",
+            "color": "#2F6BFF"
+          },
+          "role": "PLAYER",
+          "connected": true
+        },
+        "screen": {
+          "t": "choice",
+          "prompt": "Pick a team",
+          "options": [
+            {
+              "id": "T1",
+              "text": "Smarty Pints",
+              "color": "#FF4B3E",
+              "detail": "3 in"
+            },
+            {
+              "id": "T2",
+              "text": "Les Quizerables",
+              "color": "#2F6BFF",
+              "detail": "2 in"
+            }
+          ],
+          "kind": "team",
+          "style": "teams",
+          "votes": {}
+        }
+      }
+    },
+    "intro": {
+      "stage": {
+        "gameId": "writeitdown",
+        "title": "Write It Down",
+        "phaseSeq": 3,
+        "deadlineAt": 1790550123870,
+        "remainingMs": 7000,
+        "paused": false,
+        "game": {
+          "t": "trivia",
+          "phase": "intro",
+          "format": "write",
+          "round": 1,
+          "totalRounds": 3,
+          "q": 0,
+          "qTotal": 5,
+          "durationMs": 7000,
+          "prompt": "",
+          "options": [],
+          "teams": [
+            {
+              "id": "T1",
+              "name": "Smarty Pints",
+              "color": "#FF4B3E",
+              "members": [
+                "3d516812ad00",
+                "40d33d5d6bca",
+                "28fc5cf6dd8e"
+              ],
+              "score": 0,
+              "answered": 0,
+              "position": 0,
+              "headStart": 0
+            },
+            {
+              "id": "T2",
+              "name": "Les Quizerables",
+              "color": "#2F6BFF",
+              "members": [
+                "303b406cb5c2",
+                "97c6faef680a",
+                "a966246b6140"
+              ],
+              "score": 0,
+              "answered": 0,
+              "position": 0,
+              "headStart": 0
+            }
+          ],
+          "answered": 0,
+          "expected": 6,
+          "finishLine": 10,
+          "podium": [],
+          "awards": []
+        }
+      },
+      "scores": [
+        {
+          "id": "3d516812ad00",
+          "name": "Ava",
+          "avatar": {
+            "face": "p:00",
+            "color": "#FF4B3E"
+          },
+          "score": 0
+        },
+        {
+          "id": "303b406cb5c2",
+          "name": "Ben",
+          "avatar": {
+            "face": "p:01",
+            "color": "#FF8A2B"
+          },
+          "score": 0
+        },
+        {
+          "id": "40d33d5d6bca",
+          "name": "Cleo",
+          "avatar": {
+            "face": "p:02",
+            "color": "#FFD23F"
+          },
+          "score": 0
+        },
+        {
+          "id": "97c6faef680a",
+          "name": "Dev",
+          "avatar": {
+            "face": "p:03",
+            "color": "#2FBF55"
+          },
+          "score": 0
+        },
+        {
+          "id": "28fc5cf6dd8e",
+          "name": "Eli",
+          "avatar": {
+            "face": "p:04",
+            "color": "#7FD3FF"
+          },
+          "score": 0
+        },
+        {
+          "id": "a966246b6140",
+          "name": "Fin",
+          "avatar": {
+            "face": "p:05",
+            "color": "#2F6BFF"
+          },
+          "score": 0
+        }
+      ],
+      "phone": {
+        "me": {
+          "id": "3d516812ad00",
+          "name": "Ava",
+          "avatar": {
+            "face": "p:00",
+            "color": "#FF4B3E"
+          },
+          "role": "PLAYER",
+          "connected": true
+        },
+        "screen": {
+          "t": "waiting",
+          "title": "Write It Down",
+          "detail": "No options this time. Type the answer; your team's most-written one counts. Close spelling is fine.",
+          "team": {
+            "id": "T1",
+            "name": "Smarty Pints",
+            "color": "#FF4B3E"
+          }
+        }
+      }
+    },
+    "question": {
+      "stage": {
+        "gameId": "writeitdown",
+        "title": "Write It Down",
+        "phaseSeq": 4,
+        "deadlineAt": 1790550157397,
+        "remainingMs": 39431,
+        "paused": false,
+        "game": {
+          "t": "trivia",
+          "phase": "question",
+          "format": "write",
+          "round": 1,
+          "totalRounds": 3,
+          "q": 1,
+          "qTotal": 5,
+          "durationMs": 40000,
+          "prompt": "Which video game series stars Master Chief?",
+          "category": "Tech",
+          "options": [],
+          "teams": [
+            {
+              "id": "T1",
+              "name": "Smarty Pints",
+              "color": "#FF4B3E",
+              "members": [
+                "3d516812ad00",
+                "40d33d5d6bca",
+                "28fc5cf6dd8e"
+              ],
+              "score": 0,
+              "answered": 1,
+              "position": 0,
+              "headStart": 0
+            },
+            {
+              "id": "T2",
+              "name": "Les Quizerables",
+              "color": "#2F6BFF",
+              "members": [
+                "303b406cb5c2",
+                "97c6faef680a",
+                "a966246b6140"
+              ],
+              "score": 0,
+              "answered": 1,
+              "position": 0,
+              "headStart": 0
+            }
+          ],
+          "answered": 2,
+          "expected": 6,
+          "finishLine": 10,
+          "podium": [],
+          "awards": []
+        }
+      },
+      "scores": [
+        {
+          "id": "3d516812ad00",
+          "name": "Ava",
+          "avatar": {
+            "face": "p:00",
+            "color": "#FF4B3E"
+          },
+          "score": 0
+        },
+        {
+          "id": "303b406cb5c2",
+          "name": "Ben",
+          "avatar": {
+            "face": "p:01",
+            "color": "#FF8A2B"
+          },
+          "score": 0
+        },
+        {
+          "id": "40d33d5d6bca",
+          "name": "Cleo",
+          "avatar": {
+            "face": "p:02",
+            "color": "#FFD23F"
+          },
+          "score": 0
+        },
+        {
+          "id": "97c6faef680a",
+          "name": "Dev",
+          "avatar": {
+            "face": "p:03",
+            "color": "#2FBF55"
+          },
+          "score": 0
+        },
+        {
+          "id": "28fc5cf6dd8e",
+          "name": "Eli",
+          "avatar": {
+            "face": "p:04",
+            "color": "#7FD3FF"
+          },
+          "score": 0
+        },
+        {
+          "id": "a966246b6140",
+          "name": "Fin",
+          "avatar": {
+            "face": "p:05",
+            "color": "#2F6BFF"
+          },
+          "score": 0
+        }
+      ],
+      "phone": {
+        "me": {
+          "id": "40d33d5d6bca",
+          "name": "Cleo",
+          "avatar": {
+            "face": "p:02",
+            "color": "#FFD23F"
+          },
+          "role": "PLAYER",
+          "connected": true
+        },
+        "screen": {
+          "t": "text",
+          "prompt": "Which video game series stars Master Chief?",
+          "maxLen": 40,
+          "kind": "write",
+          "hint": "Team: Ava: Halo",
+          "team": {
+            "id": "T1",
+            "name": "Smarty Pints",
+            "color": "#FF4B3E"
+          }
+        }
+      }
+    },
+    "reveal": {
+      "stage": {
+        "gameId": "writeitdown",
+        "title": "Write It Down",
+        "phaseSeq": 5,
+        "deadlineAt": 1790550126967,
+        "remainingMs": 8000,
+        "paused": false,
+        "game": {
+          "t": "trivia",
+          "phase": "reveal",
+          "format": "write",
+          "round": 1,
+          "totalRounds": 3,
+          "q": 1,
+          "qTotal": 5,
+          "durationMs": 8000,
+          "prompt": "Which video game series stars Master Chief?",
+          "category": "Tech",
+          "options": [],
+          "teams": [
+            {
+              "id": "T1",
+              "name": "Smarty Pints",
+              "color": "#FF4B3E",
+              "members": [
+                "3d516812ad00",
+                "40d33d5d6bca",
+                "28fc5cf6dd8e"
+              ],
+              "score": 1000,
+              "answered": 0,
+              "position": 0,
+              "headStart": 0
+            },
+            {
+              "id": "T2",
+              "name": "Les Quizerables",
+              "color": "#2F6BFF",
+              "members": [
+                "303b406cb5c2",
+                "97c6faef680a",
+                "a966246b6140"
+              ],
+              "score": 0,
+              "answered": 0,
+              "position": 0,
+              "headStart": 0
+            }
+          ],
+          "answered": 0,
+          "expected": 6,
+          "reveal": {
+            "correct": [],
+            "answerText": "Halo",
+            "answers": [
+              {
+                "team": "T1",
+                "picks": [],
+                "correct": true,
+                "points": 1000,
+                "bullseye": false,
+                "seconds": 0.454,
+                "text": "Halo"
+              },
+              {
+                "team": "T2",
+                "picks": [],
+                "correct": false,
+                "points": 0,
+                "bullseye": false,
+                "seconds": 0.575,
+                "text": "Doom"
+              }
+            ]
+          },
+          "hostLine": "Smarty Pints, alone. Everyone else, look at Smarty Pints.",
+          "fact": "It launched alongside the original Xbox in 2001.",
+          "finishLine": 10,
+          "podium": [],
+          "awards": []
+        }
+      },
+      "scores": [
+        {
+          "id": "3d516812ad00",
+          "name": "Ava",
+          "avatar": {
+            "face": "p:00",
+            "color": "#FF4B3E"
+          },
+          "score": 1000
+        },
+        {
+          "id": "40d33d5d6bca",
+          "name": "Cleo",
+          "avatar": {
+            "face": "p:02",
+            "color": "#FFD23F"
+          },
+          "score": 1000
+        },
+        {
+          "id": "28fc5cf6dd8e",
+          "name": "Eli",
+          "avatar": {
+            "face": "p:04",
+            "color": "#7FD3FF"
+          },
+          "score": 1000
+        },
+        {
+          "id": "303b406cb5c2",
+          "name": "Ben",
+          "avatar": {
+            "face": "p:01",
+            "color": "#FF8A2B"
+          },
+          "score": 0
+        },
+        {
+          "id": "97c6faef680a",
+          "name": "Dev",
+          "avatar": {
+            "face": "p:03",
+            "color": "#2FBF55"
+          },
+          "score": 0
+        },
+        {
+          "id": "a966246b6140",
+          "name": "Fin",
+          "avatar": {
+            "face": "p:05",
+            "color": "#2F6BFF"
+          },
+          "score": 0
+        }
+      ],
+      "phone": {
+        "me": {
+          "id": "3d516812ad00",
+          "name": "Ava",
+          "avatar": {
+            "face": "p:00",
+            "color": "#FF4B3E"
+          },
+          "role": "PLAYER",
+          "connected": true
+        },
+        "screen": {
+          "t": "waiting",
+          "title": "Correct!",
+          "detail": "“Halo” counts · +1000",
+          "tone": "win",
+          "team": {
+            "id": "T1",
+            "name": "Smarty Pints",
+            "color": "#FF4B3E"
+          }
+        }
+      }
+    },
+    "standings": {
+      "stage": {
+        "gameId": "writeitdown",
+        "title": "Write It Down",
+        "phaseSeq": 14,
+        "deadlineAt": 1790550133006,
+        "remainingMs": 9000,
+        "paused": false,
+        "game": {
+          "t": "trivia",
+          "phase": "standings",
+          "format": "write",
+          "round": 1,
+          "totalRounds": 3,
+          "q": 5,
+          "qTotal": 5,
+          "durationMs": 9000,
+          "prompt": "",
+          "options": [],
+          "teams": [
+            {
+              "id": "T1",
+              "name": "Smarty Pints",
+              "color": "#FF4B3E",
+              "members": [
+                "3d516812ad00",
+                "40d33d5d6bca",
+                "28fc5cf6dd8e"
+              ],
+              "score": 5000,
+              "answered": 0,
+              "position": 0,
+              "headStart": 0
+            },
+            {
+              "id": "T2",
+              "name": "Les Quizerables",
+              "color": "#2F6BFF",
+              "members": [
+                "303b406cb5c2",
+                "97c6faef680a",
+                "a966246b6140"
+              ],
+              "score": 0,
+              "answered": 0,
+              "position": 0,
+              "headStart": 0
+            }
+          ],
+          "answered": 0,
+          "expected": 6,
+          "drink": {
+            "teams": [
+              "T2"
+            ],
+            "sips": 1,
+            "reason": "last place"
+          },
+          "hostLine": "Smarty Pints lead after round 1.",
+          "finishLine": 10,
+          "podium": [],
+          "awards": []
+        }
+      },
+      "scores": [
+        {
+          "id": "3d516812ad00",
+          "name": "Ava",
+          "avatar": {
+            "face": "p:00",
+            "color": "#FF4B3E"
+          },
+          "score": 5000
+        },
+        {
+          "id": "40d33d5d6bca",
+          "name": "Cleo",
+          "avatar": {
+            "face": "p:02",
+            "color": "#FFD23F"
+          },
+          "score": 5000
+        },
+        {
+          "id": "28fc5cf6dd8e",
+          "name": "Eli",
+          "avatar": {
+            "face": "p:04",
+            "color": "#7FD3FF"
+          },
+          "score": 5000
+        },
+        {
+          "id": "303b406cb5c2",
+          "name": "Ben",
+          "avatar": {
+            "face": "p:01",
+            "color": "#FF8A2B"
+          },
+          "score": 0
+        },
+        {
+          "id": "97c6faef680a",
+          "name": "Dev",
+          "avatar": {
+            "face": "p:03",
+            "color": "#2FBF55"
+          },
+          "score": 0
+        },
+        {
+          "id": "a966246b6140",
+          "name": "Fin",
+          "avatar": {
+            "face": "p:05",
+            "color": "#2F6BFF"
+          },
+          "score": 0
+        }
+      ],
+      "phone": {
+        "me": {
+          "id": "3d516812ad00",
+          "name": "Ava",
+          "avatar": {
+            "face": "p:00",
+            "color": "#FF4B3E"
+          },
+          "role": "PLAYER",
+          "connected": true
+        },
+        "screen": {
+          "t": "waiting",
+          "title": "1st place",
+          "detail": "Smarty Pints · 5,000 pts",
+          "tone": "win",
+          "team": {
+            "id": "T1",
+            "name": "Smarty Pints",
+            "color": "#FF4B3E"
+          }
+        }
+      }
+    }
+  }
+}

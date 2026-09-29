@@ -1,0 +1,135 @@
+/* Home Turf on the phone: your token band, one decision at a time, your places, and the trade builder. */
+
+.turf-phone { display: flex; flex-direction: column; gap: 12px; flex: 1; min-height: 0; }
+.turf-tab-body { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 12px; }
+
+.turf-band { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; background: var(--paper); border: var(--stroke-phone) solid var(--ink); border-left: 12px solid var(--me);
+  border-radius: 16px; padding: 8px 12px; box-shadow: 4px 4px 0 var(--ink); }
+.turf-band .who { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.turf-band .who b { font-family: var(--font-display); font-weight: 400; font-size: 1.1rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.turf-band .who small { font-size: .85rem; color: var(--ink-soft); font-weight: 800; }
+.turf-band .cash .led7 { background: var(--ink); border-radius: 10px; }
+.turf-band .tag { font-size: .75rem; font-weight: 900; border: 3px solid var(--ink); border-radius: 999px; padding: 2px 8px; }
+.turf-band .tag.jail { background: var(--blueberry); color: var(--white); }
+.turf-band .tag.card { background: var(--sky); }
+
+.turf-drink { background: var(--bubblegum); border: var(--stroke-phone) solid var(--ink); border-radius: 16px; padding: 12px 14px; box-shadow: 4px 4px 0 var(--ink);
+  display: flex; flex-direction: column; gap: 2px; animation: boing .5s var(--ease-boing); }
+.turf-drink b { font-family: var(--font-display); font-weight: 400; font-size: 1.6rem; color: var(--paper); -webkit-text-stroke: 5px var(--ink); paint-order: stroke fill; }
+.turf-drink span { font-weight: 900; font-size: 1.05rem; }
+
+.turf-card-phone { background: var(--paper); border: var(--stroke-phone) solid var(--ink); border-radius: 24px; box-shadow: 6px 6px 0 var(--ink); padding: 18px 16px;
+  display: flex; flex-direction: column; gap: 12px; text-align: center; }
+.turf-card-phone h1 { font-size: 1.7rem; }
+.turf-card-phone > p { margin: 0; font-size: 1.05rem; font-weight: 800; }
+.turf-card-phone.go { background: var(--sun); }
+.turf-card-phone.win { background: var(--lime); animation: boing .5s var(--ease-boing); }
+.turf-card-phone.lose { background: var(--tomato); color: var(--white); }
+.turf-card-phone.lose h1 { color: var(--white); }
+.turf-worth { margin: 0; font-weight: 900; color: var(--ink-soft); }
+
+.turf-roll { display: flex; flex-direction: column; align-items: center; gap: 8px; min-height: 36dvh; justify-content: center; background: var(--tomato); color: var(--white);
+  font-family: var(--font-display); font-size: 2.6rem; border-radius: 28px; box-shadow: 7px 7px 0 var(--ink); -webkit-text-stroke: 5px var(--ink); paint-order: stroke fill; }
+.turf-roll .dice { display: flex; gap: 12px; }
+.turf-roll:not(:disabled) .dice { animation: turf-wobble 1.2s ease-in-out infinite alternate; }
+@keyframes turf-wobble { from { transform: rotate(-4deg); } to { transform: rotate(4deg); } }
+
+.turf-keys { display: flex; flex-direction: column; gap: 12px; }
+.turf-keys.two { flex-direction: row; }
+.turf-keys.two > * { flex: 1; }
+.turf-key { font-family: var(--font-display); font-weight: 400; font-size: 1.35rem; padding: 18px 14px; min-height: 68px; border-radius: 20px; box-shadow: 5px 5px 0 var(--ink);
+  display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.turf-key small { font-family: var(--font-body); font-weight: 800; font-size: .8rem; }
+.turf-key.buy, .turf-key.pay, .turf-key.card { background: var(--lime); }
+.turf-key.pass { background: var(--paper); }
+.turf-key.go, .turf-key.roll { background: var(--sun); }
+.turf-key.end { background: var(--blueberry); color: var(--white); }
+.turf-key.raise { background: var(--sun); }
+
+.turf-links { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+.turf-links button { font-weight: 900; background: var(--sky); }
+
+.turf-hold { position: relative; overflow: hidden; background: var(--ink); color: var(--paper); font-weight: 900; padding: 16px; border-radius: 18px; user-select: none; -webkit-user-select: none; touch-action: none; }
+.turf-hold .fill { position: absolute; inset: 0; background: var(--tomato); transform-origin: left; transform: scaleX(0); z-index: -1; }
+.turf-hold { isolation: isolate; }
+.turf-hold.held .fill { transform: scaleX(1); transition: transform 1.2s linear; }
+
+.turf-spaces { display: flex; flex-direction: column; gap: 6px; max-height: 52dvh; overflow-y: auto; text-align: left; }
+.turf-spaces button { display: flex; align-items: center; gap: 10px; padding: 10px 12px; box-shadow: 3px 3px 0 var(--ink); }
+.turf-spaces i { flex: none; width: 18px; height: 28px; border: 3px solid var(--ink); border-radius: 5px; }
+.turf-spaces span { flex: 1; font-weight: 900; }
+.turf-spaces small { font-weight: 800; color: var(--ink-soft); }
+
+.turf-pieces { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.turf-pieces button { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 10px 4px; font-size: .85rem; }
+
+.turf-gamecard { border: var(--stroke-phone) solid var(--ink); border-radius: 24px; box-shadow: 6px 6px 0 var(--ink); padding: 24px 18px; text-align: center; display: flex; flex-direction: column; gap: 10px; }
+.turf-gamecard.twist { background: var(--sky); }
+.turf-gamecard.chat { background: var(--bubblegum); }
+.turf-gamecard b { font-family: var(--font-display); font-weight: 400; font-size: 1.5rem; color: var(--paper); -webkit-text-stroke: 5px var(--ink); paint-order: stroke fill; }
+.turf-gamecard p { margin: 0; font-size: 1.3rem; font-weight: 900; line-height: 1.25; }
+
+.turf-bid { background: var(--sun); border: var(--stroke-phone) solid var(--ink); border-radius: 24px; box-shadow: 6px 6px 0 var(--ink); padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+.turf-bid.leading { background: var(--lime); }
+.turf-bid .lot { display: flex; gap: 10px; align-items: center; }
+.turf-bid .lot i { flex: none; width: 22px; height: 44px; border: 3px solid var(--ink); border-radius: 6px; }
+.turf-bid .lot b { font-family: var(--font-display); font-weight: 400; font-size: 1.2rem; display: block; }
+.turf-bid .lot small { font-weight: 800; color: var(--ink-soft); }
+.turf-bid .top { display: flex; align-items: center; justify-content: space-between; font-family: var(--font-display); font-size: 1.1rem; }
+.turf-bid .top .led7 { background: var(--ink); border-radius: 12px; }
+.turf-bid .status { margin: 0; text-align: center; font-family: var(--font-display); font-size: 1.3rem; }
+.turf-bid .status.small { font-family: var(--font-body); font-weight: 900; font-size: 1rem; }
+.turf-bid .incs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.turf-bid .incs button { font-family: var(--font-display); font-size: 1.5rem; padding: 16px 4px; background: var(--paper); display: flex; flex-direction: column; align-items: center; min-height: 84px; }
+.turf-bid .incs small { font-family: var(--font-body); font-weight: 900; font-size: .8rem; }
+
+.turf-places { display: flex; flex-direction: column; gap: 14px; }
+.turf-places section { display: flex; flex-direction: column; gap: 8px; }
+.turf-places h2 { font-size: 1.05rem; display: flex; align-items: center; gap: 8px; }
+.turf-places .set { font-size: .75rem; background: var(--lime); border: 3px solid var(--ink); border-radius: 999px; padding: 1px 8px; }
+.turf-note { margin: 0; font-weight: 800; color: var(--ink-soft); text-align: center; }
+.turf-deed { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; background: var(--paper); border: var(--stroke-phone) solid var(--ink); border-radius: 16px; padding: 10px; box-shadow: 3px 3px 0 var(--ink); }
+.turf-deed.mortgaged { background: var(--paper-2); }
+.turf-deed .swatch { flex: none; width: 16px; align-self: stretch; min-height: 38px; border: 3px solid var(--ink); border-radius: 5px; }
+.turf-deed .name { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.turf-deed .name b { font-weight: 900; }
+.turf-deed .name small { font-weight: 800; color: var(--ink-soft); font-size: .8rem; }
+.turf-deed .ops { display: flex; gap: 6px; flex-wrap: wrap; width: 100%; }
+.turf-deed .op { flex: 1; min-width: 88px; padding: 8px 6px; font-size: .85rem; display: flex; flex-direction: column; align-items: center; box-shadow: 3px 3px 0 var(--ink); }
+.turf-deed .op small { font-weight: 800; font-size: .75rem; }
+.turf-deed .op.build { background: var(--lime); }
+.turf-deed .op.sell, .turf-deed .op.mortgage { background: var(--sun); }
+.turf-deed .op.unmortgage { background: var(--sky); }
+
+.turf-trade { display: flex; flex-direction: column; gap: 12px; }
+.turf-trade section { background: var(--paper); border: var(--stroke-phone) solid var(--ink); border-radius: 18px; padding: 12px; display: flex; flex-direction: column; gap: 10px; box-shadow: 4px 4px 0 var(--ink); }
+.turf-trade h3 { margin: 0; font-family: var(--font-display); font-weight: 400; font-size: 1rem; }
+.turf-partners { display: flex; flex-direction: column; gap: 10px; }
+.turf-partners button { display: flex; flex-direction: column; align-items: flex-start; border-left: 14px solid var(--band); padding: 14px; }
+.turf-partners b { font-family: var(--font-display); font-weight: 400; font-size: 1.15rem; }
+.turf-partners small { font-weight: 800; color: var(--ink-soft); }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.turf-chip { font-size: .85rem; font-weight: 900; padding: 8px 10px; border-left: 10px solid var(--band, var(--ink)); box-shadow: 2px 2px 0 var(--ink); display: inline-flex; flex-direction: column; align-items: flex-start; }
+.turf-chip.on { background: var(--lime); }
+.turf-chip small { font-size: .7rem; color: var(--ink-soft); }
+.turf-chip.static { border: var(--stroke-phone) solid var(--ink); border-left: 10px solid var(--band, var(--ink)); border-radius: 12px; background: var(--white); }
+.turf-chip.cash { background: var(--lime); }
+.turf-cash-step { display: flex; align-items: center; gap: 6px; }
+.turf-cash-step span { font-weight: 900; margin-right: auto; }
+.turf-cash-step b { font-family: var(--font-display); font-weight: 400; min-width: 70px; text-align: center; }
+.turf-cash-step button { padding: 6px 10px; font-size: .85rem; box-shadow: 2px 2px 0 var(--ink); }
+.turf-offer { display: flex; flex-direction: column; gap: 10px; text-align: left; }
+.turf-offer h2 { font-size: 1.05rem; }
+
+.turf-tabs { position: sticky; bottom: calc(6px + env(safe-area-inset-bottom)); display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; background: var(--ink); border-radius: 18px; padding: 6px; }
+.turf-tabs button { position: relative; font-size: .8rem; font-weight: 900; padding: 12px 4px; background: var(--paper-2); box-shadow: none; border-width: 0; border-radius: 12px; }
+.turf-tabs button.on { background: var(--sun); }
+.turf-tabs .dot { position: absolute; top: 6px; right: 8px; width: 10px; height: 10px; border-radius: 50%; background: var(--tomato); border: 2px solid var(--ink); }
+.turf-tabs .count { position: absolute; top: -6px; right: -2px; font-style: normal; font-size: .7rem; background: var(--lime); border: 2px solid var(--ink); border-radius: 999px; padding: 0 6px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .turf-roll .dice, .turf-drink, .turf-card-phone.win { animation: none; }
+  .turf-hold.held .fill { transition: none; }
+}
+/* The captain's crown button sits bottom-right; keep the tab bar clear of it. */
+body:has(.crown-fab) .turf-tabs { margin-right: 72px; }

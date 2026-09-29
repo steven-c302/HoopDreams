@@ -1,0 +1,48 @@
+{
+  "places": [
+    "Ethan's Dorm",
+    "Anna's Porch",
+    "Kaishun's Basement",
+    "Sunhye's Studio",
+    "Steven's Garage",
+    "Alex's Backyard",
+    "Junha's Kitchen",
+    "Amanda's Balcony",
+    "Daniel's Place",
+    "The Other Daniel's",
+    "Izzy's Rooftop",
+    "John's Living Room",
+    "Charlie's Hot Tub",
+    "The Corner Store",
+    "The Laundromat",
+    "The Taco Truck",
+    "The Karaoke Bar",
+    "The Late-Night Diner",
+    "The Dive Bar",
+    "The Club",
+    "The Penthouse",
+    "The Beach House",
+    "The Rooftop Bar",
+    "The Bodega",
+    "The Parking Lot",
+    "The Food Court",
+    "The Bowling Alley",
+    "The Arcade",
+    "The Gas Station",
+    "The Pizza Place"
+  ],
+  "deserts": ["The Couch", "The Futon"],
+  "landlord": "The Landlord",
+  "resources": ["Brick", "Wood", "Sheep", "Wheat", "Ore"],
+  "dev": {
+    "knight": "Bouncer",
+    "road": "Road Trip",
+    "plenty": "Windfall",
+    "mono": "Shakedown",
+    "vp": "Clout"
+  },
+  "awards": {
+    "road": "Longest Road",
+    "army": "Most Bouncers"
+  }
+}

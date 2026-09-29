@@ -3,3 +3,6 @@ uvicorn[standard]
 sqlalchemy
 pydantic
 httpx
+python-socketio
+python-multipart
+qrcode

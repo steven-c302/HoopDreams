@@ -1,0 +1,704 @@
+{
+  "players": [
+    {
+      "id": "3d516812ad00",
+      "name": "Ava",
+      "avatar": {
+        "face": "p:00",
+        "color": "#FF4B3E"
+      },
+      "role": "PLAYER",
+      "connected": true
+    },
+    {
+      "id": "303b406cb5c2",
+      "name": "Ben",
+      "avatar": {
+        "face": "p:01",
+        "color": "#FF8A2B"
+      },
+      "role": "PLAYER",
+      "connected": true
+    },
+    {
+      "id": "40d33d5d6bca",
+      "name": "Cleo",
+      "avatar": {
+        "face": "p:02",
+        "color": "#FFD23F"
+      },
+      "role": "PLAYER",
+      "connected": true
+    },
+    {
+      "id": "97c6faef680a",
+      "name": "Dev",
+      "avatar": {
+        "face": "p:03",
+        "color": "#2FBF55"
+      },
+      "role": "PLAYER",
+      "connected": true
+    },
+    {
+      "id": "28fc5cf6dd8e",
+      "name": "Eli",
+      "avatar": {
+        "face": "p:04",
+        "color": "#7FD3FF"
+      },
+      "role": "PLAYER",
+      "connected": true
+    },
+    {
+      "id": "a966246b6140",
+      "name": "Fin",
+      "avatar": {
+        "face": "p:05",
+        "color": "#2F6BFF"
+      },
+      "role": "PLAYER",
+      "connected": true
+    }
+  ],
+  "beats": {
+    "write": {
+      "stage": {
+        "gameId": "bluff",
+        "title": "Bluff Battle",
+        "phaseSeq": 2,
+        "deadlineAt": 1790550170691,
+        "remainingMs": 59609,
+        "paused": false,
+        "game": {
+          "t": "bluff",
+          "phase": "write",
+          "round": 1,
+          "totalRounds": 5,
+          "finalRound": false,
+          "prompt": "Canada's official national summer sport is ____.",
+          "submitted": 3,
+          "expected": 6,
+          "options": [],
+          "reveal": [],
+          "deltas": []
+        }
+      },
+      "scores": [
+        {
+          "id": "3d516812ad00",
+          "name": "Ava",
+          "avatar": {
+            "face": "p:00",
+            "color": "#FF4B3E"
+          },
+          "score": 0
+        },
+        {
+          "id": "303b406cb5c2",
+          "name": "Ben",
+          "avatar": {
+            "face": "p:01",
+            "color": "#FF8A2B"
+          },
+          "score": 0
+        },
+        {
+          "id": "40d33d5d6bca",
+          "name": "Cleo",
+          "avatar": {
+            "face": "p:02",
+            "color": "#FFD23F"
+          },
+          "score": 0
+        },
+        {
+          "id": "97c6faef680a",
+          "name": "Dev",
+          "avatar": {
+            "face": "p:03",
+            "color": "#2FBF55"
+          },
+          "score": 0
+        },
+        {
+          "id": "28fc5cf6dd8e",
+          "name": "Eli",
+          "avatar": {
+            "face": "p:04",
+            "color": "#7FD3FF"
+          },
+          "score": 0
+        },
+        {
+          "id": "a966246b6140",
+          "name": "Fin",
+          "avatar": {
+            "face": "p:05",
+            "color": "#2F6BFF"
+          },
+          "score": 0
+        }
+      ],
+      "phone": {
+        "me": {
+          "id": "a966246b6140",
+          "name": "Fin",
+          "avatar": {
+            "face": "p:05",
+            "color": "#2F6BFF"
+          },
+          "role": "PLAYER",
+          "connected": true
+        },
+        "screen": {
+          "t": "text",
+          "prompt": "Canada's official national summer sport is ____.",
+          "maxLen": 60,
+          "kind": "write",
+          "hint": "Write a believable fake answer"
+        }
+      }
+    },
+    "pick": {
+      "stage": {
+        "gameId": "bluff",
+        "title": "Bluff Battle",
+        "phaseSeq": 3,
+        "deadlineAt": 1790550141452,
+        "remainingMs": 29759,
+        "paused": false,
+        "game": {
+          "t": "bluff",
+          "phase": "pick",
+          "round": 1,
+          "totalRounds": 5,
+          "finalRound": false,
+          "prompt": "Canada's official national summer sport is ____.",
+          "submitted": 2,
+          "expected": 6,
+          "options": [
+            "soup",
+            "Belgium",
+            "lacrosse",
+            "Nicolas Cage",
+            "a rubber duck",
+            "a very old goat",
+            "jazz hands"
+          ],
+          "reveal": [],
+          "deltas": []
+        }
+      },
+      "scores": [
+        {
+          "id": "3d516812ad00",
+          "name": "Ava",
+          "avatar": {
+            "face": "p:00",
+            "color": "#FF4B3E"
+          },
+          "score": 0
+        },
+        {
+          "id": "303b406cb5c2",
+          "name": "Ben",
+          "avatar": {
+            "face": "p:01",
+            "color": "#FF8A2B"
+          },
+          "score": 0
+        },
+        {
+          "id": "40d33d5d6bca",
+          "name": "Cleo",
+          "avatar": {
+            "face": "p:02",
+            "color": "#FFD23F"
+          },
+          "score": 0
+        },
+        {
+          "id": "97c6faef680a",
+          "name": "Dev",
+          "avatar": {
+            "face": "p:03",
+            "color": "#2FBF55"
+          },
+          "score": 0
+        },
+        {
+          "id": "28fc5cf6dd8e",
+          "name": "Eli",
+          "avatar": {
+            "face": "p:04",
+            "color": "#7FD3FF"
+          },
+          "score": 0
+        },
+        {
+          "id": "a966246b6140",
+          "name": "Fin",
+          "avatar": {
+            "face": "p:05",
+            "color": "#2F6BFF"
+          },
+          "score": 0
+        }
+      ],
+      "phone": {
+        "me": {
+          "id": "28fc5cf6dd8e",
+          "name": "Eli",
+          "avatar": {
+            "face": "p:04",
+            "color": "#7FD3FF"
+          },
+          "role": "PLAYER",
+          "connected": true
+        },
+        "screen": {
+          "t": "choice",
+          "prompt": "Which one is the truth?",
+          "options": [
+            {
+              "id": "o2",
+              "text": "Belgium"
+            },
+            {
+              "id": "o3",
+              "text": "lacrosse"
+            },
+            {
+              "id": "o4",
+              "text": "Nicolas Cage"
+            },
+            {
+              "id": "o5",
+              "text": "a rubber duck"
+            },
+            {
+              "id": "o6",
+              "text": "a very old goat"
+            },
+            {
+              "id": "o7",
+              "text": "jazz hands"
+            }
+          ],
+          "kind": "pick",
+          "votes": {}
+        }
+      }
+    },
+    "reveal": {
+      "stage": {
+        "gameId": "bluff",
+        "title": "Bluff Battle",
+        "phaseSeq": 4,
+        "deadlineAt": 1790550131682,
+        "remainingMs": 19500,
+        "paused": false,
+        "game": {
+          "t": "bluff",
+          "phase": "reveal",
+          "round": 1,
+          "totalRounds": 5,
+          "finalRound": false,
+          "prompt": "Canada's official national summer sport is ____.",
+          "submitted": 6,
+          "expected": 6,
+          "options": [],
+          "reveal": [
+            {
+              "text": "Belgium",
+              "kind": "fake",
+              "authors": [
+                "Ben"
+              ],
+              "fooled": []
+            },
+            {
+              "text": "Nicolas Cage",
+              "kind": "fake",
+              "authors": [
+                "Dev"
+              ],
+              "fooled": []
+            },
+            {
+              "text": "jazz hands",
+              "kind": "fake",
+              "authors": [
+                "Fin"
+              ],
+              "fooled": []
+            },
+            {
+              "text": "a rubber duck",
+              "kind": "fake",
+              "authors": [
+                "Cleo"
+              ],
+              "fooled": [
+                "Dev"
+              ]
+            },
+            {
+              "text": "soup",
+              "kind": "fake",
+              "authors": [
+                "Eli"
+              ],
+              "fooled": [
+                "Ava",
+                "Ben"
+              ]
+            },
+            {
+              "text": "a very old goat",
+              "kind": "fake",
+              "authors": [
+                "Ava"
+              ],
+              "fooled": [
+                "Eli",
+                "Fin"
+              ]
+            },
+            {
+              "text": "lacrosse",
+              "kind": "truth",
+              "authors": [],
+              "fooled": [
+                "Cleo"
+              ]
+            }
+          ],
+          "deltas": [
+            {
+              "id": "40d33d5d6bca",
+              "name": "Cleo",
+              "points": 1500
+            },
+            {
+              "id": "28fc5cf6dd8e",
+              "name": "Eli",
+              "points": 1000
+            },
+            {
+              "id": "3d516812ad00",
+              "name": "Ava",
+              "points": 1000
+            }
+          ]
+        }
+      },
+      "scores": [
+        {
+          "id": "40d33d5d6bca",
+          "name": "Cleo",
+          "avatar": {
+            "face": "p:02",
+            "color": "#FFD23F"
+          },
+          "score": 1500
+        },
+        {
+          "id": "3d516812ad00",
+          "name": "Ava",
+          "avatar": {
+            "face": "p:00",
+            "color": "#FF4B3E"
+          },
+          "score": 1000
+        },
+        {
+          "id": "28fc5cf6dd8e",
+          "name": "Eli",
+          "avatar": {
+            "face": "p:04",
+            "color": "#7FD3FF"
+          },
+          "score": 1000
+        },
+        {
+          "id": "303b406cb5c2",
+          "name": "Ben",
+          "avatar": {
+            "face": "p:01",
+            "color": "#FF8A2B"
+          },
+          "score": 0
+        },
+        {
+          "id": "97c6faef680a",
+          "name": "Dev",
+          "avatar": {
+            "face": "p:03",
+            "color": "#2FBF55"
+          },
+          "score": 0
+        },
+        {
+          "id": "a966246b6140",
+          "name": "Fin",
+          "avatar": {
+            "face": "p:05",
+            "color": "#2F6BFF"
+          },
+          "score": 0
+        }
+      ],
+      "phone": {
+        "me": {
+          "id": "3d516812ad00",
+          "name": "Ava",
+          "avatar": {
+            "face": "p:00",
+            "color": "#FF4B3E"
+          },
+          "role": "PLAYER",
+          "connected": true
+        },
+        "screen": {
+          "t": "waiting",
+          "title": "Eyes on the TV",
+          "detail": "Who got fooled?"
+        }
+      }
+    },
+    "scores": {
+      "stage": {
+        "gameId": "bluff",
+        "title": "Bluff Battle",
+        "phaseSeq": 5,
+        "deadlineAt": 1790550120704,
+        "remainingMs": 8000,
+        "paused": false,
+        "game": {
+          "t": "bluff",
+          "phase": "scores",
+          "round": 1,
+          "totalRounds": 5,
+          "finalRound": false,
+          "prompt": "Canada's official national summer sport is ____.",
+          "submitted": 6,
+          "expected": 6,
+          "options": [],
+          "reveal": [
+            {
+              "text": "Belgium",
+              "kind": "fake",
+              "authors": [
+                "Ben"
+              ],
+              "fooled": []
+            },
+            {
+              "text": "Nicolas Cage",
+              "kind": "fake",
+              "authors": [
+                "Dev"
+              ],
+              "fooled": []
+            },
+            {
+              "text": "jazz hands",
+              "kind": "fake",
+              "authors": [
+                "Fin"
+              ],
+              "fooled": []
+            },
+            {
+              "text": "a rubber duck",
+              "kind": "fake",
+              "authors": [
+                "Cleo"
+              ],
+              "fooled": [
+                "Dev"
+              ]
+            },
+            {
+              "text": "soup",
+              "kind": "fake",
+              "authors": [
+                "Eli"
+              ],
+              "fooled": [
+                "Ava",
+                "Ben"
+              ]
+            },
+            {
+              "text": "a very old goat",
+              "kind": "fake",
+              "authors": [
+                "Ava"
+              ],
+              "fooled": [
+                "Eli",
+                "Fin"
+              ]
+            },
+            {
+              "text": "lacrosse",
+              "kind": "truth",
+              "authors": [],
+              "fooled": [
+                "Cleo"
+              ]
+            }
+          ],
+          "deltas": [
+            {
+              "id": "40d33d5d6bca",
+              "name": "Cleo",
+              "points": 1500
+            },
+            {
+              "id": "28fc5cf6dd8e",
+              "name": "Eli",
+              "points": 1000
+            },
+            {
+              "id": "3d516812ad00",
+              "name": "Ava",
+              "points": 1000
+            }
+          ]
+        }
+      },
+      "scores": [
+        {
+          "id": "40d33d5d6bca",
+          "name": "Cleo",
+          "avatar": {
+            "face": "p:02",
+            "color": "#FFD23F"
+          },
+          "score": 1500
+        },
+        {
+          "id": "3d516812ad00",
+          "name": "Ava",
+          "avatar": {
+            "face": "p:00",
+            "color": "#FF4B3E"
+          },
+          "score": 1000
+        },
+        {
+          "id": "28fc5cf6dd8e",
+          "name": "Eli",
+          "avatar": {
+            "face": "p:04",
+            "color": "#7FD3FF"
+          },
+          "score": 1000
+        },
+        {
+          "id": "303b406cb5c2",
+          "name": "Ben",
+          "avatar": {
+            "face": "p:01",
+            "color": "#FF8A2B"
+          },
+          "score": 0
+        },
+        {
+          "id": "97c6faef680a",
+          "name": "Dev",
+          "avatar": {
+            "face": "p:03",
+            "color": "#2FBF55"
+          },
+          "score": 0
+        },
+        {
+          "id": "a966246b6140",
+          "name": "Fin",
+          "avatar": {
+            "face": "p:05",
+            "color": "#2F6BFF"
+          },
+          "score": 0
+        }
+      ],
+      "phone": {
+        "me": {
+          "id": "3d516812ad00",
+          "name": "Ava",
+          "avatar": {
+            "face": "p:00",
+            "color": "#FF4B3E"
+          },
+          "role": "PLAYER",
+          "connected": true
+        },
+        "screen": {
+          "t": "scores",
+          "title": "Round 1 scores",
+          "rows": [
+            {
+              "id": "40d33d5d6bca",
+              "name": "Cleo",
+              "avatar": {
+                "face": "p:02",
+                "color": "#FFD23F"
+              },
+              "score": 1500
+            },
+            {
+              "id": "3d516812ad00",
+              "name": "Ava",
+              "avatar": {
+                "face": "p:00",
+                "color": "#FF4B3E"
+              },
+              "score": 1000
+            },
+            {
+              "id": "28fc5cf6dd8e",
+              "name": "Eli",
+              "avatar": {
+                "face": "p:04",
+                "color": "#7FD3FF"
+              },
+              "score": 1000
+            },
+            {
+              "id": "303b406cb5c2",
+              "name": "Ben",
+              "avatar": {
+                "face": "p:01",
+                "color": "#FF8A2B"
+              },
+              "score": 0
+            },
+            {
+              "id": "97c6faef680a",
+              "name": "Dev",
+              "avatar": {
+                "face": "p:03",
+                "color": "#2FBF55"
+              },
+              "score": 0
+            },
+            {
+              "id": "a966246b6140",
+              "name": "Fin",
+              "avatar": {
+                "face": "p:05",
+                "color": "#2F6BFF"
+              },
+              "score": 0
+            }
+          ]
+        }
+      }
+    }
+  }
+}

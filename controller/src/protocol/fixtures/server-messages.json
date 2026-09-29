@@ -1,0 +1,1754 @@
+[
+    {
+        "t": "welcome",
+        "playerId": "p-sam",
+        "role": "PLAYER",
+        "host": false,
+        "protocol": 1
+    },
+    {
+        "t": "welcome",
+        "host": true,
+        "protocol": 1
+    },
+    {
+        "t": "view",
+        "seq": 12,
+        "view": {
+            "me": {
+                "id": "p-sam",
+                "name": "Sam",
+                "avatar": {
+                    "face": "p:01",
+                    "color": "#FF7A00"
+                },
+                "role": "PLAYER",
+                "connected": true,
+                "water": false
+            },
+            "roomCode": "KXQT",
+            "gameId": "bluff",
+            "gameTitle": "Bluff Battle",
+            "round": 0,
+            "paused": false,
+            "remainingMs": 42000,
+            "screen": {
+                "t": "waiting",
+                "title": "You're in!",
+                "detail": "Waiting for the host to pick a game"
+            },
+            "scores": [
+                {
+                    "id": "p-sam",
+                    "name": "Sam",
+                    "avatar": {
+                        "face": "p:01",
+                        "color": "#FF7A00"
+                    },
+                    "score": 1500
+                },
+                {
+                    "id": "p-al",
+                    "name": "Al",
+                    "avatar": {
+                        "face": "p:02",
+                        "color": "#22AA55"
+                    },
+                    "score": 500
+                }
+            ],
+            "captain": false,
+            "settings": {},
+            "crew": []
+        }
+    },
+    {
+        "t": "view",
+        "seq": 12,
+        "view": {
+            "me": {
+                "id": "p-sam",
+                "name": "Sam",
+                "avatar": {
+                    "face": "p:01",
+                    "color": "#FF7A00"
+                },
+                "role": "PLAYER",
+                "connected": true,
+                "water": false
+            },
+            "roomCode": "KXQT",
+            "gameId": "bluff",
+            "gameTitle": "Bluff Battle",
+            "round": 3,
+            "paused": false,
+            "remainingMs": 42000,
+            "screen": {
+                "t": "tutorial",
+                "cards": [
+                    {
+                        "title": "Write a fake",
+                        "body": "Type a believable fake answer."
+                    }
+                ],
+                "acknowledged": false
+            },
+            "scores": [
+                {
+                    "id": "p-sam",
+                    "name": "Sam",
+                    "avatar": {
+                        "face": "p:01",
+                        "color": "#FF7A00"
+                    },
+                    "score": 1500
+                },
+                {
+                    "id": "p-al",
+                    "name": "Al",
+                    "avatar": {
+                        "face": "p:02",
+                        "color": "#22AA55"
+                    },
+                    "score": 500
+                }
+            ],
+            "captain": false,
+            "settings": {},
+            "crew": []
+        }
+    },
+    {
+        "t": "view",
+        "seq": 12,
+        "view": {
+            "me": {
+                "id": "p-sam",
+                "name": "Sam",
+                "avatar": {
+                    "face": "p:01",
+                    "color": "#FF7A00"
+                },
+                "role": "PLAYER",
+                "connected": true,
+                "water": false
+            },
+            "roomCode": "KXQT",
+            "gameId": "bluff",
+            "gameTitle": "Bluff Battle",
+            "round": 3,
+            "paused": false,
+            "remainingMs": 42000,
+            "screen": {
+                "t": "text",
+                "prompt": "Wombat poop is shaped like ____.",
+                "maxLen": 60,
+                "kind": "write",
+                "hint": "Write a believable fake answer"
+            },
+            "scores": [
+                {
+                    "id": "p-sam",
+                    "name": "Sam",
+                    "avatar": {
+                        "face": "p:01",
+                        "color": "#FF7A00"
+                    },
+                    "score": 1500
+                },
+                {
+                    "id": "p-al",
+                    "name": "Al",
+                    "avatar": {
+                        "face": "p:02",
+                        "color": "#22AA55"
+                    },
+                    "score": 500
+                }
+            ],
+            "captain": false,
+            "settings": {},
+            "crew": []
+        }
+    },
+    {
+        "t": "view",
+        "seq": 12,
+        "view": {
+            "me": {
+                "id": "p-sam",
+                "name": "Sam",
+                "avatar": {
+                    "face": "p:01",
+                    "color": "#FF7A00"
+                },
+                "role": "PLAYER",
+                "connected": true,
+                "water": false
+            },
+            "roomCode": "KXQT",
+            "gameId": "bluff",
+            "gameTitle": "Bluff Battle",
+            "round": 3,
+            "paused": false,
+            "remainingMs": 42000,
+            "screen": {
+                "t": "choice",
+                "prompt": "Which one is the truth?",
+                "options": [
+                    {
+                        "id": "o1",
+                        "text": "cubes"
+                    },
+                    {
+                        "id": "o2",
+                        "text": "stars"
+                    }
+                ],
+                "selected": "o2",
+                "kind": "pick",
+                "votes": {}
+            },
+            "scores": [
+                {
+                    "id": "p-sam",
+                    "name": "Sam",
+                    "avatar": {
+                        "face": "p:01",
+                        "color": "#FF7A00"
+                    },
+                    "score": 1500
+                },
+                {
+                    "id": "p-al",
+                    "name": "Al",
+                    "avatar": {
+                        "face": "p:02",
+                        "color": "#22AA55"
+                    },
+                    "score": 500
+                }
+            ],
+            "captain": false,
+            "settings": {},
+            "crew": []
+        }
+    },
+    {
+        "t": "view",
+        "seq": 12,
+        "view": {
+            "me": {
+                "id": "p-sam",
+                "name": "Sam",
+                "avatar": {
+                    "face": "p:01",
+                    "color": "#FF7A00"
+                },
+                "role": "PLAYER",
+                "connected": true,
+                "water": false
+            },
+            "roomCode": "KXQT",
+            "gameId": "bluff",
+            "gameTitle": "Bluff Battle",
+            "round": 3,
+            "paused": false,
+            "remainingMs": 42000,
+            "screen": {
+                "t": "scores",
+                "title": "Final scores",
+                "rows": [
+                    {
+                        "id": "p-sam",
+                        "name": "Sam",
+                        "avatar": {
+                            "face": "p:01",
+                            "color": "#FF7A00"
+                        },
+                        "score": 1500
+                    },
+                    {
+                        "id": "p-al",
+                        "name": "Al",
+                        "avatar": {
+                            "face": "p:02",
+                            "color": "#22AA55"
+                        },
+                        "score": 500
+                    }
+                ]
+            },
+            "scores": [
+                {
+                    "id": "p-sam",
+                    "name": "Sam",
+                    "avatar": {
+                        "face": "p:01",
+                        "color": "#FF7A00"
+                    },
+                    "score": 1500
+                },
+                {
+                    "id": "p-al",
+                    "name": "Al",
+                    "avatar": {
+                        "face": "p:02",
+                        "color": "#22AA55"
+                    },
+                    "score": 500
+                }
+            ],
+            "captain": false,
+            "settings": {},
+            "crew": []
+        }
+    },
+    {
+        "t": "view",
+        "seq": 12,
+        "view": {
+            "me": {
+                "id": "p-sam",
+                "name": "Sam",
+                "avatar": {
+                    "face": "p:01",
+                    "color": "#FF7A00"
+                },
+                "role": "PLAYER",
+                "connected": true,
+                "water": false
+            },
+            "roomCode": "KXQT",
+            "gameId": "bluff",
+            "gameTitle": "Bluff Battle",
+            "round": 3,
+            "paused": false,
+            "remainingMs": 42000,
+            "screen": {
+                "t": "choice",
+                "prompt": "Which planet has the most known moons?",
+                "options": [
+                    {
+                        "id": "a",
+                        "text": "Saturn"
+                    },
+                    {
+                        "id": "b",
+                        "text": "Jupiter"
+                    }
+                ],
+                "selected": "a",
+                "kind": "answer",
+                "style": "shapes",
+                "votes": {
+                    "a": [
+                        "p-sam"
+                    ]
+                },
+                "team": {
+                    "id": "T1",
+                    "name": "Quizzards",
+                    "color": "#FF4B3E"
+                }
+            },
+            "scores": [
+                {
+                    "id": "p-sam",
+                    "name": "Sam",
+                    "avatar": {
+                        "face": "p:01",
+                        "color": "#FF7A00"
+                    },
+                    "score": 1500
+                },
+                {
+                    "id": "p-al",
+                    "name": "Al",
+                    "avatar": {
+                        "face": "p:02",
+                        "color": "#22AA55"
+                    },
+                    "score": 500
+                }
+            ],
+            "captain": false,
+            "settings": {},
+            "crew": []
+        }
+    },
+    {
+        "t": "view",
+        "seq": 12,
+        "view": {
+            "me": {
+                "id": "p-sam",
+                "name": "Sam",
+                "avatar": {
+                    "face": "p:01",
+                    "color": "#FF7A00"
+                },
+                "role": "PLAYER",
+                "connected": true,
+                "water": false
+            },
+            "roomCode": "KXQT",
+            "gameId": "bluff",
+            "gameTitle": "Bluff Battle",
+            "round": 3,
+            "paused": false,
+            "remainingMs": 42000,
+            "screen": {
+                "t": "choice",
+                "prompt": "Pick a team",
+                "options": [
+                    {
+                        "id": "T1",
+                        "text": "Quizzards",
+                        "color": "#FF4B3E",
+                        "detail": "2 in"
+                    }
+                ],
+                "selected": "T1",
+                "kind": "team",
+                "style": "teams",
+                "votes": {},
+                "team": {
+                    "id": "T1",
+                    "name": "Quizzards",
+                    "color": "#FF4B3E"
+                }
+            },
+            "scores": [
+                {
+                    "id": "p-sam",
+                    "name": "Sam",
+                    "avatar": {
+                        "face": "p:01",
+                        "color": "#FF7A00"
+                    },
+                    "score": 1500
+                },
+                {
+                    "id": "p-al",
+                    "name": "Al",
+                    "avatar": {
+                        "face": "p:02",
+                        "color": "#22AA55"
+                    },
+                    "score": 500
+                }
+            ],
+            "captain": false,
+            "settings": {},
+            "crew": []
+        }
+    },
+    {
+        "t": "view",
+        "seq": 12,
+        "view": {
+            "me": {
+                "id": "p-sam",
+                "name": "Sam",
+                "avatar": {
+                    "face": "p:01",
+                    "color": "#FF7A00"
+                },
+                "role": "PLAYER",
+                "connected": true,
+                "water": false
+            },
+            "roomCode": "KXQT",
+            "gameId": "bluff",
+            "gameTitle": "Bluff Battle",
+            "round": 3,
+            "paused": false,
+            "remainingMs": 42000,
+            "screen": {
+                "t": "number",
+                "prompt": "How many bones are in the adult human body?",
+                "unit": "bones",
+                "value": 206.0,
+                "kind": "guess",
+                "guesses": [
+                    {
+                        "id": "p-al",
+                        "value": 180.0
+                    }
+                ],
+                "team": {
+                    "id": "T1",
+                    "name": "Quizzards",
+                    "color": "#FF4B3E"
+                }
+            },
+            "scores": [
+                {
+                    "id": "p-sam",
+                    "name": "Sam",
+                    "avatar": {
+                        "face": "p:01",
+                        "color": "#FF7A00"
+                    },
+                    "score": 1500
+                },
+                {
+                    "id": "p-al",
+                    "name": "Al",
+                    "avatar": {
+                        "face": "p:02",
+                        "color": "#22AA55"
+                    },
+                    "score": 500
+                }
+            ],
+            "captain": false,
+            "settings": {},
+            "crew": []
+        }
+    },
+    {
+        "t": "view",
+        "seq": 12,
+        "view": {
+            "me": {
+                "id": "p-sam",
+                "name": "Sam",
+                "avatar": {
+                    "face": "p:01",
+                    "color": "#FF7A00"
+                },
+                "role": "PLAYER",
+                "connected": true,
+                "water": false
+            },
+            "roomCode": "KXQT",
+            "gameId": "bluff",
+            "gameTitle": "Bluff Battle",
+            "round": 3,
+            "paused": false,
+            "remainingMs": 42000,
+            "screen": {
+                "t": "multi",
+                "prompt": "Which of these are Great Lakes?",
+                "options": [
+                    {
+                        "id": "a",
+                        "text": "Huron"
+                    },
+                    {
+                        "id": "b",
+                        "text": "Erie"
+                    },
+                    {
+                        "id": "c",
+                        "text": "Champlain"
+                    }
+                ],
+                "selected": [
+                    "a"
+                ],
+                "locked": false,
+                "kind": "multi",
+                "eliminated": [
+                    "c"
+                ],
+                "votes": {
+                    "a": [
+                        "p-sam"
+                    ]
+                },
+                "team": {
+                    "id": "T1",
+                    "name": "Quizzards",
+                    "color": "#FF4B3E"
+                }
+            },
+            "scores": [
+                {
+                    "id": "p-sam",
+                    "name": "Sam",
+                    "avatar": {
+                        "face": "p:01",
+                        "color": "#FF7A00"
+                    },
+                    "score": 1500
+                },
+                {
+                    "id": "p-al",
+                    "name": "Al",
+                    "avatar": {
+                        "face": "p:02",
+                        "color": "#22AA55"
+                    },
+                    "score": 500
+                }
+            ],
+            "captain": false,
+            "settings": {},
+            "crew": []
+        }
+    },
+    {
+        "t": "view",
+        "seq": 12,
+        "view": {
+            "me": {
+                "id": "p-sam",
+                "name": "Sam",
+                "avatar": {
+                    "face": "p:01",
+                    "color": "#FF7A00"
+                },
+                "role": "PLAYER",
+                "connected": true,
+                "water": false
+            },
+            "roomCode": "KXQT",
+            "gameId": "bluff",
+            "gameTitle": "Bluff Battle",
+            "round": 3,
+            "paused": false,
+            "remainingMs": 42000,
+            "screen": {
+                "t": "waiting",
+                "title": "Correct!",
+                "detail": "+1250",
+                "tone": "win",
+                "team": {
+                    "id": "T1",
+                    "name": "Quizzards",
+                    "color": "#FF4B3E"
+                }
+            },
+            "scores": [
+                {
+                    "id": "p-sam",
+                    "name": "Sam",
+                    "avatar": {
+                        "face": "p:01",
+                        "color": "#FF7A00"
+                    },
+                    "score": 1500
+                },
+                {
+                    "id": "p-al",
+                    "name": "Al",
+                    "avatar": {
+                        "face": "p:02",
+                        "color": "#22AA55"
+                    },
+                    "score": 500
+                }
+            ],
+            "captain": false,
+            "settings": {},
+            "crew": []
+        }
+    },
+    {
+        "t": "tv",
+        "seq": 13,
+        "tv": {
+            "roomCode": "KXQT",
+            "players": [
+                {
+                    "id": "p-sam",
+                    "name": "Sam",
+                    "avatar": {
+                        "face": "p:01",
+                        "color": "#FF7A00"
+                    },
+                    "role": "PLAYER",
+                    "connected": true,
+                    "water": false
+                }
+            ],
+            "stage": {
+                "gameId": "trivia",
+                "title": "Brain Drain",
+                "phaseSeq": 9,
+                "deadlineAt": 1700000068000,
+                "remainingMs": 8000,
+                "paused": false,
+                "game": {
+                    "t": "trivia",
+                    "phase": "reveal",
+                    "format": "quick",
+                    "round": 1,
+                    "totalRounds": 5,
+                    "q": 2,
+                    "qTotal": 5,
+                    "durationMs": 8000,
+                    "prompt": "Which planet has the most known moons?",
+                    "category": "Science",
+                    "options": [
+                        {
+                            "id": "a",
+                            "text": "Saturn"
+                        },
+                        {
+                            "id": "b",
+                            "text": "Jupiter"
+                        }
+                    ],
+                    "teams": [
+                        {
+                            "id": "T1",
+                            "name": "Quizzards",
+                            "color": "#FF4B3E",
+                            "members": [
+                                "p-sam"
+                            ],
+                            "score": 1250,
+                            "answered": 0,
+                            "position": 0,
+                            "headStart": 0
+                        }
+                    ],
+                    "answered": 0,
+                    "expected": 0,
+                    "reveal": {
+                        "correct": [
+                            "a"
+                        ],
+                        "answerText": "Saturn",
+                        "answers": [
+                            {
+                                "team": "T1",
+                                "choice": "a",
+                                "picks": [],
+                                "correct": true,
+                                "points": 1250,
+                                "bullseye": false,
+                                "seconds": 3.5
+                            }
+                        ]
+                    },
+                    "drink": {
+                        "teams": [
+                            "T2"
+                        ],
+                        "sips": 1,
+                        "reason": "last place"
+                    },
+                    "hostLine": "Only Quizzards knew that.",
+                    "fact": "Saturn's count shot past 200 in 2025.",
+                    "finishLine": 10,
+                    "podium": [],
+                    "awards": []
+                }
+            },
+            "scores": [
+                {
+                    "id": "p-sam",
+                    "name": "Sam",
+                    "avatar": {
+                        "face": "p:01",
+                        "color": "#FF7A00"
+                    },
+                    "score": 1500
+                },
+                {
+                    "id": "p-al",
+                    "name": "Al",
+                    "avatar": {
+                        "face": "p:02",
+                        "color": "#22AA55"
+                    },
+                    "score": 500
+                }
+            ],
+            "gamesPlayed": 1,
+            "captain": "p-sam",
+            "settings": {
+                "rounds": 5,
+                "teams": 0,
+                "drinks": 1,
+                "game": 0
+            }
+        }
+    },
+    {
+        "t": "view",
+        "seq": 14,
+        "view": {
+            "me": {
+                "id": "p-sam",
+                "name": "Sam",
+                "avatar": {
+                    "face": "p:01",
+                    "color": "#FF7A00"
+                },
+                "role": "PLAYER",
+                "connected": true,
+                "water": false
+            },
+            "roomCode": "KXQT",
+            "round": 0,
+            "paused": false,
+            "screen": {
+                "t": "waiting",
+                "title": "You're in!",
+                "detail": "You have the crown: pick a game"
+            },
+            "scores": [],
+            "captain": true,
+            "captainName": "Sam",
+            "settings": {
+                "game": 0
+            },
+            "crew": [
+                {
+                    "id": "p-sam",
+                    "name": "Sam",
+                    "avatar": {
+                        "face": "p:01",
+                        "color": "#FF7A00"
+                    },
+                    "role": "PLAYER",
+                    "connected": true,
+                    "water": false
+                }
+            ]
+        }
+    },
+    {
+        "t": "tv",
+        "seq": 12,
+        "tv": {
+            "roomCode": "KXQT",
+            "players": [
+                {
+                    "id": "p-sam",
+                    "name": "Sam",
+                    "avatar": {
+                        "face": "p:01",
+                        "color": "#FF7A00"
+                    },
+                    "role": "PLAYER",
+                    "connected": true,
+                    "water": false
+                }
+            ],
+            "stage": {
+                "gameId": "bluff",
+                "title": "Bluff Battle",
+                "phaseSeq": 5,
+                "deadlineAt": 1700000060000,
+                "remainingMs": 30000,
+                "paused": false,
+                "tutorial": {
+                    "cards": [
+                        {
+                            "title": "Score",
+                            "body": "+1000 for the truth"
+                        }
+                    ],
+                    "acked": [
+                        "p-sam"
+                    ]
+                },
+                "game": {
+                    "t": "bluff",
+                    "phase": "reveal",
+                    "round": 2,
+                    "totalRounds": 5,
+                    "finalRound": false,
+                    "prompt": "Wombat poop is shaped like ____.",
+                    "submitted": 3,
+                    "expected": 3,
+                    "options": [],
+                    "reveal": [
+                        {
+                            "text": "stars",
+                            "kind": "fake",
+                            "authors": [
+                                "Al"
+                            ],
+                            "fooled": [
+                                "Sam"
+                            ]
+                        },
+                        {
+                            "text": "cubes",
+                            "kind": "truth",
+                            "authors": [],
+                            "fooled": []
+                        }
+                    ],
+                    "deltas": [
+                        {
+                            "id": "p-al",
+                            "name": "Al",
+                            "points": 500
+                        }
+                    ]
+                }
+            },
+            "scores": [
+                {
+                    "id": "p-sam",
+                    "name": "Sam",
+                    "avatar": {
+                        "face": "p:01",
+                        "color": "#FF7A00"
+                    },
+                    "score": 1500
+                },
+                {
+                    "id": "p-al",
+                    "name": "Al",
+                    "avatar": {
+                        "face": "p:02",
+                        "color": "#22AA55"
+                    },
+                    "score": 500
+                }
+            ],
+            "lastResult": {
+                "gameId": "bluff",
+                "title": "Bluff Battle",
+                "finishedAt": 1700000000000,
+                "standings": [
+                    {
+                        "id": "p-sam",
+                        "name": "Sam",
+                        "avatar": {
+                            "face": "p:01",
+                            "color": "#FF7A00"
+                        },
+                        "score": 1500
+                    },
+                    {
+                        "id": "p-al",
+                        "name": "Al",
+                        "avatar": {
+                            "face": "p:02",
+                            "color": "#22AA55"
+                        },
+                        "score": 500
+                    }
+                ],
+                "highlights": [
+                    "Al fooled 3 people with “stars”"
+                ]
+            },
+            "gamesPlayed": 1,
+            "settings": {}
+        }
+    },
+    {
+        "t": "view",
+        "seq": 15,
+        "view": {
+            "me": {
+                "id": "p-sam",
+                "name": "Sam",
+                "avatar": {
+                    "face": "p:01",
+                    "color": "#FF7A00"
+                },
+                "role": "PLAYER",
+                "connected": true,
+                "water": false
+            },
+            "roomCode": "KXQT",
+            "gameId": "turf",
+            "gameTitle": "Home Turf",
+            "round": 21,
+            "paused": false,
+            "remainingMs": 14000,
+            "screen": {
+                "t": "turf",
+                "me": {
+                    "index": 0,
+                    "name": "Sam",
+                    "color": "#FF4B3E",
+                    "piece": "duck",
+                    "cash": 1240,
+                    "seat": "p-sam",
+                    "seatName": "Sam",
+                    "mine": true,
+                    "jailed": false,
+                    "jailCards": 0,
+                    "bankrupt": false,
+                    "pos": 3,
+                    "spaceName": "The Laundromat",
+                    "worth": 1600
+                },
+                "prompt": {
+                    "kind": "buy",
+                    "title": "Buy The Laundromat?",
+                    "detail": "Or pass and everyone bids on it.",
+                    "actions": [
+                        {
+                            "id": "buy",
+                            "text": "BUY $60"
+                        },
+                        {
+                            "id": "pass",
+                            "text": "AUCTION IT"
+                        }
+                    ],
+                    "timed": true,
+                    "space": 3,
+                    "amount": 60
+                },
+                "deeds": [
+                    {
+                        "space": 1,
+                        "name": "The Corner Store",
+                        "color": "#8B5A2B",
+                        "group": 0,
+                        "level": 0,
+                        "mortgaged": false,
+                        "rent": 2,
+                        "mortgage": 30,
+                        "tradable": true,
+                        "set": false
+                    }
+                ],
+                "partners": [
+                    {
+                        "index": 1,
+                        "name": "Al",
+                        "color": "#2F6BFF",
+                        "cash": 900,
+                        "jailCards": 0,
+                        "deeds": [
+                            {
+                                "space": 5,
+                                "name": "The Night Bus",
+                                "color": "#2B2B2B",
+                                "group": 8,
+                                "mortgaged": false,
+                                "tradable": true
+                            }
+                        ]
+                    }
+                ],
+                "trade": {
+                    "id": 4,
+                    "from": 1,
+                    "to": 0,
+                    "fromName": "Al",
+                    "toName": "Sam",
+                    "give": [
+                        {
+                            "space": 5,
+                            "name": "The Night Bus",
+                            "color": "#2B2B2B",
+                            "group": 8,
+                            "mortgaged": false,
+                            "tradable": true
+                        }
+                    ],
+                    "get": [],
+                    "giveCash": 0,
+                    "getCash": 50,
+                    "giveCards": 0,
+                    "getCards": 0,
+                    "role": "to",
+                    "canCounter": true
+                },
+                "canTrade": true,
+                "auction": {
+                    "auction": 3,
+                    "space": 3,
+                    "name": "The Laundromat",
+                    "color": "#8B5A2B",
+                    "price": 60,
+                    "top": 20,
+                    "leaderName": "Al",
+                    "leading": false,
+                    "maxBid": 1240,
+                    "canBid": true
+                },
+                "pieces": [],
+                "drink": "Drink 1 sip: paid rent at The Corner Store",
+                "drinks": true
+            },
+            "scores": [
+                {
+                    "id": "p-sam",
+                    "name": "Sam",
+                    "avatar": {
+                        "face": "p:01",
+                        "color": "#FF7A00"
+                    },
+                    "score": 1500
+                },
+                {
+                    "id": "p-al",
+                    "name": "Al",
+                    "avatar": {
+                        "face": "p:02",
+                        "color": "#22AA55"
+                    },
+                    "score": 500
+                }
+            ],
+            "captain": false,
+            "settings": {},
+            "crew": []
+        }
+    },
+    {
+        "t": "tv",
+        "seq": 16,
+        "tv": {
+            "roomCode": "KXQT",
+            "players": [
+                {
+                    "id": "p-sam",
+                    "name": "Sam",
+                    "avatar": {
+                        "face": "p:01",
+                        "color": "#FF7A00"
+                    },
+                    "role": "PLAYER",
+                    "connected": true,
+                    "water": false
+                }
+            ],
+            "stage": {
+                "gameId": "turf",
+                "title": "Home Turf",
+                "phaseSeq": 21,
+                "deadlineAt": 1700000080000,
+                "remainingMs": 14000,
+                "paused": false,
+                "game": {
+                    "t": "turf",
+                    "phase": "auction",
+                    "teams": false,
+                    "board": [
+                        {
+                            "name": "Payday",
+                            "label": "Payday",
+                            "kind": "payday",
+                            "group": -1,
+                            "price": 0,
+                            "rent": [],
+                            "houseCost": 0,
+                            "tax": 0
+                        },
+                        {
+                            "name": "The Corner Store",
+                            "label": "Corner Store",
+                            "kind": "street",
+                            "group": 0,
+                            "color": "#8B5A2B",
+                            "price": 60,
+                            "rent": [
+                                2,
+                                10,
+                                30,
+                                90,
+                                160,
+                                250
+                            ],
+                            "houseCost": 50,
+                            "tax": 0
+                        }
+                    ],
+                    "chanceName": "Plot Twist",
+                    "chestName": "Group Chat",
+                    "owner": [
+                        -1,
+                        0
+                    ],
+                    "level": [
+                        0,
+                        0
+                    ],
+                    "mortgaged": [],
+                    "tokens": [
+                        {
+                            "name": "Sam",
+                            "color": "#FF4B3E",
+                            "piece": "duck",
+                            "members": [
+                                "p-sam"
+                            ],
+                            "seat": "p-sam",
+                            "cash": 1240,
+                            "pos": 3,
+                            "jailed": false,
+                            "jailCards": 0,
+                            "bankrupt": false,
+                            "worth": 1600,
+                            "sets": 0
+                        }
+                    ],
+                    "turn": 0,
+                    "dice": [
+                        1,
+                        2,
+                        3
+                    ],
+                    "doubles": 0,
+                    "housesLeft": 32,
+                    "hotelsLeft": 12,
+                    "buy": -1,
+                    "auction": {
+                        "id": 3,
+                        "space": 3,
+                        "top": 20,
+                        "leader": 1,
+                        "bids": 2
+                    },
+                    "clockLeftMs": 2400000,
+                    "phaseMs": 6000,
+                    "lastLap": false,
+                    "timed": true,
+                    "drinks": true,
+                    "beats": [
+                        {
+                            "seq": 40,
+                            "kind": "bid",
+                            "token": 1,
+                            "other": -1,
+                            "space": 3,
+                            "amount": 20,
+                            "dice": [],
+                            "path": [],
+                            "tokens": [],
+                            "sips": 0
+                        }
+                    ],
+                    "ticker": [
+                        "The Laundromat goes to auction!"
+                    ],
+                    "pieces": [],
+                    "tally": []
+                }
+            },
+            "scores": [
+                {
+                    "id": "p-sam",
+                    "name": "Sam",
+                    "avatar": {
+                        "face": "p:01",
+                        "color": "#FF7A00"
+                    },
+                    "score": 1500
+                },
+                {
+                    "id": "p-al",
+                    "name": "Al",
+                    "avatar": {
+                        "face": "p:02",
+                        "color": "#22AA55"
+                    },
+                    "score": 500
+                }
+            ],
+            "gamesPlayed": 2,
+            "settings": {
+                "game": 4,
+                "turfMode": 0,
+                "minutes": 45,
+                "drinks": 1
+            }
+        }
+    },
+    {
+        "t": "view",
+        "seq": 17,
+        "view": {
+            "me": {
+                "id": "p-sam",
+                "name": "Sam",
+                "avatar": {
+                    "face": "p:01",
+                    "color": "#FF7A00"
+                },
+                "role": "PLAYER",
+                "connected": true,
+                "water": false
+            },
+            "roomCode": "KXQT",
+            "gameId": "sprawl",
+            "gameTitle": "Sprawl",
+            "round": 30,
+            "paused": false,
+            "remainingMs": 52000,
+            "screen": {
+                "t": "sprawl",
+                "me": {
+                    "index": 0,
+                    "name": "Sam",
+                    "color": "#FF4B3E",
+                    "hand": [
+                        1,
+                        1,
+                        0,
+                        2,
+                        0
+                    ],
+                    "vp": 3,
+                    "dev": [
+                        {
+                            "kind": "knight",
+                            "name": "Bouncer",
+                            "count": 1,
+                            "playable": true,
+                            "fresh": 0
+                        }
+                    ],
+                    "pieces": [
+                        13,
+                        3,
+                        4
+                    ],
+                    "ratios": [
+                        4,
+                        4,
+                        3,
+                        4,
+                        4
+                    ],
+                    "mine": true
+                },
+                "prompt": {
+                    "kind": "main",
+                    "title": "Build, trade, or end your turn",
+                    "detail": "You rolled 8.",
+                    "actions": [
+                        {
+                            "id": "end",
+                            "text": "END TURN"
+                        }
+                    ],
+                    "timed": true
+                },
+                "map": {
+                    "size": 0,
+                    "hexes": [
+                        {
+                            "x": 0,
+                            "y": 0,
+                            "terrain": 3,
+                            "number": 8,
+                            "name": "Izzy's Rooftop"
+                        }
+                    ],
+                    "vertices": [
+                        [
+                            0,
+                            -100
+                        ],
+                        [
+                            87,
+                            -50
+                        ],
+                        [
+                            87,
+                            50
+                        ],
+                        [
+                            0,
+                            100
+                        ],
+                        [
+                            -87,
+                            50
+                        ],
+                        [
+                            -87,
+                            -50
+                        ]
+                    ],
+                    "edges": [
+                        [
+                            0,
+                            1
+                        ],
+                        [
+                            1,
+                            2
+                        ]
+                    ],
+                    "harbours": [
+                        {
+                            "edge": 0,
+                            "kind": -1
+                        }
+                    ],
+                    "resources": [
+                        "Brick",
+                        "Wood",
+                        "Sheep",
+                        "Wheat",
+                        "Ore"
+                    ],
+                    "landlord": "The Landlord",
+                    "dev": {
+                        "knight": "Bouncer"
+                    },
+                    "awards": {
+                        "road": "Longest Road",
+                        "army": "Most Bouncers"
+                    }
+                },
+                "robber": 0,
+                "vOwner": [
+                    0,
+                    -1,
+                    -1,
+                    1,
+                    -1,
+                    -1
+                ],
+                "vLevel": [
+                    1,
+                    0,
+                    0,
+                    2,
+                    0,
+                    0
+                ],
+                "eOwner": [
+                    0,
+                    -1
+                ],
+                "colors": [
+                    "#FF4B3E",
+                    "#2F6BFF"
+                ],
+                "spots": [],
+                "build": {
+                    "roads": [
+                        1
+                    ],
+                    "settlements": [],
+                    "cities": [],
+                    "dev": false
+                },
+                "victims": [],
+                "partners": [
+                    {
+                        "index": 1,
+                        "name": "Al",
+                        "color": "#2F6BFF",
+                        "cards": 4
+                    }
+                ],
+                "trade": {
+                    "id": 5,
+                    "from": 1,
+                    "to": 0,
+                    "fromName": "Al",
+                    "toName": "Sam",
+                    "give": [
+                        0,
+                        0,
+                        0,
+                        1,
+                        0
+                    ],
+                    "get": [
+                        1,
+                        0,
+                        0,
+                        0,
+                        0
+                    ],
+                    "role": "to",
+                    "canAccept": true,
+                    "canCounter": true
+                },
+                "canTrade": false,
+                "bank": [
+                    18,
+                    18,
+                    19,
+                    17,
+                    19
+                ],
+                "discard": 0,
+                "drink": "Drink 1 sip: got robbed",
+                "drinks": true
+            },
+            "scores": [
+                {
+                    "id": "p-sam",
+                    "name": "Sam",
+                    "avatar": {
+                        "face": "p:01",
+                        "color": "#FF7A00"
+                    },
+                    "score": 1500
+                },
+                {
+                    "id": "p-al",
+                    "name": "Al",
+                    "avatar": {
+                        "face": "p:02",
+                        "color": "#22AA55"
+                    },
+                    "score": 500
+                }
+            ],
+            "captain": false,
+            "settings": {},
+            "crew": []
+        }
+    },
+    {
+        "t": "tv",
+        "seq": 18,
+        "tv": {
+            "roomCode": "KXQT",
+            "players": [
+                {
+                    "id": "p-sam",
+                    "name": "Sam",
+                    "avatar": {
+                        "face": "p:01",
+                        "color": "#FF7A00"
+                    },
+                    "role": "PLAYER",
+                    "connected": true,
+                    "water": false
+                }
+            ],
+            "stage": {
+                "gameId": "sprawl",
+                "title": "Sprawl",
+                "phaseSeq": 30,
+                "deadlineAt": 1700000090000,
+                "remainingMs": 52000,
+                "paused": false,
+                "game": {
+                    "t": "sprawl",
+                    "phase": "trade",
+                    "map": {
+                        "size": 0,
+                        "hexes": [
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "terrain": 3,
+                                "number": 8,
+                                "name": "Izzy's Rooftop"
+                            }
+                        ],
+                        "vertices": [
+                            [
+                                0,
+                                -100
+                            ],
+                            [
+                                87,
+                                -50
+                            ],
+                            [
+                                87,
+                                50
+                            ],
+                            [
+                                0,
+                                100
+                            ],
+                            [
+                                -87,
+                                50
+                            ],
+                            [
+                                -87,
+                                -50
+                            ]
+                        ],
+                        "edges": [
+                            [
+                                0,
+                                1
+                            ],
+                            [
+                                1,
+                                2
+                            ]
+                        ],
+                        "harbours": [
+                            {
+                                "edge": 0,
+                                "kind": -1
+                            }
+                        ],
+                        "resources": [
+                            "Brick",
+                            "Wood",
+                            "Sheep",
+                            "Wheat",
+                            "Ore"
+                        ],
+                        "landlord": "The Landlord",
+                        "dev": {
+                            "knight": "Bouncer"
+                        },
+                        "awards": {
+                            "road": "Longest Road",
+                            "army": "Most Bouncers"
+                        }
+                    },
+                    "robber": 0,
+                    "vOwner": [
+                        0,
+                        -1,
+                        -1,
+                        1,
+                        -1,
+                        -1
+                    ],
+                    "vLevel": [
+                        1,
+                        0,
+                        0,
+                        2,
+                        0,
+                        0
+                    ],
+                    "eOwner": [
+                        0,
+                        -1
+                    ],
+                    "seats": [
+                        {
+                            "name": "Sam",
+                            "color": "#FF4B3E",
+                            "player": "p-sam",
+                            "cards": 4,
+                            "dev": 1,
+                            "vp": 3,
+                            "knights": 1,
+                            "road": 1,
+                            "longest": false,
+                            "army": false,
+                            "gone": false,
+                            "discard": 0
+                        }
+                    ],
+                    "turn": 0,
+                    "setupRound": 0,
+                    "dice": [
+                        3,
+                        5
+                    ],
+                    "trade": {
+                        "id": 5,
+                        "from": 1,
+                        "to": 0,
+                        "give": [
+                            0,
+                            0,
+                            0,
+                            1,
+                            0
+                        ],
+                        "get": [
+                            1,
+                            0,
+                            0,
+                            0,
+                            0
+                        ],
+                        "counters": 1,
+                        "passed": []
+                    },
+                    "peek": -1,
+                    "bank": [
+                        18,
+                        18,
+                        19,
+                        17,
+                        19
+                    ],
+                    "deckLeft": 20,
+                    "clockLeftMs": 2000000,
+                    "phaseMs": 30000,
+                    "lastRound": false,
+                    "timed": true,
+                    "vpTarget": 8,
+                    "drinks": true,
+                    "beats": [
+                        {
+                            "seq": 12,
+                            "kind": "harvest",
+                            "seat": 0,
+                            "other": -1,
+                            "target": -1,
+                            "amount": 8,
+                            "dice": [],
+                            "seats": [],
+                            "targets": [
+                                0
+                            ],
+                            "gains": [
+                                [
+                                    0,
+                                    0,
+                                    0,
+                                    1,
+                                    0
+                                ]
+                            ],
+                            "sips": 0
+                        }
+                    ],
+                    "ticker": [
+                        "Al countered"
+                    ],
+                    "winner": -1,
+                    "tally": []
+                }
+            },
+            "scores": [
+                {
+                    "id": "p-sam",
+                    "name": "Sam",
+                    "avatar": {
+                        "face": "p:01",
+                        "color": "#FF7A00"
+                    },
+                    "score": 1500
+                },
+                {
+                    "id": "p-al",
+                    "name": "Al",
+                    "avatar": {
+                        "face": "p:02",
+                        "color": "#22AA55"
+                    },
+                    "score": 500
+                }
+            ],
+            "gamesPlayed": 3,
+            "settings": {
+                "game": 5,
+                "vp": 8,
+                "minutes": 45,
+                "drinks": 1
+            }
+        }
+    },
+    {
+        "t": "ack",
+        "id": "a-1"
+    },
+    {
+        "t": "reject",
+        "id": "a-2",
+        "code": "TOO_TRUE"
+    },
+    {
+        "t": "pong"
+    },
+    {
+        "t": "bye",
+        "reason": "KICKED"
+    }
+]
