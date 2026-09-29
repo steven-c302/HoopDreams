@@ -18,3 +18,17 @@ export interface Draw {
   drawn_at: string;
   game: Game;
 }
+
+export type TriviaDifficulty = "easy" | "medium" | "hard";
+
+export interface TriviaAnswer {
+  text: string;
+  correct: boolean;
+}
+
+export interface TriviaQuestion {
+  category: string;
+  difficulty: TriviaDifficulty;
+  question: string;
+  answers: TriviaAnswer[];
+}

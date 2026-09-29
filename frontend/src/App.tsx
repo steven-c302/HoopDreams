@@ -3,7 +3,10 @@ import { drawGame, fetchGames, fetchHistory } from "./api";
 import { GameCard } from "./components/GameCard";
 import { Hat } from "./components/Hat";
 import { HistoryStrip } from "./components/HistoryStrip";
+import { TriviaGame } from "./components/TriviaGame";
 import type { Draw, Game } from "./types";
+
+const PLAYABLE_GAMES = new Set(["Trivia"]);
 
 function App() {
   const [games, setGames] = useState<Game[]>([]);
@@ -13,6 +16,7 @@ function App() {
   const [isDrawing, setIsDrawing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loaded, setLoaded] = useState(false);
+  const [mode, setMode] = useState<"hat" | "trivia">("hat");
 
   useEffect(() => {
     Promise.all([fetchGames(), fetchHistory()])
@@ -57,31 +61,41 @@ function App() {
       </header>
 
       <main className="content">
-        <Hat onDraw={handleDraw} isDrawing={isDrawing} disabled={!loaded || games.length === 0} />
+        {mode === "trivia" ? (
+          <TriviaGame onExit={() => setMode("hat")} />
+        ) : (
+          <>
+            <Hat onDraw={handleDraw} isDrawing={isDrawing} disabled={!loaded || games.length === 0} />
 
-        {loaded && games.length > 0 && (
-          <p className="remaining">
-            {remaining === games.length
-              ? `${games.length} games in the hat`
-              : `${remaining} of ${games.length} games left in the hat`}
-          </p>
+            {loaded && games.length > 0 && (
+              <p className="remaining">
+                {remaining === games.length
+                  ? `${games.length} game${games.length === 1 ? "" : "s"} in the hat`
+                  : `${remaining} of ${games.length} games left in the hat`}
+              </p>
+            )}
+
+            {error && <p className="error">{error}</p>}
+
+            {current && (
+              <div className="reveal">
+                <GameCard
+                  game={current.game}
+                  justReshuffled={current.reshuffled}
+                  onPlay={PLAYABLE_GAMES.has(current.game.name) ? () => setMode("trivia") : undefined}
+                />
+              </div>
+            )}
+
+            {drawnIds.length > 0 && (
+              <button className="reset-button" onClick={handleReset}>
+                🔄 Reset hat
+              </button>
+            )}
+
+            <HistoryStrip history={history} />
+          </>
         )}
-
-        {error && <p className="error">{error}</p>}
-
-        {current && (
-          <div className="reveal">
-            <GameCard game={current.game} justReshuffled={current.reshuffled} />
-          </div>
-        )}
-
-        {drawnIds.length > 0 && (
-          <button className="reset-button" onClick={handleReset}>
-            🔄 Reset hat
-          </button>
-        )}
-
-        <HistoryStrip history={history} />
       </main>
     </div>
   );

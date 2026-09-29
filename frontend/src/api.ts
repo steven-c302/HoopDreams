@@ -1,4 +1,4 @@
-import type { Draw, DrawResponse, Game } from "./types";
+import type { Draw, DrawResponse, Game, TriviaQuestion } from "./types";
 
 const BASE_URL = import.meta.env.VITE_API_URL ?? "http://localhost:8000";
 
@@ -26,4 +26,8 @@ export function drawGame(exclude: number[]): Promise<DrawResponse> {
 
 export function fetchHistory(limit = 8): Promise<Draw[]> {
   return request<Draw[]>(`/api/history?limit=${limit}`);
+}
+
+export function fetchTriviaQuestion(): Promise<TriviaQuestion> {
+  return request<TriviaQuestion>("/api/trivia/question");
 }

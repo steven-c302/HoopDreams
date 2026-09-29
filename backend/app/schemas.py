@@ -26,3 +26,15 @@ class DrawOut(BaseModel):
     id: int
     drawn_at: datetime
     game: GameOut
+
+
+class TriviaAnswer(BaseModel):
+    text: str
+    correct: bool
+
+
+class TriviaQuestionOut(BaseModel):
+    category: str
+    difficulty: str
+    question: str
+    answers: list[TriviaAnswer]

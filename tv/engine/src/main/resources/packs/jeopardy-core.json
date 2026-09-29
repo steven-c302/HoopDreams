@@ -1,0 +1,58 @@
+{
+  "packId": "jeopardy-core",
+  "title": "HoopDreams Jeopardy",
+  "game": "jeopardy",
+  "version": 1,
+  "categories": [
+    {
+      "name": "Food & Drink",
+      "clues": [
+        { "id": "food-200", "value": 200, "clue": "This spread is made by mashing avocados with lime and salt.", "answer": "Guacamole" },
+        { "id": "food-400", "value": 400, "clue": "This Japanese dish is vinegared rice topped with raw fish.", "answer": "Sushi" },
+        { "id": "food-600", "value": 600, "clue": "This French cooking technique means to quickly cook food in a small amount of hot fat.", "answer": "Saute" },
+        { "id": "food-800", "value": 800, "clue": "This spice, made from a crocus flower, is the most expensive by weight in the world.", "answer": "Saffron" },
+        { "id": "food-1000", "value": 1000, "clue": "This fermented Korean side dish is usually made from cabbage and chili paste.", "answer": "Kimchi" }
+      ]
+    },
+    {
+      "name": "Sports",
+      "clues": [
+        { "id": "sports-200", "value": 200, "clue": "In basketball, this term describes a shot that goes in without touching the rim or backboard.", "answer": "Swish" },
+        { "id": "sports-400", "value": 400, "clue": "This NBA legend won 6 championships with the Chicago Bulls and never lost in the Finals.", "answer": "Michael Jordan" },
+        { "id": "sports-600", "value": 600, "clue": "In basketball, this is the term for grabbing the ball after a missed shot.", "answer": "Rebound" },
+        { "id": "sports-800", "value": 800, "clue": "This Los Angeles Laker wore number 24 and was nicknamed the Black Mamba.", "answer": "Kobe Bryant" },
+        { "id": "sports-1000", "value": 1000, "clue": "This is the only player in NBA history to average a triple-double for a full season more than once.", "answer": "Russell Westbrook" }
+      ]
+    },
+    {
+      "name": "Music",
+      "clues": [
+        { "id": "music-200", "value": 200, "clue": "This King of Pop released the best-selling album of all time, Thriller.", "answer": "Michael Jackson" },
+        { "id": "music-400", "value": 400, "clue": "This instrument has 88 black and white keys.", "answer": "Piano" },
+        { "id": "music-600", "value": 600, "clue": "This British rock band's members included Freddie Mercury, Brian May and Roger Taylor.", "answer": "Queen" },
+        { "id": "music-800", "value": 800, "clue": "This genre of music originated in Jamaica in the late 1960s and was popularized by Bob Marley.", "answer": "Reggae" },
+        { "id": "music-1000", "value": 1000, "clue": "This composer, deaf by the end of his life, wrote the Ninth Symphony.", "answer": "Beethoven" }
+      ]
+    },
+    {
+      "name": "General Knowledge",
+      "clues": [
+        { "id": "gk-200", "value": 200, "clue": "This is the largest planet in our solar system.", "answer": "Jupiter" },
+        { "id": "gk-400", "value": 400, "clue": "This is the longest river in the world.", "answer": "Nile" },
+        { "id": "gk-600", "value": 600, "clue": "This is the two-letter chemical symbol for gold.", "answer": "Au" },
+        { "id": "gk-800", "value": 800, "clue": "This country has the largest population in the world as of 2024.", "answer": "India" },
+        { "id": "gk-1000", "value": 1000, "clue": "This is the only mammal capable of true, sustained flight.", "answer": "Bat" }
+      ]
+    },
+    {
+      "name": "Potpourri",
+      "clues": [
+        { "id": "pot-200", "value": 200, "clue": "This is the name of Mickey Mouse's pet dog.", "answer": "Pluto" },
+        { "id": "pot-400", "value": 400, "clue": "This planet is known as the Red Planet.", "answer": "Mars" },
+        { "id": "pot-600", "value": 600, "clue": "This board game involves buying properties and charging rent.", "answer": "Monopoly" },
+        { "id": "pot-800", "value": 800, "clue": "This is the tallest mountain in the world, measured from sea level.", "answer": "Everest" },
+        { "id": "pot-1000", "value": 1000, "clue": "This is the only Ancient Wonder of the World still standing today.", "answer": "Pyramids" }
+      ]
+    }
+  ]
+}
