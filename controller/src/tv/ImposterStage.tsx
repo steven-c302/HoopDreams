@@ -86,7 +86,7 @@ function Wall({ g, who, note }: { g: ImposterTv; who: Map<string, PlayerSummary>
                 <b className="imp-name">{c.name}</b>
                 <span className="imp-clue">{c.text ?? '...'}</span>
                 {n > 0 && <span className="imp-votes">{n} {n === 1 ? 'VOTE' : 'VOTES'}</span>}
-                {imposters.has(c.id) && <Stamp text="IMPOSTER" color={C.bubblegum} />}
+                {imposters.has(c.id) && <Stamp text="IMPOSTER" color={C.bubblegum} size={40} />}
               </Panel>
             </Deal>
           )

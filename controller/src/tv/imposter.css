@@ -9,6 +9,7 @@
 .imp-name { font: 900 30px var(--font-display, inherit); letter-spacing: .04em; text-transform: uppercase; }
 .imp-clue { font: 900 44px/1.05 var(--font-display, inherit); text-align: center; overflow-wrap: anywhere; }
 .imp-votes { font: 800 24px var(--font-body, inherit); letter-spacing: .1em; }
+.imp-placard .stamp { margin-top: 14px; }
 .imp-drinks { list-style: none; display: flex; flex-wrap: wrap; justify-content: center; gap: 14px 28px; padding: 0; margin: 0; }
 .imp-drinks li { font: 700 30px var(--font-body, inherit); color: var(--paper); }
 .imp-drinks b { color: var(--game-accent, #d9a441); }

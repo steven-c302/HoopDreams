@@ -68,7 +68,7 @@ export function ThemeGallery() {
           <span className="room-chip">{beat.stage.title}</span><span className="timer">18</span>
         </header>
         {team && <div className="team-band" style={{ background: team.color }}><span>{team.name}</span></div>}
-        <section className="screen"><ScreenView screen={screen} disabled={false} meId={me.id} people={new Map()} onAction={() => setAction('Preview only · no action sent')} /></section>
+        <section className="screen"><ScreenView screen={screen} disabled={false} meId={me.id} people={new Map((beat.scores ?? []).map((s) => [s.id, s]))} onAction={() => setAction('Preview only · no action sent')} /></section>
         <p className="theme-preview-note" role="status">{action}</p>
       </main>
     )

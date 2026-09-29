@@ -67,6 +67,10 @@
 .game-scene[data-game-theme='imposter'] {
   background-image: repeating-linear-gradient(180deg, transparent 0 94px, #ffffff0d 94px 96px);
 }
+/* The room is dark, so text that sits straight on it (not inside a paper card) reads in paper, never ink. */
+[data-game-theme='imposter'] .status-text { color: var(--paper); }
+[data-game-theme='imposter'] .muted { color: var(--paper); opacity: .85; }
+[data-game-theme='imposter'] h1.prompt:not(.small) { color: var(--paper); }
 .game-mark { padding: 4px 8px 18px; color: var(--paper); }
 .game-mark .edition { display: block; font: 750 15px var(--font-body); letter-spacing: .18em; opacity: .75; }
 .game-mark h1 { font: 900 54px/.95 var(--font-display); letter-spacing: -.055em; margin: 12px 0 10px; }
