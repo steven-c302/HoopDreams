@@ -196,6 +196,12 @@ dealer, and the dealer plays their own hand from their phone. If the dealer bust
   <img src="docs/media/turf-auction.png" alt="Home Turf auction: the place on offer, the top bid on an LED readout and who's leading" width="49%">
 </p>
 
+**Imposter.** Everyone gets a secret card, except the imposter, who only sees the category. Hold your card to peek (it hides
+the moment you let go), type one word that proves you know the word without giving it away, then argue it out and vote on
+your phone. Name the imposter for points; the imposter scores for staying hidden, or for guessing the word once caught.
+Four to sixteen players (two imposters from nine), five rounds by default, the last one counts double. The vote comes with
+drink calls, and the lobby switch and Water tonight work as in the other games.
+
 ### Rename the board
 
 The spaces are named after the crew's places. To rename them, edit
