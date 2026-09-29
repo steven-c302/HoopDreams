@@ -93,6 +93,12 @@ class Imposter(pack: ImposterPack = ImposterPack.core()) : GameModule<ImposterSt
                 if (!CLUE_SHAPE.matches(text)) throw Reject("BAD_TEXT")
                 Step(s.copy(clues = s.clues + (who.v to text)))
             }
+            s.phase == VOTE && kind == "vote" -> {
+                val target = payload["option"]?.jsonPrimitive?.content?.let(::PlayerId)
+                if (target == null || target !in s.participants) throw Reject("BAD_OPTION")
+                if (target == who) throw Reject("OWN_VOTE")
+                Step(s.copy(votes = s.votes + (who.v to target.v)))
+            }
             else -> throw Reject("NOT_NOW")
         }
     }
@@ -100,12 +106,34 @@ class Imposter(pack: ImposterPack = ImposterPack.core()) : GameModule<ImposterSt
     override fun onDeadline(s: ImposterState, ctx: GameContext): Step<ImposterState> = when (s.phase) {
         ROLE -> Step(s.copy(phase = CLUE), listOf(Effect.Phase(ctx.timer(CLUE_MS))))
         CLUE -> Step(s.copy(phase = DISCUSS), listOf(Effect.Phase(DISCUSS_MS)))
+        DISCUSS -> Step(s.copy(phase = VOTE), listOf(Effect.Phase(ctx.timer(VOTE_MS))))
+        VOTE -> reveal(s, ctx)
+        RESULT ->
+            if (imposterAccused(s).isNotEmpty()) Step(s.copy(phase = GUESS), listOf(Effect.Phase(ctx.timer(GUESS_MS))))
+            else Step(s.copy(phase = SCORES), listOf(Effect.Phase(SCORES_MS)))
         else -> Step(s, listOf(Effect.Finish))
+    }
+
+    /** The vote closes: work out who is accused and award the vote points. Guess points come later. */
+    private fun reveal(s: ImposterState, ctx: GameContext): Step<ImposterState> {
+        val accused = ImposterRules.accused(s.votes, s.imposters.size)
+        val multiplier = if (s.round == s.totalRounds) 2 else 1
+        val imposters = s.imposters.map { it.v }.toSet()
+        val deltas = ImposterRules.roundDeltas(imposters, s.votes, accused, multiplier)
+        val effects = mutableListOf<Effect>()
+        deltas.forEach { (id, pts) ->
+            effects += Effect.Award(PlayerId(id), pts, if (id in imposters) "fooled the room" else "spotted the imposter")
+        }
+        for (i in s.imposters) {
+            if (i.v !in accused) ctx.player(i)?.let { effects += Effect.Highlight("${it.name} fooled the room as the imposter") }
+        }
+        return Step(s.copy(phase = RESULT, accused = accused, deltas = deltas), effects + Effect.Phase(RESULT_MS))
     }
 
     override fun waitingOn(s: ImposterState): Set<PlayerId>? = when (s.phase) {
         ROLE -> s.participants.filter { it.v !in s.seen }.toSet()
         CLUE -> s.participants.filter { it.v !in s.clues }.toSet()
+        VOTE -> s.participants.filter { it.v !in s.votes }.toSet()
         else -> null
     }
 
