@@ -434,4 +434,123 @@ class JeopardyTest {
         assertEquals(ActionResult.Rejected("BAD_WAGER"), act(ids[0], "wager", "value" to 1001))
         assertEquals(ActionResult.Ack, act(ids[0], "wager", "value" to 1000))
     }
+
+    /** Plays every clue left on the board with nobody ringing in (a Daily Double is wagered at the minimum and missed). */
+    private fun playBoardOut() {
+        toPick()
+        var guard = 0
+        while (tv.phase == "pick" && tv.cells.any { !it.used } && guard++ < 40) {
+            val cell = tv.cells.filter { !it.used }.minWith(compareBy({ it.row }, { it.col }))
+            pickCell(cell.id)
+            repeat(8) { if (tv.phase in setOf("wager", "clue", "buzz", "answer", "reveal")) skip() }
+        }
+    }
+
+    /** [who] rings in on the next cheap cell and answers it right. */
+    private fun answerRight(who: PlayerId, col: Int) {
+        val id = openPlain(col)
+        act(who, "buzz"); act(who, "answer", "text" to ansOf(id))
+        skip() // reveal -> pick
+    }
+
+    @Test fun aShortShowGoesFromTheLastClueStraightToFinalJeopardy() {
+        val ids = start(3)
+        answerRight(ids[1], 0)
+        playBoardOut()
+        assertEquals("final_category", tv.phase)
+        assertEquals(3, tv.round)
+        assertTrue(tv.cells.isEmpty())
+    }
+
+    @Test fun theFullShowPlaysASecondBoardWithDoubleValuesAndTheLowestScorePicksFirst() {
+        val ids = start(3, show = 1)
+        answerRight(ids[1], 0)
+        val id = openPlain(1)
+        act(ids[2], "buzz"); act(ids[2], "answer", "text" to "nope") // P3 is now the lowest
+        skip(); skip()
+        assertEquals(-200, score(ids[2]))
+        playBoardOut()
+        assertEquals("break", tv.phase)
+        skip()
+        assertEquals("intro", tv.phase)
+        assertEquals(2, tv.round)
+        assertEquals(ids[2], tv.controller)
+        assertEquals(listOf(400, 800, 1200, 1600, 2000), (0..4).map { r -> tv.cells.first { it.row == r && it.col == 0 }.value })
+        assertTrue(tv.cells.none { it.used })
+        skip()
+        assertEquals("pick", tv.phase)
+        assertTrue(id.isNotEmpty())
+    }
+
+    @Test fun theSecondBoardHidesTwoDailyDoubles() {
+        start(3, show = 1)
+        playBoardOut()
+        skip(); skip() // break -> intro -> pick
+        var doubles = 0
+        for (row in 0..4) for (col in 0..4) {
+            pickCell(tv.cells.first { it.row == row && it.col == col }.id)
+            if (tv.phase == "wager") doubles++
+            playOut()
+        }
+        assertEquals(2, doubles)
+    }
+
+    @Test fun finalJeopardyIsSkippedWhenNobodyIsAboveZero() {
+        start(3)
+        playBoardOut() // nobody scores; the Daily Double costs its picker a little
+        assertEquals("podium", tv.phase)
+    }
+
+    @Test fun finalJeopardyTakesSecretWagersThenRevealsFromTheLowestScoreUp() {
+        val ids = start(3)
+        answerRight(ids[1], 0)
+        answerRight(ids[2], 1)
+        playBoardOut()
+        assertEquals("final_category", tv.phase)
+        val before = ids.associateWith { score(it) }
+        assertEquals(0, before.getValue(ids[0]))
+        assertTrue(before.getValue(ids[1]) > 0 && before.getValue(ids[2]) > 0)
+        val k = tv.final!!.category.removePrefix("Final ")
+        skip() // category -> wager
+        assertEquals("final_wager", tv.phase)
+        assertIs<Screen.Waiting>(screen(ids[0])) // no score, no wager
+        assertEquals("wager", assertIs<Screen.NumberEntry>(screen(ids[1])).kind)
+        assertEquals(ActionResult.Rejected("NOT_NOW"), act(ids[0], "wager", "value" to 0))
+        assertEquals(ActionResult.Rejected("BAD_WAGER"), act(ids[1], "wager", "value" to before.getValue(ids[1]) + 1))
+        assertEquals(ActionResult.Ack, act(ids[1], "wager", "value" to before.getValue(ids[1])))
+        assertEquals(ActionResult.Ack, act(ids[2], "wager", "value" to 100))
+        assertEquals("final_answer", tv.phase) // both bettors are in, so the phase moves on by itself
+        assertEquals("Final clue $k", tv.final!!.clue)
+        act(ids[1], "answer", "text" to "What is Fin$k?")
+        act(ids[2], "answer", "text" to "nope")
+        act(ids[0], "answer", "text" to "Fin$k")
+        assertEquals("final_reveal", tv.phase)
+        // Lowest first: P1 (no wager), then whichever of P2/P3 had less.
+        val order = ids.sortedBy { before.getValue(it) }
+        assertEquals(order[0], tv.final!!.steps.single().id)
+        skip(); skip()
+        assertEquals(3, tv.final!!.steps.size)
+        assertEquals(order, tv.final!!.steps.map { it.id })
+        assertEquals("Fin$k", tv.final!!.answer)
+        assertEquals(before.getValue(ids[1]) * 2, score(ids[1]))
+        assertEquals(before.getValue(ids[2]) - 100, score(ids[2]))
+        assertEquals(0, score(ids[0]))
+        assertEquals(2, tv.drinks.single { it.id == ids[2] }.sips)
+        skip()
+        assertEquals("podium", tv.phase)
+        skip()
+        assertEquals(null, e.tvState().stage)
+        assertTrue(e.tvState().lastResult != null)
+    }
+
+    @Test fun aSavedGameKeepsTheFloorMidClue() {
+        val ids = start(3)
+        openPlain()
+        act(ids[1], "buzz")
+        val restored = PartyEngine.restore(e.snapshot(), clock, SeededEntropy(4), GameRegistry(listOf(Jeopardy(pack()))))
+        val restoredTv = restored.tvState().stage!!.game as JeopardyTv
+        assertEquals("answer", restoredTv.phase)
+        assertEquals(ids[1], restoredTv.floor)
+        assertIs<Screen.TextEntry>(restored.phoneState(ids[1]).screen)
+    }
 }

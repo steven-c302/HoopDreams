@@ -182,6 +182,17 @@ class Jeopardy(private val pack: JeopardyPack = JeopardyPack.core()) : GameModul
                 if (value !in JeopardyRules.wagerRange(ctx.scores[who] ?: 0, s.round)) throw Reject("BAD_WAGER")
                 placeWager(s, value)
             }
+            s.phase == FINAL_WAGER && kind == "wager" -> {
+                if (who !in s.finalWagerers) throw Reject("NOT_NOW")
+                val value = payload["value"]?.jsonPrimitive?.intOrNull ?: throw Reject("BAD_WAGER")
+                if (value !in JeopardyRules.finalWagerRange(ctx.scores[who] ?: 0)) throw Reject("BAD_WAGER")
+                Step(s.copy(finalWagers = s.finalWagers + (who.v to value)))
+            }
+            s.phase == FINAL_ANSWER && kind == "answer" -> {
+                if (who !in s.finalPlayers) throw Reject("NOT_NOW")
+                val text = cleanText(payload["text"]?.jsonPrimitive?.content ?: "") ?: throw Reject("BAD_TEXT")
+                Step(s.copy(finalAnswers = s.finalAnswers + (who.v to text)))
+            }
             else -> throw Reject("NOT_NOW")
         }
     }
@@ -196,6 +207,11 @@ class Jeopardy(private val pack: JeopardyPack = JeopardyPack.core()) : GameModul
         BUZZ -> reveal(s.copy(right = false), emptyList()) // nobody rang in
         ANSWER -> judge(s, null, ctx) // time ran out with nothing typed
         REVEAL -> afterReveal(s, ctx)
+        BREAK -> startSecondBoard(s, ctx)
+        FINAL_CATEGORY -> Step(s.copy(phase = FINAL_WAGER), listOf(Effect.Phase(ctx.timer(FINAL_WAGER_MS))))
+        FINAL_WAGER -> Step(s.copy(phase = FINAL_ANSWER), listOf(Effect.Phase(ctx.timer(FINAL_ANSWER_MS))))
+        FINAL_ANSWER -> beginFinalReveal(s, ctx)
+        FINAL_REVEAL -> nextFinalStep(s, ctx)
         else -> Step(s, listOf(Effect.Finish))
     }
 
@@ -204,6 +220,8 @@ class Jeopardy(private val pack: JeopardyPack = JeopardyPack.core()) : GameModul
         WAGER -> s.controller?.let { setOf(PlayerId(it)) }
         BUZZ -> s.eligible.filter { it.v !in s.tried }.toSet()
         ANSWER -> s.floor?.let { setOf(PlayerId(it)) }
+        FINAL_WAGER -> s.finalWagerers.filter { it.v !in s.finalWagers }.toSet()
+        FINAL_ANSWER -> s.finalPlayers.filter { it.v !in s.finalAnswers }.toSet()
         else -> null
     }
 
@@ -233,7 +251,67 @@ class Jeopardy(private val pack: JeopardyPack = JeopardyPack.core()) : GameModul
     private fun reveal(s: JeopardyState, effects: List<Effect>): Step<JeopardyState> =
         Step(s.copy(phase = REVEAL, used = s.used + requireNotNull(s.active), lockedUntil = emptyMap()), effects + Effect.Phase(REVEAL_MS))
 
-    private fun afterReveal(s: JeopardyState, ctx: GameContext): Step<JeopardyState> = toPick(s, ctx)
+    /** After the reveal: the next pick, or, once the board is empty, the break, the next board or Final Jeopardy. */
+    private fun afterReveal(s: JeopardyState, ctx: GameContext): Step<JeopardyState> {
+        val boardDone = cells(s).all { it.id in s.used }
+        return when {
+            !boardDone -> toPick(s, ctx)
+            s.round < s.boards -> Step(s.copy(phase = BREAK, active = null, floor = null, dailyDouble = false), listOf(Effect.Phase(BREAK_MS)))
+            else -> enterFinal(s, ctx)
+        }
+    }
+
+    /** Double Jeopardy: a fresh board, doubled values, two Daily Doubles, and the lowest score picks first. */
+    private fun startSecondBoard(s: JeopardyState, ctx: GameContext): Step<JeopardyState> {
+        val players = ctx.players.map { it.id.v }
+        return Step(
+            s.copy(
+                phase = INTRO, round = 2, categories = s.nextCategories, nextCategories = emptyList(), used = emptySet(),
+                dailyDoubles = dealDoubles(2, s.nextCategories, ctx.random),
+                controller = JeopardyRules.firstPicker(2, players, ctx.scores.mapKeys { it.key.v }, ctx.captain?.v),
+            ),
+            listOf(Effect.Phase(INTRO_MS)),
+        )
+    }
+
+    /** Final Jeopardy, unless nobody has a score above zero to bet. */
+    private fun enterFinal(s: JeopardyState, ctx: GameContext): Step<JeopardyState> {
+        val bettors = ctx.players.filter { (ctx.scores[it.id] ?: 0) > 0 }.map { it.id }
+        if (bettors.isEmpty()) return podium(s)
+        return Step(
+            s.copy(phase = FINAL_CATEGORY, round = 3, active = null, floor = null, dailyDouble = false, sips = emptyMap(), finalPlayers = ctx.players.map { it.id }, finalWagerers = bettors),
+            listOf(Effect.Phase(FINAL_CAT_MS)),
+        )
+    }
+
+    private fun podium(s: JeopardyState): Step<JeopardyState> =
+        Step(s.copy(phase = PODIUM, active = null, floor = null, dailyDouble = false), listOf(Effect.Phase(PODIUM_MS)))
+
+    private fun beginFinalReveal(s: JeopardyState, ctx: GameContext): Step<JeopardyState> {
+        val order = JeopardyRules.finalOrder(s.finalPlayers.map { it.v }, ctx.scores.mapKeys { it.key.v })
+        return revealFinalStep(s.copy(phase = FINAL_REVEAL, finalOrder = order, finalStep = 0), ctx)
+    }
+
+    private fun nextFinalStep(s: JeopardyState, ctx: GameContext): Step<JeopardyState> =
+        if (s.finalStep + 1 < s.finalOrder.size) revealFinalStep(s.copy(finalStep = s.finalStep + 1), ctx) else podium(s)
+
+    /** Shows one player's Final answer: it is marked and their wager is won or lost. */
+    private fun revealFinalStep(s: JeopardyState, ctx: GameContext): Step<JeopardyState> {
+        val id = s.finalOrder[s.finalStep]
+        val wager = s.finalWagers[id] ?: 0
+        val right = matches(s.finalAnswers[id], finalById.getValue(s.finalId).answer)
+        val delta = if (wager == 0) 0 else JeopardyRules.clueDelta(wager, right)
+        val effects = mutableListOf<Effect>()
+        if (delta != 0) effects += Effect.Award(PlayerId(id), delta, if (right) "won Final Jeopardy" else "lost Final Jeopardy")
+        return Step(
+            s.copy(
+                finalResults = s.finalResults + (id to delta),
+                finalRight = if (right) s.finalRight + id else s.finalRight,
+                sips = if (!right && wager > 0) s.sips + (id to 2) else s.sips,
+            ),
+            effects + Effect.Phase(FINAL_STEP_MS),
+        )
+    }
 
     // ---- views ----------------------------------------------------------------------------
 
