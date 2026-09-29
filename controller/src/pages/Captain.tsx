@@ -17,7 +17,7 @@ function settingsOf(view: PhoneState) {
   const s = view.settings ?? {}
   return {
     rounds: s.rounds ?? 5, teams: s.teams ?? 0, drinks: (s.drinks ?? 1) === 1, game: s.game ?? 0,
-    turfMode: s.turfMode ?? 0, minutes: s.minutes ?? 45, vp: s.vp ?? 8, timers: s.timers ?? 0,
+    turfMode: s.turfMode ?? 0, minutes: s.minutes ?? 45, vp: s.vp ?? 8, timers: s.timers ?? 0, show: s.show ?? 0,
   }
 }
 
@@ -28,6 +28,7 @@ export function CaptainLobby({ view, games, host }: { view: PhoneState; games: G
   const trivia = isTrivia(game?.id)
   const turf = game?.id === 'turf'
   const sprawl = game?.id === 'sprawl'
+  const jeopardy = game?.id === 'jeopardy'
   const set = (key: OptionKey, value: number) => { buzz(12); host({ t: 'setOption', key, value }) }
   const minuteAt = Math.max(0, TURF_MINUTES.indexOf(s.minutes))
   const teamAt = Math.max(0, TEAM_CHOICES.indexOf(s.teams))
@@ -66,6 +67,7 @@ export function CaptainLobby({ view, games, host }: { view: PhoneState; games: G
                 onDown={() => set('minutes', TURF_MINUTES[Math.max(0, minuteAt - 1)])} onUp={() => set('minutes', TURF_MINUTES[Math.min(TURF_MINUTES.length - 1, minuteAt + 1)])} />
             </>
           )
+          : jeopardy ? <Stepper label="Show" value={s.show ? 'Full' : 'Short'} onDown={() => set('show', 0)} onUp={() => set('show', 1)} />
           : <Stepper label={trivia ? 'Questions per round' : 'Rounds'} value={String(s.rounds)}
               onDown={() => set('rounds', Math.max(3, s.rounds - 1))} onUp={() => set('rounds', Math.min(8, s.rounds + 1))} />}
         {trivia && (
@@ -73,7 +75,7 @@ export function CaptainLobby({ view, games, host }: { view: PhoneState; games: G
             onDown={() => set('teams', TEAM_CHOICES[Math.max(0, TEAM_CHOICES.indexOf(s.teams) - 1)])}
             onUp={() => set('teams', TEAM_CHOICES[Math.min(TEAM_CHOICES.length - 1, TEAM_CHOICES.indexOf(s.teams) + 1)])} />
         )}
-        {(trivia || turf || sprawl) && (
+        {(trivia || turf || sprawl || jeopardy) && (
           <div className="setting-row">
             <span>Drink calls</span>
             <button className={`toggle ${s.drinks ? 'on' : ''}`} role="switch" aria-checked={s.drinks} onClick={() => set('drinks', s.drinks ? 0 : 1)}>{s.drinks ? 'On' : 'Off'}</button>

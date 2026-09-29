@@ -1,5 +1,6 @@
 import { expect, test, type Locator } from '@playwright/test'
 import { clearParty, hostPage, phone } from './helpers'
+import pack from '../../tv/engine/src/main/resources/packs/jeopardy-core.json' with { type: 'json' }
 
 // The dev server is shared across spec files: leave the party empty for the next test.
 test.afterEach(async ({ browser }) => { await clearParty((await hostPage(browser)).host) })
@@ -32,24 +33,30 @@ test('Answer & Question: pick from the TV, answer in the show\'s form, see who s
   for (const p of [ana, bo, cy]) await p.getByRole('button', { name: 'Ready!' }).click()
 
   // The board: the how-to-pick hint sits straight on the dark TV, so it must be light.
-  const hint = tv.getByText('Arrow keys to move, Enter to pick a clue.')
-  await expect(hint).toBeVisible()
+  const hint = tv.getByText('Arrow keys and Enter work here too.')
+  await expect(hint).toBeVisible({ timeout: 20_000 })
   expect(await brightness(hint), 'the pick hint is too dark to read on the dark TV').toBeGreaterThan(0.6)
 
-  await tv.keyboard.press('Enter') // the first clue: Food & Drink for $200, answer "Guacamole"
-  await expect(tv.getByText('Food & Drink · $200')).toBeVisible()
-  await ana.getByRole('textbox').fill('What is guacamole?')
-  await ana.getByRole('button', { name: /Lock it in/ }).click()
-  await bo.getByRole('textbox').fill('guacamole')
-  await bo.getByRole('button', { name: /Lock it in/ }).click()
-  await cy.getByRole('textbox').fill('nachos')
+  // Categories are shuffled. The cheapest row has no Daily Doubles, so choose its first clue.
+  const category = (await tv.locator('.jeo-head').first().textContent())!.trim()
+  const clue = pack.categories.find((c) => c.name === category)!.clues[0]
+  await tv.keyboard.press('Enter')
+  await expect(tv.locator('.jeo-clue')).toHaveText(clue.clue)
+  // A wrong answer loses the clue's value, and opens the buzzer again for the remaining players.
+  await cy.getByRole('button', { name: 'BUZZ!', exact: true }).click()
+  await cy.getByRole('textbox').fill('not the answer')
   await cy.getByRole('button', { name: /Lock it in/ }).click()
+  await expect(cy.getByRole('button', { name: 'MISSED', exact: true })).toBeVisible()
+  await ana.getByRole('button', { name: 'BUZZ!', exact: true }).click()
+  await ana.getByRole('textbox').fill(`What is ${clue.answer}?`)
+  await ana.getByRole('button', { name: /Lock it in/ }).click()
 
-  // Everyone answered, so the reveal comes up by itself.
+  // The first correct answer ends the clue; players who never rang in score nothing.
   await expect(tv.getByText('Ana +200')).toBeVisible()
-  await expect(tv.getByText('Bo +200')).toBeVisible()
-  await expect(tv.getByText('Cy +200')).toHaveCount(0)
-  const gotIt = tv.getByText('GOT IT', { exact: true })
+  await expect(tv.getByText('Cy -200')).toBeVisible()
+  await expect(tv.getByText('Bo +200')).toHaveCount(0)
+  await expect(bo.getByRole('heading', { name: 'Eyes on the TV' })).toBeVisible()
+  const gotIt = tv.getByText('Got it!', { exact: true })
   await expect(gotIt).toBeVisible()
   expect(await brightness(gotIt), 'the GOT IT label is too dark to read on the dark TV').toBeGreaterThan(0.6)
   expect(errors).toEqual([])

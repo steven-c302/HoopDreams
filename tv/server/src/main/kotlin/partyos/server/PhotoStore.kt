@@ -18,11 +18,14 @@ class PhotoStore(
     private val onError: (String) -> Unit = {},
 ) {
     private val photos = LinkedHashMap<String, ByteArray>()
+    private var lastSavedAt = 0L
 
     init {
+        require(maxPhotos > 0) { "maxPhotos must be positive" }
         dir?.listFiles { f -> f.isFile && f.name.endsWith(".jpg") && ID.matches(f.name.removeSuffix(".jpg")) }
             ?.sortedBy { it.lastModified() }
             ?.forEach { f ->
+                lastSavedAt = maxOf(lastSavedAt, f.lastModified())
                 runCatching { f.readBytes() }.getOrNull()?.takeIf { it.size <= MAX_BYTES && looksLikeJpeg(it) }
                     ?.let { photos[f.name.removeSuffix(".jpg")] = it }
             }
@@ -40,7 +43,11 @@ class PhotoStore(
                 d.mkdirs()
                 val tmp = File(d, "$id.tmp")
                 tmp.writeBytes(jpeg)
+                // Files written within one millisecond otherwise tie on restart, losing insertion order.
+                val savedAt = maxOf(System.currentTimeMillis(), lastSavedAt + 1)
+                Files.setLastModifiedTime(tmp.toPath(), java.nio.file.attribute.FileTime.fromMillis(savedAt))
                 Files.move(tmp.toPath(), File(d, "$id.jpg").toPath(), StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE)
+                lastSavedAt = savedAt
             }.onFailure { onError("couldn't save photo $id: ${it.message}") }
         }
         trim()
