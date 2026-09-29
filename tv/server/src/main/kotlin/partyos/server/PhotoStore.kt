@@ -19,10 +19,14 @@ class PhotoStore(
 ) {
     private val photos = LinkedHashMap<String, ByteArray>()
 
+    /** Last-modified stamp given to the newest file; the next write gets a strictly larger one (see [put]). */
+    private var lastStamp = 0L
+
     init {
         dir?.listFiles { f -> f.isFile && f.name.endsWith(".jpg") && ID.matches(f.name.removeSuffix(".jpg")) }
-            ?.sortedBy { it.lastModified() }
+            ?.sortedWith(compareBy<File> { it.lastModified() }.thenBy { it.name })
             ?.forEach { f ->
+                lastStamp = maxOf(lastStamp, f.lastModified())
                 runCatching { f.readBytes() }.getOrNull()?.takeIf { it.size <= MAX_BYTES && looksLikeJpeg(it) }
                     ?.let { photos[f.name.removeSuffix(".jpg")] = it }
             }
@@ -40,6 +44,10 @@ class PhotoStore(
                 d.mkdirs()
                 val tmp = File(d, "$id.tmp")
                 tmp.writeBytes(jpeg)
+                // Age is the file's last-modified time when the folder is reloaded, and writes made in the same tick would
+                // tie, so each one is stamped strictly after the last (also after a clock that ran ahead or went back).
+                lastStamp = maxOf(System.currentTimeMillis(), lastStamp + 1)
+                tmp.setLastModified(lastStamp)
                 Files.move(tmp.toPath(), File(d, "$id.jpg").toPath(), StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE)
             }.onFailure { onError("couldn't save photo $id: ${it.message}") }
         }
