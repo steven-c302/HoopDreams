@@ -302,6 +302,7 @@ private class PartySession(
                 if (pid == null) ActionResult.Rejected("NOT_PLAYER")
                 else host.mutate { action(pid, msg.id, msg.round, msg.payload) }
             }
+            is ClientMsg.Ink -> Unit // routed to the ink board in the next change
             is ClientMsg.Host -> reply(msg.id) {
                 when {
                     isHost -> host.hostCommand(msg.id, msg.cmd.toCmd())
