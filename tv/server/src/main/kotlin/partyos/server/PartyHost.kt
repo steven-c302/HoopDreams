@@ -4,8 +4,11 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
@@ -42,6 +45,11 @@ class PartyHost(
     private val hostTokenHashes = HashSet<String>()
     private val _pinGeneration = MutableStateFlow(0)
     private val entropy = SecureEntropy()
+    private val inkBoard = InkBoard()
+    private val _ink = MutableSharedFlow<ServerMsg.Ink>(extraBufferCapacity = 4096)
+
+    /** Accepted ink batches, in order, for host (TV) sockets. */
+    val inkEvents: SharedFlow<ServerMsg.Ink> = _ink.asSharedFlow()
 
     /** Bumps whenever the PIN changes; co-host sockets from an older generation are signed out. */
     val pinGeneration: StateFlow<Int> = _pinGeneration.asStateFlow()
@@ -123,6 +131,21 @@ class PartyHost(
 
     suspend fun <T> read(block: PartyEngine.() -> T): T = mutex.withLock { engine.block() }
 
+    /**
+     * A drawer's strokes: checked against the game, kept for TV reconnects and relayed to the TV. This never changes
+     * game state and never pushes a view, so drawing costs nothing on the phones.
+     */
+    suspend fun ink(who: PlayerId, round: Int, ops: List<InkOp>) {
+        mutex.withLock {
+            val turn = engine.inkTurn(who, round) ?: return@withLock
+            val (n, accepted) = inkBoard.apply(turn, ops) ?: return@withLock
+            _ink.tryEmit(ServerMsg.Ink(turn, n, accepted))
+        }
+    }
+
+    /** Everything drawn this game, and the batch number it is up to date with. */
+    suspend fun inkSync(): ServerMsg.InkSync = mutex.withLock { inkBoard.sync() }
+
     suspend fun connected(id: PlayerId) = mutate {
         connections[id] = (connections[id] ?: 0) + 1
         setPresence(id, true)
@@ -142,6 +165,7 @@ class PartyHost(
         _tv.value = engine.tvState()
         _version.value += 1
         pending.trySend(engine.snapshot())
+        if (_tv.value.stage == null) inkBoard.reset() // the drawings belong to the game that just ended
         scheduleDeadline()
     }
 

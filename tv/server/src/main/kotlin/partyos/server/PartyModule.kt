@@ -28,8 +28,11 @@ import io.ktor.websocket.CloseReason
 import io.ktor.websocket.Frame
 import io.ktor.websocket.close
 import io.ktor.websocket.readText
+import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
@@ -232,12 +235,14 @@ private class PartySession(
 ) {
     @Volatile private var lastSeen = cfg.clock.now()
     private val bucket = TokenBucket(cfg.actionsPerSecond, cfg.actionsPerSecond.toDouble(), cfg.clock::now)
+    private val inkBucket = TokenBucket(40, 25.0, cfg.clock::now)
 
     suspend fun run() {
         val role = pid?.let { id -> host.read { player(id)?.role } }
         ws.send(ServerMsg.Welcome(pid, role, isHost))
         pid?.let { host.connected(it) }
         val sender = ws.launch { host.version.collect { seq -> push(seq) } }
+        val inkRelay = if (!isHost) null else ws.launch { relayInk() }
         val pinWatch = if (!isHost) null else ws.launch {
             val gen = host.pinGeneration.value
             host.pinGeneration.first { it != gen }
@@ -266,10 +271,23 @@ private class PartySession(
             }
         } finally {
             sender.cancel()
+            inkRelay?.cancel()
             watchdog.cancel()
             pinWatch?.cancel()
             pid?.let { withContext(NonCancellable) { host.disconnected(it) } }
         }
+    }
+
+    /**
+     * Sends a TV socket the whole drawing, then every new batch. It subscribes before it syncs so nothing slips between
+     * the two; batches the sync already contains are skipped by their number.
+     */
+    private suspend fun relayInk() = coroutineScope {
+        val queue = Channel<ServerMsg.Ink>(Channel.UNLIMITED)
+        launch(start = CoroutineStart.UNDISPATCHED) { host.inkEvents.collect { queue.trySend(it) } }
+        val sync = host.inkSync()
+        ws.send(sync)
+        for (event in queue) if (event.n > sync.upTo) ws.send(event)
     }
 
     private suspend fun push(seq: Long) {
@@ -302,7 +320,7 @@ private class PartySession(
                 if (pid == null) ActionResult.Rejected("NOT_PLAYER")
                 else host.mutate { action(pid, msg.id, msg.round, msg.payload) }
             }
-            is ClientMsg.Ink -> Unit // routed to the ink board in the next change
+            is ClientMsg.Ink -> if (pid != null && inkBucket.tryTake()) host.ink(pid, msg.round, msg.ops)
             is ClientMsg.Host -> reply(msg.id) {
                 when {
                     isHost -> host.hostCommand(msg.id, msg.cmd.toCmd())
