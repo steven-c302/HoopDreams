@@ -81,6 +81,10 @@
     { "id": "cityUp", "seconds": 1.5, "prompt": "A building shooting up: quick rising brass swell with construction clanks, ending in a bright bell ding" },
     { "id": "longRoad", "seconds": 2, "prompt": "Short triumphant brass fanfare that ends with a cheeky double car horn toot, award won" },
     { "id": "bigCrew", "seconds": 2, "prompt": "Short triumphant brass fanfare with big stomping drums and a loud whistle, tough crew award won, no voice" },
-    { "id": "sprawlWin", "seconds": 3, "prompt": "Big victory brass fanfare with cymbal crash, timpani roll and a cheering crowd, board game won" }
+    { "id": "sprawlWin", "seconds": 3, "prompt": "Big victory brass fanfare with cymbal crash, timpani roll and a cheering crowd, board game won" },
+    { "id": "htFlip", "seconds": 1.2, "prompt": "Rapid mechanical split-flap tile flips, wooden clacks cascading one after another, short, like an old train station board" },
+    { "id": "htStamp", "seconds": 0.8, "variants": 3, "prompt": "A heavy rubber ink stamp thumped hard onto paper, dull wooden thud with a soft slap, dry, no echo" },
+    { "id": "htPlaten", "seconds": 1.6, "prompt": "A heavy cast iron letterpress platen slamming down, deep metallic thunk with a short rattle" },
+    { "id": "htPaper", "seconds": 1.2, "prompt": "A newspaper snapped open and flattened on a table, crisp paper rustle" }
   ]
 }
