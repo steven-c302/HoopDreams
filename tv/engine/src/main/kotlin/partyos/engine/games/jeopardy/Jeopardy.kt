@@ -92,7 +92,7 @@ class Jeopardy(private val pack: JeopardyPack = JeopardyPack.core()) : GameModul
 
     private fun score(s: JeopardyState, ctx: GameContext): Step<JeopardyState> {
         val clue = byId.getValue(requireNotNull(s.activeId))
-        val correct = s.answers.filterValues { AnswerMatch.accepts(it, clue.answer) }.keys
+        val correct = s.answers.filterValues { AnswerMatch.accepts(asAnswer(it), clue.answer) }.keys
         val effects = mutableListOf<Effect>()
         val deltas = LinkedHashMap<String, Int>()
         for (pid in correct) {
@@ -160,6 +160,13 @@ class Jeopardy(private val pack: JeopardyPack = JeopardyPack.core()) : GameModul
     private fun rows(ctx: GameContext) =
         ctx.players.map { ScoreRow(it.id, it.name, it.avatar, ctx.scores[it.id] ?: 0) }.sortedByDescending { it.score }
 
+    /**
+     * Players answer in the show's form ("What is guacamole?"), which the shared matcher would read as extra wrong
+     * words, so the leading "what is / who's / where are..." is dropped first. Only this game does it: Write It Down
+     * and Brain Drain take bare answers.
+     */
+    private fun asAnswer(raw: String): String = raw.trim().replace(QUESTION_LEAD, "").trimEnd('?', ' ')
+
     private fun cleanText(raw: String): String? {
         val t = raw.filterNot { Character.isISOControl(it) }.trim().replace(Regex("\\s+"), " ")
         return t.takeIf { it.isNotEmpty() && it.length <= MAX_ANSWER }
@@ -170,6 +177,7 @@ class Jeopardy(private val pack: JeopardyPack = JeopardyPack.core()) : GameModul
         const val ANSWER = "answer"
         const val REVEAL = "reveal"
         const val PODIUM = "podium"
+        private val QUESTION_LEAD = Regex("^(?:what|who|where|when)(?:['’]?s|\\s+(?:is|are|was|were))\\s+", RegexOption.IGNORE_CASE)
         const val MAX_ANSWER = 60
         const val ANSWER_MS = 30_000L
         const val REVEAL_MS = 6_000L

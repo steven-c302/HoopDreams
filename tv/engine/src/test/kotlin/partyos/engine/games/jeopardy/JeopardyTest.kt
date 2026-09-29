@@ -74,6 +74,34 @@ class JeopardyTest {
         assertTrue(tv.board.first { it.id == "f200" }.used)
     }
 
+    @Test fun answersGivenAsAQuestionCountLikeOnTheShow() {
+        val forms = listOf("What is guacamole?", "what is a guacamole", "Whats guacamole", "WHAT'S GUACAMOLE?", "what are guacamole")
+        for (form in forms) {
+            val (a, b) = start(listOf("A", "B"))
+            e.host(HostCmd.GameAction("pick:f200"))
+            answer(a, form)
+            answer(b, "hummus")
+            assertEquals(listOf("A"), tv.correct, "'$form' should count")
+            assertEquals(200, score(a), form)
+        }
+        val (a, b) = start(listOf("A", "B"))
+        e.host(HostCmd.GameAction("pick:s200"))
+        answer(a, "Who is Kobe Bryant?")
+        answer(b, "Who's Kobe Bryant")
+        assertEquals(listOf("A", "B"), tv.correct.sorted())
+    }
+
+    @Test fun aQuestionFormAnswerThatIsWrongIsStillWrongAndABareLeadIsNoAnswer() {
+        val (a, b) = start(listOf("A", "B"))
+        e.host(HostCmd.GameAction("pick:f200"))
+        answer(a, "What is nachos?")
+        answer(b, "what is")
+        assertEquals("reveal", tv.phase)
+        assertTrue(tv.correct.isEmpty())
+        assertEquals(0, score(a))
+        assertEquals(0, score(b))
+    }
+
     @Test fun lockedAnswerCannotBeChanged() {
         val (a) = start(listOf("A", "B"))
         e.host(HostCmd.GameAction("pick:f200"))
