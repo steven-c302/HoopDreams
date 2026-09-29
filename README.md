@@ -173,6 +173,8 @@ refreshed or dropped phone rejoins as the same player.
 screen, everyone types the answer, and the team's most-written answer counts (close spelling is fine). Same teams,
 settings, standings, drink calls and awards as Brain Drain.
 
+**Answer & Question.** A Jeopardy-style quiz show. Five categories, five clues each, and whoever last answered right picks the next square from their own phone (the captain can always pick too). Read the clue, wait for the BUZZ button to light up (buzz early and you are locked out for a second), then type your answer; a wrong answer costs the clue's value and reopens the buzzers to everyone else. Watch for Daily Doubles, and finish with a secret-wager Final Jeopardy. In the lobby, choose a **Short** show (one board plus Final Jeopardy) or a **Full** one (with Double Jeopardy), press D for drink calls, and set the answer timers like any other game.
+
 **Bluff Battle.** Everyone gets a weird-but-true question and writes a fake answer. Then everyone hunts for the
 truth among the fakes. Fool a friend for points; find the truth for more.
 

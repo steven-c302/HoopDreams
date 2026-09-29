@@ -29,7 +29,7 @@
 .jeo-cat span { font: 400 46px var(--font-display); letter-spacing: .05em; text-transform: uppercase; }
 .jeo-cat b { font: 400 56px var(--font-display); color: var(--paper); }
 .jeo-cat em { font: 800 30px var(--font-body); font-style: normal; letter-spacing: .1em; background: var(--game-accent); color: var(--ink); padding: 4px 16px; border-radius: 10px; }
-.jeo-clue { width: 100%; max-width: 1640px; padding: 52px 64px; font: 800 62px/1.2 var(--font-body); color: var(--ink); text-align: center; }
+.jeo-clue { width: 100%; max-width: 1640px; margin-inline: auto; padding: 52px 64px; font: 800 62px/1.2 var(--font-body); color: var(--ink); text-align: center; }
 .jeo-clue.small { font-size: 44px; padding: 32px 48px; }
 .jeo-buzzrow, .jeo-revealrow, .jeo-dd { display: flex; flex-direction: column; align-items: center; gap: 14px; }
 .jeo-buzz { font: 400 120px var(--font-display); letter-spacing: .06em; color: var(--game-accent); text-shadow: 0 6px 0 var(--ink); animation: jeo-pulse .9s ease-in-out infinite; }
@@ -42,6 +42,8 @@
 .jeo-drinks li { font: 700 30px var(--font-body); color: var(--paper); }
 .jeo-drinks b { color: var(--game-accent); }
 
+.jeo-finalwrap.reveal { gap: 12px; }
+.jeo-finalwrap.reveal .jeo-final-cat { font-size: 56px; }
 .jeo-final-cat { font: 400 84px var(--font-display); letter-spacing: .05em; text-transform: uppercase; color: var(--paper); }
 .jeo-steps { display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 1500px; }
 .jeo-step { display: grid; grid-template-columns: 60px 200px 1fr 180px 130px 170px; align-items: center; gap: 14px; padding: 8px 18px; background: var(--paper); color: var(--ink); border: 4px solid var(--ink); border-radius: 14px; font: 800 30px var(--font-body); text-align: left; }
