@@ -33,8 +33,9 @@ sealed interface Screen {
     ) : Screen
 
     /**
-     * Pick one. [style]: null (plain list), `shapes` (A-D answer buttons), `sides` (two giant buttons) or `teams`
-     * (coloured team buttons). [votes] maps option id to the teammates currently on it.
+     * Pick one. [style]: null (plain list), `shapes` (A-D answer buttons), `sides` (two giant buttons), `teams`
+     * (coloured team buttons) or `faces` (option ids are player ids; the phone draws each player's face).
+     * [votes] maps option id to the teammates currently on it.
      */
     @Serializable @SerialName("choice")
     data class ChoiceList(
@@ -93,6 +94,23 @@ sealed interface Screen {
     ) : Screen
 
     /**
+     * Imposter: a face-down card the phone flips only while it is held. [face] is the word, or IMPOSTER; [role] is
+     * `crew` or `imposter` and never changes how the card looks face-down. [kind] names the "Got it" action (null =
+     * no button); [input] is the clue field shown under a small peek chip.
+     */
+    @Serializable @SerialName("secret")
+    data class Secret(
+        val title: String,
+        val face: String,
+        val category: String,
+        val role: String,
+        val note: String? = null,
+        val kind: String? = null,
+        val acknowledged: Boolean = false,
+        val input: SecretInput? = null,
+    ) : Screen
+
+    /**
      * Home Turf: your token, the one thing to do now, your places (with what you can do to each), who you could
      * trade with, and any open trade or auction. Faces are ids only; phones already have everyone's from `scores`.
      */
@@ -144,6 +162,10 @@ sealed interface Screen {
         val drinks: Boolean = true,
     ) : Screen
 }
+
+/** The clue field under Imposter's peek chip. */
+@Serializable
+data class SecretInput(val prompt: String, val maxLen: Int, val value: String?, val kind: String, val hint: String? = null)
 
 /** One playing card. rank 1 (ace) to 13 (king), suit 0..3 = spades, hearts, diamonds, clubs. rank 0 = face down. */
 @Serializable
