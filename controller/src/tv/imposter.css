@@ -1,0 +1,14 @@
+/* Imposter TV stage: an interrogation-room lineup. Type stays large for a room across the floor. */
+.imp-center { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 48px; }
+.imp-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 28px; min-height: 0; }
+.imp-note { font: 700 36px/1.3 var(--font-body, system-ui); color: var(--paper); text-align: center; max-width: 1400px; }
+.imp-note b { color: var(--game-accent, #d9a441); font-weight: 900; }
+.imp-wall { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 22px; width: 100%; max-width: 1760px; align-items: start; }
+.imp-placard { position: relative; display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 16px 12px 18px; min-height: 250px; }
+.imp-placard.accused { outline: 6px solid var(--game-accent, #d9a441); outline-offset: 4px; }
+.imp-name { font: 900 30px var(--font-display, inherit); letter-spacing: .04em; text-transform: uppercase; }
+.imp-clue { font: 900 44px/1.05 var(--font-display, inherit); text-align: center; overflow-wrap: anywhere; }
+.imp-votes { font: 800 24px var(--font-body, inherit); letter-spacing: .1em; }
+.imp-drinks { list-style: none; display: flex; flex-wrap: wrap; justify-content: center; gap: 14px 28px; padding: 0; margin: 0; }
+.imp-drinks li { font: 700 30px var(--font-body, inherit); color: var(--paper); }
+.imp-drinks b { color: var(--game-accent, #d9a441); }

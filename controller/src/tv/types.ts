@@ -171,3 +171,19 @@ export interface SprawlTv {
   tally: { seat: number; vp: number; vpCards: number; rank: number }[]
 }
 
+
+// ---- Imposter (tv/engine/.../ImposterViews.kt) ----------------------------------------------
+
+export interface ImposterTv {
+  t: 'imposter'; phase: 'role' | 'clue' | 'discuss' | 'vote' | 'result' | 'guess' | 'scores' | 'podium'
+  round: number; totalRounds: number; finalRound: boolean; category: string
+  submitted: number; expected: number; imposterCount: number
+  clues: { id: string; name: string; text?: string }[]
+  /** Held back until any caught imposter has guessed. */
+  word?: string
+  imposters: string[]; accused: string[]
+  votes: { voter: string; suspect: string }[]
+  guesses: { id: string; name: string; text: string; right: boolean }[]
+  drinks: { id: string; name: string; sips: number; text: string }[]
+  deltas: { id: string; name: string; points: number }[]
+}

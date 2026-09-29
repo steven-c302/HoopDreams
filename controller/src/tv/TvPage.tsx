@@ -10,6 +10,7 @@ import { loadMix, setMix, sfx, unlockAudio, whenAudioRuns, type Mix } from './au
 import { BlackjackStage } from './BlackjackStage'
 import { BluffStage } from './BluffStage'
 import { Gallery } from './Gallery'
+import { ImposterStage } from './ImposterStage'
 import { JeopardyStage } from './JeopardyStage'
 import { TriviaStage } from './TriviaStage'
 import { SprawlCover } from './SprawlArt'
@@ -187,6 +188,7 @@ function Show({ session }: { session: TvSession }) {
                 : stage.gameId === 'turf' ? <GameScene game="turf"><TurfStage stage={stage} players={players} scores={tv.scores} clock={clock} /></GameScene>
                 : stage.gameId === 'sprawl' ? <GameScene game="sprawl"><SprawlStage stage={stage} players={players} scores={tv.scores} clock={clock} /></GameScene>
                 : stage.gameId === 'jeopardy' ? <JeopardyStage stage={stage} players={players} scores={tv.scores} clock={clock} cmd={cmd} />
+                : stage.gameId === 'imposter' ? <GameScene game="imposter"><ImposterStage stage={stage} players={players} scores={tv.scores} clock={clock} /></GameScene>
                 : <GameScene game="bluff"><BluffStage stage={stage} players={players} scores={tv.scores} clock={clock} /></GameScene>}
               {stage.paused && <Paused reason={stage.pauseReason} />}
             </TimerScale.Provider>

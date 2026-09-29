@@ -44,6 +44,15 @@
   --sp-desert: #e1d0a6;
   --sp-jetty: #ba9772;
 }
+[data-game-theme='imposter'] {
+  --ink: #23262b;
+  --ink-soft: #5b6068;
+  --paper: #f4efe1;
+  --paper-2: #e2dbc6;
+  --font-display: 'Anton', system-ui, sans-serif;
+  --game-bg: #2c3138;
+  --game-accent: #d9a441;
+}
 .game-scene {
   position: absolute; inset: 0; overflow: hidden; background-color: var(--game-bg);
   background-image: linear-gradient(120deg, #ffffff06, transparent 65%);
@@ -54,6 +63,9 @@
 }
 .game-scene[data-game-theme='sprawl'] {
   background-image: repeating-radial-gradient(ellipse at 50% 55%, transparent 0 88px, #9ed8d506 89px 90px, transparent 91px 125px);
+}
+.game-scene[data-game-theme='imposter'] {
+  background-image: repeating-linear-gradient(180deg, transparent 0 94px, #ffffff0d 94px 96px);
 }
 .game-mark { padding: 4px 8px 18px; color: var(--paper); }
 .game-mark .edition { display: block; font: 750 15px var(--font-body); letter-spacing: .18em; opacity: .75; }
