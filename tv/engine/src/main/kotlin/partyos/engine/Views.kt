@@ -192,6 +192,24 @@ sealed interface Screen {
         val drink: String? = null,
         val drinks: Boolean = true,
     ) : Screen
+
+    /**
+     * Hot Type: the board and your own found words, newest first. [phase] is ready | hunt | press | reveal | scores.
+     * [tiles] is empty until the hunt starts. [score] is your base total during the hunt and your round total after.
+     * In the reveal, each [found] word carries how many players found it and your unique bonus. A swipe is sent as
+     * `{ kind: "word", path: [tile index, ...] }`.
+     */
+    @Serializable @SerialName("hunt")
+    data class Hunt(
+        val phase: String,
+        val round: Int,
+        val totalRounds: Int,
+        val size: Int,
+        val tiles: List<String> = emptyList(),
+        val found: List<HuntFound> = emptyList(),
+        val score: Int = 0,
+        val note: String? = null,
+    ) : Screen
 }
 
 /** The clue field under Imposter's peek chip. */
@@ -298,3 +316,7 @@ sealed interface HostCmd {
     /** A show control the running game defines, e.g. Brain Drain's "shuffle" during Team Up. */
     data class GameAction(val action: String) : HostCmd
 }
+
+/** One word on a Hot Type phone. [finders] and [bonus] are 0 until the reveal. */
+@Serializable
+data class HuntFound(val word: String, val points: Int, val finders: Int = 0, val bonus: Int = 0)
