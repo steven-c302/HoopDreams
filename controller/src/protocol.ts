@@ -1,6 +1,8 @@
 // Wire types for the PARTY OS server (tv/server/.../Protocol.kt). Kept in step by the shared fixtures
 // in ./protocol/fixtures, which src/protocol.test.ts checks in both directions.
 
+import type { InkOp, InkSyncMsg } from './ink/types'
+
 export const PROTOCOL_VERSION = 1
 
 export type Role = 'PLAYER' | 'SPECTATOR'
@@ -27,6 +29,8 @@ export type Screen =
   | { t: 'scores'; title: string; rows: ScoreRow[] }
   | { t: 'cards'; title: string; hand: PlayingCard[]; total?: number; dealer: PlayingCard[]; actions: Choice[]; kind: string; note?: string; tone?: string; stack?: number }
   | { t: 'secret'; title: string; face: string; category: string; role: 'crew' | 'imposter'; note?: string; kind?: string; acknowledged: boolean; input?: SecretInput }
+  | { t: 'draw'; word: string; difficulty: number; guessed: number; expected: number; tailMs: number; note?: string }
+  | { t: 'guess'; drawer: string; blanks: string; kind: string; solved: boolean; points?: number; close: boolean; last?: string; guessed: number; expected: number; tailMs: number }
   | TurfScreen
   | SprawlScreen
 
@@ -173,6 +177,8 @@ export type ServerMsg =
   | { t: 'welcome'; playerId?: string; role?: Role; host: boolean; protocol: number }
   | { t: 'view'; seq: number; view: PhoneState }
   | { t: 'tv'; seq: number; tv: TvState }
+  | { t: 'ink'; turn: number; n: number; ops: InkOp[] }
+  | ({ t: 'inkSync' } & InkSyncMsg)
   | { t: 'ack'; id: string }
   | { t: 'reject'; id: string; code: string }
   | { t: 'pong' }
@@ -202,12 +208,13 @@ export type ActionPayload = { kind: string; [k: string]: string | number | boole
 export type ClientMsg =
   | { t: 'hello'; protocol: number }
   | { t: 'action'; id: string; round: number; payload: ActionPayload }
+  | { t: 'ink'; round: number; ops: InkOp[] }
   | { t: 'host'; id: string; cmd: HostCommand }
   | { t: 'ping' }
 
 export interface GameListing { id: string; title: string; tagline: string; minPlayers: number; maxPlayers: number }
 
-const SCREENS = new Set(['waiting', 'text', 'choice', 'number', 'multi', 'tutorial', 'scores', 'cards', 'turf', 'sprawl', 'secret'])
+const SCREENS = new Set(['waiting', 'text', 'choice', 'number', 'multi', 'tutorial', 'scores', 'cards', 'turf', 'sprawl', 'secret', 'draw', 'guess'])
 const isObj = (v: unknown): v is Record<string, unknown> => typeof v === 'object' && v !== null
 
 /** Parses one server frame; returns null for anything malformed or unknown instead of throwing. */
@@ -223,6 +230,8 @@ export function parseServerMsg(text: string): ServerMsg | null {
         ? (m as ServerMsg) : null
     }
     case 'tv': return typeof m.seq === 'number' && isObj(m.tv) && Array.isArray(m.tv.players) ? (m as ServerMsg) : null
+    case 'ink': return typeof m.turn === 'number' && typeof m.n === 'number' && Array.isArray(m.ops) ? (m as ServerMsg) : null
+    case 'inkSync': return Array.isArray(m.turns) && typeof m.upTo === 'number' ? (m as ServerMsg) : null
     case 'ack': return typeof m.id === 'string' ? (m as ServerMsg) : null
     case 'reject': return typeof m.id === 'string' && typeof m.code === 'string' ? (m as ServerMsg) : null
     case 'pong': return { t: 'pong' }
@@ -254,6 +263,9 @@ export function rejectMessage(code: string): string {
     case 'RATE_LIMIT': return 'Slow down a little!'
     case 'NOT_ENOUGH_PLAYERS': return 'Need more players connected.'
     case 'STALE': return ''
+    // Doodle Dash
+    case 'NOT_GUESSING': return "You've already got it!"
+    case 'BAD_OPTION': return 'Pick one of the words.'
     // Home Turf
     case 'NOT_YOUR_TURN': return "It's not your turn."
     case 'NOT_YOUR_SEAT': return 'A teammate has the dice right now.'

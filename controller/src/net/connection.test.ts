@@ -46,6 +46,16 @@ describe('Connection', () => {
     vi.useRealTimers()
   })
 
+  it('sends ink without keeping it for a resend', () => {
+    const { c, sock } = setup()
+    sock().open()
+    c.ink(4, [{ t: 'clear' }])
+    expect(sock().sentOf('ink')).toEqual([{ t: 'ink', round: 4, ops: [{ t: 'clear' }] }])
+    sock().close(); vi.advanceTimersByTime(250); sock().open()
+    expect(sock().sentOf('ink')).toEqual([])
+    vi.useRealTimers()
+  })
+
   it('does not resend an action the server rejected as stale', () => {
     const { c, sock } = setup()
     sock().open()
