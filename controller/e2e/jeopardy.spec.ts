@@ -1,4 +1,4 @@
-import { expect, test, type Locator } from '@playwright/test'
+import { expect, test, type Locator, type Page } from '@playwright/test'
 import { clearParty, hostPage, phone } from './helpers'
 import pack from '../../tv/engine/src/main/resources/packs/jeopardy-core.json' with { type: 'json' }
 
@@ -18,6 +18,14 @@ const brightness = (el: Locator) => el.evaluate((node) => {
   const [r, gr, b] = g.getImageData(0, 0, 1, 1).data
   return (0.2126 * r + 0.7152 * gr + 0.0722 * b) / 255
 })
+
+async function ringIn(page: Page) {
+  const button = page.getByRole('button', { name: 'BUZZ!', exact: true })
+  await expect(button).toBeVisible({ timeout: 15_000 })
+  await expect(button).toBeEnabled()
+  // This button pulses continuously; waiting for a stable bounding box would miss the buzz window.
+  await button.click({ force: true })
+}
 
 test('Answer & Question: pick from the TV, answer in the show\'s form, see who scored, all readable', async ({ browser }) => {
   test.setTimeout(120_000)
@@ -43,11 +51,11 @@ test('Answer & Question: pick from the TV, answer in the show\'s form, see who s
   await tv.keyboard.press('Enter')
   await expect(tv.locator('.jeo-clue')).toHaveText(clue.clue)
   // A wrong answer loses the clue's value, and opens the buzzer again for the remaining players.
-  await cy.getByRole('button', { name: 'BUZZ!', exact: true }).click()
+  await ringIn(cy)
   await cy.getByRole('textbox').fill('not the answer')
   await cy.getByRole('button', { name: /Lock it in/ }).click()
   await expect(cy.getByRole('button', { name: 'MISSED', exact: true })).toBeVisible()
-  await ana.getByRole('button', { name: 'BUZZ!', exact: true }).click()
+  await ringIn(ana)
   await ana.getByRole('textbox').fill(`What is ${clue.answer}?`)
   await ana.getByRole('button', { name: /Lock it in/ }).click()
 
