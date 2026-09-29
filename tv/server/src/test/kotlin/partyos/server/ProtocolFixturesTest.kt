@@ -17,6 +17,14 @@ import partyos.engine.BluffReveal
 import partyos.engine.BluffTv
 import partyos.engine.Choice
 import partyos.engine.GameResult
+import partyos.engine.HotTypeTv
+import partyos.engine.HuntBigFind
+import partyos.engine.HuntDelta
+import partyos.engine.HuntDrink
+import partyos.engine.HuntFound
+import partyos.engine.HuntMissed
+import partyos.engine.HuntPageWord
+import partyos.engine.HuntRail
 import partyos.engine.ImposterClue
 import partyos.engine.ImposterDelta
 import partyos.engine.ImposterDrink
@@ -325,6 +333,63 @@ class ProtocolFixturesTest {
             ),
         ),
         ServerMsg.View(
+            seq = 40,
+            view = PhoneState(
+                me, "KXQT", "hottype", "Hot Type", 3, false, null, 61_000,
+                Screen.Hunt("hunt", 1, 3, 4, "STRPLONAHECIDWKU".map { it.toString() }, listOf(HuntFound("stone", 800), HuntFound("ton", 100)), 900),
+                rows,
+            ),
+        ),
+        ServerMsg.View(
+            seq = 41,
+            view = PhoneState(
+                me, "KXQT", "hottype", "Hot Type", 5, false, null, 12_000,
+                Screen.Hunt("reveal", 1, 3, 4, "STRPLONAHECIDWKU".map { it.toString() }, listOf(HuntFound("stone", 800, 1, 800), HuntFound("ton", 100, 2, 0)), 2200),
+                rows,
+            ),
+        ),
+        ServerMsg.Tv(
+            42,
+            TvState(
+                roomCode = "KXQT",
+                players = listOf(me),
+                stage = StageInfo(
+                    "hottype", "Hot Type", 4, 1_700_000_200_000, 61_000, false, null, null,
+                    game = HotTypeTv(
+                        phase = "hunt", round = 1, totalRounds = 3, finalRound = false, size = 4,
+                        tiles = "STRPLONAHECIDWKU".map { it.toString() },
+                        rail = listOf(HuntRail(PlayerId("p-al"), "Al", 2, 900, listOf(5, 3)), HuntRail(sam, "Sam", 0, 0, emptyList())),
+                        wordsFound = 2, longest = 5, bigFind = HuntBigFind(1, PlayerId("p-al"), "Al", 6),
+                    ),
+                ),
+                scores = rows,
+                lastResult = null,
+                gamesPlayed = 1,
+                settings = mapOf("game" to 7, "rounds" to 3, "grid" to 0),
+            ),
+        ),
+        ServerMsg.Tv(
+            43,
+            TvState(
+                roomCode = "KXQT",
+                players = listOf(me),
+                stage = StageInfo(
+                    "hottype", "Hot Type", 6, 1_700_000_300_000, 8_000, false, null, null,
+                    game = HotTypeTv(
+                        phase = "scores", round = 1, totalRounds = 3, finalRound = false, size = 4,
+                        tiles = "STRPLONAHECIDWKU".map { it.toString() },
+                        page = listOf(HuntPageWord("ton", 100, 0, listOf(PlayerId("p-al"), sam), false), HuntPageWord("stone", 800, 800, listOf(PlayerId("p-al")), true)),
+                        missed = HuntMissed("clappers", 2200),
+                        deltas = listOf(HuntDelta(PlayerId("p-al"), "Al", 900, 800, 500, 2200), HuntDelta(sam, "Sam", 100, 0, 0, 100)),
+                        drinks = listOf(HuntDrink(sam, "Sam", 2, "Last place! Drink 2 sips")),
+                    ),
+                ),
+                scores = rows,
+                lastResult = null,
+                gamesPlayed = 1,
+            ),
+        ),
+        ServerMsg.View(
             seq = 30,
             view = PhoneState(
                 me, "KXQT", "jeopardy", "Answer & Question", 4, false, null, 20_000,
@@ -448,6 +513,8 @@ class ProtocolFixturesTest {
         ClientMsg.Action("a-16", 8, JsonObject(mapOf("kind" to JsonPrimitive("wager"), "value" to JsonPrimitive(300)))),
         ClientMsg.Host("h-15", HostCommand.SetOption("show", 1)),
         ClientMsg.Host("h-16", HostCommand.GameAction("pick:food-200")),
+        ClientMsg.Action("a-17", 4, JsonObject(mapOf("kind" to JsonPrimitive("word"), "path" to kotlinx.serialization.json.JsonArray(listOf(0, 1, 5, 6, 9).map { JsonPrimitive(it) })))),
+        ClientMsg.Host("h-17", HostCommand.SetOption("grid", 1)),
         ClientMsg.Ping,
     )
 

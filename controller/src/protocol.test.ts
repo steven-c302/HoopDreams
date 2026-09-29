@@ -14,7 +14,7 @@ describe('protocol fixtures shared with the Kotlin server', () => {
 
   it('covers every screen kind the phone can render', () => {
     const kinds = serverFixtures.flatMap((m) => ('view' in m ? [(m.view as { screen: { t: string } }).screen.t] : []))
-    expect(new Set(kinds)).toEqual(new Set(['waiting', 'tutorial', 'text', 'choice', 'scores', 'number', 'multi', 'turf', 'sprawl', 'secret', 'board', 'buzzer']))
+    expect(new Set(kinds)).toEqual(new Set(['waiting', 'tutorial', 'text', 'choice', 'scores', 'number', 'multi', 'turf', 'sprawl', 'secret', 'hunt', 'board', 'buzzer']))
   })
 
   it('encodes client messages exactly as the server expects', () => {
@@ -52,6 +52,8 @@ describe('protocol fixtures shared with the Kotlin server', () => {
       { t: 'action', id: 'a-16', round: 8, payload: { kind: 'wager', value: 300 } },
       { t: 'host', id: 'h-15', cmd: { t: 'setOption', key: 'show', value: 1 } },
       { t: 'host', id: 'h-16', cmd: { t: 'gameAction', action: 'pick:food-200' } },
+      { t: 'action', id: 'a-17', round: 4, payload: { kind: 'word', path: [0, 1, 5, 6, 9] } },
+      { t: 'host', id: 'h-17', cmd: { t: 'setOption', key: 'grid', value: 1 } },
       { t: 'ping' },
     ]
     expect(ours.map((m) => JSON.parse(encodeClient(m)))).toEqual(clientFixtures)

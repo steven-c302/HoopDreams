@@ -196,3 +196,21 @@ export interface ImposterTv {
   drinks: { id: string; name: string; sips: number; text: string }[]
   deltas: { id: string; name: string; points: number }[]
 }
+
+// ---- Hot Type (tv/engine/.../HotTypeViews.kt) ------------------------------------------------
+
+export interface HotTypeTv {
+  t: 'hottype'; phase: 'ready' | 'hunt' | 'press' | 'reveal' | 'scores' | 'podium'
+  round: number; totalRounds: number; finalRound: boolean; size: number
+  tiles: string[]
+  /** Hunt and press only. Counts and word lengths, never words. */
+  rail: { id: string; name: string; count: number; score: number; lengths: number[] }[]
+  wordsFound: number; longest: number
+  /** The latest word of 6 or more letters: a length, never the word. seq rises with each one. */
+  bigFind?: { seq: number; id: string; name: string; letters: number }
+  /** Reveal onward, in stamping order (rising points, longest last). */
+  page: { word: string; points: number; bonus: number; finders: string[]; longest: boolean }[]
+  missed?: { word: string; points: number }
+  deltas: { id: string; name: string; base: number; unique: number; longest: number; total: number }[]
+  drinks: { id: string; name: string; sips: number; text: string }[]
+}

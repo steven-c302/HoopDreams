@@ -188,6 +188,8 @@ class PartyEngine private constructor(
         "vp" -> 8..10
         // Answer & Question: 0 Short (one board then Final), 1 Full (two boards then Final).
         "show" -> 0..1
+        // Hot Type: 0 = 4×4 board, 1 = 5×5.
+        "grid" -> 0..1
 
         "game" -> 0..(games.all.size - 1).coerceAtLeast(0)
         else -> null

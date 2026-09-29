@@ -15,6 +15,8 @@ export interface TutorialCard { title: string; body: string }
 /** rank 1 (ace)..13 (king), suit 0..3 = spades, hearts, diamonds, clubs; rank 0 = face down. */
 export interface PlayingCard { rank: number; suit: number }
 /** The clue field under Imposter's peek chip. */
+/** One word on a Hot Type phone. finders and bonus are 0 until the reveal. */
+export interface HuntFound { word: string; points: number; finders: number; bonus: number }
 export interface SecretInput { prompt: string; maxLen: number; value?: string; kind: string; hint?: string }
 export interface BoardCell { id: string; col: number; row: number; value: number; used: boolean }
 
@@ -28,6 +30,7 @@ export type Screen =
   | { t: 'scores'; title: string; rows: ScoreRow[] }
   | { t: 'cards'; title: string; hand: PlayingCard[]; total?: number; dealer: PlayingCard[]; actions: Choice[]; kind: string; note?: string; tone?: string; stack?: number }
   | { t: 'secret'; title: string; face: string; category: string; role: 'crew' | 'imposter'; note?: string; kind?: string; acknowledged: boolean; input?: SecretInput }
+  | { t: 'hunt'; phase: 'ready' | 'hunt' | 'press' | 'reveal' | 'scores'; round: number; totalRounds: number; size: number; tiles: string[]; found: HuntFound[]; score: number; note?: string }
   | { t: 'board'; prompt: string; categories: string[]; cells: BoardCell[]; canPick: boolean; pickFor?: string; note?: string }
   | { t: 'buzzer'; state: 'reading' | 'open' | 'locked' | 'beaten' | 'tried' | 'out'; category: string; value: number; detail?: string; lockedMs: number; live: boolean }
   | TurfScreen
@@ -198,7 +201,7 @@ export type HostCommand =
  * Shared lobby settings. turfMode: Home Turf 0 auto, 1 solo, 2 teams; minutes: Home Turf's and Sprawl's game clock
  * (0 = no limit); vp: Sprawl's points to win (8 or 10).
  */
-export type OptionKey = 'rounds' | 'teams' | 'drinks' | 'game' | 'captain' | 'turfMode' | 'minutes' | 'vp' | 'timers' | 'show'
+export type OptionKey = 'rounds' | 'teams' | 'drinks' | 'game' | 'captain' | 'turfMode' | 'minutes' | 'vp' | 'timers' | 'show' | 'grid'
 
 export type ActionPayload = { kind: string; [k: string]: string | number | boolean | string[] | number[] }
 
@@ -210,7 +213,7 @@ export type ClientMsg =
 
 export interface GameListing { id: string; title: string; tagline: string; minPlayers: number; maxPlayers: number }
 
-const SCREENS = new Set(['waiting', 'text', 'choice', 'number', 'multi', 'tutorial', 'scores', 'cards', 'turf', 'sprawl', 'secret', 'board', 'buzzer'])
+const SCREENS = new Set(['waiting', 'text', 'choice', 'number', 'multi', 'tutorial', 'scores', 'cards', 'turf', 'sprawl', 'secret', 'hunt', 'board', 'buzzer'])
 const isObj = (v: unknown): v is Record<string, unknown> => typeof v === 'object' && v !== null
 
 /** Parses one server frame; returns null for anything malformed or unknown instead of throwing. */
@@ -257,6 +260,11 @@ export function rejectMessage(code: string): string {
     case 'RATE_LIMIT': return 'Slow down a little!'
     case 'NOT_ENOUGH_PLAYERS': return 'Need more players connected.'
     case 'STALE': return ''
+    // Hot Type
+    case 'TOO_SHORT': return 'Three letters minimum.'
+    case 'NOT_A_WORD': return 'Not a word.'
+    case 'ALREADY': return 'Already found.'
+    case 'BAD_PATH': return ''
     // Home Turf
     case 'NOT_YOUR_TURN': return "It's not your turn."
     case 'NOT_YOUR_SEAT': return 'A teammate has the dice right now.'

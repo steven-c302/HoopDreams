@@ -2098,6 +2098,418 @@
     },
     {
         "t": "view",
+        "seq": 40,
+        "view": {
+            "me": {
+                "id": "p-sam",
+                "name": "Sam",
+                "avatar": {
+                    "face": "p:01",
+                    "color": "#FF7A00"
+                },
+                "role": "PLAYER",
+                "connected": true,
+                "water": false
+            },
+            "roomCode": "KXQT",
+            "gameId": "hottype",
+            "gameTitle": "Hot Type",
+            "round": 3,
+            "paused": false,
+            "remainingMs": 61000,
+            "screen": {
+                "t": "hunt",
+                "phase": "hunt",
+                "round": 1,
+                "totalRounds": 3,
+                "size": 4,
+                "tiles": [
+                    "S",
+                    "T",
+                    "R",
+                    "P",
+                    "L",
+                    "O",
+                    "N",
+                    "A",
+                    "H",
+                    "E",
+                    "C",
+                    "I",
+                    "D",
+                    "W",
+                    "K",
+                    "U"
+                ],
+                "found": [
+                    {
+                        "word": "stone",
+                        "points": 800,
+                        "finders": 0,
+                        "bonus": 0
+                    },
+                    {
+                        "word": "ton",
+                        "points": 100,
+                        "finders": 0,
+                        "bonus": 0
+                    }
+                ],
+                "score": 900
+            },
+            "scores": [
+                {
+                    "id": "p-sam",
+                    "name": "Sam",
+                    "avatar": {
+                        "face": "p:01",
+                        "color": "#FF7A00"
+                    },
+                    "score": 1500
+                },
+                {
+                    "id": "p-al",
+                    "name": "Al",
+                    "avatar": {
+                        "face": "p:02",
+                        "color": "#22AA55"
+                    },
+                    "score": 500
+                }
+            ],
+            "captain": false,
+            "settings": {},
+            "crew": []
+        }
+    },
+    {
+        "t": "view",
+        "seq": 41,
+        "view": {
+            "me": {
+                "id": "p-sam",
+                "name": "Sam",
+                "avatar": {
+                    "face": "p:01",
+                    "color": "#FF7A00"
+                },
+                "role": "PLAYER",
+                "connected": true,
+                "water": false
+            },
+            "roomCode": "KXQT",
+            "gameId": "hottype",
+            "gameTitle": "Hot Type",
+            "round": 5,
+            "paused": false,
+            "remainingMs": 12000,
+            "screen": {
+                "t": "hunt",
+                "phase": "reveal",
+                "round": 1,
+                "totalRounds": 3,
+                "size": 4,
+                "tiles": [
+                    "S",
+                    "T",
+                    "R",
+                    "P",
+                    "L",
+                    "O",
+                    "N",
+                    "A",
+                    "H",
+                    "E",
+                    "C",
+                    "I",
+                    "D",
+                    "W",
+                    "K",
+                    "U"
+                ],
+                "found": [
+                    {
+                        "word": "stone",
+                        "points": 800,
+                        "finders": 1,
+                        "bonus": 800
+                    },
+                    {
+                        "word": "ton",
+                        "points": 100,
+                        "finders": 2,
+                        "bonus": 0
+                    }
+                ],
+                "score": 2200
+            },
+            "scores": [
+                {
+                    "id": "p-sam",
+                    "name": "Sam",
+                    "avatar": {
+                        "face": "p:01",
+                        "color": "#FF7A00"
+                    },
+                    "score": 1500
+                },
+                {
+                    "id": "p-al",
+                    "name": "Al",
+                    "avatar": {
+                        "face": "p:02",
+                        "color": "#22AA55"
+                    },
+                    "score": 500
+                }
+            ],
+            "captain": false,
+            "settings": {},
+            "crew": []
+        }
+    },
+    {
+        "t": "tv",
+        "seq": 42,
+        "tv": {
+            "roomCode": "KXQT",
+            "players": [
+                {
+                    "id": "p-sam",
+                    "name": "Sam",
+                    "avatar": {
+                        "face": "p:01",
+                        "color": "#FF7A00"
+                    },
+                    "role": "PLAYER",
+                    "connected": true,
+                    "water": false
+                }
+            ],
+            "stage": {
+                "gameId": "hottype",
+                "title": "Hot Type",
+                "phaseSeq": 4,
+                "deadlineAt": 1700000200000,
+                "remainingMs": 61000,
+                "paused": false,
+                "game": {
+                    "t": "hottype",
+                    "phase": "hunt",
+                    "round": 1,
+                    "totalRounds": 3,
+                    "finalRound": false,
+                    "size": 4,
+                    "tiles": [
+                        "S",
+                        "T",
+                        "R",
+                        "P",
+                        "L",
+                        "O",
+                        "N",
+                        "A",
+                        "H",
+                        "E",
+                        "C",
+                        "I",
+                        "D",
+                        "W",
+                        "K",
+                        "U"
+                    ],
+                    "rail": [
+                        {
+                            "id": "p-al",
+                            "name": "Al",
+                            "count": 2,
+                            "score": 900,
+                            "lengths": [
+                                5,
+                                3
+                            ]
+                        },
+                        {
+                            "id": "p-sam",
+                            "name": "Sam",
+                            "count": 0,
+                            "score": 0,
+                            "lengths": []
+                        }
+                    ],
+                    "wordsFound": 2,
+                    "longest": 5,
+                    "bigFind": {
+                        "seq": 1,
+                        "id": "p-al",
+                        "name": "Al",
+                        "letters": 6
+                    },
+                    "page": [],
+                    "deltas": [],
+                    "drinks": []
+                }
+            },
+            "scores": [
+                {
+                    "id": "p-sam",
+                    "name": "Sam",
+                    "avatar": {
+                        "face": "p:01",
+                        "color": "#FF7A00"
+                    },
+                    "score": 1500
+                },
+                {
+                    "id": "p-al",
+                    "name": "Al",
+                    "avatar": {
+                        "face": "p:02",
+                        "color": "#22AA55"
+                    },
+                    "score": 500
+                }
+            ],
+            "gamesPlayed": 1,
+            "settings": {
+                "game": 7,
+                "rounds": 3,
+                "grid": 0
+            }
+        }
+    },
+    {
+        "t": "tv",
+        "seq": 43,
+        "tv": {
+            "roomCode": "KXQT",
+            "players": [
+                {
+                    "id": "p-sam",
+                    "name": "Sam",
+                    "avatar": {
+                        "face": "p:01",
+                        "color": "#FF7A00"
+                    },
+                    "role": "PLAYER",
+                    "connected": true,
+                    "water": false
+                }
+            ],
+            "stage": {
+                "gameId": "hottype",
+                "title": "Hot Type",
+                "phaseSeq": 6,
+                "deadlineAt": 1700000300000,
+                "remainingMs": 8000,
+                "paused": false,
+                "game": {
+                    "t": "hottype",
+                    "phase": "scores",
+                    "round": 1,
+                    "totalRounds": 3,
+                    "finalRound": false,
+                    "size": 4,
+                    "tiles": [
+                        "S",
+                        "T",
+                        "R",
+                        "P",
+                        "L",
+                        "O",
+                        "N",
+                        "A",
+                        "H",
+                        "E",
+                        "C",
+                        "I",
+                        "D",
+                        "W",
+                        "K",
+                        "U"
+                    ],
+                    "rail": [],
+                    "wordsFound": 0,
+                    "longest": 0,
+                    "page": [
+                        {
+                            "word": "ton",
+                            "points": 100,
+                            "bonus": 0,
+                            "finders": [
+                                "p-al",
+                                "p-sam"
+                            ],
+                            "longest": false
+                        },
+                        {
+                            "word": "stone",
+                            "points": 800,
+                            "bonus": 800,
+                            "finders": [
+                                "p-al"
+                            ],
+                            "longest": true
+                        }
+                    ],
+                    "missed": {
+                        "word": "clappers",
+                        "points": 2200
+                    },
+                    "deltas": [
+                        {
+                            "id": "p-al",
+                            "name": "Al",
+                            "base": 900,
+                            "unique": 800,
+                            "longest": 500,
+                            "total": 2200
+                        },
+                        {
+                            "id": "p-sam",
+                            "name": "Sam",
+                            "base": 100,
+                            "unique": 0,
+                            "longest": 0,
+                            "total": 100
+                        }
+                    ],
+                    "drinks": [
+                        {
+                            "id": "p-sam",
+                            "name": "Sam",
+                            "sips": 2,
+                            "text": "Last place! Drink 2 sips"
+                        }
+                    ]
+                }
+            },
+            "scores": [
+                {
+                    "id": "p-sam",
+                    "name": "Sam",
+                    "avatar": {
+                        "face": "p:01",
+                        "color": "#FF7A00"
+                    },
+                    "score": 1500
+                },
+                {
+                    "id": "p-al",
+                    "name": "Al",
+                    "avatar": {
+                        "face": "p:02",
+                        "color": "#22AA55"
+                    },
+                    "score": 500
+                }
+            ],
+            "gamesPlayed": 1,
+            "settings": {}
+        }
+    },
+    {
+        "t": "view",
         "seq": 30,
         "view": {
             "me": {
