@@ -4,6 +4,7 @@ import { Face } from '../theme/Face'
 import { Card } from '../tv/Card'
 import { DrinkBet, Led } from '../tv/Casino'
 import { Brainy, Shape } from '../tv/toon'
+import { SecretCard } from './SecretCard'
 import { SprawlScreen } from './SprawlScreen'
 import { TurfScreen } from './TurfScreen'
 
@@ -21,6 +22,7 @@ export function ScreenView({ screen, disabled, meId, people, onAction }: Props) 
     case 'multi': return <MultiSelect screen={screen} disabled={disabled} meId={meId} people={people} onAction={onAction} />
     case 'scores': return <Scores title={screen.title} rows={screen.rows} meId={meId} />
     case 'cards': return <CardTable screen={screen} disabled={disabled} onAction={onAction} />
+    case 'secret': return <SecretCard screen={screen} disabled={disabled} onAction={onAction} />
     case 'turf': return <TurfScreen screen={screen} disabled={disabled} onAction={onAction} />
     case 'sprawl': return <SprawlScreen screen={screen} disabled={disabled} onAction={onAction} />
   }
@@ -126,6 +128,25 @@ function ChoiceList({ screen, disabled, meId, people, onAction }: { screen: Extr
             </button>
           ))}
         </div>
+      </div>
+    )
+  }
+  if (screen.style === 'faces') {
+    return (
+      <div className="stack">
+        <h1 className="prompt">{screen.prompt}</h1>
+        <div className="choices faces">
+          {screen.options.map((o) => {
+            const p = people.get(o.id)
+            return (
+              <button key={o.id} className={`choice face-pick ${screen.selected === o.id ? 'on' : screen.selected ? 'off' : ''}`} disabled={disabled} onClick={() => pick(o)}>
+                {p && <Face face={p.avatar.face} color={p.avatar.color} size={64} />}
+                <span className="txt">{o.text}</span>
+              </button>
+            )
+          })}
+        </div>
+        {screen.selected && <p className="muted">You can change your vote until time runs out.</p>}
       </div>
     )
   }
