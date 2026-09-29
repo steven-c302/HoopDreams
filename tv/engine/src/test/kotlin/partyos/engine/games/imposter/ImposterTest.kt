@@ -260,4 +260,92 @@ class ImposterTest {
         assertEquals("result", tv.phase)
         assertTrue(tv.drinks.single { it.id == wet }.text.endsWith("Drink 2 sips of water"))
     }
+
+    /** Everyone names the imposter (who names a crew member), so the imposter is accused and reaches the guess phase. */
+    private fun catchTheImposter(r: Round) {
+        val imp = r.imps.single()
+        r.crew.forEach { vote(it, imp) }
+        vote(imp, r.crew.first())
+        assertEquals("result", tv.phase)
+        skip()
+        assertEquals("guess", tv.phase)
+    }
+
+    @Test fun aCaughtImposterGuessesTheWordAndScores() {
+        val ids = start(4)
+        val r = toVote(ids)
+        catchTheImposter(r)
+        val imp = r.imps.single()
+        val screen = assertIs<Screen.TextEntry>(e.phoneState(imp).screen)
+        assertEquals("guess", screen.kind)
+        assertIs<Screen.Waiting>(e.phoneState(r.crew.first()).screen)
+        assertEquals(ActionResult.Rejected("NOT_NOW"), act(r.crew.first(), "guess", "text" to r.word))
+        assertNull(tv.word)
+        assertEquals(ActionResult.Ack, act(imp, "guess", "text" to r.word.uppercase()))
+        assertEquals("scores", tv.phase) // the only accused imposter has guessed, so the phase ends early
+        assertEquals(1000, score(imp))
+        assertEquals(r.word, tv.word)
+        assertTrue(tv.guesses.single().right)
+    }
+
+    @Test fun aWrongGuessScoresNothing() {
+        val ids = start(4)
+        val r = toVote(ids)
+        catchTheImposter(r)
+        act(r.imps.single(), "guess", "text" to "spaceship")
+        assertEquals("scores", tv.phase)
+        assertEquals(0, score(r.imps.single()))
+        assertFalse(tv.guesses.single().right)
+    }
+
+    @Test fun aBlankGuessIsRejected() {
+        val ids = start(4)
+        val r = toVote(ids)
+        catchTheImposter(r)
+        assertEquals(ActionResult.Rejected("BAD_TEXT"), act(r.imps.single(), "guess", "text" to "   "))
+    }
+
+    @Test fun theGuessPhaseEndsWhenTheCaughtImposterDrops() {
+        val ids = start(4)
+        val r = toVote(ids)
+        catchTheImposter(r)
+        e.setPresence(r.imps.single(), false)
+        assertEquals("scores", tv.phase)
+    }
+
+    @Test fun theRoundsRunToAPodiumAndTheGameFinishes() {
+        val ids = start(4, rounds = 3)
+        for (round in 1..3) {
+            assertEquals(round, tv.round)
+            val r = toVote(ids)
+            val imp = r.imps.single()
+            r.crew.forEach { vote(it, imp) }
+            vote(imp, r.crew.first())
+            skip() // result -> guess
+            skip() // guess -> scores (no guess made)
+            assertEquals("scores", tv.phase)
+            if (round == 3) {
+                assertTrue(tv.finalRound)
+                r.crew.forEach { c -> assertEquals(2000, tv.deltas.single { it.id == c }.points) } // the last round doubles
+            } else {
+                r.crew.forEach { c -> assertEquals(1000, tv.deltas.single { it.id == c }.points) }
+            }
+            skip() // scores -> next round | podium
+        }
+        assertEquals("podium", tv.phase)
+        skip()
+        assertNull(e.tvState().stage)
+        assertTrue(e.tvState().lastResult != null)
+    }
+
+    @Test fun aSavedGameRestoresMidRoundWithTheSameRoles() {
+        val ids = start(5)
+        allSeen(ids)
+        act(ids[0], "clue", "text" to "hint0"); act(ids[1], "clue", "text" to "hint1")
+        val roles = ids.associateWith { card(it).role }
+        val restored = PartyEngine.restore(e.snapshot(), clock, SeededEntropy(4), GameRegistry(listOf(Imposter(pack))))
+        assertEquals("clue", (restored.tvState().stage!!.game as ImposterTv).phase)
+        ids.forEach { assertEquals(roles.getValue(it), assertIs<Screen.Secret>(restored.phoneState(it).screen).role) }
+        assertEquals("hint0", assertIs<Screen.Secret>(restored.phoneState(ids[0]).screen).input?.value)
+    }
 }

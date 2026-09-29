@@ -24,6 +24,7 @@ import partyos.engine.Step
 import partyos.engine.TutorialCard
 import partyos.engine.games.bluff.cleanText
 import partyos.engine.games.bluff.normalise
+import partyos.engine.games.trivia.AnswerMatch
 import partyos.engine.ofWater
 
 @Serializable
@@ -99,6 +100,11 @@ class Imposter(pack: ImposterPack = ImposterPack.core()) : GameModule<ImposterSt
                 if (target == who) throw Reject("OWN_VOTE")
                 Step(s.copy(votes = s.votes + (who.v to target.v)))
             }
+            s.phase == GUESS && kind == "guess" -> {
+                if (who.v !in imposterAccused(s)) throw Reject("NOT_NOW")
+                val text = cleanText(payload["text"]?.jsonPrimitive?.content ?: "", MAX_GUESS) ?: throw Reject("BAD_TEXT")
+                Step(s.copy(guesses = s.guesses + (who.v to text)))
+            }
             else -> throw Reject("NOT_NOW")
         }
     }
@@ -111,7 +117,26 @@ class Imposter(pack: ImposterPack = ImposterPack.core()) : GameModule<ImposterSt
         RESULT ->
             if (imposterAccused(s).isNotEmpty()) Step(s.copy(phase = GUESS), listOf(Effect.Phase(ctx.timer(GUESS_MS))))
             else Step(s.copy(phase = SCORES), listOf(Effect.Phase(SCORES_MS)))
+        GUESS -> judge(s, ctx)
+        SCORES ->
+            if (s.round < s.totalRounds) newRound(s, s.round + 1, ctx)
+            else Step(s.copy(phase = PODIUM), listOf(Effect.Phase(PODIUM_MS)))
         else -> Step(s, listOf(Effect.Finish))
+    }
+
+    /** The guess closes: an accused imposter who named the word (close spelling counts) earns the guess points. */
+    private fun judge(s: ImposterState, ctx: GameContext): Step<ImposterState> {
+        val multiplier = if (s.round == s.totalRounds) 2 else 1
+        val right = imposterAccused(s).filter { id -> s.guesses[id]?.let { AnswerMatch.accepts(it, s.word) } == true }.toSet()
+        val deltas = s.deltas.toMutableMap()
+        val effects = mutableListOf<Effect>()
+        for (id in right) {
+            val pts = ImposterRules.GUESS_POINTS * multiplier
+            deltas.merge(id, pts, Int::plus)
+            effects += Effect.Award(PlayerId(id), pts, "guessed the word")
+            ctx.player(PlayerId(id))?.let { effects += Effect.Highlight("${it.name} was caught but still guessed “${s.word}”") }
+        }
+        return Step(s.copy(phase = SCORES, guessedRight = right, deltas = deltas), effects + Effect.Phase(SCORES_MS))
     }
 
     /** The vote closes: work out who is accused and award the vote points. Guess points come later. */
@@ -134,6 +159,7 @@ class Imposter(pack: ImposterPack = ImposterPack.core()) : GameModule<ImposterSt
         ROLE -> s.participants.filter { it.v !in s.seen }.toSet()
         CLUE -> s.participants.filter { it.v !in s.clues }.toSet()
         VOTE -> s.participants.filter { it.v !in s.votes }.toSet()
+        GUESS -> s.imposters.filter { it.v in s.accused && it.v !in s.guesses }.toSet()
         else -> null
     }
 
