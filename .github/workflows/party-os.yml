@@ -2,7 +2,7 @@ name: PARTY OS
 
 on:
   push:
-    branches: [main, party-os]
+    branches: [main, party-os, party-os-2]
     paths: ['tv/**', 'controller/**', '.github/workflows/party-os.yml']
   pull_request:
     paths: ['tv/**', 'controller/**', '.github/workflows/party-os.yml']
@@ -35,7 +35,8 @@ jobs:
           distribution: temurin
           java-version: 17
 
-      - uses: android-actions/setup-android@v3
+      # v4.0.2+ stops asking for the removed 'tools' package, which failed every v3 run.
+      - uses: android-actions/setup-android@v4
 
       - name: Install Android platform 37
         run: sdkmanager "platforms;android-37.0"
@@ -107,7 +108,8 @@ jobs:
       - name: Launch on an Android TV emulator and hit /healthz
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 34
+          # Google TV ships x86_64 images from API 36 (API 34 is x86 only); 36 is also the targetSdk.
+          api-level: 36
           target: google-tv
           arch: x86_64
           profile: tv_1080p

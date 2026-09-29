@@ -1,0 +1,7 @@
+# Check out text files with LF on every platform. The protocol fixtures are compared byte for byte with
+# what the server writes, and the .command launchers and gradlew are shell scripts.
+* text=auto eol=lf
+
+# Kept byte for byte as committed: the Windows launcher is CRLF, the font licence is upstream's file.
+*.bat -text
+tv/app/FONT-LICENSE-OFL.txt -text
