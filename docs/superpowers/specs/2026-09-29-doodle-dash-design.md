@@ -220,3 +220,14 @@ Coordinates are integers on a 0-1000 by 0-750 grid (4:3), so the TV and the phon
 - The TV renders ink with plain canvas 2D. If crayon texture costs too much on the TV hardware, the plan falls back
   to plain strokes with a grain overlay.
 - The plan verifies how the runtime ends a phase early before relying on the "everyone guessed" end.
+
+## Refinements decided during planning (2026-09-29)
+
+- Default number of turns is 5 (the lobby shows 5 when `rounds` is unset), not 6.
+- Guessers get a dedicated `guess` phone screen and the drawer a `draw` screen (text-entry's lock-in flow does not fit rapid guessing).
+- "So close" means the normalised edit distance is at most `len / 3 + 1`, because the fuzzy matcher already accepts small typos.
+- Hint letters reveal at draw-stage deadlines (`Effect.Deadline`); the phone and TV clocks add `tailMs`. Host skip during a draw advances one stage.
+- The server ink archive is keyed by turn number; each accepted batch carries a sequence `n` and `inkSync` carries `upTo` so a late TV never doubles strokes.
+- The word pack lists `easy` / `medium` / `hard` words inside each category.
+- The podium phase lasts 24 s: podium blocks first, then the gallery.
+- A guess or pick in the wrong phase is rejected with `NOT_NOW` (the code every other game uses), not `WRONG_PHASE`.
