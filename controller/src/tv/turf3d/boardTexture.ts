@@ -60,6 +60,32 @@ export function fitSize(measure: (text: string, size: number) => number, words: 
   return Math.max(size, min)
 }
 
+/** Greedy word wrap: as many words per line as fit [maxW] at [size]. */
+function wrapWords(measure: (text: string, size: number) => number, words: string[], size: number, maxW: number): string[] {
+  const lines: string[] = []
+  let cur = ''
+  for (const w of words) {
+    const next = cur ? `${cur} ${w}` : w
+    if (cur && measure(next, size) > maxW) { lines.push(cur); cur = w } else cur = next
+  }
+  if (cur) lines.push(cur)
+  return lines
+}
+
+/**
+ * Picks the largest name size, wrapping onto as many lines as needed, at which every line fits [maxW] and the lines
+ * (plus a price line when [hasSub]) fit [maxH]. Never goes below [min], and never drops a word.
+ */
+export function layoutName(measure: (text: string, size: number) => number, text: string, maxW: number, maxH: number, start: number, min: number, hasSub: boolean): { size: number; lines: string[] } {
+  const words = text.split(' ')
+  for (let size = start; ; size -= 2) {
+    const lines = wrapWords(measure, words, size, maxW)
+    const used = lines.length * (size + 4) + (hasSub ? Math.round(size * 0.72) + 4 : 0)
+    const widest = Math.max(...lines.map((l) => measure(l, size)))
+    if ((widest <= maxW && used <= maxH) || size <= min) return { size: Math.max(size, min), lines }
+  }
+}
+
 const SUBTITLE: Record<string, string> = { payday: 'COLLECT $200', jail: 'JUST VISITING' }
 
 /** Paints the board (tiles, names, prices, the title sticker) to a square canvas texture. Call after [ensureFonts]. */
@@ -79,14 +105,14 @@ export function drawBoardTexture(board: TurfSpace[], look: TurfLook, S = 2048): 
       g.fillStyle = space.color; g.fillRect(band.x, band.y, band.w, band.h); g.strokeRect(band.x, band.y, band.w, band.h)
     }
     const box = textRect(i, S)
-    const words = space.label.toUpperCase().split(' ')
-    const size = fitSize(measure, words, box.w - 14, corner ? 66 : 56, 24)
-    g.fillStyle = look.text; g.font = `${size}px ${look.nameFont}, sans-serif`
-    const line = size + 4, price = space.kind === 'tax' ? space.tax : space.price
+    const price = space.kind === 'tax' ? space.tax : space.price
     const sub = SUBTITLE[space.kind] ?? (price > 0 ? `$${price}` : '')
-    const total = words.length + (sub ? 0.8 : 0)
+    const { size, lines } = layoutName(measure, space.label.toUpperCase(), box.w - 14, box.h - 10, corner ? 66 : 56, 24, !!sub)
+    g.fillStyle = look.text; g.font = `${size}px ${look.nameFont}, sans-serif`
+    const line = size + 4
+    const total = lines.length + (sub ? 0.8 : 0)
     let y = box.y + box.h / 2 - ((total - 1) * line) / 2
-    for (const w of words) { g.fillText(w, box.x + box.w / 2, y); y += line }
+    for (const w of lines) { g.fillText(w, box.x + box.w / 2, y); y += line }
     if (sub) { g.font = `${Math.round(size * 0.72)}px ${look.nameFont}, sans-serif`; g.fillText(sub, box.x + box.w / 2, y - line * 0.1 + line * 0.15) }
   })
 

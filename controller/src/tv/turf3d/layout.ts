@@ -48,13 +48,23 @@ export function tileOf(i: number): Tile {
 
 export const spacePos = (i: number): { x: number; z: number } => { const t = tileOf(i); return { x: t.cx, z: t.cz } }
 
-/** Where piece [k] of [n] on one space stands, relative to the space's centre, so a crowd never stacks into one spot. */
-export function crowdSlot(k: number, n: number): { dx: number; dz: number } {
-  if (n <= 1) return { dx: 0, dz: 0 }
-  const cols = n <= 2 ? 2 : 3
-  const rows = Math.ceil(n / cols)
-  const col = k % cols, row = Math.floor(k / cols)
-  return { dx: (col - (cols - 1) / 2) * 0.34, dz: (row - (rows - 1) / 2) * 0.42 }
+/** How much a piece shrinks when [n] share a space, so coasters (0.88 across at full size) never overlap. */
+const CROWD_SCALE = [1, 1, 0.8, 0.65, 0.55, 0.55, 0.55]
+
+/**
+ * Where piece [k] of [n] on one space stands, relative to the space's centre, and how big it is there. The crowd is a
+ * small grid laid along the tile's long axis, so a deep bottom tile and a wide side tile both use their length.
+ */
+export function crowdSlot(k: number, n: number, tile: { ex: number; ez: number }): { dx: number; dz: number; scale: number } {
+  const count = Math.max(1, Math.min(n, 6))
+  const scale = CROWD_SCALE[count]
+  if (count === 1) return { dx: 0, dz: 0, scale }
+  const across = count <= 3 ? 1 : 2
+  const along = Math.ceil(count / across)
+  const gap = 0.9 * scale
+  const u = ((k % along) - (along - 1) / 2) * gap
+  const v = (Math.floor(k / along) - (across - 1) / 2) * gap
+  return tile.ex >= tile.ez ? { dx: u, dz: v, scale } : { dx: v, dz: u, scale }
 }
 
 /** For each token, its rank among the living tokens shown on the same space and how many share it. */

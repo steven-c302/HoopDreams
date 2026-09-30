@@ -50,15 +50,37 @@ describe('board layout', () => {
 })
 
 describe('crowds on one space', () => {
-  it('keeps up to six pieces in distinct slots that stay inside the smallest tile', () => {
-    for (let n = 1; n <= 6; n++) {
-      const slots = Array.from({ length: n }, (_, k) => crowdSlot(k, n))
-      for (let a = 0; a < n; a++) {
-        expect(Math.abs(slots[a].dx)).toBeLessThanOrEqual(EDGE_W / 2)
-        for (let b = a + 1; b < n; b++) expect(Math.hypot(slots[a].dx - slots[b].dx, slots[a].dz - slots[b].dz)).toBeGreaterThanOrEqual(0.3)
+  const kinds = [{ name: 'corner', tile: tileOf(0) }, { name: 'bottom edge', tile: tileOf(4) }, { name: 'left edge', tile: tileOf(14) }]
+
+  it('gives up to six pieces distinct slots whose coasters never overlap, on every kind of tile', () => {
+    for (const { name, tile } of kinds) for (let n = 1; n <= 6; n++) {
+      const slots = Array.from({ length: n }, (_, k) => crowdSlot(k, n, tile))
+      for (let a = 0; a < n; a++) for (let b = a + 1; b < n; b++) {
+        const d = Math.hypot(slots[a].dx - slots[b].dx, slots[a].dz - slots[b].dz)
+        expect(d, `${name}, ${n} pieces, slots ${a}/${b}`).toBeGreaterThanOrEqual(0.88 * slots[a].scale * 0.98)
       }
     }
-    expect(crowdSlot(0, 1)).toEqual({ dx: 0, dz: 0 })
+  })
+
+  it('keeps every coaster inside its tile, allowing a sliver of overhang', () => {
+    for (const { name, tile } of kinds) for (let n = 1; n <= 6; n++) for (let k = 0; k < n; k++) {
+      const s = crowdSlot(k, n, tile)
+      expect(Math.abs(s.dx) + 0.44 * s.scale, `${name} x, ${n} pieces`).toBeLessThanOrEqual(tile.ex / 2 + 0.05)
+      expect(Math.abs(s.dz) + 0.44 * s.scale, `${name} z, ${n} pieces`).toBeLessThanOrEqual(tile.ez / 2 + 0.05)
+    }
+  })
+
+  it('shrinks pieces as the crowd grows and spreads them along the tile\'s long axis', () => {
+    const scales = [1, 2, 3, 4, 5, 6].map((n) => crowdSlot(0, n, tileOf(4)).scale)
+    expect(scales[0]).toBe(1)
+    for (let i = 1; i < scales.length; i++) expect(scales[i]).toBeLessThanOrEqual(scales[i - 1])
+    const bottom = [0, 1, 2].map((k) => crowdSlot(k, 3, tileOf(4))) // a bottom tile is deeper than it is wide: spread along z
+    expect(new Set(bottom.map((s) => s.dz.toFixed(3))).size).toBe(3)
+    expect(new Set(bottom.map((s) => s.dx.toFixed(3))).size).toBe(1)
+    const left = [0, 1, 2].map((k) => crowdSlot(k, 3, tileOf(14))) // a left tile is wider than it is tall: spread along x
+    expect(new Set(left.map((s) => s.dx.toFixed(3))).size).toBe(3)
+    expect(new Set(left.map((s) => s.dz.toFixed(3))).size).toBe(1)
+    expect(crowdSlot(0, 1, tileOf(4))).toEqual({ dx: 0, dz: 0, scale: 1 })
   })
 
   it('ranks pieces on the same space and ignores the bankrupt', () => {

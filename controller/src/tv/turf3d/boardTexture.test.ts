@@ -1,6 +1,6 @@
 // controller/src/tv/turf3d/boardTexture.test.ts
 import { describe, expect, it } from 'vitest'
-import { CLASSIC, bandRect, fitSize, textRect, tileRect } from './boardTexture'
+import { CLASSIC, bandRect, fitSize, layoutName, textRect, tileRect } from './boardTexture'
 
 const S = 2048
 
@@ -47,4 +47,32 @@ describe('fitSize', () => {
     expect(measure('KAISHUNS', s + 2)).toBeGreaterThan(100)
   })
   it('never goes below the minimum, even if the word cannot fit', () => { expect(fitSize(measure, ['EXTRAORDINARILYLONG'], 20, 40, 14)).toBe(14) })
+})
+
+describe('layoutName', () => {
+  const measure = (text: string, size: number) => text.length * size * 0.42
+  const usedHeight = (size: number, lines: number, hasSub: boolean) => lines * (size + 4) + (hasSub ? Math.round(size * 0.72) + 4 : 0)
+
+  it('wraps long names onto as many lines as the tile\'s height allows, on every side tile', () => {
+    const longest = ["KAISHUN'S BASEMENT", "JOHN'S LIVING ROOM", "CHARLIE'S HOT TUB", 'LATE-NIGHT DINER', 'LONG WALK HOME', "STEVEN'S GARAGE"]
+    for (const space of [11, 14, 18, 19, 31, 32, 34, 35]) {
+      const box = textRect(space, S)
+      for (const name of longest) {
+        const { size, lines } = layoutName(measure, name, box.w - 14, box.h - 10, 56, 24, true)
+        expect(usedHeight(size, lines.length, true), `${name} on space ${space}`).toBeLessThanOrEqual(box.h - 10)
+        expect(lines.join(' ')).toBe(name)
+      }
+    }
+  })
+
+  it('keeps a short name on one line at full size', () => {
+    const box = textRect(3, S)
+    expect(layoutName(measure, 'AUX', box.w - 14, box.h - 10, 56, 24, false)).toEqual({ size: 56, lines: ['AUX'] })
+  })
+
+  it('never returns a size below the minimum or drops words', () => {
+    const { size, lines } = layoutName(measure, 'A VERY LONG NAME THAT NEVER FITS ANYWHERE', 40, 30, 56, 24, true)
+    expect(size).toBe(24)
+    expect(lines.join(' ')).toBe('A VERY LONG NAME THAT NEVER FITS ANYWHERE')
+  })
 })

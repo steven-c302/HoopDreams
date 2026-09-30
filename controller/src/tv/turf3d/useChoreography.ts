@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'react'
 import { sfx } from '../audio'
 import type { TurfTv } from '../types'
 import type { Shot } from './camera'
+import { ShowQueue, shouldSnap } from './showQueue'
 import { planBeats, type Cue } from './timeline'
 
 export interface HopInfo { n: number; ms: number; height: number; last: boolean }
@@ -36,45 +37,45 @@ export function snapFor(c: Craft, g: TurfTv): Craft {
 }
 
 /**
- * Plays new engine beats as a timed show. Beats that arrive while a show is running queue behind it. Any [skip] change
- * jumps to the final state. Only used by the 3D stage; the 2D board keeps its own hops.
+ * Plays new engine beats as a timed show. Beats that arrive while a show is running queue behind it. Beats that skip
+ * ahead of what this TV has seen (a reconnect), or amount to a huge backlog, snap straight to the engine's positions
+ * instead. Any [skip] change jumps to the final state. Only used by the 3D stage; the 2D board keeps its own hops.
  */
 export function useChoreography(g: TurfTv, quick: boolean, skip: number): Craft {
   const [craft, setCraft] = useState<Craft>(() => restCraft(g))
   const seen = useRef(initialSeen(g))
-  const busyUntil = useRef(0)
-  const timers = useRef<ReturnType<typeof setTimeout>[]>([])
   const hopN = useRef(0)
   const gRef = useRef(g)
   gRef.current = g
+  const applyRef = useRef<(c: Cue) => void>(() => undefined)
+  const queue = useRef<ShowQueue | null>(null)
+  if (!queue.current) queue.current = new ShowQueue((c) => applyRef.current(c), () => setCraft((cr) => snapFor(cr, gRef.current)))
 
   useEffect(() => {
     const fresh = g.beats.filter((b) => b.seq > seen.current)
+    const before = seen.current
     seen.current = Math.max(seen.current, latest(g))
-    const now = performance.now()
+    const q = queue.current!
     if (fresh.length > 0) {
       const plan = planBeats(fresh, { quick })
       if (plan.cues.length > 0) {
-        const wait = Math.max(0, busyUntil.current - now)
-        busyUntil.current = now + wait + plan.totalMs
-        for (const cue of plan.cues) timers.current.push(setTimeout(() => apply(cue), wait + cue.at))
-        timers.current.push(setTimeout(() => setCraft((c) => snapFor(c, gRef.current)), wait + plan.totalMs + 50))
+        if (shouldSnap(before, fresh, plan.totalMs)) { q.skip(); setCraft(restCraft(g)); return }
+        q.enqueue(plan)
         return
       }
     }
-    if (now >= busyUntil.current) setCraft((c) => snapFor(c, g))
+    if (!q.isBusy()) setCraft((c) => snapFor(c, g))
   }, [g, quick])
 
   useEffect(() => {
     if (skip === 0) return
-    timers.current.forEach(clearTimeout); timers.current = []
-    busyUntil.current = 0
+    queue.current!.skip()
     setCraft(restCraft(gRef.current))
   }, [skip])
 
-  useEffect(() => () => timers.current.forEach(clearTimeout), [])
+  useEffect(() => () => queue.current?.skip(), [])
 
-  function apply(c: Cue) {
+  applyRef.current = (c: Cue) => {
     switch (c.kind) {
       case 'hop':
         setCraft((cr) => {

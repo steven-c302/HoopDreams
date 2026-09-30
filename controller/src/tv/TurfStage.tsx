@@ -11,6 +11,7 @@ import { Die, Piece, PIECE_NAMES } from './TurfArt'
 import { TurfBoard } from './TurfBoard'
 import { Burst, C, CountUp, Crown, Deal, Panel, Pop, Slam, Stamp, Timer, coinShower, fireConfetti, inkOn } from './toon'
 import { waterNote, type TurfBeat, type TurfTv } from './types'
+import { ErrorBoundary } from './turf3d/ErrorBoundary'
 import { hasWebGL2, wants3d } from './turf3d/webgl'
 import './turf.css'
 
@@ -72,9 +73,11 @@ function Turf({ g, stage, players, clock }: { g: TurfTv; stage: StageInfo; playe
   return (
     <div className={`turf-stage ${use3d ? 'is3d' : ''}`}>
       {use3d && (
-        <Suspense fallback={null}>
-          <TurfStage3D g={g} onLost={() => setLost(true)}><Well g={g} stage={stage} clock={clock} people={people} /></TurfStage3D>
-        </Suspense>
+        <ErrorBoundary onError={() => setLost(true)}>
+          <Suspense fallback={null}>
+            <TurfStage3D g={g} onLost={() => setLost(true)}><Well g={g} stage={stage} clock={clock} people={people} /></TurfStage3D>
+          </Suspense>
+        </ErrorBoundary>
       )}
       <div className="turf-rail left"><GameMark game="turf" />{left.map((i) => <TokenCard key={i} g={g} i={i} people={people} />)}</div>
       <div className="turf-board-wrap">
