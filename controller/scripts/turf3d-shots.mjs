@@ -29,6 +29,7 @@ const open = async (beat, query = '') => {
 const shots = [
   ['lineup', 5000], ['roll', 5000], ['doubles-roll', 5000], ['manage', 5000], ['jail', 5000], ['choose', 5000], ['pieces', 5000], ['deal', 5000],
   ['buy', 5000], ['auction', 5000], ['card', 5000],
+  ['debt', 5000], ['trade', 5000], ['tally', 6500], ['teamup', 6000],
   ['diced-move', 2300], ['diced-move', 3400], ['doubles-move', 5800],
   ['rent', 4900], ['tax', 1900], ['payday-pass', 2400], ['card-moment', 4300], ['bankrupt-fall', 4400],
   ['jail-walk', 4600], ['build', 1500],
