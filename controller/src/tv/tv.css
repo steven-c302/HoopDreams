@@ -114,8 +114,8 @@
 .lobby.packed .lobby-right { gap: 16px; }
 .lobby.packed .cast { gap: 10px 18px; }
 .lobby.packed .cast-card { padding: 3px 12px 3px 4px; font-size: 27px; gap: 10px; }
-.lobby.packed .picker.six .cover { height: 150px; }
-.lobby.packed .picker.six .cover h2 { font-size: 26px; -webkit-text-stroke: 6px var(--ink); }
+.lobby.packed .picker.six .cover { height: 165px; }
+.lobby.packed .picker.six .cover h2 { --h2: 24px; }
 .cast-card { display: flex; align-items: center; gap: 16px; padding: 10px 18px 10px 10px; font-size: 38px; font-weight: 900; overflow: hidden; }
 .cast-card span { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
 .cast-card.away { opacity: .45; }
@@ -123,37 +123,52 @@
 .lobby-notes { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 30px; }
 .crown-note { display: flex; align-items: center; gap: 12px; font-size: 28px; font-weight: 800; }
 .cast-empty { grid-column: 1 / -1; display: flex; align-items: center; gap: 30px; font-size: 40px; font-weight: 900; }
-.controls-row { display: flex; align-items: center; flex-wrap: wrap; gap: 14px 30px; font-size: 26px; font-weight: 900; }
+.controls-row { margin-bottom: 20px; display: flex; align-items: center; flex-wrap: wrap; gap: 14px 30px; font-size: 26px; font-weight: 900; }
 .stepper { display: inline-flex; align-items: center; gap: 12px; }
 .stepper b { font-family: var(--font-display); font-weight: 400; font-size: 34px; min-width: 44px; text-align: center; }
 .stepper { white-space: nowrap; }
 .picker { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 30px; margin-bottom: 40px; }
-.cover { all: unset; cursor: pointer; position: relative; height: 300px; border: var(--stroke-tv) solid var(--ink); border-radius: 26px; overflow: hidden;
+.cover { all: unset; cursor: pointer; position: relative; container-type: inline-size; --w: .85; height: 300px; display: flex; flex-direction: column; border: var(--stroke-tv) solid var(--ink); border-radius: 26px; overflow: hidden;
   box-shadow: 10px 10px 0 var(--ink); transition: transform var(--dur-base) var(--ease-boing), box-shadow var(--dur-base) var(--ease-out); }
-.cover.focused, .cover:hover, .cover:focus-visible { transform: translate(-6px, -10px) rotate(-1.5deg); box-shadow: 16px 20px 0 var(--ink); }
-.cover:focus-visible { outline: 6px solid var(--blueberry); outline-offset: 6px; }
-.cover .art { position: absolute; inset: 0; width: 100%; height: 100%; }
-.cover .issue { position: absolute; left: 18px; top: 16px; font-family: var(--font-display); font-size: 20px; background: var(--paper); border: 4px solid var(--ink); padding: 2px 12px; border-radius: 10px; }
-.cover .title { position: absolute; left: 22px; right: 22px; bottom: 18px; }
-.cover h2 { font-family: var(--font-display); font-weight: 400; font-size: 40px; line-height: .98; color: var(--paper); -webkit-text-stroke: 9px var(--ink); paint-order: stroke fill; }
-.cover p { margin-top: 10px; font-size: 24px; font-weight: 900; background: var(--paper); border: 4px solid var(--ink); border-radius: 12px; padding: 4px 12px; display: inline-block; }
-.cover p.need { background: var(--tomato); color: var(--white); }
+.cover.focused, .cover:hover, .cover:focus-visible { transform: translate(-6px, -10px) rotate(-1.5deg); box-shadow: 16px 20px 0 var(--ink); outline: 8px solid var(--blueberry); outline-offset: 5px; }
+/* Each cover is a scene on its own backdrop (CoverArt.tsx) that fills the whole tile; the title sits on it. */
+.cover .scene { display: contents; }
+.cover .ground { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; }
+.cover .props { position: relative; z-index: 1; flex: 1 1 0; min-height: 0; width: 100%; padding: 12px 0 0; box-sizing: border-box; }
+.cover .title { position: relative; z-index: 1; flex: none; padding: 0 20px 16px; min-width: 0; }
+.cover h2 { font-family: var(--font-display); font-weight: 400; --h2: 40px; font-size: min(var(--h2), calc((100cqw - 40px) / (var(--len) * var(--w)))); line-height: 1.02; color: var(--paper); -webkit-text-stroke: .24em var(--ink); paint-order: stroke fill; text-wrap: balance; }
+.cover p { margin-top: 10px; font-size: 22px; font-weight: 900; line-height: 1.2; color: var(--ink); background: var(--paper); border: 4px solid var(--ink); border-radius: 12px; padding: 3px 12px; display: inline-block; }
+/* Not enough players yet: the card greys out. */
+.cover.short .scene, .cover.short .title { filter: saturate(.3) brightness(.92); }
+/* Each game's own display face. */
+.cover-turf { --w: .68; }
+.cover-sprawl { --w: .66; }
+.cover-blackjack { --w: .74; }
+.cover-hottype { --w: .8; }
+.cover-jeopardy, .cover-bluff, .cover-imposter { --w: .48; }
+.cover-writeitdown { --w: .62; }
+.cover-turf h2 { font-family: 'Figtree Variable', system-ui, sans-serif; font-weight: 900; letter-spacing: -.02em; }
+.cover-sprawl h2 { font-family: Georgia, 'Times New Roman', serif; font-weight: 700; letter-spacing: -.03em; }
+.cover-blackjack h2 { font-family: 'Playfair Display', Georgia, serif; font-weight: 900; }
+.cover-hottype h2 { font-family: 'Alfa Slab One', Georgia, serif; }
+.cover-jeopardy h2, .cover-bluff h2, .cover-imposter h2 { font-family: Anton, Impact, sans-serif; letter-spacing: .02em; }
+.cover-writeitdown h2 { font-family: 'Zilla Slab', Georgia, serif; font-weight: 700; }
 /* Four games side by side: slimmer covers, smaller type. */
 .picker.four { gap: 22px; }
-.picker.four .cover h2 { font-size: 32px; -webkit-text-stroke: 8px var(--ink); }
-.picker.four .cover p { font-size: 19px; padding: 3px 10px; }
-.picker.four .cover .title { left: 16px; right: 16px; }
+.picker.four .cover h2 { --h2: 32px; }
+.picker.four .cover p { font-size: 19px; }
+.picker.four .cover .title { padding: 0 16px 12px; }
+.picker.four .cover p { padding: 2px 10px; }
+.picker.four .cover h2, .picker.five .cover h2, .picker.six .cover h2 { min-height: 2.04em; display: flex; align-items: center; }
+.picker.five .cover p, .picker.six .cover p { display: none; }
 .picker.five { gap: 18px; }
-.picker.five .cover h2 { font-size: 28px; -webkit-text-stroke: 7px var(--ink); }
-.picker.five .cover p { font-size: 17px; }
-.picker.five .cover .issue { font-size: 17px; }
+.picker.five .cover h2 { --h2: 28px; }
 /* Six or more: two rows of three shorter covers. */
 .picker.six { gap: 16px 24px; margin-bottom: 24px; }
-.picker.six .cover { height: 168px; }
-.picker.six .cover h2 { font-size: 30px; -webkit-text-stroke: 7px var(--ink); }
-.picker.six .cover p { font-size: 17px; margin-top: 6px; padding: 2px 10px; }
-.picker.six .cover .issue { font-size: 16px; top: 10px; left: 12px; }
-.picker.six .cover .title { left: 16px; right: 16px; bottom: 12px; }
+.picker.six .cover { height: 190px; }
+.picker.six .cover h2 { --h2: 28px; }
+.picker.six .cover .title { padding: 0 16px 10px; }
+.picker.five .cover .props, .picker.six .cover .props { padding: 14px 0 0; }
 /* Shares the crown note's line (shortened with an ellipsis) rather than taking a line of its own. */
 .last-game { flex: 1 1 0; min-width: 260px; font-size: 26px; color: var(--ink-soft); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 

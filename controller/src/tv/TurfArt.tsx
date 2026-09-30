@@ -129,21 +129,3 @@ export function Buildings({ level, size = 18 }: { level: number; size?: number }
   if (level <= 0) return null
   return <span className="turf-buildings">{level >= 4 ? <Hotel size={size} /> : Array.from({ length: level }, (_, i) => <House key={i} size={size} />)}</span>
 }
-
-/** The lobby cover: a corner of the board, a hotel and two dice mid-tumble. */
-export function TurfCover() {
-  return (
-    <svg className="art" viewBox="0 0 560 330" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-      <rect width="560" height="330" fill="var(--lime)" />
-      <g opacity=".22">{Array.from({ length: 12 }, (_, k) => <path key={k} d="M400 170 L1100 -40 L1100 120 Z" fill="var(--white)" transform={`rotate(${k * 30} 400 170)`} />)}</g>
-      <g transform="translate(300 30) rotate(-8)">
-        <rect x="0" y="0" width="240" height="240" rx="10" fill="var(--paper)" stroke={INK} strokeWidth="7" />
-        <rect x="0" y="0" width="240" height="56" fill="var(--tomato)" stroke={INK} strokeWidth="7" />
-        <rect x="0" y="56" width="56" height="184" fill="var(--sky)" stroke={INK} strokeWidth="7" />
-        <g transform="translate(120 110) scale(3)"><path d="M2 8 L18 2 L34 8 V18 H2 Z" fill="var(--tomato)" stroke={INK} strokeWidth="2.2" strokeLinejoin="round" /><rect x="15" y="11" width="6" height="7" fill={INK} /></g>
-      </g>
-      <g transform="translate(250 190) rotate(-18) scale(1.1)"><rect x="6" y="10" width="88" height="88" rx="18" fill={INK} /><rect x="4" y="4" width="88" height="88" rx="18" fill="var(--white)" stroke={INK} strokeWidth="6" /><circle cx="28" cy="28" r="8.5" fill={INK} /><circle cx="48" cy="48" r="8.5" fill={INK} /><circle cx="68" cy="68" r="8.5" fill={INK} /></g>
-      <g transform="translate(360 210) rotate(14)"><rect x="6" y="10" width="88" height="88" rx="18" fill={INK} /><rect x="4" y="4" width="88" height="88" rx="18" fill="var(--tomato)" stroke={INK} strokeWidth="6" /><path d="M26 30 L48 50 L26 70 M52 30 L74 50 L52 70" fill="none" stroke="var(--white)" strokeWidth="10" strokeLinecap="round" strokeLinejoin="round" /></g>
-    </svg>
-  )
-}
