@@ -191,7 +191,12 @@ dealer, and the dealer plays their own hand from their phone. If the dealer bust
 - **The clock:** when it runs out, everyone finishes the lap and the richest wins (cash, plus places at their price,
   plus buildings at cost).
 - **Drinks:** rent, Timeout and bankruptcy come with drink calls; the lobby can switch them off.
-- **Controls:** on the TV lobby, ↑/↓ sets the game clock and T switches between Auto, Solo and Teams.
+- **Controls:** on the TV lobby, ↑/↓ sets the game clock, T switches between Auto, Solo and Teams, and S switches the
+  TV show between Theatre and Quick.
+- **In 3D:** on the TV the board is a lit wooden tabletop with drink pieces (soju, vodka, beer bottle, beer can, shot
+  glass, red cup) on coloured coasters. In Theatre, a rolled move gets a dice beat and a slowed, close-up finish;
+  Quick keeps the short move. Space or Enter skips the animation in progress. Add `?quality=low` to the TV address on a
+  slow machine, or `?board=2d` for the flat board. Close spare browser tabs: two 3D pages share one GPU.
 
 <p align="center">
   <img src="docs/media/turf-board.png" alt="Home Turf: the crew's places around the board, players' cash on the side rails, dice in the middle" width="49%">

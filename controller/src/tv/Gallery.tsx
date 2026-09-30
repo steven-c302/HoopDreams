@@ -7,7 +7,6 @@ import { TriviaStage } from './TriviaStage'
 import type { TriviaTeam, TriviaTv } from './types'
 import { TurfGallery } from './TurfGallery'
 
-const Spike3D = lazy(() => import('./spike3d/Spike3D').then(m => ({ default: m.Spike3D })))
 const ThemeGallery = lazy(() => import('./ThemeGallery').then(m => ({ default: m.ThemeGallery })))
 
 /**
@@ -17,7 +16,6 @@ const ThemeGallery = lazy(() => import('./ThemeGallery').then(m => ({ default: m
  */
 export function Gallery() {
   const params = new URLSearchParams(location.search)
-  if (params.get('gallery') === 'spike3d') return <Suspense fallback={null}><Spike3D /></Suspense>
   if (params.get('gallery') === 'themes') return <Suspense fallback={null}><ThemeGallery /></Suspense>
   if (params.get('gallery') === 'trivia') return <TriviaGallery beat={params.get('beat')} pub={params.get('show') === 'writeitdown'} />
   if (params.get('gallery') === 'turf') return <TurfGallery beat={params.get('beat')} />
