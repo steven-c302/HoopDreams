@@ -15,6 +15,8 @@ const browser = await chromium.launch({ args: ['--use-angle=metal', '--enable-gp
 const open = async (beat, query = '') => {
   const page = await browser.newPage({ viewport: { width: 1920, height: 1080 } })
   page.errors = []
+  page.offOrigin = []
+  page.on('request', (r) => { const u = r.url(); if (!u.startsWith(base) && !u.startsWith('data:') && !u.startsWith('blob:')) page.offOrigin.push(u) })
   page.on('pageerror', (e) => page.errors.push(String(e)))
   page.on('console', (m) => m.type() === 'error' && page.errors.push(m.text()))
   await page.goto(`${base}/tv?gallery=turf&beat=${beat}${query}`)
@@ -22,9 +24,11 @@ const open = async (beat, query = '') => {
 }
 
 // [beat, ms after the page opens]. The gallery injects each beat about 0.7 s after the stage mounts, so effects
-// start near 1.2 s; the times below catch each one in the middle of playing.
+// start near 1.2 s; the times below catch each one in the middle of playing. The 3D cards need about 3 s for their
+// text to lay out (the flat well shows until then), so the panel shots wait 5 s.
 const shots = [
-  ['lineup', 3500], ['roll', 3500], ['diced-move', 2300], ['diced-move', 3400], ['doubles-move', 3400],
+  ['lineup', 5000], ['roll', 5000], ['doubles-roll', 5000], ['manage', 5000], ['jail', 5000], ['choose', 5000], ['pieces', 5000], ['deal', 5000],
+  ['diced-move', 2300], ['diced-move', 3400], ['doubles-move', 3400],
   ['rent', 1900], ['tax', 1900], ['payday-pass', 2400], ['card-moment', 2100], ['bankrupt-fall', 2000],
   ['jail-walk', 4600], ['build', 1500], ['buy', 3500],
 ]
@@ -32,7 +36,7 @@ for (const [beat, ms] of shots) {
   const page = await open(beat, extra)
   await page.waitForTimeout(ms)
   await page.screenshot({ path: `${out}/${beat}-${ms}.png` })
-  console.log(`${beat}@${ms}`.padEnd(20), page.errors.length ? `ERRORS ${page.errors.join(' | ')}` : 'ok')
+  console.log(`${beat}@${ms}`.padEnd(20), page.errors.length ? `ERRORS ${page.errors.join(' | ')}` : 'ok', page.offOrigin.length ? `OFF-ORIGIN ${page.offOrigin.join(' ')}` : '')
   await page.close()
 }
 
