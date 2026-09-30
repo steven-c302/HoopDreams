@@ -205,9 +205,9 @@ export type HostCommand =
 
 /**
  * Shared lobby settings. turfMode: Home Turf 0 auto, 1 solo, 2 teams; minutes: Home Turf's and Sprawl's game clock
- * (0 = no limit); vp: Sprawl's points to win (8 or 10).
+ * (0 = no limit); vp: Sprawl's points to win (8 or 10); pace: Home Turf's TV show, 0 Theatre or 1 Quick.
  */
-export type OptionKey = 'rounds' | 'teams' | 'drinks' | 'game' | 'captain' | 'turfMode' | 'minutes' | 'vp' | 'timers' | 'show' | 'grid'
+export type OptionKey = 'rounds' | 'teams' | 'drinks' | 'game' | 'captain' | 'turfMode' | 'minutes' | 'vp' | 'timers' | 'show' | 'grid' | 'pace'
 
 export type ActionPayload = { kind: string; [k: string]: string | number | boolean | string[] | number[] }
 

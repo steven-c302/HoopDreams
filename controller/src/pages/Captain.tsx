@@ -17,7 +17,7 @@ function settingsOf(view: PhoneState) {
   const s = view.settings ?? {}
   return {
     rounds: s.rounds ?? 5, teams: s.teams ?? 0, drinks: (s.drinks ?? 1) === 1, game: s.game ?? 0,
-    turfMode: s.turfMode ?? 0, minutes: s.minutes ?? 45, vp: s.vp ?? 8, timers: s.timers ?? 0, show: s.show ?? 0,
+    turfMode: s.turfMode ?? 0, minutes: s.minutes ?? 45, vp: s.vp ?? 8, timers: s.timers ?? 0, show: s.show ?? 0, pace: s.pace ?? 0,
   }
 }
 
@@ -58,6 +58,7 @@ export function CaptainLobby({ view, games, host }: { view: PhoneState; games: G
               )}
               <Stepper label="Game clock" value={s.minutes === 0 ? 'No limit' : `${s.minutes} min`}
                 onDown={() => set('minutes', TURF_MINUTES[Math.max(0, minuteAt - 1)])} onUp={() => set('minutes', TURF_MINUTES[Math.min(TURF_MINUTES.length - 1, minuteAt + 1)])} />
+              <Stepper label="Show" value={s.pace ? 'Quick' : 'Theatre'} onDown={() => set('pace', 0)} onUp={() => set('pace', 1)} />
             </>
           )
           : sprawl ? (

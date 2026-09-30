@@ -125,6 +125,8 @@ export interface TurfTv {
   lastLap: boolean
   timed: boolean
   drinks: boolean
+  /** Quick pace: the short move with no dice theatre. Absent or false means Theatre. */
+  quick?: boolean
   beats: TurfBeat[]
   ticker: string[]
   pieces: string[]
