@@ -3,6 +3,7 @@ import type { ReactNode } from 'react'
 import type { TurfTv } from '../../types'
 import { Dais } from './Dais'
 import { Frame } from './Frame'
+import type { Person } from './copy'
 import type { Hud } from './hud'
 import { AuctionPanel } from './panels/AuctionPanel'
 import { BuyPanel } from './panels/BuyPanel'
@@ -15,7 +16,8 @@ import { PiecesPanel } from './panels/PiecesPanel'
 import { RollPanel } from './panels/RollPanel'
 import { panelFor, panelSize, type PanelName } from './panels'
 
-function panelBody(name: PanelName, tv: TurfTv, hud: Hud): ReactNode {
+function panelBody(name: PanelName, tv: TurfTv, hud: Hud, people: Person[]): ReactNode {
+  void people
   switch (name) {
     case 'roll': return <RollPanel tv={tv} hud={hud} />
     case 'move': return <RollPanel tv={tv} hud={hud} quiet />
@@ -32,12 +34,12 @@ function panelBody(name: PanelName, tv: TurfTv, hud: Hud): ReactNode {
 }
 
 /** The 3D card for the current phase, or nothing (the DOM well shows) when the phase is not ported. */
-export function PanelHost({ tv, hud, visible, onReady }: { tv: TurfTv; hud: Hud; visible: boolean; onReady: () => void }) {
+export function PanelHost({ tv, hud, people, visible, onReady }: { tv: TurfTv; hud: Hud; people: Person[]; visible: boolean; onReady: () => void }) {
   return (
     <Dais panelKey={panelFor(tv.phase)} visible={visible}>
       {(key) => (
         <Frame tv={tv} hud={hud} size={panelSize(key as PanelName)} onReady={onReady}>
-          {panelBody(key as PanelName, tv, hud)}
+          {panelBody(key as PanelName, tv, hud, people)}
         </Frame>
       )}
     </Dais>

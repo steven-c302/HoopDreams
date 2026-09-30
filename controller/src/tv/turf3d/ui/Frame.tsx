@@ -55,7 +55,7 @@ export function Frame({ tv, hud, size, onReady, children }: { tv: TurfTv; hud: H
       {/* body */}
       <group position={[0, body.cy, 0]}>{children}</group>
       {/* footer */}
-      {hud.ticker.length > 0 && (
+      {size === 'std' && hud.ticker.length > 0 && (
         <>
           <Plate w={w - 40} h={3} r={1.5} color={INK} y={-h / 2 + FOOT_H} z={1} />
           <group position={[0, footY, 0]}>

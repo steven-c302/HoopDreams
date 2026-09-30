@@ -6,7 +6,7 @@ import type { TurfTv } from '../types'
 import { ensureFonts } from './fonts'
 import { QualityContext, parseQuality } from './quality'
 import { TurfScene } from './TurfScene'
-import { FALLBACK_PALETTE, type FlashSpec, type Palette } from './ui/copy'
+import { FALLBACK_PALETTE, type FlashSpec, type Palette, type Person } from './ui/copy'
 import { buildHud, type HudIn } from './ui/hud'
 import { PaletteContext, readPalette } from './ui/palette'
 import { panelFor } from './ui/panels'
@@ -17,7 +17,7 @@ import { useChoreography } from './useChoreography'
  * board. Space or Enter skips the animation in progress. A lost WebGL context reports through [onLost] so the caller
  * can fall back to the flat board.
  */
-export function TurfStage3D({ g, hud, flash, onReady, children, onLost }: { g: TurfTv; hud: HudIn; flash: FlashSpec | null; onReady?: () => void; children: ReactNode; onLost: () => void }) {
+export function TurfStage3D({ g, hud, flash, people, onReady, children, onLost }: { g: TurfTv; hud: HudIn; flash: FlashSpec | null; people: Person[]; onReady?: () => void; children: ReactNode; onLost: () => void }) {
   const [skip, setSkip] = useState(0)
   const [fontsReady, setFontsReady] = useState(false)
   const quality = useMemo(() => parseQuality(location.search), [])
@@ -49,7 +49,7 @@ export function TurfStage3D({ g, hud, flash, onReady, children, onLost }: { g: T
         >
           <QualityContext.Provider value={quality}>
             <PaletteContext.Provider value={palette}>
-              <TurfScene tv={g} craft={craft} hud={hudNow} flash={flash} onPanelReady={() => { setPanelReady(true); onReady?.() }} />
+              <TurfScene tv={g} craft={craft} hud={hudNow} flash={flash} people={people} onPanelReady={() => { setPanelReady(true); onReady?.() }} />
             </PaletteContext.Provider>
           </QualityContext.Provider>
         </Canvas>

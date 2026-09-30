@@ -72,3 +72,6 @@ export function inkOn(hex: string): string {
   const n = parseInt(m[1], 16)
   return ((n >> 16) & 255) * 0.3 + ((n >> 8) & 255) * 0.59 + (n & 255) * 0.11 > 150 ? '#1a1a1a' : '#ffffff'
 }
+
+/** A player as the 3D panels need them: an id to match team members, a name, and their avatar. */
+export interface Person { id: string; name: string; face: string; color: string }
