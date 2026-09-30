@@ -12,17 +12,20 @@ import { CardFlips, CoinFx } from './scene/Moments'
 import { Pieces } from './scene/Pieces'
 import { Post } from './scene/Post'
 import { Table } from './scene/Table'
+import { Callouts } from './ui/Callouts'
+import type { FlashSpec } from './ui/copy'
 import type { Hud } from './ui/hud'
 import { PanelHost } from './ui/PanelHost'
 import type { Craft } from './useChoreography'
 
 /** The whole tabletop. Render it inside an R3F Canvas that is wrapped in QualityContext.Provider. */
-export function TurfScene({ tv, craft, hud, onPanelReady }: { tv: TurfTv; craft: Craft; hud: Hud; onPanelReady: () => void }) {
+export function TurfScene({ tv, craft, hud, flash, onPanelReady }: { tv: TurfTv; craft: Craft; hud: Hud; flash: FlashSpec | null; onPanelReady: () => void }) {
   return (
     <>
       <color attach="background" args={['#241710']} />
       <CameraRig shot={craft.shot} focus={craft.focus} landedN={craft.landed?.n ?? 0} />
       <PanelHost tv={tv} hud={hud} visible={craft.shot === 'wide'} onReady={onPanelReady} />
+      <Callouts flash={flash} banner={craft.banner} />
       <Lights />
       <Table />
       <Board3D tv={tv} />

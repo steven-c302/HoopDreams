@@ -94,7 +94,7 @@ const base: TurfTv = {
 const withTokens = (f: (t: TurfToken, i: number) => Partial<TurfToken>) => tokens.map((t, i) => ({ ...t, ...f(t, i) }))
 
 /** Fixture per beat, plus beats to inject after mount (for hops and callouts). */
-const BEATS: Record<string, { g: TurfTv; later?: TurfBeat[]; after?: Partial<TurfTv> }> = {
+const BEATS: Record<string, { g: TurfTv; later?: TurfBeat[]; after?: Partial<TurfTv>; delay?: number }> = {
   teamup: { g: { ...base, phase: 'teamup', teams: true, timed: true, notice: 'Too many for solo, so it\'s teams',
     tokens: [0, 1, 2].map((k) => ({ ...tokens[k], name: ['Team Tomato', 'Team Blueberry', 'Team Lime'][k], members: [`p${k * 4}`, `p${k * 4 + 1}`, `p${k * 4 + 2}`, `p${k * 4 + 3}`], seat: `p${k * 4}`, piece: undefined })) } },
   pieces: { g: { ...base, phase: 'pieces', tokens: withTokens((_, i) => ({ piece: i < 3 ? PIECES[i] : undefined })) } },
@@ -105,11 +105,11 @@ const BEATS: Record<string, { g: TurfTv; later?: TurfBeat[]; after?: Partial<Tur
   move: { g: { ...base, phase: 'move', timed: false }, later: [beat('move', { token: 3, space: 23, path: [15, 16, 17, 18, 19, 20, 21, 22, 23] })], after: { tokens: withTokens((_, i) => (i === 3 ? { pos: 23 } : {})) } },
   lineup: { g: { ...base, phase: 'roll', tokens: withTokens(() => ({ pos: 0 })) } },
   'diced-move': { g: { ...base, phase: 'move', timed: false }, later: [beat('roll', { token: 3, dice: [4, 5, 1] }), beat('move', { token: 3, space: 23, path: [15, 16, 17, 18, 19, 20, 21, 22, 23] })], after: { tokens: withTokens((_, i) => (i === 3 ? { pos: 23 } : {})) } },
-  'doubles-move': { g: { ...base, phase: 'move', timed: false }, later: [beat('roll', { token: 3, dice: [4, 4, 1] }), beat('move', { token: 3, space: 22, path: [15, 16, 17, 18, 19, 20, 21, 22] })], after: { tokens: withTokens((_, i) => (i === 3 ? { pos: 22 } : {})) } },
+  'doubles-move': { g: { ...base, phase: 'move', timed: false }, later: [beat('roll', { token: 3, dice: [4, 4, 1] }), beat('move', { token: 3, space: 22, path: [15, 16, 17, 18, 19, 20, 21, 22] })], after: { tokens: withTokens((_, i) => (i === 3 ? { pos: 22 } : {})) } , delay: 3500 },
   tax: { g: { ...base, phase: 'manage', tokens: withTokens((_, i) => (i === 3 ? { pos: 4 } : {})) }, later: [beat('tax', { token: 3, space: 4, amount: 200 })] },
   'payday-pass': { g: { ...base, phase: 'move', timed: false, tokens: withTokens((_, i) => (i === 3 ? { pos: 37 } : {})) }, later: [beat('move', { token: 3, space: 3, path: [38, 39, 0, 1, 2, 3] }), beat('payday', { token: 3, amount: 200 })], after: { tokens: withTokens((_, i) => (i === 3 ? { pos: 3 } : {})) } },
-  'card-moment': { g: { ...base, phase: 'card', timed: false, card: { deck: 'chance', deckName: 'Plot Twist', text: 'Last call! Everyone drinks.', sips: 0 } }, later: [beat('card', { token: 3, text: 'Last call! Everyone drinks.' })] },
-  'bankrupt-fall': { g: { ...base, phase: 'manage' }, later: [beat('bankrupt', { token: 4, other: 1 })], after: { tokens: withTokens((_, i) => (i === 4 ? { bankrupt: true, cash: 0 } : {})) } },
+  'card-moment': { g: { ...base, phase: 'card', timed: false, card: { deck: 'chance', deckName: 'Plot Twist', text: 'Last call! Everyone drinks.', sips: 0 } }, later: [beat('card', { token: 3, text: 'Last call! Everyone drinks.' })] , delay: 3500 },
+  'bankrupt-fall': { g: { ...base, phase: 'manage' }, later: [beat('bankrupt', { token: 4, other: 1 })], after: { tokens: withTokens((_, i) => (i === 4 ? { bankrupt: true, cash: 0 } : {})) } , delay: 3500 },
   'jail-walk': { g: { ...base, phase: 'move', timed: false, tokens: withTokens((_, i) => (i === 3 ? { pos: 27 } : {})) }, later: [beat('move', { token: 3, space: 30, path: [28, 29, 30] }), beat('jail', { token: 3, space: 10 })], after: { tokens: withTokens((_, i) => (i === 3 ? { pos: 10, jailed: true } : {})) } },
   build: { g: { ...base, phase: 'manage' }, later: [beat('build', { token: 1, space: 6, amount: 4 })], after: { level: base.level.map((l, i) => (i === 6 ? 4 : l)) } },
   buy: { g: { ...base, phase: 'buy', buy: 23, tokens: withTokens((_, i) => (i === 3 ? { pos: 23 } : {})) } },
@@ -119,7 +119,7 @@ const BEATS: Record<string, { g: TurfTv; later?: TurfBeat[]; after?: Partial<Tur
   debt: { g: { ...base, phase: 'debt', turn: 4, debt: { token: 4, amount: 600, to: 1, why: 'rent at The Taco Truck' } } },
   manage: { g: { ...base, phase: 'manage' } },
   jail: { g: { ...base, phase: 'jail', turn: 2, tokens: withTokens((_, i) => (i === 2 ? { pos: 10, jailed: true } : {})) } },
-  rent: { g: { ...base, phase: 'manage' }, later: [beat('rent', { token: 4, other: 1, space: 9, amount: 600 }), beat('drink', { tokens: [4], sips: 5, text: 'paid rent at The Taco Truck' })] },
+  rent: { g: { ...base, phase: 'manage' }, later: [beat('rent', { token: 4, other: 1, space: 9, amount: 600 }), beat('drink', { tokens: [4], sips: 5, text: 'paid rent at The Taco Truck' })] , delay: 3500 },
   'home-turf': { g: { ...base, phase: 'manage' }, later: [beat('set', { token: 3, space: 24 }), beat('drink', { tokens: [0, 1, 2, 4, 5], sips: 1, text: 'Amanda completed a set' })] },
   'last-lap': { g: { ...base, phase: 'roll', lastLap: true }, later: [beat('lastlap')] },
   bankrupt: { g: { ...base, phase: 'manage', tokens: withTokens((_, i) => (i === 4 ? { bankrupt: true, cash: 0 } : {})) }, later: [beat('bankrupt', { token: 4, other: 1 })] },
@@ -143,7 +143,7 @@ export function TurfGallery({ beat: name }: { beat: string | null }) {
       if (!cur) return cur
       const top = cur.beats.reduce((m, b) => Math.max(m, b.seq), 0)
       return { ...cur, ...fixture.after, beats: [...cur.beats, ...fixture.later!.map((b, i) => ({ ...b, seq: top + 1 + i }))] }
-    }), 700)
+    }), fixture.delay ?? 700)
     return () => clearTimeout(id)
   }, [fixture])
   if (!fixture || !g) {

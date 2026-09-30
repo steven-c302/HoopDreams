@@ -68,6 +68,7 @@ function podiumRows(g: TurfTv, players: PlayerSummary[]): ScoreRow[] {
 function Turf({ g, stage, players, clock }: { g: TurfTv; stage: StageInfo; players: PlayerSummary[]; clock: Clock }) {
   const people = useMemo(() => new Map(players.map((p) => [p.id, p])), [players])
   const [lost, setLost] = useState(false)
+  const [ready3d, setReady3d] = useState(false)
   const use3d = useMemo(() => !lost && wants3d(location.search, hasWebGL2()), [lost])
   const { display, zoom } = useHops(g, !use3d)
   const flash = useFlashes(g, people)
@@ -83,7 +84,7 @@ function Turf({ g, stage, players, clock }: { g: TurfTv; stage: StageInfo; playe
       {use3d && (
         <ErrorBoundary onError={() => setLost(true)}>
           <Suspense fallback={null}>
-            <TurfStage3D g={g} hud={{ clock, paused: !!stage.paused, timerScale, seatName }} onLost={() => setLost(true)}><Well g={g} stage={stage} clock={clock} people={people} /></TurfStage3D>
+            <TurfStage3D g={g} hud={{ clock, paused: !!stage.paused, timerScale, seatName }} flash={flash} onReady={() => setReady3d(true)} onLost={() => setLost(true)}><Well g={g} stage={stage} clock={clock} people={people} /></TurfStage3D>
           </Suspense>
         </ErrorBoundary>
       )}
@@ -96,7 +97,7 @@ function Turf({ g, stage, players, clock }: { g: TurfTv; stage: StageInfo; playe
         )}
       </div>
       <div className="turf-rail right">{right.map((i) => <TokenCard key={i} g={g} i={i} people={people} />)}</div>
-      <AnimatePresence>{flash && <FlashView key={flash.id} f={flash} />}</AnimatePresence>
+      <AnimatePresence>{flash && !(use3d && ready3d) && <FlashView key={flash.id} f={flash} />}</AnimatePresence>
     </div>
   )
 }

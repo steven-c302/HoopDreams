@@ -5,7 +5,7 @@ import * as THREE from 'three'
 import { REF_H, stepToward, worldPerPx } from './sizing'
 
 /** How far in front of the camera the card hangs. Its size on screen is set by REF_H and the field of view, not by this. */
-const DIST = 9
+const DEFAULT_DIST = 9
 
 /**
  * Hangs whatever it is given in front of the camera, always at the same spot and size on screen, whatever the shot.
@@ -13,7 +13,7 @@ const DIST = 9
  * false (any shot but the wide one, so it never covers a walking piece). Children are laid out in reference pixels
  * (1080 tall, centred, y up).
  */
-export function Dais({ panelKey, visible, children }: { panelKey: string | null; visible: boolean; children: (key: string) => ReactNode }) {
+export function Dais({ panelKey, visible, dist = DEFAULT_DIST, offsetY = 0, children }: { panelKey: string | null; visible: boolean; dist?: number; offsetY?: number; children: (key: string) => ReactNode }) {
   const { camera } = useThree()
   const group = useRef<THREE.Group>(null)
   const inner = useRef<THREE.Group>(null)
@@ -30,8 +30,9 @@ export function Dais({ panelKey, visible, children }: { panelKey: string | null;
     if (panelKey !== shown && grow.current < 0.02) setShown(panelKey) // the old card has dropped away: swap
     g.visible = grow.current > 0.01
     g.quaternion.copy(cam.quaternion)
-    g.position.copy(cam.position).add(tmp.set(0, 0, -DIST).applyQuaternion(cam.quaternion))
-    g.scale.setScalar(worldPerPx(cam.fov, DIST, REF_H) * grow.current)
+    const wpp = worldPerPx(cam.fov, dist, REF_H)
+    g.position.copy(cam.position).add(tmp.set(0, offsetY * wpp, -dist).applyQuaternion(cam.quaternion))
+    g.scale.setScalar(wpp * grow.current)
     i.position.y = -(1 - grow.current) * 90
   })
 
