@@ -74,4 +74,4 @@ export function inkOn(hex: string): string {
 }
 
 /** A player as the 3D panels need them: an id to match team members, a name, and their avatar. */
-export interface Person { id: string; name: string; face: string; color: string }
+export interface Person { id: string; name: string; face: string; color: string; connected: boolean }

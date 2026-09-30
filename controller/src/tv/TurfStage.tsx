@@ -69,7 +69,7 @@ function Turf({ g, stage, players, clock }: { g: TurfTv; stage: StageInfo; playe
   const people = useMemo(() => new Map(players.map((p) => [p.id, p])), [players])
   const [lost, setLost] = useState(false)
   const [ready3d, setReady3d] = useState(false)
-  const faces = useMemo(() => players.map((p) => ({ id: p.id, name: p.name, face: p.avatar.face, color: p.avatar.color })), [players])
+  const faces = useMemo(() => players.map((p) => ({ id: p.id, name: p.name, face: p.avatar.face, color: p.avatar.color, connected: p.connected })), [players])
   const use3d = useMemo(() => !lost && wants3d(location.search, hasWebGL2()), [lost])
   const { display, zoom } = useHops(g, !use3d)
   const flash = useFlashes(g, people)

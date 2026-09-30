@@ -15,12 +15,12 @@ export function roundedRect(w: number, h: number, r: number): THREE.ShapeGeometr
 }
 
 /** A flat, unlit rounded plate. Unlit so paper stays paper whatever the scene lights are doing. */
-export function Plate({ w, h, r = 14, color, x = 0, y = 0, z = 0 }: { w: number; h: number; r?: number; color: string; x?: number; y?: number; z?: number }) {
+export function Plate({ w, h, r = 14, color, x = 0, y = 0, z = 0, opacity = 1 }: { w: number; h: number; r?: number; color: string; x?: number; y?: number; z?: number; opacity?: number }) {
   const geo = useMemo(() => roundedRect(w, h, r), [w, h, r])
   useEffect(() => () => geo.dispose(), [geo])
   return (
     <mesh geometry={geo} position={[x, y, z]}>
-      <meshBasicMaterial color={color} toneMapped={false} />
+      <meshBasicMaterial color={color} transparent={opacity < 1} opacity={opacity} toneMapped={false} />
     </mesh>
   )
 }

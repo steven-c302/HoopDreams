@@ -45,10 +45,10 @@ function Burst({ f }: { f: FlashSpec }) {
 export function Callouts({ flash, banner }: { flash: FlashSpec | null; banner: string | null }) {
   return (
     <>
-      <Dais panelKey={flash ? String(flash.id) : null} visible dist={8.4} offsetY={flash?.small ? 250 : 0}>
+      <Dais panelKey={flash ? String(flash.id) : null} visible lit={false} dist={8.4} offsetY={flash?.small ? 250 : 0}>
         {() => (flash ? <Burst f={flash} /> : null)}
       </Dais>
-      <Dais panelKey={banner} visible dist={8.7} offsetY={380}>
+      <Dais panelKey={banner} visible lit={false} dist={8.7} offsetY={380}>
         {(text) => <Label px={128} kind="hero" color="#ffffff" outline={INK} maxWidth={1500}>{text}</Label>}
       </Dais>
     </>

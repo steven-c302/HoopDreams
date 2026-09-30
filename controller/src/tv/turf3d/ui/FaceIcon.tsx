@@ -11,7 +11,7 @@ const load = (src: string) => new Promise<HTMLImageElement>((res, rej) => { cons
  * variables replaced from the palette, drawn to a canvas; a photo face gets its picture painted on top, clipped to the
  * face circle. Anything that fails leaves the preset (or nothing): the panel never depends on it.
  */
-export function FaceIcon({ face, color, size = 48, x = 0, y = 0 }: { face: string; color: string; size?: number; x?: number; y?: number }) {
+export function FaceIcon({ face, color, size = 48, x = 0, y = 0, dim = false }: { face: string; color: string; size?: number; x?: number; y?: number; dim?: boolean }) {
   const p = usePalette()
   const [tex, setTex] = useState<THREE.CanvasTexture | null>(null)
   useEffect(() => {
@@ -46,7 +46,7 @@ export function FaceIcon({ face, color, size = 48, x = 0, y = 0 }: { face: strin
   return (
     <mesh position={[x, y, 2]}>
       <planeGeometry args={[size, size]} />
-      <meshBasicMaterial map={tex} transparent toneMapped={false} />
+      <meshBasicMaterial map={tex} transparent opacity={dim ? 0.35 : 1} toneMapped={false} />
     </mesh>
   )
 }
