@@ -36,7 +36,7 @@ describe('rail geometry', () => {
     expect(railSlots(5)).toEqual({ left: [0, 2, 4], right: [1, 3] }); expect(railSlots(0)).toEqual({ left: [], right: [] }); expect(railSlots(1)).toEqual({ left: [0], right: [] })
   })
   it('stacks a rail from the top, centred a little below the middle', () => {
-    expect(railY(0, 3)).toBe(242); expect(railY(1, 3)).toBe(-30); expect(railY(2, 3)).toBe(-302); expect(railY(0, 1)).toBe(-30); expect(railY(0, 2)).toBe(106); expect(railY(1, 2)).toBe(-166)
+    expect(railY(0, 3)).toBe(228); expect(railY(1, 3)).toBe(-44); expect(railY(2, 3)).toBe(-316); expect(railY(0, 1)).toBe(-44); expect(railY(0, 2)).toBe(92); expect(railY(1, 2)).toBe(-180)
     expect(RAIL.w).toBe(400); expect(RAIL.h).toBe(250)
   })
 })

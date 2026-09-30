@@ -81,7 +81,7 @@ function Turf({ g, stage, players, clock }: { g: TurfTv; stage: StageInfo; playe
   const curTok = g.tokens[g.turn]
   const seatName = curTok?.seat ? people.get(curTok.seat)?.name ?? curTok.name : curTok?.name ?? ''
   return (
-    <div className={`turf-stage ${use3d ? 'is3d' : ''}`}>
+    <div className={`turf-stage ${use3d ? 'is3d' : ''} ${use3d && ready3d ? 'rails3d' : ''}`}>
       {use3d && (
         <ErrorBoundary onError={() => setLost(true)}>
           <Suspense fallback={null}>

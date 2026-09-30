@@ -49,7 +49,7 @@ export function TurfStage3D({ g, hud, flash, people, onReady, children, onLost }
         >
           <QualityContext.Provider value={quality}>
             <PaletteContext.Provider value={palette}>
-              <TurfScene tv={g} craft={craft} hud={hudNow} flash={flash} people={people} onPanelReady={() => { setPanelReady(true); onReady?.() }} />
+              <TurfScene tv={g} craft={craft} hud={hudNow} flash={flash} people={people} railsReady={panelReady} onPanelReady={() => { setPanelReady(true); onReady?.() }} />
             </PaletteContext.Provider>
           </QualityContext.Provider>
         </Canvas>

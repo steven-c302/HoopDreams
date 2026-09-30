@@ -1,6 +1,6 @@
 // controller/src/tv/turf3d/ui/rails.ts
 /** A rail card is 400 by 250 reference pixels; the rails sit 728 px either side of the centre, a little below the middle. */
-export const RAIL = { w: 400, h: 250, gap: 22, dx: 728, dy: -30 }
+export const RAIL = { w: 400, h: 250, gap: 22, dx: 728, dy: -44 }
 
 /** The displayed value [u] (0 to 1) of the way from [from] to [to], easing out; ends exactly on [to]. */
 export function countAt(from: number, to: number, u: number): number {

@@ -54,6 +54,7 @@
 .turf-3d { position: absolute; inset: 0; z-index: 0; background: #241710; }
 .turf-3d canvas { display: block; width: 100% !important; height: 100% !important; }
 .turf-stage.is3d .turf-rail { position: relative; z-index: 2; }
+.turf-stage.rails3d .turf-card { visibility: hidden; }
 /* Laid out at the flat board's natural size, then scaled to sit inside the printed middle of the board; it fades out
    whenever the camera leaves the wide shot so it never covers a piece that is walking. */
 .turf-well3d { position: absolute; left: 50%; top: 50%; width: 900px; height: 580px; transform: translate(-50%, -50%) scale(0.68); z-index: 1; pointer-events: none; transition: opacity .35s; }
