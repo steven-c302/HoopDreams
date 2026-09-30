@@ -101,12 +101,14 @@ snaps to the true state.
 **Pacing lives in one place.** Today the engine holds the MOVE phase for `path.size * HOP_MS(260) + MOVE_PAD_MS(1400)`.
 The new choreography is longer (dice theatre plus a slowed final approach), so both sides use one formula:
 `moveDwellMs = DICE_MS + sum(hopMs(k)) + LAND_PAD_MS`, defined in Kotlin (`HomeTurf.kt`) and mirrored in `timeline.ts`,
-with a shared fixture test that fails if they differ. Roughly 2.6 s of dice, 0.23 s per early hop, slowing to 0.82 s on
-the last, and about 0.9 s to land, so a 7-space move takes about 6.5 s.
+with the same table of expected values in the Kotlin and TypeScript tests. The dice theatre is 2.6 s and only applies to
+moves that follow a roll. Hops take 0.23 s, then 0.32, 0.46 and 0.82 s for the last three; landing adds 0.9 s. A 7-space
+move after a roll therefore takes about 6 s.
 
 **Turn length and the game clock.** Longer turns mean fewer turns inside the 30 to 90 minute clock. A lobby option
-`Show: Theatre | Quick` (TV key S) sets the pacing. Quick keeps today's 260 ms hops and skips the dice theatre. The
-captain can also tap to skip the current animation. With more than 4 tokens the dice theatre shortens to 1.6 s.
+`Show: Theatre | Quick` (TV key S) sets the pacing. Quick keeps today's 260 ms hops and skips the dice theatre. Any key
+pressed on the TV skips the current animation. A captain-phone skip tap is a later addition, because the engine
+cannot know when an animation ends.
 
 ## Dice
 
