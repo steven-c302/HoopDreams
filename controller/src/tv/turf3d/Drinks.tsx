@@ -1,26 +1,21 @@
-// THROWAWAY SPIKE (branch turf-3d-spike): Home Turf's six pieces as drinks, built from scratch with lathe geometry.
-// Labels are generic on purpose (no brand names or logos), the same IP rule as the rest of Home Turf.
+// controller/src/tv/turf3d/Drinks.tsx
+// Home Turf's six pieces as drinks, built from scratch with lathe geometry. Labels are generic on purpose (see drinkSpecs.ts).
 import { useMemo } from 'react'
 import * as THREE from 'three'
+import { BOTTLES, CAN_LABEL, type BottleKind, type BottleLabel, type DrinkKind } from './drinkSpecs'
+import { useQuality, usesRealGlass } from './quality'
 
-export const DRINK_KINDS = ['soju', 'vodka', 'beer', 'can', 'shot', 'cup'] as const
-export type DrinkKind = (typeof DRINK_KINDS)[number]
-
-const FAST = new URLSearchParams(location.search).get('glass') === 'fast'
 const v = (pts: number[][]) => pts.map(([x, y]) => new THREE.Vector2(x, y))
 /** Smooth (smoothstep) run from radius r0 at y0 to r1 at y1, for bottle shoulders. */
 const ease = (r0: number, r1: number, y0: number, y1: number, n = 10) =>
   Array.from({ length: n }, (_, i) => { const t = (i + 1) / n, e = t * t * (3 - 2 * t); return [r0 + (r1 - r0) * e, y0 + (y1 - y0) * t] })
 
-interface BottleCfg { r: number; body: number; neck: number; shoulder: number; top: number; glass: string; att: string; label: { y0: number; y1: number; bg: string; accent: string; text: string; sub: string; ink: string }; cap: { color: string; metal: boolean } }
-const BOTTLES: Record<'soju' | 'vodka' | 'beer', BottleCfg> = {
-  soju: { r: 0.27, body: 0.5, neck: 0.085, shoulder: 0.74, top: 0.94, glass: '#7fe0a4', att: '#3aa866', label: { y0: 0.1, y1: 0.4, bg: '#f5f5ec', accent: '#2d9a55', text: 'SOJU', sub: 'ORIGINAL', ink: '#1b6b3a' }, cap: { color: '#2d9a55', metal: false } },
-  vodka: { r: 0.25, body: 0.56, neck: 0.09, shoulder: 0.84, top: 1.02, glass: '#eef7ff', att: '#d4e8f5', label: { y0: 0.14, y1: 0.52, bg: '#c62828', accent: '#ffffff', text: 'VODKA', sub: 'PREMIUM', ink: '#ffffff' }, cap: { color: '#d7d7de', metal: true } },
-  beer: { r: 0.2, body: 0.4, neck: 0.07, shoulder: 0.72, top: 0.96, glass: '#e08a2a', att: '#c46a10', label: { y0: 0.1, y1: 0.34, bg: '#f3e2b8', accent: '#b8341f', text: 'BEER', sub: 'COLD LAGER', ink: '#7a1f12' }, cap: { color: '#c9a227', metal: true } },
+const fit = (g: CanvasRenderingContext2D, text: string, max: number, start: number) => {
+  let fs = start
+  do { g.font = `${fs}px Anton, sans-serif`; fs -= 4 } while (fs > 18 && g.measureText(text).width > max)
 }
 
-const fit = (g: CanvasRenderingContext2D, text: string, max: number, start: number) => { let fs = start; do { g.font = `${fs}px Anton, sans-serif`; fs -= 4 } while (fs > 18 && g.measureText(text).width > max); }
-function labelTexture(l: BottleCfg['label']): THREE.CanvasTexture {
+function labelTexture(l: BottleLabel): THREE.CanvasTexture {
   const cv = document.createElement('canvas'); cv.width = 512; cv.height = 256
   const g = cv.getContext('2d')!
   g.fillStyle = l.bg; g.fillRect(0, 0, 512, 256)
@@ -36,6 +31,7 @@ function labelTexture(l: BottleCfg['label']): THREE.CanvasTexture {
   const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8
   return t
 }
+
 function canTexture(): THREE.CanvasTexture {
   const cv = document.createElement('canvas'); cv.width = 512; cv.height = 256
   const g = cv.getContext('2d')!
@@ -44,20 +40,22 @@ function canTexture(): THREE.CanvasTexture {
   g.fillStyle = '#f5c542'; g.fillRect(0, 48, 512, 8); g.fillRect(0, 200, 512, 8)
   g.textAlign = 'center'; g.textBaseline = 'middle'
   for (const cx of [128, 384]) {
-    g.fillStyle = '#fff'; fit(g, 'LAGER', 124, 100); g.fillText('LAGER', cx, 118)
-    fit(g, 'COLD & CRISP', 130, 26); g.fillText('COLD & CRISP', cx, 168)
+    g.fillStyle = '#fff'; fit(g, CAN_LABEL.top, 124, 100); g.fillText(CAN_LABEL.top, cx, 118)
+    fit(g, CAN_LABEL.sub, 130, 26); g.fillText(CAN_LABEL.sub, cx, 168)
   }
   const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8
   return t
 }
 
-const Glass = ({ color, att, dist = 0.7, thick = 0.5 }: { color: string; att: string; dist?: number; thick?: number }) => FAST ? (
-  <meshPhysicalMaterial color={att} roughness={0.06} clearcoat={1} clearcoatRoughness={0.02} metalness={0.1} envMapIntensity={2} />
-) : (
-  <meshPhysicalMaterial color={color} transmission={1} thickness={thick} ior={1.45} roughness={0.05} attenuationColor={att} attenuationDistance={dist} clearcoat={1} clearcoatRoughness={0.03} envMapIntensity={1.5} />
-)
+/** Real transmissive glass, or (Low quality) a glossy tinted stand-in that costs no extra render pass. */
+function Glass({ color, att, dist = 0.7, thick = 0.5 }: { color: string; att: string; dist?: number; thick?: number }) {
+  const real = usesRealGlass(useQuality())
+  return real
+    ? <meshPhysicalMaterial color={color} transmission={1} thickness={thick} ior={1.45} roughness={0.05} attenuationColor={att} attenuationDistance={dist} clearcoat={1} clearcoatRoughness={0.03} envMapIntensity={1.5} />
+    : <meshPhysicalMaterial color={att} roughness={0.06} clearcoat={1} clearcoatRoughness={0.02} metalness={0.1} envMapIntensity={2} />
+}
 
-function Bottle({ kind }: { kind: 'soju' | 'vodka' | 'beer' }) {
+function Bottle({ kind }: { kind: BottleKind }) {
   const c = BOTTLES[kind]
   const geo = useMemo(() => v([[0, 0], [c.r - 0.05, 0], [c.r - 0.015, 0.02], [c.r, 0.06], [c.r, c.body], ...ease(c.r, c.neck, c.body, c.shoulder), [c.neck, c.top - 0.03], [c.neck + 0.022, c.top - 0.02], [c.neck + 0.022, c.top], [0, c.top]]), [kind])
   const tex = useMemo(() => labelTexture(c.label), [kind])
@@ -105,7 +103,7 @@ function Cup() {
   )
 }
 
-/** One drink standing on a coaster in the player's colour (the coaster is how you tell whose piece it is). */
+/** One drink standing on a coaster in the player's colour (the coaster, plus the silhouette, is how you tell whose piece it is). */
 export function Drink({ kind, color }: { kind: DrinkKind; color: string }) {
   return (
     <group>

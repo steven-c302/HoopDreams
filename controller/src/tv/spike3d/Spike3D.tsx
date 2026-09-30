@@ -9,7 +9,8 @@ import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import * as THREE from 'three'
 import '@fontsource/anton'
 import '@fontsource/rammetto-one'
-import { Drink, DRINK_KINDS } from './Drinks'
+import { Drink } from '../turf3d/Drinks'
+import { DRINK_KINDS } from '../turf3d/drinkSpecs'
 
 export type LookId = 'toon' | 'vinyl' | 'classic' | 'luxe'
 
