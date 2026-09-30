@@ -4,6 +4,9 @@ import type { TurfTv } from '../../types'
 import { Dais } from './Dais'
 import { Frame } from './Frame'
 import type { Hud } from './hud'
+import { ChoosePanel } from './panels/ChoosePanel'
+import { JailPanel } from './panels/JailPanel'
+import { ManagePanel } from './panels/ManagePanel'
 import { RollPanel } from './panels/RollPanel'
 import { panelFor, panelSize, type PanelName } from './panels'
 
@@ -11,6 +14,9 @@ function panelBody(name: PanelName, tv: TurfTv, hud: Hud): ReactNode {
   switch (name) {
     case 'roll': return <RollPanel tv={tv} hud={hud} />
     case 'move': return <RollPanel tv={tv} hud={hud} quiet />
+    case 'manage': return <ManagePanel tv={tv} />
+    case 'jail': return <JailPanel />
+    case 'choose': return <ChoosePanel tv={tv} hud={hud} />
     default: return null
   }
 }
