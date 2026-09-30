@@ -2,9 +2,9 @@
 import type { TurfPhase, TurfTv } from '../../types'
 import type { CardSize } from './sizing'
 
-export type PanelName = 'roll' | 'move' | 'manage' | 'jail' | 'choose' | 'pieces' | 'deal'
+export type PanelName = 'roll' | 'move' | 'manage' | 'jail' | 'choose' | 'pieces' | 'deal' | 'buy' | 'auction' | 'card'
 
-const PORTED: Partial<Record<TurfPhase, PanelName>> = { roll: 'roll', move: 'move', manage: 'manage', jail: 'jail', choose: 'choose', pieces: 'pieces', deal: 'deal' }
+const PORTED: Partial<Record<TurfPhase, PanelName>> = { roll: 'roll', move: 'move', manage: 'manage', jail: 'jail', choose: 'choose', pieces: 'pieces', deal: 'deal', buy: 'buy', auction: 'auction', card: 'card' }
 
 /** The 3D panel for a phase, or null while that phase still uses the DOM well. */
 export const panelFor = (phase: TurfPhase): PanelName | null => PORTED[phase] ?? null

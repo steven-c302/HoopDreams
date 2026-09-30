@@ -5,17 +5,17 @@ import { PIECE_ORDER, bankLine, chooseCall, panelFor, panelSize, rollCall } from
 
 describe('panelFor', () => {
   it('maps the ported phases to their own panel', () => {
-    for (const p of ['roll', 'move', 'manage', 'jail', 'choose', 'pieces', 'deal'] as TurfPhase[]) expect(panelFor(p)).toBe(p)
+    for (const p of ['roll', 'move', 'manage', 'jail', 'choose', 'pieces', 'deal', 'buy', 'auction', 'card'] as TurfPhase[]) expect(panelFor(p)).toBe(p)
   })
   it('leaves every other phase to the DOM well', () => {
-    for (const p of ['teamup', 'buy', 'auction', 'card', 'debt', 'trade', 'tally', 'podium'] as TurfPhase[]) expect(panelFor(p), p).toBeNull()
+    for (const p of ['teamup', 'debt', 'trade', 'tally', 'podium'] as TurfPhase[]) expect(panelFor(p), p).toBeNull()
   })
 })
 
 describe('panelSize', () => {
   it('uses the big card only where nobody is walking (setup) and the standard card everywhere else', () => {
     expect(panelSize('pieces')).toBe('setup'); expect(panelSize('deal')).toBe('setup')
-    for (const n of ['roll', 'move', 'manage', 'jail', 'choose'] as const) expect(panelSize(n)).toBe('std')
+    for (const n of ['roll', 'move', 'manage', 'jail', 'choose', 'buy', 'auction', 'card'] as const) expect(panelSize(n)).toBe('std')
   })
 })
 

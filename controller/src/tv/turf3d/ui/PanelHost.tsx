@@ -4,6 +4,9 @@ import type { TurfTv } from '../../types'
 import { Dais } from './Dais'
 import { Frame } from './Frame'
 import type { Hud } from './hud'
+import { AuctionPanel } from './panels/AuctionPanel'
+import { BuyPanel } from './panels/BuyPanel'
+import { CardPanel } from './panels/CardPanel'
 import { ChoosePanel } from './panels/ChoosePanel'
 import { DealPanel } from './panels/DealPanel'
 import { JailPanel } from './panels/JailPanel'
@@ -21,6 +24,9 @@ function panelBody(name: PanelName, tv: TurfTv, hud: Hud): ReactNode {
     case 'choose': return <ChoosePanel tv={tv} hud={hud} />
     case 'pieces': return <PiecesPanel tv={tv} />
     case 'deal': return <DealPanel tv={tv} />
+    case 'buy': return <BuyPanel tv={tv} />
+    case 'auction': return <AuctionPanel tv={tv} />
+    case 'card': return <CardPanel tv={tv} />
     default: return null
   }
 }

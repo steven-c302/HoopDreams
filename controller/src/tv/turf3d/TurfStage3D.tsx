@@ -1,12 +1,14 @@
 // controller/src/tv/turf3d/TurfStage3D.tsx
 import { Canvas } from '@react-three/fiber'
-import { useEffect, useMemo, useState, type ReactNode } from 'react'
+import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import * as THREE from 'three'
 import type { TurfTv } from '../types'
 import { ensureFonts } from './fonts'
 import { QualityContext, parseQuality } from './quality'
 import { TurfScene } from './TurfScene'
+import { FALLBACK_PALETTE, type Palette } from './ui/copy'
 import { buildHud, type HudIn } from './ui/hud'
+import { PaletteContext, readPalette } from './ui/palette'
 import { panelFor } from './ui/panels'
 import { useChoreography } from './useChoreography'
 
@@ -21,6 +23,9 @@ export function TurfStage3D({ g, hud, children, onLost }: { g: TurfTv; hud: HudI
   const quality = useMemo(() => parseQuality(location.search), [])
   const craft = useChoreography(g, !!g.quick, skip)
   const [panelReady, setPanelReady] = useState(false)
+  const root = useRef<HTMLDivElement>(null)
+  const [palette, setPalette] = useState<Palette>(FALLBACK_PALETTE)
+  useEffect(() => { if (root.current) setPalette(readPalette(root.current)) }, [])
   const [now, setNow] = useState(() => Date.now())
   useEffect(() => { const id = setInterval(() => setNow(Date.now()), 500); return () => clearInterval(id) }, [])
   const hudNow = useMemo(() => buildHud(g, hud, now), [g, hud, now])
@@ -33,7 +38,7 @@ export function TurfStage3D({ g, hud, children, onLost }: { g: TurfTv; hud: HudI
   }, [])
 
   return (
-    <div className="turf-3d">
+    <div className="turf-3d" ref={root}>
       {fontsReady && (
         <Canvas
           shadows
@@ -43,7 +48,9 @@ export function TurfStage3D({ g, hud, children, onLost }: { g: TurfTv; hud: HudI
           onCreated={({ gl }) => gl.domElement.addEventListener('webglcontextlost', (e) => { e.preventDefault(); onLost() })}
         >
           <QualityContext.Provider value={quality}>
-            <TurfScene tv={g} craft={craft} hud={hudNow} onPanelReady={() => setPanelReady(true)} />
+            <PaletteContext.Provider value={palette}>
+              <TurfScene tv={g} craft={craft} hud={hudNow} onPanelReady={() => setPanelReady(true)} />
+            </PaletteContext.Provider>
           </QualityContext.Provider>
         </Canvas>
       )}
