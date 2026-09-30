@@ -109,6 +109,7 @@ const BEATS: Record<string, { g: TurfTv; later?: TurfBeat[]; after?: Partial<Tur
   'card-moment': { g: { ...base, phase: 'card', timed: false, card: { deck: 'chance', deckName: 'Plot Twist', text: 'Last call! Everyone drinks.', sips: 0 } }, later: [beat('card', { token: 3, text: 'Last call! Everyone drinks.' })] },
   'bankrupt-fall': { g: { ...base, phase: 'manage' }, later: [beat('bankrupt', { token: 4, other: 1 })], after: { tokens: withTokens((_, i) => (i === 4 ? { bankrupt: true, cash: 0 } : {})) } },
   'jail-walk': { g: { ...base, phase: 'move', timed: false, tokens: withTokens((_, i) => (i === 3 ? { pos: 27 } : {})) }, later: [beat('move', { token: 3, space: 30, path: [28, 29, 30] }), beat('jail', { token: 3, space: 10 })], after: { tokens: withTokens((_, i) => (i === 3 ? { pos: 10, jailed: true } : {})) } },
+  build: { g: { ...base, phase: 'manage' }, later: [beat('build', { token: 1, space: 6, amount: 4 })], after: { level: base.level.map((l, i) => (i === 6 ? 4 : l)) } },
   buy: { g: { ...base, phase: 'buy', buy: 23, tokens: withTokens((_, i) => (i === 3 ? { pos: 23 } : {})) } },
   auction: { g: { ...base, phase: 'auction', auction: { id: 4, space: 23, top: 260, leader: 1, bids: 5 }, tokens: withTokens((_, i) => (i === 3 ? { pos: 23 } : {})) } },
   card: { g: { ...base, phase: 'card', timed: false, card: { deck: 'chance', deckName: 'Plot Twist', text: "Last call! Go to the nearest ride home. If it's owned, pay double. If not, you can buy it.", sips: 0 } } },

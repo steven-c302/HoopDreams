@@ -1,14 +1,32 @@
 // controller/src/tv/turf3d/scene/Houses.tsx
+import { useFrame } from '@react-three/fiber'
+import { useRef, type ReactNode } from 'react'
+import type * as THREE from 'three'
 import type { TurfTv } from '../../types'
 import { CLASSIC } from '../boardTexture'
 import { tileOf } from '../layout'
+import { popScale } from '../moments'
+
+const LOADED = performance.now()
+
+/** Grows its children from nothing with a little overshoot, unless they were already there when the stage opened. */
+function Pop({ children }: { children: ReactNode }) {
+  const ref = useRef<THREE.Group>(null)
+  const t0 = useRef(performance.now())
+  const animate = useRef(performance.now() - LOADED > 2500)
+  useFrame(() => {
+    const g = ref.current
+    if (g) g.scale.setScalar(animate.current ? popScale((performance.now() - t0.current) / 500) : 1)
+  })
+  return <group ref={ref}>{children}</group>
+}
 
 function HouseMesh({ hotel }: { hotel?: boolean }) {
   return (
-    <group scale={0.85}>
+    <Pop><group scale={0.85}>
       <mesh castShadow position={[0, 0.16, 0]}><boxGeometry args={[hotel ? 0.6 : 0.3, 0.32, 0.3]} /><meshPhysicalMaterial color={hotel ? '#e2483d' : '#2fbf55'} roughness={0.45} clearcoat={0.5} /></mesh>
       <mesh castShadow position={[0, 0.4, 0]} rotation={[0, Math.PI / 4, 0]}><coneGeometry args={[hotel ? 0.42 : 0.24, 0.24, 4]} /><meshPhysicalMaterial color={hotel ? '#8a2a22' : '#1f8a3f'} roughness={0.45} clearcoat={0.5} /></mesh>
-    </group>
+    </group></Pop>
   )
 }
 

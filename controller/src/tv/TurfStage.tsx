@@ -29,6 +29,11 @@ const sipText = (n: number) => (n >= 99 ? 'FINISH YOUR DRINK' : n === 5 ? 'A SHO
 const latest = (beats: TurfBeat[]) => beats.reduce((m, b) => Math.max(m, b.seq), 0)
 
 export function TurfStage({ stage, players, clock }: { stage: StageInfo; players: PlayerSummary[]; scores: ScoreRow[]; clock: Clock }) {
+  useEffect(() => {
+    if (!wants3d(location.search, hasWebGL2())) return
+    void import('./turf3d/TurfStage3D') // the board appears the moment the tutorial ends
+    void import('./turf3d/diceSim').then((m) => m.loadRapier()).catch(() => undefined) // and the dice are ready for the first roll
+  }, [])
   if (stage.tutorial) {
     return (
       <div className="stage-pad">
