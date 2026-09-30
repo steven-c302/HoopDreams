@@ -7,6 +7,7 @@ import { Effects } from './scene/Effects'
 import { Flags } from './scene/Flags'
 import { Houses } from './scene/Houses'
 import { Lights } from './scene/Lights'
+import { CardFlips, CoinFx } from './scene/Moments'
 import { Pieces } from './scene/Pieces'
 import { Post } from './scene/Post'
 import { Table } from './scene/Table'
@@ -26,6 +27,8 @@ export function TurfScene({ tv, craft }: { tv: TurfTv; craft: Craft }) {
       <Pieces tv={tv} craft={craft} />
       <Effects craft={craft} />
       <Dice dice={craft.dice} />
+      <CoinFx craft={craft} />
+      <CardFlips craft={craft} />
       <Post />
     </>
   )
