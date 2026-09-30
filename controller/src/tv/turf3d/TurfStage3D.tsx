@@ -6,6 +6,8 @@ import type { TurfTv } from '../types'
 import { ensureFonts } from './fonts'
 import { QualityContext, parseQuality } from './quality'
 import { TurfScene } from './TurfScene'
+import { buildHud, type HudIn } from './ui/hud'
+import { panelFor } from './ui/panels'
 import { useChoreography } from './useChoreography'
 
 /**
@@ -13,11 +15,15 @@ import { useChoreography } from './useChoreography'
  * board. Space or Enter skips the animation in progress. A lost WebGL context reports through [onLost] so the caller
  * can fall back to the flat board.
  */
-export function TurfStage3D({ g, children, onLost }: { g: TurfTv; children: ReactNode; onLost: () => void }) {
+export function TurfStage3D({ g, hud, children, onLost }: { g: TurfTv; hud: HudIn; children: ReactNode; onLost: () => void }) {
   const [skip, setSkip] = useState(0)
   const [fontsReady, setFontsReady] = useState(false)
   const quality = useMemo(() => parseQuality(location.search), [])
   const craft = useChoreography(g, !!g.quick, skip)
+  const [panelReady, setPanelReady] = useState(false)
+  const [now, setNow] = useState(() => Date.now())
+  useEffect(() => { const id = setInterval(() => setNow(Date.now()), 500); return () => clearInterval(id) }, [])
+  const hudNow = useMemo(() => buildHud(g, hud, now), [g, hud, now])
 
   useEffect(() => { void ensureFonts().then(() => setFontsReady(true)) }, [])
   useEffect(() => {
@@ -37,12 +43,12 @@ export function TurfStage3D({ g, children, onLost }: { g: TurfTv; children: Reac
           onCreated={({ gl }) => gl.domElement.addEventListener('webglcontextlost', (e) => { e.preventDefault(); onLost() })}
         >
           <QualityContext.Provider value={quality}>
-            <TurfScene tv={g} craft={craft} />
+            <TurfScene tv={g} craft={craft} hud={hudNow} onPanelReady={() => setPanelReady(true)} />
           </QualityContext.Provider>
         </Canvas>
       )}
       <div className="turf-banner3d" aria-live="polite">{craft.banner}</div>
-      <div className={`turf-well3d ${craft.shot === 'wide' ? '' : 'dim'}`}>{children}</div>
+      <div className={`turf-well3d ${craft.shot === 'wide' ? '' : 'dim'} ${panelReady && fontsReady && panelFor(g.phase) ? 'hidden3d' : ''}`}>{children}</div>
     </div>
   )
 }

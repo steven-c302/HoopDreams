@@ -75,12 +75,15 @@ function Turf({ g, stage, players, clock }: { g: TurfTv; stage: StageInfo; playe
   const left = g.tokens.map((_, i) => i).filter((i) => i % 2 === 0)
   const right = g.tokens.map((_, i) => i).filter((i) => i % 2 === 1)
   const hot = g.phase === 'buy' ? g.buy : g.phase === 'auction' ? g.auction?.space : undefined
+  const timerScale = useTimerScale()
+  const curTok = g.tokens[g.turn]
+  const seatName = curTok?.seat ? people.get(curTok.seat)?.name ?? curTok.name : curTok?.name ?? ''
   return (
     <div className={`turf-stage ${use3d ? 'is3d' : ''}`}>
       {use3d && (
         <ErrorBoundary onError={() => setLost(true)}>
           <Suspense fallback={null}>
-            <TurfStage3D g={g} onLost={() => setLost(true)}><Well g={g} stage={stage} clock={clock} people={people} /></TurfStage3D>
+            <TurfStage3D g={g} hud={{ clock, paused: !!stage.paused, timerScale, seatName }} onLost={() => setLost(true)}><Well g={g} stage={stage} clock={clock} people={people} /></TurfStage3D>
           </Suspense>
         </ErrorBoundary>
       )}
