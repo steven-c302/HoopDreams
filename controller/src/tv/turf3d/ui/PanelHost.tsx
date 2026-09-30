@@ -16,10 +16,11 @@ import { ManagePanel } from './panels/ManagePanel'
 import { PiecesPanel } from './panels/PiecesPanel'
 import { RollPanel } from './panels/RollPanel'
 import { TallyPanel } from './panels/TallyPanel'
+import { TeamUpPanel } from './panels/TeamUpPanel'
+import { TradePanel } from './panels/TradePanel'
 import { panelFor, panelSize, type PanelName } from './panels'
 
 function panelBody(name: PanelName, tv: TurfTv, hud: Hud, people: Person[]): ReactNode {
-  void people
   switch (name) {
     case 'roll': return <RollPanel tv={tv} hud={hud} />
     case 'move': return <RollPanel tv={tv} hud={hud} quiet />
@@ -33,6 +34,8 @@ function panelBody(name: PanelName, tv: TurfTv, hud: Hud, people: Person[]): Rea
     case 'card': return <CardPanel tv={tv} />
     case 'debt': return <DebtPanel tv={tv} />
     case 'tally': return <TallyPanel tv={tv} />
+    case 'trade': return <TradePanel tv={tv} />
+    case 'teamup': return <TeamUpPanel tv={tv} people={people} />
     default: return null
   }
 }
