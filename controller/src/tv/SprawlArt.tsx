@@ -97,25 +97,21 @@ export function LandlordShape({ scale = 1 }: { scale?: number }) {
   )
 }
 
-/** The lobby cover: three hexes, a house, a road and The Landlord. */
-export function SprawlCover() {
+/** The lobby cover's props (CoverArt draws the backdrop): three hexes, a house, a road and The Landlord. */
+export function SprawlProps() {
   const hex = (cx: number, cy: number, fill: string) => {
     const pts = [[0, -60], [52, -30], [52, 30], [0, 60], [-52, 30], [-52, -30]].map(([x, y]) => `${cx + x},${cy + y}`).join(' ')
     return <polygon points={pts} fill={fill} stroke={INK} strokeWidth="7" strokeLinejoin="round" />
   }
   return (
-    <svg className="art" viewBox="0 0 560 330" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-      <rect width="560" height="330" fill="var(--sky)" />
-      <g opacity=".22">{Array.from({ length: 12 }, (_, k) => <path key={k} d="M400 170 L1100 -40 L1100 120 Z" fill="var(--white)" transform={`rotate(${k * 30} 400 170)`} />)}</g>
-      <g transform="translate(20 10)">
-        {hex(330, 110, 'var(--sp-fields)')}{hex(434, 110, 'var(--sp-forest)')}{hex(382, 200, 'var(--sp-hills)')}
-        <g transform="translate(330 110) scale(.7) translate(-50 -50)"><ResourceGlyph res={3} /></g>
-        <g transform="translate(434 110) scale(.7) translate(-50 -50)"><ResourceGlyph res={1} /></g>
-        <path d="M382 140 L434 170" stroke={INK} strokeWidth="22" strokeLinecap="round" />
-        <path d="M382 140 L434 170" stroke="var(--tomato)" strokeWidth="12" strokeLinecap="round" />
-        <g transform="translate(382 140)"><SettlementShape color="var(--blueberry)" scale={1.3} /></g>
-        <g transform="translate(470 238)"><LandlordShape scale={0.9} /></g>
-      </g>
-    </svg>
+    <g transform="translate(20 10)">
+      {hex(330, 110, 'var(--sp-fields)')}{hex(434, 110, 'var(--sp-forest)')}{hex(382, 200, 'var(--sp-hills)')}
+      <g transform="translate(330 110) scale(.7) translate(-50 -50)"><ResourceGlyph res={3} /></g>
+      <g transform="translate(434 110) scale(.7) translate(-50 -50)"><ResourceGlyph res={1} /></g>
+      <path d="M382 140 L434 170" stroke={INK} strokeWidth="22" strokeLinecap="round" />
+      <path d="M382 140 L434 170" stroke="var(--tomato)" strokeWidth="12" strokeLinecap="round" />
+      <g transform="translate(382 140)"><SettlementShape color="var(--blueberry)" scale={1.3} /></g>
+      <g transform="translate(470 238)"><LandlordShape scale={0.9} /></g>
+    </g>
   )
 }

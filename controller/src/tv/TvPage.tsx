@@ -2,7 +2,7 @@ import '../theme/tokens.css'
 import './tv.css'
 import QRCode from 'qrcode'
 import { AnimatePresence, motion } from 'motion/react'
-import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from 'react'
 import { Connection, browserSocket, browserSocketUrl, type Status } from '../net/connection'
 import { rejectMessage, type GameListing, type HostCommand, type OptionKey, type PlayerSummary, type TvState } from '../protocol'
 import { GameScene } from '../theme/GameScene'
@@ -16,9 +16,8 @@ import { ImposterStage } from './ImposterStage'
 import { HotTypeStage } from './HotTypeStage'
 import { JeopardyStage } from './JeopardyStage'
 import { TriviaStage } from './TriviaStage'
-import { SprawlCover } from './SprawlArt'
 import { SprawlStage } from './SprawlStage'
-import { TurfCover } from './TurfArt'
+import { CoverArt } from './CoverArt'
 import { TurfStage } from './TurfStage'
 import { useCueDirector, useDeadline } from './director'
 import { nowPlaying, useSpotify } from './spotify'
@@ -346,12 +345,11 @@ function LobbyScreen({ tv, session, games, lobby, setOption, onStart, keys, play
             {games.map((g, i) => {
               const enough = online >= g.minPlayers
               return (
-                <button key={g.id} className={`cover ${focus === i ? 'focused' : ''}`} onClick={() => onStart(g)}>
+                <button key={g.id} className={`cover cover-${g.id} ${focus === i ? 'focused' : ''} ${enough ? '' : 'short'}`} style={{ '--len': Math.max(...g.title.split(' ').map((w) => w.length)) } as CSSProperties} onClick={() => onStart(g)}>
                   <CoverArt id={g.id} />
-                  <span className="issue">No. {i + 1}</span>
                   <div className="title">
                     <h2>{g.title.toUpperCase()}</h2>
-                    <p className={enough ? '' : 'need'}>{enough ? g.tagline : `Needs ${g.minPlayers} players`}</p>
+                    <p>{g.tagline}</p>
                   </div>
                 </button>
               )
@@ -374,82 +372,6 @@ function CastCard({ p, i, size, captain }: { p: PlayerSummary; i: number; size: 
         <span>{p.name}</span>
       </Panel>
     </Pop>
-  )
-}
-
-/** Code-drawn covers: Brainy for Brain Drain, a pencil on an answer sheet for Write It Down, a liar's grin for Bluff Battle, a fanned hand for Drunk Blackjack. */
-function CoverArt({ id }: { id: string }) {
-  const rays = (fill: string) => (
-    <g opacity=".22">{Array.from({ length: 12 }, (_, k) => <path key={k} d="M400 170 L1100 -40 L1100 120 Z" fill={fill} transform={`rotate(${k * 30} 400 170)`} />)}</g>
-  )
-  if (id === 'writeitdown') {
-    return (
-      <svg className="art" viewBox="0 0 560 330" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-        <rect width="560" height="330" fill="var(--tangerine)" />{rays('var(--white)')}
-        <g transform="translate(400 40) rotate(8)">
-          <rect x="-95" y="0" width="190" height="240" rx="10" fill="var(--white)" stroke="var(--ink)" strokeWidth="7" />
-          {[50, 90, 130, 170].map((y) => <path key={y} d={`M-70 ${y} H70`} stroke="var(--sky)" strokeWidth="5" strokeLinecap="round" />)}
-          <path d="M-70 50 Q-40 34 -10 52 T50 48" fill="none" stroke="var(--ink)" strokeWidth="6" strokeLinecap="round" />
-          <path d="M-70 90 Q-30 76 10 92" fill="none" stroke="var(--ink)" strokeWidth="6" strokeLinecap="round" />
-        </g>
-        <g transform="translate(470 110) rotate(35)">
-          <rect x="-16" y="-110" width="32" height="170" fill="var(--sun)" stroke="var(--ink)" strokeWidth="6" />
-          <rect x="-16" y="-138" width="32" height="30" rx="6" fill="var(--bubblegum)" stroke="var(--ink)" strokeWidth="6" />
-          <path d="M-16 60 L0 100 L16 60 Z" fill="var(--paper)" stroke="var(--ink)" strokeWidth="6" strokeLinejoin="round" />
-          <path d="M-6 85 L0 100 L6 85 Z" fill="var(--ink)" />
-        </g>
-      </svg>
-    )
-  }
-  if (id === 'turf') return <TurfCover />
-  if (id === 'sprawl') return <SprawlCover />
-  if (id === 'trivia') {
-    return (
-      <svg className="art" viewBox="0 0 560 330" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-        <rect width="560" height="330" fill="var(--bubblegum)" />{rays('var(--white)')}
-        <g transform="translate(250 0) scale(1.35)"><BrainyInline /></g>
-      </svg>
-    )
-  }
-  if (id === 'blackjack') {
-    return (
-      <svg className="art" viewBox="0 0 560 330" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-        <rect width="560" height="330" fill="var(--felt)" />{rays('var(--sun)')}
-        {[-18, 0, 18].map((r, k) => (
-          <g key={r} transform={`translate(${390 + k * 40} 150) rotate(${r})`}>
-            <rect x="-55" y="-78" width="110" height="156" rx="12" fill="var(--white)" stroke="var(--ink)" strokeWidth="6" />
-            <text x="-38" y="-40" fontFamily="Rammetto One" fontSize="32" fill={k === 1 ? 'var(--tomato)' : 'var(--ink)'}>{['A', 'K', '7'][k]}</text>
-          </g>
-        ))}
-      </svg>
-    )
-  }
-  return (
-    <svg className="art" viewBox="0 0 560 330" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-      <rect width="560" height="330" fill="var(--grape)" />{rays('var(--white)')}
-      <g transform="translate(420 140)">
-        <path d="M-110 -40 Q0 -120 110 -40 Q120 60 0 90 Q-120 60 -110 -40 Z" fill="var(--sun)" stroke="var(--ink)" strokeWidth="7" />
-        <path d="M-80 -30 Q-45 -60 -10 -30 Q-45 -10 -80 -30 Z M10 -30 Q45 -60 80 -30 Q45 -10 10 -30 Z" fill="var(--ink)" />
-        <path d="M-60 30 Q0 70 60 30" fill="none" stroke="var(--ink)" strokeWidth="7" strokeLinecap="round" />
-        <path d="M0 -8 L0 20 L80 60" fill="none" stroke="var(--ink)" strokeWidth="7" strokeLinecap="round" strokeLinejoin="round" />
-      </g>
-    </svg>
-  )
-}
-
-/** Brainy at cover scale (the host component draws an <svg>, so the cover inlines its own copy). */
-function BrainyInline() {
-  return (
-    <g>
-      <path d="M150 58 L158 10 L196 -4" fill="none" stroke="var(--ink)" strokeWidth="20" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M150 58 L158 10 L196 -4" fill="none" stroke="var(--white)" strokeWidth="10" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M150 58 L158 10 L196 -4" fill="none" stroke="var(--tomato)" strokeWidth="10" strokeDasharray="7 9" strokeLinejoin="round" />
-      <path d="M45 124 C15 122 12 84 36 74 C30 46 60 30 84 42 C92 18 132 16 142 38 C166 26 196 46 188 72 C212 82 208 120 184 126 C186 150 160 164 140 154 C128 172 92 172 82 156 C60 166 36 152 45 124 Z"
-        fill="var(--paper)" stroke="var(--ink)" strokeWidth="7" strokeLinejoin="round" />
-      <circle cx="100" cy="102" r="17" fill="var(--white)" stroke="var(--ink)" strokeWidth="5" /><circle cx="138" cy="102" r="17" fill="var(--white)" stroke="var(--ink)" strokeWidth="5" />
-      <circle cx="102" cy="106" r="7.5" fill="var(--ink)" /><circle cx="140" cy="106" r="7.5" fill="var(--ink)" />
-      <path d="M104 134 Q119 152 134 134 Z" fill="var(--white)" stroke="var(--ink)" strokeWidth="5" strokeLinejoin="round" />
-    </g>
   )
 }
 
