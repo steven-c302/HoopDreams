@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from 'motion/react'
-import { useEffect, useMemo, useRef, useState, type CSSProperties } from 'react'
+import { lazy, Suspense, useEffect, useMemo, useRef, useState, type CSSProperties } from 'react'
 import type { PlayerSummary, ScoreRow, StageInfo } from '../protocol'
 import { Face } from '../theme/Face'
 import { GameMark, Neighborhood } from '../theme/GameScene'
@@ -11,7 +11,10 @@ import { Die, Piece, PIECE_NAMES } from './TurfArt'
 import { TurfBoard } from './TurfBoard'
 import { Burst, C, CountUp, Crown, Deal, Panel, Pop, Slam, Stamp, Timer, coinShower, fireConfetti, inkOn } from './toon'
 import { waterNote, type TurfBeat, type TurfTv } from './types'
+import { hasWebGL2, wants3d } from './turf3d/webgl'
 import './turf.css'
+
+const TurfStage3D = lazy(() => import('./turf3d/TurfStage3D').then((m) => ({ default: m.TurfStage3D })))
 
 type Clock = { deadline: number | null; frozen: number | null }
 
@@ -58,19 +61,28 @@ function podiumRows(g: TurfTv, players: PlayerSummary[]): ScoreRow[] {
 
 function Turf({ g, stage, players, clock }: { g: TurfTv; stage: StageInfo; players: PlayerSummary[]; clock: Clock }) {
   const people = useMemo(() => new Map(players.map((p) => [p.id, p])), [players])
-  const { display, zoom } = useHops(g)
+  const [lost, setLost] = useState(false)
+  const use3d = useMemo(() => !lost && wants3d(location.search, hasWebGL2()), [lost])
+  const { display, zoom } = useHops(g, !use3d)
   const flash = useFlashes(g, people)
   useBeatSounds(g)
   const left = g.tokens.map((_, i) => i).filter((i) => i % 2 === 0)
   const right = g.tokens.map((_, i) => i).filter((i) => i % 2 === 1)
   const hot = g.phase === 'buy' ? g.buy : g.phase === 'auction' ? g.auction?.space : undefined
   return (
-    <div className="turf-stage">
+    <div className={`turf-stage ${use3d ? 'is3d' : ''}`}>
+      {use3d && (
+        <Suspense fallback={null}>
+          <TurfStage3D g={g} onLost={() => setLost(true)}><Well g={g} stage={stage} clock={clock} people={people} /></TurfStage3D>
+        </Suspense>
+      )}
       <div className="turf-rail left"><GameMark game="turf" />{left.map((i) => <TokenCard key={i} g={g} i={i} people={people} />)}</div>
       <div className="turf-board-wrap">
-        <TurfBoard tv={g} display={display} zoom={zoom} hot={hot}>
-          <Well g={g} stage={stage} clock={clock} people={people} />
-        </TurfBoard>
+        {!use3d && (
+          <TurfBoard tv={g} display={display} zoom={zoom} hot={hot}>
+            <Well g={g} stage={stage} clock={clock} people={people} />
+          </TurfBoard>
+        )}
       </div>
       <div className="turf-rail right">{right.map((i) => <TokenCard key={i} g={g} i={i} people={people} />)}</div>
       <AnimatePresence>{flash && <FlashView key={flash.id} f={flash} />}</AnimatePresence>
@@ -80,7 +92,7 @@ function Turf({ g, stage, players, clock }: { g: TurfTv; stage: StageInfo; playe
 
 // ---- motion: pieces hop, the camera follows ------------------------------------------------------
 
-function useHops(g: TurfTv) {
+function useHops(g: TurfTv, enabled: boolean) {
   const [display, setDisplay] = useState<number[]>(() => g.tokens.map((t) => t.pos))
   const [zoom, setZoom] = useState<number | null>(null)
   const seen = useRef(latest(g.beats))
@@ -89,6 +101,7 @@ function useHops(g: TurfTv) {
   useEffect(() => {
     const fresh = g.beats.filter((b) => b.seq > seen.current)
     seen.current = Math.max(seen.current, latest(g.beats))
+    if (!enabled) { setDisplay(g.tokens.map((t) => t.pos)); return }
     const moves = fresh.filter((b) => b.kind === 'move' && b.path.length > 0)
     for (const b of moves) {
       busy.current++
@@ -103,7 +116,7 @@ function useHops(g: TurfTv) {
     }
     // Anything else that moved a piece (Timeout, a bankruptcy, a restore) snaps straight there.
     if (moves.length === 0 && busy.current === 0) setDisplay(g.tokens.map((t) => t.pos))
-  }, [g])
+  }, [g, enabled])
   useEffect(() => () => timers.current.forEach(clearTimeout), [])
   return { display, zoom }
 }

@@ -48,6 +48,19 @@
 .side-l .turf-buildings, .side-r .turf-buildings { flex-direction: column; }
 
 .turf-well { position: absolute; }
+
+/* ---- 3D stage: the canvas fills the stage behind the rails; the well panel floats over the middle of the board ---- */
+.turf-stage.is3d .turf-board-wrap { pointer-events: none; }
+.turf-3d { position: absolute; inset: 0; z-index: 0; background: #241710; }
+.turf-3d canvas { display: block; width: 100% !important; height: 100% !important; }
+.turf-stage.is3d .turf-rail { position: relative; z-index: 2; }
+/* Laid out at the flat board's natural size, then scaled to sit inside the printed middle of the board; it fades out
+   whenever the camera leaves the wide shot so it never covers a piece that is walking. */
+.turf-well3d { position: absolute; left: 50%; top: 50%; width: 900px; height: 580px; transform: translate(-50%, -50%) scale(0.68); z-index: 1; pointer-events: none; transition: opacity .35s; }
+.turf-well3d.dim { opacity: 0; }
+.turf-well3d .well { inset: 0; }
+.turf-banner3d { position: absolute; top: 7%; left: 0; right: 0; text-align: center; z-index: 3; pointer-events: none;
+  font-family: 'Rammetto One', var(--font-display); font-size: 120px; line-height: 1; color: #fff; text-shadow: 0 6px 0 #1a1a1a; }
 .turf-token { position: absolute; z-index: 5; width: 42px; height: 42px; }
 .turf-token.active { z-index: 6; filter: drop-shadow(0 0 0 var(--ink)); }
 .turf-token.active .turf-piece { transform: scale(1.12); }

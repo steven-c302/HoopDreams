@@ -101,6 +101,8 @@ const BEATS: Record<string, { g: TurfTv; later?: TurfBeat[]; after?: Partial<Tur
   deal: { g: { ...base, phase: 'deal', timed: false, beats: tokens.map((_, i) => beat('deal', { token: i, tokens: owned.filter(([, t]) => t === i).slice(0, 2).map(([s]) => s) })) } },
   roll: { g: base },
   move: { g: { ...base, phase: 'move', timed: false }, later: [beat('move', { token: 3, space: 23, path: [15, 16, 17, 18, 19, 20, 21, 22, 23] })], after: { tokens: withTokens((_, i) => (i === 3 ? { pos: 23 } : {})) } },
+  lineup: { g: { ...base, phase: 'roll', tokens: withTokens(() => ({ pos: 0 })) } },
+  'diced-move': { g: { ...base, phase: 'move', timed: false }, later: [beat('roll', { token: 3, dice: [4, 5, 1] }), beat('move', { token: 3, space: 23, path: [15, 16, 17, 18, 19, 20, 21, 22, 23] })], after: { tokens: withTokens((_, i) => (i === 3 ? { pos: 23 } : {})) } },
   buy: { g: { ...base, phase: 'buy', buy: 23, tokens: withTokens((_, i) => (i === 3 ? { pos: 23 } : {})) } },
   auction: { g: { ...base, phase: 'auction', auction: { id: 4, space: 23, top: 260, leader: 1, bids: 5 }, tokens: withTokens((_, i) => (i === 3 ? { pos: 23 } : {})) } },
   card: { g: { ...base, phase: 'card', timed: false, card: { deck: 'chance', deckName: 'Plot Twist', text: "Last call! Go to the nearest ride home. If it's owned, pay double. If not, you can buy it.", sips: 0 } } },

@@ -3,7 +3,7 @@ export type Shot = 'wide' | 'dice' | 'follow' | 'close'
 export type V3 = [number, number, number]
 export interface Pose { pos: V3; look: V3 }
 
-const WIDE: V3 = [0, 14, 15.4]
+const WIDE: V3 = [0, 15.4, 16.9] // backed off 10% so the board clears both rails by 24px at 1920x1080
 
 /** Backs the wide shot off when the frame is narrower than 16:9 so the whole board still fits. */
 export const wideScale = (aspect: number) => Math.max(1, 1.7 / Math.max(aspect, 0.1))
