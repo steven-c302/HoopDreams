@@ -13,15 +13,15 @@ import { Burst, C, CountUp, Crown, Deal, Panel, Pop, Slam, Stamp, Timer, coinSho
 import { waterNote, type TurfBeat, type TurfTv } from './types'
 import { ErrorBoundary } from './turf3d/ErrorBoundary'
 import { hasWebGL2, wants3d } from './turf3d/webgl'
+import { DECISION_MS, SETUP_PHASES, gameClockLeft, type Clock } from './turf3d/ui/hud'
 import './turf.css'
 
 const TurfStage3D = lazy(() => import('./turf3d/TurfStage3D').then((m) => ({ default: m.TurfStage3D })))
 
-type Clock = { deadline: number | null; frozen: number | null }
 
 /** Same as the engine: each hop is 260 ms, and the camera lets go shortly after the last one. */
 const HOP_MS = 260
-const SETUP = new Set(['teamup', 'pieces', 'deal', 'tally', 'podium'])
+const SETUP = SETUP_PHASES
 const RIDE = '#2B2B2B'
 
 const money = (n: number) => `$${n.toLocaleString()}`
@@ -280,10 +280,7 @@ function TokenCard({ g, i, people }: { g: TurfTv; i: number; people: Map<string,
 function useGameClock(g: TurfTv, clock: Clock): number | null {
   const [now, setNow] = useState(() => Date.now())
   useEffect(() => { const id = setInterval(() => setNow(Date.now()), 500); return () => clearInterval(id) }, [])
-  if (g.clockLeftMs == null) return null
-  if (SETUP.has(g.phase)) return Math.max(0, g.clockLeftMs)
-  const left = clock.frozen ?? (clock.deadline ? Math.max(0, clock.deadline - now) : g.phaseMs ?? 0)
-  return Math.max(0, g.clockLeftMs - Math.max(0, (g.phaseMs ?? 0) - left))
+  return gameClockLeft(g, clock, now)
 }
 
 function GameClock({ g, clock }: { g: TurfTv; clock: Clock }) {
@@ -294,7 +291,6 @@ function GameClock({ g, clock }: { g: TurfTv; clock: Clock }) {
   return <span className="turf-clock"><Led value={`${m}:${String(s).padStart(2, '0')}`} tone={left < 5 * 60_000 ? 'red' : 'gold'} size={40} digits={5} /></span>
 }
 
-const DECISION_MS: Record<string, number> = { roll: 20_000, jail: 15_000, buy: 15_000, auction: 10_000, choose: 10_000, manage: 20_000, debt: 60_000, trade: 30_000, pieces: 15_000, teamup: 15_000 }
 
 function Well({ g, stage, clock, people }: { g: TurfTv; stage: StageInfo; clock: Clock; people: Map<string, PlayerSummary> }) {
   const scale = useTimerScale()
