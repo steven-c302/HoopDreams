@@ -1,7 +1,7 @@
 // controller/src/tv/turf3d/timeline.test.ts
 import { describe, expect, it } from 'vitest'
 import type { TurfBeat } from '../types'
-import { DICE_MS, LAND_PAD_MS, hopMs, moveDwellMs, planBeats, walkMs, type Cue } from './timeline'
+import { DICE_BANNER_MS, DICE_MS, LAND_PAD_MS, hopMs, moveDwellMs, planBeats, walkMs, type Cue } from './timeline'
 
 let seq = 0
 const beat = (kind: string, b: Partial<TurfBeat> = {}): TurfBeat =>
@@ -38,7 +38,7 @@ describe('planBeats', () => {
   it('plays a Theatre roll: dice shot and banner first, the walk after DICE_MS, a close-up for the last three hops', () => {
     const p = planBeats([beat('roll', { token: 3, dice: [4, 5, 1] }), beat('move', { token: 3, path: walk(14, 9) })], { quick: false })
     expect(p.cues[0]).toEqual({ at: 0, kind: 'shot', shot: 'dice', focus: null })
-    expect(p.cues).toContainEqual({ at: 1500, kind: 'banner', text: '4 + 5 = 9' })
+    expect(p.cues).toContainEqual({ at: DICE_BANNER_MS, kind: 'banner', text: '4 + 5 = 9' })
     expect(p.cues).toContainEqual({ at: DICE_MS, kind: 'banner', text: null })
     const h = hops(p)
     expect(h).toHaveLength(9)
@@ -93,5 +93,61 @@ describe('planBeats', () => {
   it('does not treat a later, unrelated move as diced after a turn change', () => {
     const p = planBeats([beat('roll', { token: 0, dice: [2, 3, 1] }), beat('turn', { token: 1 }), beat('move', { token: 1, path: walk(5, 2) })], { quick: false })
     expect(p.cues.some((c) => c.kind === 'shot' && c.shot === 'dice')).toBe(false)
+  })
+})
+
+describe('planBeats: dice cues and moments', () => {
+  const moments = (p: { cues: Cue[] }) => p.cues.filter((c): c is Extract<Cue, { kind: 'moment' }> => c.kind === 'moment')
+
+  it('adds a dice cue seeded by the roll beat, and a doubles banner', () => {
+    const roll = beat('roll', { token: 3, dice: [4, 4, 1] })
+    const p = planBeats([roll, beat('move', { token: 3, path: walk(0, 8) })], { quick: false })
+    expect(p.cues).toContainEqual({ at: 0, kind: 'dice', values: [4, 4], seed: roll.seq })
+    expect(p.cues).toContainEqual({ at: DICE_BANNER_MS, kind: 'banner', text: '4 + 4 = 8 DOUBLES!' })
+    expect(DICE_BANNER_MS).toBeLessThan(DICE_MS)
+  })
+
+  it('skips the dice cue for a value no die can show, but still plans the banner', () => {
+    const p = planBeats([beat('roll', { token: 3, dice: [0, 9, 1] }), beat('move', { token: 3, path: walk(0, 4) })], { quick: false })
+    expect(p.cues.some((c) => c.kind === 'dice')).toBe(false)
+    expect(p.cues.some((c) => c.kind === 'banner' && c.text === '0 + 9 = 9')).toBe(true)
+  })
+
+  it('plans no dice cue at Quick pace', () => {
+    const p = planBeats([beat('roll', { token: 3, dice: [2, 3, 1] }), beat('move', { token: 3, path: walk(0, 5) })], { quick: true })
+    expect(p.cues.some((c) => c.kind === 'dice')).toBe(false)
+  })
+
+  it('turns rent, tax, card and bankrupt beats into moments at the start of the update', () => {
+    const p = planBeats([
+      beat('rent', { token: 4, other: 1, space: 9, amount: 600 }),
+      beat('tax', { token: 3, space: 4, amount: 200 }),
+      beat('card', { token: 2, text: 'Last call' }),
+      beat('bankrupt', { token: 4, other: 1 }),
+    ], { quick: false })
+    expect(moments(p).map((c) => [c.at, c.moment])).toEqual([
+      [0, { type: 'rent', from: 4, to: 1, amount: 600 }],
+      [0, { type: 'tax', token: 3, amount: 200 }],
+      [0, { type: 'card', token: 2 }],
+      [0, { type: 'fall', token: 4 }],
+    ])
+    expect(p.totalMs).toBe(0) // moments never hold the queue
+  })
+
+  it('fires the Payday rain as the piece reaches Payday, not at the end of the walk', () => {
+    const p = planBeats([beat('move', { token: 3, path: [38, 39, 0, 1, 2, 3] }), beat('payday', { token: 3, amount: 200 })], { quick: false })
+    expect(moments(p)).toEqual([{ at: 690, kind: 'moment', moment: { type: 'payday', token: 3 } }]) // three early hops of 230 ms
+    const q = planBeats([beat('move', { token: 3, path: [38, 39, 0, 1, 2, 3] }), beat('payday', { token: 3, amount: 200 })], { quick: true })
+    expect(moments(q)[0].at).toBe(780) // three hops of 260 ms
+  })
+
+  it('still fires a Payday moment when no walk came in the same update', () => {
+    const p = planBeats([beat('payday', { token: 1, amount: 200 })], { quick: false })
+    expect(moments(p)).toEqual([{ at: 0, kind: 'moment', moment: { type: 'payday', token: 1 } }])
+  })
+
+  it('queues a moment behind a walk in the same update', () => {
+    const p = planBeats([beat('move', { token: 0, path: walk(0, 3) }), beat('rent', { token: 0, other: 1, space: 3, amount: 50 })], { quick: false })
+    expect(moments(p)[0].at).toBe(moveDwellMs(3, false, false))
   })
 })

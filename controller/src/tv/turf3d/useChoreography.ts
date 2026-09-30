@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'react'
 import { sfx } from '../audio'
 import type { TurfTv } from '../types'
 import type { Shot } from './camera'
+import type { Moment } from './moments'
 import { ShowQueue, shouldSnap } from './showQueue'
 import { planBeats, type Cue } from './timeline'
 
@@ -19,6 +20,10 @@ export interface Craft {
   banner: string | null
   target: number | null
   landed: { token: number; space: number; n: number } | null
+  /** The latest dice throw to play (numbered, so the scene plays each once). */
+  dice: { n: number; values: [number, number]; seed: number } | null
+  /** Recent moments, oldest first, each with an id that only ever goes up (even across a skip). */
+  moments: (Moment & { n: number })[]
 }
 
 const latest = (g: TurfTv) => g.beats.reduce((m, b) => Math.max(m, b.seq), 0)
@@ -27,13 +32,40 @@ const latest = (g: TurfTv) => g.beats.reduce((m, b) => Math.max(m, b.seq), 0)
 export const initialSeen = (g: TurfTv): number => latest(g)
 
 export const restCraft = (g: TurfTv): Craft => ({
-  shown: g.tokens.map((t) => t.pos), hop: g.tokens.map(() => null), shot: 'wide', focus: null, banner: null, target: null, landed: null,
+  shown: g.tokens.map((t) => t.pos), hop: g.tokens.map(() => null), shot: 'wide', focus: null, banner: null, target: null,
+  landed: null, dice: null, moments: [],
 })
 
 /** Puts every piece back where the engine says it is (a restore, a Timeout, a new token); same object when already right. */
 export function snapFor(c: Craft, g: TurfTv): Craft {
   const right = c.shown.length === g.tokens.length && c.shown.every((s, i) => s === g.tokens[i].pos)
   return right ? c : { ...c, shown: g.tokens.map((t) => t.pos), hop: g.tokens.map(() => null) }
+}
+
+/** Running ids for hops, moments and dice throws; owned by the hook so they keep climbing across a reset. */
+export interface Counters { hop: number; moment: number; dice: number }
+
+/** What one cue does to the craft. Sound cues change nothing here (the hook plays them). */
+export function applyCue(cr: Craft, c: Cue, n: Counters): Craft {
+  switch (c.kind) {
+    case 'hop': {
+      const shown = cr.shown.slice(); shown[c.token] = c.space
+      const hop = cr.hop.slice(); hop[c.token] = { n: ++n.hop, ms: c.ms, height: c.height, last: c.last }
+      return { ...cr, shown, hop }
+    }
+    case 'snap': {
+      const shown = cr.shown.slice(); shown[c.token] = c.space
+      const hop = cr.hop.slice(); hop[c.token] = null
+      return { ...cr, shown, hop }
+    }
+    case 'shot': return { ...cr, shot: c.shot, focus: c.focus }
+    case 'banner': return { ...cr, banner: c.text }
+    case 'target': return { ...cr, target: c.space }
+    case 'land': return { ...cr, landed: { token: c.token, space: c.space, n: (cr.landed?.n ?? 0) + 1 } }
+    case 'dice': return { ...cr, dice: { n: ++n.dice, values: c.values, seed: c.seed } }
+    case 'moment': return { ...cr, moments: [...cr.moments, { ...c.moment, n: ++n.moment }].slice(-8) }
+    case 'sfx': return cr
+  }
 }
 
 /**
@@ -44,7 +76,7 @@ export function snapFor(c: Craft, g: TurfTv): Craft {
 export function useChoreography(g: TurfTv, quick: boolean, skip: number): Craft {
   const [craft, setCraft] = useState<Craft>(() => restCraft(g))
   const seen = useRef(initialSeen(g))
-  const hopN = useRef(0)
+  const counters = useRef<Counters>({ hop: 0, moment: 0, dice: 0 })
   const gRef = useRef(g)
   gRef.current = g
   const applyRef = useRef<(c: Cue) => void>(() => undefined)
@@ -76,27 +108,8 @@ export function useChoreography(g: TurfTv, quick: boolean, skip: number): Craft 
   useEffect(() => () => queue.current?.skip(), [])
 
   applyRef.current = (c: Cue) => {
-    switch (c.kind) {
-      case 'hop':
-        setCraft((cr) => {
-          const shown = cr.shown.slice(); shown[c.token] = c.space
-          const hop = cr.hop.slice(); hop[c.token] = { n: ++hopN.current, ms: c.ms, height: c.height, last: c.last }
-          return { ...cr, shown, hop }
-        })
-        break
-      case 'snap':
-        setCraft((cr) => {
-          const shown = cr.shown.slice(); shown[c.token] = c.space
-          const hop = cr.hop.slice(); hop[c.token] = null
-          return { ...cr, shown, hop }
-        })
-        break
-      case 'shot': setCraft((cr) => ({ ...cr, shot: c.shot, focus: c.focus })); break
-      case 'banner': setCraft((cr) => ({ ...cr, banner: c.text })); break
-      case 'target': setCraft((cr) => ({ ...cr, target: c.space })); break
-      case 'land': setCraft((cr) => ({ ...cr, landed: { token: c.token, space: c.space, n: (cr.landed?.n ?? 0) + 1 } })); break
-      case 'sfx': if (c.name === 'hop') sfx.hop(c.arg); else sfx.drumroll(c.arg); break
-    }
+    if (c.kind === 'sfx') { if (c.name === 'hop') sfx.hop(c.arg); else sfx.drumroll(c.arg); return }
+    setCraft((cr) => applyCue(cr, c, counters.current))
   }
 
   return craft

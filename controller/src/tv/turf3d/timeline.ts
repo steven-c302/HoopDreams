@@ -1,9 +1,12 @@
 // controller/src/tv/turf3d/timeline.ts
 import type { TurfBeat } from '../types'
 import type { Shot } from './camera'
+import type { Moment } from './moments'
 
 /** Kept in step with HomeTurf.kt (DICE_MS, LAND_PAD_MS, hopMs, moveDwellMs); both tests assert the same table. */
 export const DICE_MS = 2600
+/** The dice settle by about 1.73 s; the total appears just after. */
+export const DICE_BANNER_MS = 1800
 export const LAND_PAD_MS = 900
 export const QUICK_HOP_MS = 260
 export const QUICK_PAD_MS = 1400
@@ -37,31 +40,49 @@ export type Cue =
   | { at: number; kind: 'land'; token: number; space: number }
   | { at: number; kind: 'snap'; token: number; space: number }
   | { at: number; kind: 'sfx'; name: 'hop' | 'drumroll'; arg: number }
+  | { at: number; kind: 'dice'; values: [number, number]; seed: number }
+  | { at: number; kind: 'moment'; moment: Moment }
+
+const isDie = (v: number) => Number.isInteger(v) && v >= 1 && v <= 6
 
 /**
  * Turns the beats that arrived since the last update into timed cues (ms from now, sorted, ties keep insertion order).
- * A roll only counts as "diced" for the move that follows it; a turn change or Timeout clears it.
+ * A roll only counts as "diced" for the move that follows it; a turn change or Timeout clears it. Money and drama
+ * beats become moments; they never lengthen the show, so they cannot hold the queue.
  */
 export function planBeats(fresh: TurfBeat[], { quick }: { quick: boolean }): { cues: Cue[]; totalMs: number } {
   const cues: Cue[] = []
   let t = 0
-  let dice: number[] | null = null
+  let roll: { dice: number[]; seq: number } | null = null
+  let walk: { path: number[]; ends: number[] } | null = null
+  const moment = (at: number, m: Moment) => cues.push({ at, kind: 'moment', moment: m })
   for (const b of fresh) {
-    if (b.kind === 'roll') { dice = b.dice; continue }
-    if (b.kind === 'turn') { dice = null; continue }
-    if (b.kind === 'jail') { dice = null; cues.push({ at: t, kind: 'snap', token: b.token, space: b.space }); continue }
+    if (b.kind === 'roll') { roll = { dice: b.dice, seq: b.seq }; continue }
+    if (b.kind === 'turn') { roll = null; continue }
+    if (b.kind === 'jail') { roll = null; cues.push({ at: t, kind: 'snap', token: b.token, space: b.space }); continue }
+    if (b.kind === 'rent') { moment(t, { type: 'rent', from: b.token, to: b.other, amount: b.amount }); continue }
+    if (b.kind === 'tax') { moment(t, { type: 'tax', token: b.token, amount: b.amount }); continue }
+    if (b.kind === 'card') { moment(t, { type: 'card', token: b.token }); continue }
+    if (b.kind === 'bankrupt') { moment(t, { type: 'fall', token: b.token }); continue }
+    if (b.kind === 'payday') {
+      const i = walk ? walk.path.indexOf(0) : -1
+      moment(walk && i >= 0 ? walk.ends[i] : t, { type: 'payday', token: b.token })
+      continue
+    }
     if (b.kind !== 'move' || b.path.length === 0) continue
 
-    const rolled = dice
-    dice = null
+    const rolled = roll
+    roll = null
     const path = b.path, n = path.length, dest = path[n - 1]
     if (rolled && !quick) {
-      const [a = 0, c = 0] = rolled
+      const [a = 0, c = 0] = rolled.dice
       cues.push({ at: t, kind: 'shot', shot: 'dice', focus: null })
-      cues.push({ at: t + 1500, kind: 'banner', text: `${a} + ${c} = ${a + c}` })
+      if (isDie(a) && isDie(c)) cues.push({ at: t, kind: 'dice', values: [a, c], seed: rolled.seq })
+      cues.push({ at: t + DICE_BANNER_MS, kind: 'banner', text: `${a} + ${c} = ${a + c}${a === c ? ' DOUBLES!' : ''}` })
       cues.push({ at: t + DICE_MS, kind: 'banner', text: null })
       t += DICE_MS
     }
+    const ends: number[] = []
     const tail = Math.max(0, n - 3)
     for (let i = 0; i < n; i++) {
       const ms = hopMs(i, n, quick)
@@ -76,7 +97,9 @@ export function planBeats(fresh: TurfBeat[], { quick }: { quick: boolean }): { c
       cues.push({ at: t, kind: 'hop', token: b.token, space: path[i], ms, height: hopHeight(i, n, quick), last: i === n - 1 })
       cues.push({ at: t, kind: 'sfx', name: 'hop', arg: i })
       t += ms
+      ends.push(t)
     }
+    walk = { path, ends }
     cues.push({ at: t, kind: 'land', token: b.token, space: dest })
     if (!quick) {
       cues.push({ at: t, kind: 'target', space: null })
