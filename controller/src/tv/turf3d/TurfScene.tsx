@@ -2,6 +2,7 @@
 import type { TurfTv } from '../types'
 import { Board3D } from './scene/Board3D'
 import { CameraRig } from './scene/CameraRig'
+import { Dice } from './scene/Dice'
 import { Effects } from './scene/Effects'
 import { Flags } from './scene/Flags'
 import { Houses } from './scene/Houses'
@@ -24,6 +25,7 @@ export function TurfScene({ tv, craft }: { tv: TurfTv; craft: Craft }) {
       <Flags tv={tv} />
       <Pieces tv={tv} craft={craft} />
       <Effects craft={craft} />
+      <Dice dice={craft.dice} />
       <Post />
     </>
   )

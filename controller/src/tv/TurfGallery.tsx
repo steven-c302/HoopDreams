@@ -103,6 +103,7 @@ const BEATS: Record<string, { g: TurfTv; later?: TurfBeat[]; after?: Partial<Tur
   move: { g: { ...base, phase: 'move', timed: false }, later: [beat('move', { token: 3, space: 23, path: [15, 16, 17, 18, 19, 20, 21, 22, 23] })], after: { tokens: withTokens((_, i) => (i === 3 ? { pos: 23 } : {})) } },
   lineup: { g: { ...base, phase: 'roll', tokens: withTokens(() => ({ pos: 0 })) } },
   'diced-move': { g: { ...base, phase: 'move', timed: false }, later: [beat('roll', { token: 3, dice: [4, 5, 1] }), beat('move', { token: 3, space: 23, path: [15, 16, 17, 18, 19, 20, 21, 22, 23] })], after: { tokens: withTokens((_, i) => (i === 3 ? { pos: 23 } : {})) } },
+  'doubles-move': { g: { ...base, phase: 'move', timed: false }, later: [beat('roll', { token: 3, dice: [4, 4, 1] }), beat('move', { token: 3, space: 22, path: [15, 16, 17, 18, 19, 20, 21, 22] })], after: { tokens: withTokens((_, i) => (i === 3 ? { pos: 22 } : {})) } },
   buy: { g: { ...base, phase: 'buy', buy: 23, tokens: withTokens((_, i) => (i === 3 ? { pos: 23 } : {})) } },
   auction: { g: { ...base, phase: 'auction', auction: { id: 4, space: 23, top: 260, leader: 1, bids: 5 }, tokens: withTokens((_, i) => (i === 3 ? { pos: 23 } : {})) } },
   card: { g: { ...base, phase: 'card', timed: false, card: { deck: 'chance', deckName: 'Plot Twist', text: "Last call! Go to the nearest ride home. If it's owned, pay double. If not, you can buy it.", sips: 0 } } },
@@ -129,7 +130,12 @@ export function TurfGallery({ beat: name }: { beat: string | null }) {
   const [g, setG] = useState<TurfTv | null>(fixture?.g ?? null)
   useEffect(() => {
     if (!fixture?.later) return
-    const id = setTimeout(() => setG((cur) => cur && { ...cur, ...fixture.after, beats: [...cur.beats, ...fixture.later!] }), 700)
+    // Numbered straight after the beats already on the board: a gap in seq reads as a reconnect and snaps instead of playing.
+    const id = setTimeout(() => setG((cur) => {
+      if (!cur) return cur
+      const top = cur.beats.reduce((m, b) => Math.max(m, b.seq), 0)
+      return { ...cur, ...fixture.after, beats: [...cur.beats, ...fixture.later!.map((b, i) => ({ ...b, seq: top + 1 + i }))] }
+    }), 700)
     return () => clearTimeout(id)
   }, [fixture])
   if (!fixture || !g) {
