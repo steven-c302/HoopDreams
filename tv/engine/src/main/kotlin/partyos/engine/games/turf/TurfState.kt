@@ -113,6 +113,8 @@ data class TurfState(
     val phaseMs: Long? = null,
     val lastLap: Boolean = false,
     val drinks: Boolean = true,
+    /** Quick pace: the old short MOVE dwell and no dice theatre on the TV. Theatre (false) is the default. */
+    val quick: Boolean = false,
     val rngSeed: Long = 0,
     val draws: Int = 0,
     val beats: List<TBeat> = emptyList(),

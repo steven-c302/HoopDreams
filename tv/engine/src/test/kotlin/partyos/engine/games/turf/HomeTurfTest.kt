@@ -38,6 +38,7 @@ class HomeTurfTest {
     private fun start(names: List<String>, vararg opts: Pair<String, Int>): List<PlayerId> {
         e = PartyEngine(clock, SeededEntropy(3), registry)
         ids = names.map { e.add(it) }
+        e.host(HostCmd.SetOption("pace", 1)) // Quick: the old MOVE dwell, so the existing timings hold; tests that need Theatre pass "pace" to 0
         opts.forEach { (k, v) -> e.host(HostCmd.SetOption(k, v)) }
         assertEquals(ActionResult.Ack, e.host(HostCmd.StartGame("turf")))
         e.host(HostCmd.SkipPhase) // tutorial
@@ -161,6 +162,49 @@ class HomeTurfTest {
         assertEquals(ActionResult.Ack, act(who, "end"))
         assertEquals("roll", tv.phase)
         assertEquals(other, tv.turn)
+    }
+
+    // ---- pacing (the TypeScript timeline test carries the same table) ---------------------------
+
+    @Test fun moveDwellTableMatchesTheTvTimeline() {
+        assertEquals(2180L, HomeTurf.moveDwellMs(3, diced = true, quick = true))
+        assertEquals(3220L, HomeTurf.moveDwellMs(7, diced = false, quick = true))
+        assertEquals(5100L, HomeTurf.moveDwellMs(3, diced = true, quick = false))
+        assertEquals(6020L, HomeTurf.moveDwellMs(7, diced = true, quick = false))
+        assertEquals(3420L, HomeTurf.moveDwellMs(7, diced = false, quick = false))
+        assertEquals(1720L, HomeTurf.moveDwellMs(1, diced = false, quick = false))
+        assertEquals(listOf(230L, 230L, 230L, 230L, 320L, 460L, 820L), (0 until 7).map { HomeTurf.hopMs(it, 7, false) })
+        assertEquals(listOf(260L, 260L, 260L), (0 until 3).map { HomeTurf.hopMs(it, 3, true) })
+    }
+
+    @Test fun paceOptionIsAcceptedAndShownToTheTv() {
+        start(listOf("Ava", "Ben"), "pace" to 0); skipSetup()
+        assertFalse(tv.quick)
+        assertEquals(ActionResult.Ack, e.host(HostCmd.SetOption("pace", 1)))
+    }
+
+    @Test fun quickPaceKeepsTheOldMoveDwell() {
+        start(listOf("Ava", "Ben")); skipSetup()
+        rig { it.clean() }
+        rigRoll { !it.doubles && it.move == 3 }
+        act(seatOf(state.turn), "roll")
+        assertTrue(tv.quick)
+        assertEquals("move", tv.phase)
+        assertEquals(moveMs(3), remaining)
+    }
+
+    @Test fun theatrePaceHoldsTheMoveForTheDiceAndTheSlowedWalk() {
+        start(listOf("Ava", "Ben"), "pace" to 0); skipSetup()
+        rig { it.clean() }
+        rigRoll { !it.doubles && it.move == 3 }
+        act(seatOf(state.turn), "roll")
+        assertFalse(tv.quick)
+        assertEquals("move", tv.phase)
+        assertEquals(5_100L, remaining)
+        passTime(5_099)
+        assertEquals("move", tv.phase)
+        passTime(1)
+        assertNotEquals("move", tv.phase)
     }
 
     @Test fun doublesRollAgainAndThreeInARowIsTimeout() {

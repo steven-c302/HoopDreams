@@ -43,6 +43,7 @@ data class TurfTv(
     /** The stage deadline is a decision timer (tick and hurry), not an animation pause. */
     val timed: Boolean = false,
     val drinks: Boolean = true,
+    val quick: Boolean = false,
     val beats: List<TBeat> = emptyList(),
     val ticker: List<String> = emptyList(),
     /** Pieces still free (pieces phase). */

@@ -1205,6 +1205,7 @@
                     "lastLap": false,
                     "timed": true,
                     "drinks": true,
+                    "quick": false,
                     "beats": [
                         {
                             "seq": 40,

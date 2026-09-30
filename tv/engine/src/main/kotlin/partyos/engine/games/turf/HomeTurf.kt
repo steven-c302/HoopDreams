@@ -78,6 +78,7 @@ class HomeTurf(private val names: BoardNames = TurfBoard.loadNames()) : GameModu
             chance = TurfDecks.chance.indices.shuffled(rnd()), chest = TurfDecks.chest.indices.shuffled(rnd()),
             clockLeftMs = if (minutes > 0) minutes * 60_000L else null,
             drinks = (ctx.settings["drinks"] ?: 1) != 0,
+            quick = (ctx.settings["pace"] ?: 0) != 0,
             rngSeed = seed, draws = draws, notice = notice,
         )
         return if (teams) go(s, TEAMUP, ctx) else go(s, PIECES, ctx)
@@ -308,7 +309,7 @@ class HomeTurf(private val names: BoardNames = TurfBoard.loadNames()) : GameModu
         s = s.copy(doubles = doubles)
         if (doubles >= MAX_DOUBLES) return jail(s.log("Three doubles in a row: ${s.tokens[t].name} got pulled over"), t, ctx)
         if (r.bus) return go(s.copy(choose = BUS), CHOOSE, ctx)
-        return move(s.copy(scout = r.scout), t, r.move, ctx)
+        return move(s.copy(scout = r.scout), t, r.move, ctx, diced = true)
     }
 
     /** A Timeout turn: doubles walk out (no extra roll); otherwise pay $50 and move anyway (the short-game rule). */
@@ -318,7 +319,7 @@ class HomeTurf(private val names: BoardNames = TurfBoard.loadNames()) : GameModu
         var s = s0.copy(draws = s0.draws + 1, roll = r, doubles = 0).beat("roll", token = t, dice = r.dice)
         if (r.doubles) {
             s = s.tok(t) { it.copy(jailed = false) }.copy(jailRoll = true).beat("free", token = t).log("${s.tokens[t].name} rolled doubles out of ${names.spaces[TurfBoard.JAIL].name}")
-            return move(s, t, r.a + r.b, ctx)
+            return move(s, t, r.a + r.b, ctx, diced = true)
         }
         s = s.charge(t, JAIL_FEE, TurfRules.NOBODY, "to leave ${names.spaces[TurfBoard.JAIL].name}").log("${s.tokens[t].name} paid $$JAIL_FEE to leave ${names.spaces[TurfBoard.JAIL].name}")
         if (s.debts.isNotEmpty()) return go(s.copy(next = JAIL_MOVE), DEBT, ctx)
@@ -328,7 +329,7 @@ class HomeTurf(private val names: BoardNames = TurfBoard.loadNames()) : GameModu
     private fun jailWalk(s: TurfState, ctx: GameContext): Step<TurfState> {
         val t = s.turn
         val r = s.roll ?: return afterLand(s, ctx)
-        return move(s.tok(t) { it.copy(jailed = false) }.copy(jailRoll = true).beat("free", token = t), t, r.a + r.b, ctx)
+        return move(s.tok(t) { it.copy(jailed = false) }.copy(jailRoll = true).beat("free", token = t), t, r.a + r.b, ctx, diced = true)
     }
 
     private fun jail(s0: TurfState, t: Int, ctx: GameContext): Step<TurfState> {
@@ -341,7 +342,7 @@ class HomeTurf(private val names: BoardNames = TurfBoard.loadNames()) : GameModu
     }
 
     /** Moves forward (or back, for a negative count), collecting Payday when passing or landing on it. */
-    private fun move(s0: TurfState, t: Int, steps: Int, ctx: GameContext): Step<TurfState> {
+    private fun move(s0: TurfState, t: Int, steps: Int, ctx: GameContext, diced: Boolean = false): Step<TurfState> {
         val from = s0.tokens[t].pos
         val path = TurfRules.path(from, steps)
         val to = path.lastOrNull() ?: from
@@ -349,7 +350,7 @@ class HomeTurf(private val names: BoardNames = TurfBoard.loadNames()) : GameModu
         var s = s0.tok(t) { it.copy(pos = to, passedPayday = it.passedPayday || passes) }.beat("move", token = t, space = to, path = path)
         if (passes) s = s.cash(t, TurfBoard.PAYDAY_PAY).beat("payday", token = t, amount = TurfBoard.PAYDAY_PAY)
         if (path.isEmpty()) return land(s, ctx)
-        return go(s, MOVE, ctx, path.size * HOP_MS + MOVE_PAD_MS)
+        return go(s, MOVE, ctx, moveDwellMs(path.size, diced, s.quick))
     }
 
     private fun moveTo(s: TurfState, t: Int, target: Int, ctx: GameContext) = move(s, t, TurfRules.distance(s.tokens[t].pos, target), ctx)
@@ -879,7 +880,7 @@ class HomeTurf(private val names: BoardNames = TurfBoard.loadNames()) : GameModu
             trade = s.trade?.let { TurfTradeTv(it.id, it.from, it.to, it.give, it.get, it.giveCash, it.getCash, it.giveCards, it.getCards, it.counters) },
             debt = if (s.phase == DEBT) s.debts.firstOrNull()?.let { TurfDebtTv(it.token, it.amount, it.to, it.why) } else null,
             clockLeftMs = s.clockLeftMs, phaseMs = s.phaseMs, lastLap = s.lastLap,
-            timed = s.phase in TIMED, drinks = s.drinks, beats = s.beats, ticker = s.ticker,
+            timed = s.phase in TIMED, drinks = s.drinks, quick = s.quick, beats = s.beats, ticker = s.ticker,
             pieces = PIECES_ALL.filter { p -> s.tokens.none { it.piece == p } },
             tally = if (s.tally.isEmpty()) emptyList() else s.tokens.indices.map { i ->
                 val mine = e.owned(i)
@@ -991,6 +992,23 @@ class HomeTurf(private val names: BoardNames = TurfBoard.loadNames()) : GameModu
         const val JAIL_MS = 15_000L
         const val HOP_MS = 260L
         const val MOVE_PAD_MS = 1_400L
+
+        /** The dice theatre before a rolled move, and the pause after landing (Theatre pace). Mirrors controller/src/tv/turf3d/timeline.ts. */
+        const val DICE_MS = 2_600L
+        const val LAND_PAD_MS = 900L
+        const val EARLY_HOP_MS = 230L
+
+        /** How long hop [index] of [hops] lasts: flat at Quick, otherwise slowing over the last three. */
+        fun hopMs(index: Int, hops: Int, quick: Boolean): Long {
+            if (quick) return HOP_MS
+            return when (hops - 1 - index) { 0 -> 820L; 1 -> 460L; 2 -> 320L; else -> EARLY_HOP_MS }
+        }
+
+        fun walkMs(hops: Int, quick: Boolean): Long = (0 until hops).sumOf { hopMs(it, hops, quick) }
+
+        /** How long the MOVE phase is held, so the TV can finish showing the dice and the walk. */
+        fun moveDwellMs(hops: Int, diced: Boolean, quick: Boolean): Long =
+            if (quick) hops * HOP_MS + MOVE_PAD_MS else (if (diced) DICE_MS else 0L) + walkMs(hops, false) + LAND_PAD_MS
         const val BUY_MS = 15_000L
         const val AUCTION_MS = 10_000L
         const val BID_MS = 6_000L

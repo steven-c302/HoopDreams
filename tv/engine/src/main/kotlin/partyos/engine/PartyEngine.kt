@@ -186,6 +186,8 @@ class PartyEngine private constructor(
         "minutes" -> 0..120
         // Sprawl: points to win (8 or 10).
         "vp" -> 8..10
+        // Home Turf's pace: 0 Theatre (dice and a slowed walk), 1 Quick (the old short move).
+        "pace" -> 0..1
         // Answer & Question: 0 Short (one board then Final), 1 Full (two boards then Final).
         "show" -> 0..1
         // Hot Type: 0 = 4×4 board, 1 = 5×5.
