@@ -8,12 +8,14 @@ import type { Hud } from './hud'
 import { AuctionPanel } from './panels/AuctionPanel'
 import { BuyPanel } from './panels/BuyPanel'
 import { CardPanel } from './panels/CardPanel'
+import { DebtPanel } from './panels/DebtPanel'
 import { ChoosePanel } from './panels/ChoosePanel'
 import { DealPanel } from './panels/DealPanel'
 import { JailPanel } from './panels/JailPanel'
 import { ManagePanel } from './panels/ManagePanel'
 import { PiecesPanel } from './panels/PiecesPanel'
 import { RollPanel } from './panels/RollPanel'
+import { TallyPanel } from './panels/TallyPanel'
 import { panelFor, panelSize, type PanelName } from './panels'
 
 function panelBody(name: PanelName, tv: TurfTv, hud: Hud, people: Person[]): ReactNode {
@@ -29,6 +31,8 @@ function panelBody(name: PanelName, tv: TurfTv, hud: Hud, people: Person[]): Rea
     case 'buy': return <BuyPanel tv={tv} />
     case 'auction': return <AuctionPanel tv={tv} />
     case 'card': return <CardPanel tv={tv} />
+    case 'debt': return <DebtPanel tv={tv} />
+    case 'tally': return <TallyPanel tv={tv} />
     default: return null
   }
 }
