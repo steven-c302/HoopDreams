@@ -5,8 +5,10 @@ import { Dais } from './Dais'
 import { Frame } from './Frame'
 import type { Hud } from './hud'
 import { ChoosePanel } from './panels/ChoosePanel'
+import { DealPanel } from './panels/DealPanel'
 import { JailPanel } from './panels/JailPanel'
 import { ManagePanel } from './panels/ManagePanel'
+import { PiecesPanel } from './panels/PiecesPanel'
 import { RollPanel } from './panels/RollPanel'
 import { panelFor, panelSize, type PanelName } from './panels'
 
@@ -17,6 +19,8 @@ function panelBody(name: PanelName, tv: TurfTv, hud: Hud): ReactNode {
     case 'manage': return <ManagePanel tv={tv} />
     case 'jail': return <JailPanel />
     case 'choose': return <ChoosePanel tv={tv} hud={hud} />
+    case 'pieces': return <PiecesPanel tv={tv} />
+    case 'deal': return <DealPanel tv={tv} />
     default: return null
   }
 }

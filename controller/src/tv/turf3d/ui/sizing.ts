@@ -23,10 +23,14 @@ export const CARD: Record<CardSize, { w: number; h: number }> = { std: { w: 610,
 export const HEAD_H = 84
 export const FOOT_H = 80
 
-/** The body area of a card: its size and the y of its centre (the card is centred on 0, y up). */
+/**
+ * The body area of a card: its size and the y of its centre (the card is centred on 0, y up). The standard card keeps a
+ * footer for the ticker; the setup card has no ticker, so its body runs down to the bottom edge.
+ */
 export function bodyOf(size: CardSize): { w: number; h: number; cy: number } {
   const c = CARD[size]
-  return { w: c.w - 40, h: c.h - HEAD_H - FOOT_H, cy: (FOOT_H - HEAD_H) / 2 }
+  const foot = size === 'std' ? FOOT_H : 0
+  return { w: c.w - 40, h: c.h - HEAD_H - foot, cy: (foot - HEAD_H) / 2 }
 }
 
 /** One frame of exponential easing. Frame-rate independent, never overshoots, snaps when within a thousandth. */

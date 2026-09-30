@@ -41,6 +41,7 @@ describe('the card', () => {
     expect(b.cy).toBe((FOOT_H - HEAD_H) / 2)
     expect(b.w).toBe(CARD.std.w - 40)
     expect(bodyOf('setup').h).toBeGreaterThan(b.h)
+    expect(bodyOf('setup')).toEqual({ w: 760, h: 476, cy: -42 }) // no ticker in setup, so the body runs to the bottom edge
   })
 })
 
