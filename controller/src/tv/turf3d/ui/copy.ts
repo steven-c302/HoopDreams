@@ -45,3 +45,30 @@ export function resolve(p: Palette, expr: string, fallback = '#1a1a1a'): string 
   const v = p[n.slice(2)]
   return v ? v : fallback
 }
+
+/** Who a debt is owed to: a token, everyone (-2), or the bank. */
+export function debtTo(d: { to: number }, tokens: { name: string }[]): string {
+  return d.to >= 0 ? tokens[d.to]?.name ?? 'the bank' : d.to === -2 ? 'everyone' : 'the bank'
+}
+export const debtLine = (name: string, amount: number): string => `${name.toUpperCase()} OWES ${money(amount)}`
+export const tradeTitle = (counters: number): string => (counters > 0 ? `COUNTER-OFFER #${counters}` : 'TRADE OFFER!')
+
+export interface DeedTagSpec { name: string; band: string | null }
+/** The places in one side of a trade as tags (mortgaged ones marked), capped at [max] with the rest counted. */
+export function deedTags(spaces: number[], board: { name: string; color?: string }[], mortgaged: number[], max = 5): { tags: DeedTagSpec[]; more: number } {
+  const real = spaces.filter((s) => board[s])
+  return {
+    tags: real.slice(0, max).map((s) => ({ name: `${board[s].name}${mortgaged.includes(s) ? ' (M)' : ''}`, band: board[s].color ?? null })),
+    more: Math.max(0, real.length - max),
+  }
+}
+
+export const barFraction = (worth: number, max: number): number => Math.min(1, Math.max(0, worth) / Math.max(1, max))
+
+/** Ink or white text, whichever reads better on a hex colour (ink when it is not a hex colour). */
+export function inkOn(hex: string): string {
+  const m = /^#([0-9a-f]{6})$/i.exec(hex)
+  if (!m) return '#1a1a1a'
+  const n = parseInt(m[1], 16)
+  return ((n >> 16) & 255) * 0.3 + ((n >> 8) & 255) * 0.59 + (n & 255) * 0.11 > 150 ? '#1a1a1a' : '#ffffff'
+}

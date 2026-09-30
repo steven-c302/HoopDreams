@@ -1,7 +1,7 @@
 // controller/src/tv/turf3d/ui/copy.test.ts
 import { describe, expect, it } from 'vitest'
 import type { TurfSpace } from '../../types'
-import { FALLBACK_PALETTE, PALETTE_NAMES, auctionHint, buyCall, deedFacts, money, resolve, sipLine, sipText, varName } from './copy'
+import { FALLBACK_PALETTE, PALETTE_NAMES, auctionHint, barFraction, buyCall, debtLine, debtTo, deedFacts, deedTags, inkOn, money, resolve, sipLine, sipText, tradeTitle, varName } from './copy'
 
 const street: TurfSpace = { name: "Amanda's Balcony", label: "Amanda's Balcony", kind: 'street', group: 1, color: '#e2483d', price: 220, rent: [18, 90, 250, 700, 875, 1050], houseCost: 150, tax: 0 }
 const ride: TurfSpace = { name: 'Rideshare', label: 'Rideshare', kind: 'railroad', group: 9, price: 200, rent: [], houseCost: 0, tax: 0 }
@@ -52,5 +52,30 @@ describe('the palette', () => {
   })
   it('has a hex fallback for every name it reads', () => {
     for (const n of PALETTE_NAMES) expect(FALLBACK_PALETTE[n], n).toMatch(/^#[0-9a-f]{6}$/i)
+  })
+})
+
+describe('debt and trade copy', () => {
+  const toks = [{ name: 'Amanda' }, { name: 'Izzy' }]
+  it('says who the debt is to', () => {
+    expect(debtTo({ to: 1 }, toks)).toBe('Izzy'); expect(debtTo({ to: -1 }, toks)).toBe('the bank'); expect(debtTo({ to: -2 }, toks)).toBe('everyone'); expect(debtTo({ to: 9 }, toks)).toBe('the bank')
+  })
+  it('states the debt', () => { expect(debtLine('Amanda', 1200)).toBe('AMANDA OWES $1,200') })
+  it('titles a trade, counting counter-offers', () => { expect(tradeTitle(0)).toBe('TRADE OFFER!'); expect(tradeTitle(2)).toBe('COUNTER-OFFER #2') })
+  it('lists the places in a trade, marks mortgaged ones, and caps the list', () => {
+    const board = [{ name: 'A', color: '#111111' }, { name: 'B' }, { name: 'C', color: '#333333' }, { name: 'D' }]
+    expect(deedTags([0, 1], board, [1])).toEqual({ tags: [{ name: 'A', band: '#111111' }, { name: 'B (M)', band: null }], more: 0 })
+    expect(deedTags([0, 1, 2, 3], board, [], 2)).toEqual({ tags: [{ name: 'A', band: '#111111' }, { name: 'B', band: null }], more: 2 })
+    expect(deedTags([], board, [])).toEqual({ tags: [], more: 0 })
+    expect(deedTags([7], board, [])).toEqual({ tags: [], more: 0 })
+  })
+})
+
+describe('tally and team helpers', () => {
+  it('scales a bar to the best worth without leaving 0 to 1', () => {
+    expect(barFraction(500, 1000)).toBe(0.5); expect(barFraction(2000, 1000)).toBe(1); expect(barFraction(-5, 1000)).toBe(0); expect(barFraction(0, 0)).toBe(0)
+  })
+  it('picks ink or white text for a hex colour', () => {
+    expect(inkOn('#ffd23f')).toBe('#1a1a1a'); expect(inkOn('#1a1a1a')).toBe('#ffffff'); expect(inkOn('#e2483d')).toBe('#ffffff'); expect(inkOn('nonsense')).toBe('#1a1a1a')
   })
 })
