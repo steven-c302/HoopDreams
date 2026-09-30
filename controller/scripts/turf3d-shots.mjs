@@ -21,11 +21,18 @@ const open = async (beat, query = '') => {
   return page
 }
 
-for (const beat of ['lineup', 'roll', 'diced-move', 'rent', 'jail', 'bankrupt']) {
+// [beat, ms after the page opens]. The gallery injects each beat about 0.7 s after the stage mounts, so effects
+// start near 1.2 s; the times below catch each one in the middle of playing.
+const shots = [
+  ['lineup', 3500], ['roll', 3500], ['diced-move', 2300], ['diced-move', 3400], ['doubles-move', 3400],
+  ['rent', 1900], ['tax', 1900], ['payday-pass', 2400], ['card-moment', 2100], ['bankrupt-fall', 2000],
+  ['jail-walk', 4600], ['build', 1500], ['buy', 3500],
+]
+for (const [beat, ms] of shots) {
   const page = await open(beat, extra)
-  await page.waitForTimeout(3500)
-  await page.screenshot({ path: `${out}/${beat}.png` })
-  console.log(beat.padEnd(11), page.errors.length ? `ERRORS ${page.errors.join(' | ')}` : 'ok')
+  await page.waitForTimeout(ms)
+  await page.screenshot({ path: `${out}/${beat}-${ms}.png` })
+  console.log(`${beat}@${ms}`.padEnd(20), page.errors.length ? `ERRORS ${page.errors.join(' | ')}` : 'ok')
   await page.close()
 }
 

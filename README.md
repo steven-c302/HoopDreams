@@ -194,7 +194,7 @@ dealer, and the dealer plays their own hand from their phone. If the dealer bust
 - **Controls:** on the TV lobby, ↑/↓ sets the game clock, T switches between Auto, Solo and Teams, and S switches the
   TV show between Theatre and Quick.
 - **In 3D:** on the TV the board is a lit wooden tabletop with drink pieces (soju, vodka, beer bottle, beer can, shot
-  glass, red cup) on coloured coasters. In Theatre, a rolled move gets a dice beat and a slowed, close-up finish;
+  glass, red cup) on coloured coasters. In Theatre, a rolled move gets two real tumbling dice that always show the game's numbers, and a slowed, close-up finish; landings get their own moments (rent coins, a tax burst, a Payday rain, a card flip, a cage for Timeout, a bankrupt drink tipping off the table, houses that pop in, and a deed floating over a place on offer);
   Quick keeps the short move. Space or Enter skips the animation in progress. Add `?quality=low` to the TV address on a
   slow machine, or `?board=2d` for the flat board. Close spare browser tabs: two 3D pages share one GPU.
 
