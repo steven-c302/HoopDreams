@@ -934,6 +934,10 @@ class BrainDrain(
                     )
                 }
             }
+            BET -> {
+                if (team == null) return Screen.Waiting("You're in next question", "We'll put you on the smallest team")
+                betScreen(s, team, tag, s.bets[who.v])
+            }
             REVEAL -> revealScreen(s, team, tag)
             VICTIM -> {
                 val heist = s.heist ?: return Screen.Waiting("Eyes on the TV", team = tag)
@@ -974,11 +978,43 @@ class BrainDrain(
         }
     }
 
+    /** Two taps on the phone: back a guess, then pick a stake. A locked bet shows its guess and can be changed. */
+    private fun betScreen(s: TriviaState, team: TTeam, tag: TeamTag?, mine: TBet?): Screen {
+        val backers = LinkedHashMap<String, MutableList<PlayerId>>()
+        for (m in team.members) s.bets[m.v]?.on?.let { backers.getOrPut(it) { mutableListOf() } += m }
+        val on = mine?.on
+        if (on != null && mine.stake == null) {
+            val odds = s.line.firstOrNull { it.team == on }?.odds ?: 1
+            val stakes = Betting.allowedStakes(team.score).map { Choice(Betting.stakeId(it), "$it pts", detail = "wins ${it * odds}") }
+            return Screen.ChoiceList(
+                "How much on ${nameOf(s, on)}? Pays $odds×", stakes + Choice(Betting.BACK, "Change guess"), null, "bet",
+                style = "teams", votes = backers, team = tag,
+            )
+        }
+        val guesses = s.line.map { o ->
+            Choice(o.team, nameOf(s, o.team), s.teams.firstOrNull { it.id == o.team }?.color, "guess ${formatNumber(o.number)} · pays ${o.odds}×")
+        }
+        val skipped = mine != null && mine.on == null && mine.stake == 0
+        return Screen.ChoiceList(
+            if (on != null) "Backing ${nameOf(s, on)} for ${mine.stake}. Tap to change" else "Who's closest? Back a guess",
+            guesses + Choice(Betting.SKIP, "Skip betting"), on ?: if (skipped) Betting.SKIP else null, "bet",
+            style = "teams", votes = backers, team = tag,
+        )
+    }
+
+    /** Adds "bet +250" or "bet -250" to a Ballpark result screen when the team had a bet. */
+    private fun withBet(a: TeamAnswer, screen: Screen): Screen {
+        val bet = a.bet?.takeIf { it.on != null }
+        if (bet == null || screen !is Screen.Waiting) return screen
+        val note = "bet " + if (bet.won) "+${bet.delta}" else if (bet.delta == 0) "lost" else "${bet.delta}"
+        return screen.copy(detail = listOfNotNull(screen.detail, note).joinToString(" · "))
+    }
+
     private fun revealScreen(s: TriviaState, team: TTeam?, tag: TeamTag?): Screen {
         val r = s.reveal ?: return Screen.Waiting("Eyes on the TV", team = tag)
         val a = team?.let { t -> r.answers.firstOrNull { it.team == t.id } } ?: return Screen.Waiting("Eyes on the TV", r.answerText, team = tag)
         return when (s.format) {
-            BALLPARK -> when {
+            BALLPARK -> withBet(a, when {
                 a.number == null -> Screen.Waiting("No guess", "It was ${r.answerText}", "lose", tag)
                 a.bullseye -> Screen.Waiting("Bullseye!", "+${a.points}", "win", tag)
                 a.rank == 1 -> Screen.Waiting("Closest!", "+${a.points} · it was ${r.answerText}", "win", tag)
@@ -986,7 +1022,7 @@ class BrainDrain(
                     "Off by ${formatNumber(abs(a.number - (r.number ?: 0.0)))}", "It was ${r.answerText}",
                     if (a.points > 0) "win" else "lose", tag,
                 )
-            }
+            })
             WRITE -> when {
                 a.text == null -> Screen.Waiting("No answer", "It was ${r.answerText}", "lose", tag)
                 a.correct -> Screen.Waiting("Correct!", "“${a.text}” counts · +${a.points}", "win", tag)

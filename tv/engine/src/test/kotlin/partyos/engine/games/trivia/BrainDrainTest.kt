@@ -405,6 +405,43 @@ class BrainDrainTest {
         assertTrue(s.bets.isEmpty())
     }
 
+    @Test fun thePhoneFirstOffersEveryGuessAndSkip() {
+        val (a) = atBallparkBet()
+        val screen = assertIs<Screen.ChoiceList>(e.phoneState(a).screen)
+        assertEquals("bet", screen.kind)
+        assertEquals("teams", screen.style)
+        assertEquals(listOf("T1", "T2", Betting.SKIP), screen.options.map { it.id })
+        assertEquals("guess ${BrainDrain.formatNumber(target)} · pays 1×", screen.options.first().detail)
+        assertEquals("Quizzards", screen.options.first().text)
+    }
+
+    @Test fun afterPickingAGuessThePhoneOffersTheAffordableStakes() {
+        val (a) = atBallparkBet()
+        bet(a, "T2")
+        val screen = assertIs<Screen.ChoiceList>(e.phoneState(a).screen)
+        assertTrue(screen.prompt.startsWith("How much on Brainiacs"), screen.prompt)
+        assertEquals(listOf(Betting.stakeId(250), Betting.BACK), screen.options.map { it.id }, "a team on 0 can only offer house money")
+    }
+
+    @Test fun aLockedBetShowsAndCanBeChanged() {
+        val (a, b) = atBallparkBet()
+        lockBet(a, "T1", 250)
+        val screen = assertIs<Screen.ChoiceList>(e.phoneState(a).screen)
+        assertEquals("T1", screen.selected)
+        assertTrue(screen.prompt.contains("250"))
+        assertEquals(listOf(a), screen.votes["T1"], "teammates see who backed what on their own team")
+        assertEquals(listOf(a), assertIs<Screen.ChoiceList>(e.phoneState(b).screen).votes["T1"])
+        assertEquals(ActionResult.Ack, bet(a, Betting.BACK))
+        assertEquals("Who's closest? Back a guess", assertIs<Screen.ChoiceList>(e.phoneState(a).screen).prompt)
+    }
+
+    @Test fun theRevealScreenMentionsTheBet() {
+        val (a, b, c, d) = atBallparkBet()
+        lockBet(a, "T1", 250); lockBet(b, "T1", 250); lockBet(c, "T1", 250); lockBet(d, "T1", 250)
+        assertTrue(waiting(a).detail!!.contains("bet +250"), waiting(a).detail)
+        assertTrue(waiting(c).detail!!.contains("bet +250"), waiting(c).detail)
+    }
+
     @Test fun pickASideScoresEachCall() {
         val (a, b, c, d) = fourInTwoTeams()
         repeat(2) { skipRound(); e.host(HostCmd.SkipPhase) }
