@@ -87,6 +87,7 @@ out from the TV. Removing players and switching phone control off are TV-only (J
 | Question | the question in a bubble, four colour-and-shape answers, pips fill as teammates vote | round bed; a clink per vote rising in pitch; ding-ding when everyone's in; hurry bed at 10s, ticks at 5 |
 | Reveal | wrong answers scribbled out, RIGHT! burst, team flags on their picks, +points pop, fun fact | correct or wrong sting, applause or "ooh"; Brainy reacts |
 | Ballpark reveal | team flags drop onto a number line, the answer lands as an anvil | drumroll, stamp; bullseye gets the jackpot |
+| Ballpark bet | every team's guess planted on the number line with a ×odds tag, the answer hidden, BET IN tags as teams lock; the reveal drops chips on the flags that were backed | stamp per lock; jackpot on a ×3 win; Brainy reacts to big wins and busts |
 | Pick a Side | split screen; each item slams in, then snaps to its side | fast bed; whoosh per call |
 | Heist | the fastest team picks a target; a loot sack flies, coins burst | sneaky bed; slide whistle + cha-ching; drink call |
 | Standings | team bars race to their scores, crown on the leader, last place gets a DRINK! card | strut; glass clink + brass hit |

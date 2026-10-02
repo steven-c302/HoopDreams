@@ -24,18 +24,18 @@ The bet phase is skipped when fewer than two teams have a guess. It ends early o
 - **Backable guesses:** every team that has a guess, including the team's own.
 - **Stake options:** Skip, 250, 500, 1000. A stake above the team's score is disabled, except 250, which is always allowed (house money), so a team with little or no score can still bet.
 - **Odds** are by distance of the guess from the median of all teams' guesses (the "middle of the pack"): the nearest guess pays **1x**, the next **2x**, every other guess **3x**. Guesses at the same distance share a tier. With two guesses both are the median; both pay 1x.
-- **Settlement:** a bet wins if the backed guess is the closest to the true answer (ties for closest all win). A win adds `stake x odds`; a loss subtracts the stake. A team's score never goes below zero.
+- **Settlement:** a bet wins if the backed guess is the closest to the true answer (ties for closest all win). A win adds `stake x odds`; a loss subtracts the stake, but never more than the team has (its score plus this round's points), so house money can't push a score below zero, and the reported loss is the real change.
 - **No bet** (skipped, not finished by the timer, or no players tapped): nothing is won or lost.
 - A team with no guess cannot be backed but can bet.
 
 ## Engine (`tv/engine/.../games/trivia/BrainDrain.kt`, `TriviaViews.kt`)
 
-- `BET = "bet"` phase constant; `BET_MS = 15_000L`, `STAKES = listOf(250, 500, 1000)`, `HOUSE_STAKE = 250`.
+- `BET = "bet"` phase constant on `BrainDrain`; the constants (`BET_MS`, `STAKES`, `HOUSE_STAKE`) and the pure rules live in a `Betting` object (`Betting.kt`).
 - `TriviaState` gains:
   - `line: List<BetOption>`: frozen on entering `bet` (team id, guess, odds), so a restored show shows the same odds.
   - `bets: Map<String, TBet>`: player id to `TBet(on: String?, stake: Int?, at: Long)`.
   Both default empty, so saved shows from before this change still load and never enter the phase.
-- Input: a `"bet"` message in the `BET` phase with `team` and/or `stake` fields. Player sets guess (`team`) first, then stake; sending only `team` changes the guess and clears the stake. Rejects: `NOT_NOW` outside the phase, `BAD_OPTION` for an unknown or guess-less team, `BAD_STAKE` for a stake not in `STAKES` or above the allowance.
+- Input: a `"bet"` message in the `BET` phase carrying one `option` field (what `ChoiceList` already sends): a team id backs that guess; `s250` / `s500` / `s1000` sets the stake; `skip` skips; `back` clears the guess. Rejects: `NOT_NOW` outside the phase or for a stake before a guess; `BAD_OPTION` for an unknown team; `BAD_STAKE` for a stake not in `STAKES` or above the allowance.
 - Transition: Ballpark `QUESTION` end goes to `BET` (if two or more guesses) else to `REVEAL`; `BET` end (timer or all locked) goes to `REVEAL`.
 - `score()` for Ballpark: compute round points as today, then settle bets and add the result to `points`; clamp the final team score at zero.
 - `TeamAnswer` gains `bet: BetResult?` (`on`, `stake`, `odds`, `won`, `delta`); `TriviaReveal` is unchanged.
