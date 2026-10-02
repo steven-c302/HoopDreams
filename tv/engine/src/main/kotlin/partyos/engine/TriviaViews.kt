@@ -89,6 +89,8 @@ data class TeamAnswer(
     val seconds: Double? = null,
     /** Write It Down: the team's written answer, as first typed. */
     val text: String? = null,
+    /** Ballpark: how this team's bet came out; null if they didn't bet. */
+    val bet: BetResult? = null,
 )
 
 @Serializable
@@ -102,3 +104,15 @@ data class HeistInfo(val thief: String, val victim: String? = null, val amount: 
 
 @Serializable
 data class DrinkCall(val teams: List<String>, val sips: Int, val reason: String)
+
+/** Ballpark betting: one backable guess and what backing it pays (odds is the multiplier on the stake). */
+@Serializable
+data class BetOption(val team: String, val number: Double, val odds: Int)
+
+/** How one team's bet came out. [on] is null when they didn't bet; [delta] is the real change to their score. */
+@Serializable
+data class BetResult(val on: String? = null, val stake: Int = 0, val odds: Int = 0, val won: Boolean = false, val delta: Int = 0)
+
+/** The bet phase on the TV: every guess with its odds, and which teams have a bet in (not who backed what). */
+@Serializable
+data class BetInfo(val line: List<BetOption>, val locked: List<String> = emptyList())
