@@ -361,7 +361,9 @@ function NumberLine({ g }: { g: TriviaTv }) {
   lo -= pad; hi += pad
   // Clamped so labels at the extremes stay on screen.
   const x = (v: number) => `${Math.min(90, Math.max(10, ((v - lo) / (hi - lo)) * 100))}%`
-  const lift = r.answers.some((b) => b.bet?.on) ? 50 : 0
+  // Flags drop to make room for their bet chips; a crowd backing one guess wraps to a second row, so drop a bit more.
+  const mostBacked = Math.max(0, ...guesses.map((a) => r.answers.filter((b) => b.bet?.on === a.team).length))
+  const lift = mostBacked === 0 ? 0 : mostBacked > 3 ? 72 : 50
   const bull = guesses.some((a) => a.bullseye)
   const longShot = r.answers.some((a) => a.bet?.won && a.bet.odds === 3)
   useLater(`bp${g.q}`, 1300, () => { sfx.stamp(); if (bull || longShot) sfx.jackpot() })
