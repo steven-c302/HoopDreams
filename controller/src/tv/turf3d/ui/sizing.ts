@@ -17,11 +17,11 @@ export function fitFont(chars: number, widthPx: number, maxPx: number, minPx: nu
   return Math.min(maxPx, Math.max(minPx, ideal))
 }
 
-export type CardSize = 'std' | 'setup'
-/** std sits inside the printed middle of the board (about 610 by 395 px on screen); setup is used while nobody is walking. */
-export const CARD: Record<CardSize, { w: number; h: number }> = { std: { w: 610, h: 395 }, setup: { w: 800, h: 560 } }
+export type CardSize = 'std' | 'setup' | 'strip'
+/** std sits inside the printed middle of the board; setup is used while nobody is walking; strip is just the header, for the move phase, so the board stays clear. */
+export const CARD: Record<CardSize, { w: number; h: number }> = { std: { w: 610, h: 369 }, setup: { w: 800, h: 560 }, strip: { w: 610, h: 100 } }
 export const HEAD_H = 84
-export const FOOT_H = 80
+export const FOOT_H = 54
 
 /**
  * The body area of a card: its size and the y of its centre (the card is centred on 0, y up). The standard card keeps a

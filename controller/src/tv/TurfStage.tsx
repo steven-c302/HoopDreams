@@ -136,13 +136,13 @@ function useHops(g: TurfTv, enabled: boolean) {
 
 // ---- the callouts: one at a time, in the order things happened ---------------------------------------
 
-interface Flash { id: number; text: string; sub?: string; fill: string; ink?: string; ms: number; small?: boolean }
+interface Flash { id: number; text: string; sub?: string; fill: string; ink?: string; ms: number; small?: boolean; top?: boolean }
 
 function flashFor(b: TurfBeat, g: TurfTv, people: Map<string, PlayerSummary>): Flash | null {
   const name = (i: number) => g.tokens[i]?.name ?? ''
   const alive = g.tokens.filter((t) => !t.bankrupt).length
   switch (b.kind) {
-    case 'rent': return { id: b.seq, text: `RENT ${money(b.amount)}`, sub: `${name(b.token)} pays ${name(b.other)}`, fill: C.tomato, ink: C.white, ms: 1700 }
+    case 'rent': return { id: b.seq, text: `RENT ${money(b.amount)}`, sub: `${name(b.token)} pays ${name(b.other)}`, fill: C.tomato, ink: C.white, ms: 1700, top: true }
     case 'set': return { id: b.seq, text: 'HOME TURF!', sub: `${name(b.token)} owns the whole set`, fill: C.lime, ms: 2000 }
     case 'drink': {
       if (!g.drinks) return null
@@ -151,15 +151,15 @@ function flashFor(b: TurfBeat, g: TurfTv, people: Map<string, PlayerSummary>): F
         : b.tokens.map(name).join(' + ')
       // A token whose players are all on water tonight drinks water; the call itself is the same.
       const water = b.tokens.filter((i) => (g.tokens[i]?.members.length ?? 0) > 0 && g.tokens[i].members.every((m) => people.get(m)?.water)).map(name)
-      return { id: b.seq, text: 'DRINK!', sub: `${who}: ${sipText(b.sips)}${waterNote(water)}`, fill: C.bubblegum, ms: 2200 }
+      return { id: b.seq, text: 'DRINK!', sub: `${who}: ${sipText(b.sips)}${waterNote(water)}`, fill: C.bubblegum, ms: 2200, top: true }
     }
-    case 'jail': return { id: b.seq, text: 'TIMEOUT!', sub: `${name(b.token)} is off the board`, fill: C.blueberry, ink: C.white, ms: 1700 }
+    case 'jail': return { id: b.seq, text: 'TIMEOUT!', sub: `${name(b.token)} is off the board`, fill: C.blueberry, ink: C.white, ms: 1700, top: true }
     case 'bankrupt': return { id: b.seq, text: 'BANKRUPT!', sub: `${name(b.token)} is out`, fill: C.ink, ink: C.sun, ms: 2400 }
-    case 'won': return { id: b.seq, text: 'SOLD!', sub: `${name(b.token)} for ${money(b.amount)}`, fill: C.sun, ms: 1700 }
-    case 'traded': return { id: b.seq, text: 'DEAL!', sub: `${name(b.token)} and ${name(b.other)} shook on it`, fill: C.sun, ms: 1800 }
-    case 'lastlap': return { id: b.seq, text: 'LAST LAP!', sub: "Time's up: finish the lap", fill: C.tomato, ink: C.white, ms: 2400 }
+    case 'won': return { id: b.seq, text: 'SOLD!', sub: `${name(b.token)} for ${money(b.amount)}`, fill: C.sun, ms: 1700, top: true }
+    case 'traded': return { id: b.seq, text: 'DEAL!', sub: `${name(b.token)} and ${name(b.other)} shook on it`, fill: C.sun, ms: 1800, top: true }
+    case 'lastlap': return { id: b.seq, text: 'LAST LAP!', sub: "Time's up: finish the lap", fill: C.tomato, ink: C.white, ms: 2400, top: true }
     case 'payday': return { id: b.seq, text: '+$200', sub: 'PAYDAY', fill: C.lime, ms: 900, small: true }
-    case 'teleport': return { id: b.seq, text: 'TRIPLES!', sub: `${name(b.token)} goes anywhere`, fill: C.grape, ink: C.white, ms: 1400 }
+    case 'teleport': return { id: b.seq, text: 'TRIPLES!', sub: `${name(b.token)} goes anywhere`, fill: C.grape, ink: C.white, ms: 1400, top: true }
     default: return null
   }
 }

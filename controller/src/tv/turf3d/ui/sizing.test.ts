@@ -31,7 +31,8 @@ describe('fitFont', () => {
 
 describe('the card', () => {
   it('has a standard size that fits inside the printed middle of the board, and a bigger setup size', () => {
-    expect(CARD.std).toEqual({ w: 610, h: 395 })
+    expect(CARD.std).toEqual({ w: 610, h: 369 })
+    expect(CARD.strip).toEqual({ w: 610, h: 100 }) // the move phase: a header and nothing else
     expect(CARD.setup.w).toBeGreaterThan(CARD.std.w)
     expect(CARD.setup.h).toBeGreaterThan(CARD.std.h)
   })
@@ -39,6 +40,7 @@ describe('the card', () => {
     const b = bodyOf('std')
     expect(b.h).toBe(CARD.std.h - HEAD_H - FOOT_H)
     expect(b.cy).toBe((FOOT_H - HEAD_H) / 2)
+    expect(FOOT_H).toBe(54) // one ticker line, not three
     expect(b.w).toBe(CARD.std.w - 40)
     expect(bodyOf('setup').h).toBeGreaterThan(b.h)
     expect(bodyOf('setup')).toEqual({ w: 760, h: 476, cy: -42 }) // no ticker in setup, so the body runs to the bottom edge

@@ -22,7 +22,7 @@ export const hopMs = (index: number, hops: number, quick: boolean): number => {
 export const hopHeight = (index: number, hops: number, quick: boolean): number => {
   if (quick) return 0.55
   const left = hops - 1 - index
-  return left === 0 ? 1.5 : left < 3 ? 0.95 : 0.7
+  return left === 0 ? 1.1 : left < 3 ? 0.85 : 0.65
 }
 
 export const walkMs = (hops: number, quick: boolean): number =>

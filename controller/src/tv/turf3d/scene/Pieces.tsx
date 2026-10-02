@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef } from 'react'
 import * as THREE from 'three'
 import type { TurfTv } from '../../types'
 import { Drink } from '../Drinks'
-import { crowdIndex, crowdSlot, spacePos, tileOf } from '../layout'
+import { crowdIndex, crowdSlot, standPos, tileOf } from '../layout'
 import { fallPose } from '../moments'
 import { drinkFor } from '../pieces'
 import type { Craft } from '../useChoreography'
@@ -13,6 +13,8 @@ import { JailBars } from './JailBars'
 interface Motion { n: number; from: THREE.Vector3; t0: number }
 
 const FALL_MS = 1500
+/** Pieces are drawn a fifth smaller than a tile allows, so a coaster and a bottle never crowd the tile's edges or the camera behind it. */
+const PIECE_SCALE = 0.8
 /** Phases in which the turn's piece is the one everyone is waiting on. */
 const WAITING_ON_TURN = new Set(['roll', 'jail', 'buy', 'manage'])
 
@@ -34,8 +36,8 @@ export function Pieces({ tv, craft }: { tv: TurfTv; craft: Craft }) {
   /** Where token [k] stands (crowds spread along the tile) and how big it is there (crowds shrink). */
   const slotOf = (k: number) => {
     const space = craft.shown[k] ?? tv.tokens[k].pos
-    const p = spacePos(space), slot = crowdSlot(crowd[k]?.rank ?? 0, crowd[k]?.count ?? 1, tileOf(space))
-    return { pos: new THREE.Vector3(p.x + slot.dx, 0, p.z + slot.dz), scale: slot.scale }
+    const p = standPos(space), slot = crowdSlot(crowd[k]?.rank ?? 0, crowd[k]?.count ?? 1, tileOf(space))
+    return { pos: new THREE.Vector3(p.x + slot.dx, 0, p.z + slot.dz), scale: slot.scale * PIECE_SCALE }
   }
 
   useEffect(() => { if (craft.landed) landedAt.current = performance.now() }, [craft.landed?.n])

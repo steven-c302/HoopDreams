@@ -38,7 +38,7 @@ export function TallyPanel({ tv }: { tv: TurfTv }) {
       {rows.map((r, k) => {
         const t = tv.tokens[r.token]
         if (!t) return null
-        const y = 128 - k * 58
+        const y = 130 - k * 54
         return (
           <group key={r.token}>
             <Plate w={40} h={40} r={20} color={r.rank === 1 ? GOLD : PAPER} x={-366} y={y} z={1} />

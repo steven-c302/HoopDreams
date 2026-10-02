@@ -15,6 +15,6 @@ export function shotPose(shot: Shot, focus: { x: number; z: number } | null, asp
     case 'wide': { const k = wideScale(aspect); return { pos: [0, WIDE[1] * k, WIDE[2] * k], look: [0, 0, 0.5] } }
     case 'dice': return { pos: [0, 8.6, 8.8], look: [0, 0, 0] }
     case 'follow': return { pos: [f.x * 0.7, 6.4, f.z * 0.7 + 6.8], look: [f.x, 0, f.z] }
-    default: return { pos: [f.x * 0.85, 3.5, f.z * 0.85 + 3.7], look: [f.x, 0.2, f.z] }
+    default: return { pos: [f.x * 0.85, 4.3, f.z * 0.85 + 4.5], look: [f.x, 0.3, f.z] }
   }
 }

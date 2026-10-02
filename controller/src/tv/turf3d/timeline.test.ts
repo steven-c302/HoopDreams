@@ -43,7 +43,7 @@ describe('planBeats', () => {
     const h = hops(p)
     expect(h).toHaveLength(9)
     expect(h[0].at).toBe(DICE_MS)
-    expect(h[8]).toMatchObject({ ms: 820, height: 1.5, last: true, space: 23 })
+    expect(h[8]).toMatchObject({ ms: 820, height: 1.1, last: true, space: 23 })
     const tailAt = h[6].at
     expect(p.cues).toContainEqual({ at: tailAt, kind: 'shot', shot: 'close', focus: 23 })
     expect(p.cues).toContainEqual({ at: tailAt, kind: 'target', space: 23 })

@@ -13,7 +13,8 @@ describe('panelFor', () => {
 describe('panelSize', () => {
   it('uses the big card only where nobody is walking (setup) and the standard card everywhere else', () => {
     for (const n of ['pieces', 'deal', 'trade', 'tally', 'teamup'] as const) expect(panelSize(n)).toBe('setup')
-    for (const n of ['roll', 'move', 'manage', 'jail', 'choose', 'buy', 'auction', 'card', 'debt'] as const) expect(panelSize(n)).toBe('std')
+    for (const n of ['roll', 'manage', 'jail', 'choose', 'buy', 'auction', 'card', 'debt'] as const) expect(panelSize(n)).toBe('std')
+    expect(panelSize('move')).toBe('strip')
   })
 })
 

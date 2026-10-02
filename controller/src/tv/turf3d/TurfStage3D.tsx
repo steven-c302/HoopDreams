@@ -43,7 +43,7 @@ export function TurfStage3D({ g, hud, flash, people, onReady, children, onLost }
         <Canvas
           shadows
           dpr={[1, 2]}
-          camera={{ fov: 38, position: [0, 15.4, 16.9] }}
+          camera={{ fov: 38, near: 0.3, far: 120, position: [0, 15.4, 16.9] }}
           gl={{ antialias: true, toneMapping: THREE.ACESFilmicToneMapping }}
           onCreated={({ gl }) => gl.domElement.addEventListener('webglcontextlost', (e) => { e.preventDefault(); onLost() })}
         >

@@ -48,6 +48,16 @@ export function tileOf(i: number): Tile {
 
 export const spacePos = (i: number): { x: number; z: number } => { const t = tileOf(i); return { x: t.cx, z: t.cz } }
 
+/**
+ * Where a piece (and the ring that marks it) stands on a space. The camera looks across the board from the bottom, so a
+ * piece's body is drawn up the screen from its feet; on the top and bottom rows it stands at the back of the deep tile, so
+ * its body falls on the board's middle or the table instead of over its own tile's name and price. The bottom row stands a little less far back, to stay off the houses on its inner band.
+ */
+export function standPos(i: number): { x: number; z: number } {
+  const t = tileOf(i)
+  return { x: t.cx, z: t.corner || t.side === 'left' || t.side === 'right' ? t.cz : t.cz - (t.ez / 2 - (t.side === 'top' ? 0.3 : 0.5)) }
+}
+
 /** How much a piece shrinks when [n] share a space, so coasters (0.88 across at full size) never overlap. */
 const CROWD_SCALE = [1, 1, 0.8, 0.65, 0.55, 0.55, 0.55]
 

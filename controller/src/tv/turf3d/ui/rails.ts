@@ -1,6 +1,6 @@
 // controller/src/tv/turf3d/ui/rails.ts
-/** A rail card is 400 by 250 reference pixels; the rails sit 728 px either side of the centre, a little below the middle. */
-export const RAIL = { w: 400, h: 250, gap: 22, dx: 728, dy: -44 }
+/** A rail card is 320 by 132 reference pixels, hugging the screen edges (768 px either side of the centre) a little below the middle. */
+export const RAIL = { w: 320, h: 132, gap: 16, dx: 768, dy: -44 }
 
 /** The displayed value [u] (0 to 1) of the way from [from] to [to], easing out; ends exactly on [to]. */
 export function countAt(from: number, to: number, u: number): number {
@@ -24,8 +24,14 @@ export function flowPills(texts: string[], maxW: number, gap = 8): { x: number; 
 }
 
 /** Where the i-th owned-place square goes: [step] px apart, [perRow] to a row. */
-export function pipPos(i: number, perRow = 20, step = 18): { x: number; row: number } {
+export function pipPos(i: number, perRow = 14, step = 14): { x: number; row: number } {
   return { x: (i % perRow) * step, row: Math.floor(i / perRow) }
+}
+
+/** The places a card draws: up to [max] squares, or past that [max] - 1 squares and a count of the rest. */
+export function placeRow(owned: number[], max = 12): { shown: number[]; more: number } {
+  if (owned.length <= max) return { shown: owned, more: 0 }
+  return { shown: owned.slice(0, max - 1), more: owned.length - (max - 1) }
 }
 
 /** The "+$200" or "-$50" note for a cash change, or null when nothing changed. */
@@ -44,10 +50,10 @@ export function railSlots(count: number): { left: number[]; right: number[] } {
 /** The y (reference pixels, up) of the k-th of [n] cards on a rail. */
 export const railY = (k: number, n: number): number => ((n - 1) / 2 - k) * (RAIL.h + RAIL.gap) + RAIL.dy
 
+/** The badges a card may carry: Timeout and Get Out cards only (sets and worth are on the final tally). */
 export function badgesFor(t: { jailed: boolean; bankrupt: boolean; sets: number; jailCards: number }): string[] {
   const b: string[] = []
-  if (t.jailed && !t.bankrupt) b.push('IN TIMEOUT')
-  if (t.sets > 0) b.push(`${t.sets} SET${t.sets > 1 ? 'S' : ''}`)
-  if (t.jailCards > 0) b.push(`GET OUT ×${t.jailCards}`)
+  if (t.jailed && !t.bankrupt) b.push('TIMEOUT')
+  if (t.jailCards > 0) b.push(t.jailCards > 1 ? `GET OUT ×${t.jailCards}` : 'GET OUT')
   return b
 }

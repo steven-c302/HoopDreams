@@ -15,7 +15,7 @@ function Rail({ tv, people, side, ready }: { tv: TurfTv; people: Person[]; side:
   )
 }
 
-/** Both rails of player cards, hung on the camera at the screen edges; they appear once the 3D text is ready. */
+/** Both rails of player cards, hung on the camera at the screen edges; they appear once the 3D text is ready ([ready]; the scene also drops them for the close shot, where they would cover the landing tile's neighbours). */
 export function Rails({ tv, people, ready }: { tv: TurfTv; people: Person[]; ready: boolean }) {
   return (
     <>

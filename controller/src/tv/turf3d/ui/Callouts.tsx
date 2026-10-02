@@ -25,18 +25,19 @@ function Star({ w, h, color, x = 0, y = 0, z = 0 }: { w: number; h: number; colo
   return <mesh geometry={geo} position={[x, y, z]}><meshBasicMaterial color={color} toneMapped={false} /></mesh>
 }
 
-/** One callout as a star-burst sticker: the words in the middle, a hard shadow behind. */
+/** One callout as a star-burst sticker (a flat one parked above the board for drink calls, so it never hides the game): the words in the middle, a hard shadow behind. */
 function Burst({ f }: { f: FlashSpec }) {
   const p = usePalette()
-  const w = f.small ? 440 : 880, h = f.small ? 240 : 420
+  const w = f.top ? 780 : f.small ? 440 : 880, h = f.top ? 200 : f.small ? 240 : 420
+  const px = f.top ? 76 : f.small ? 72 : 112
   const fill = resolve(p, f.fill, '#ffd23f'), ink = resolve(p, f.ink ?? 'var(--ink)', INK)
   return (
-    <group rotation-z={0.07}>
+    <group rotation-z={f.top ? 0 : 0.07}>
       <Star w={w + 24} h={h + 24} color={SHADOW} x={14} y={-14} z={-3} />
       <Star w={w + 24} h={h + 24} color={INK} z={-2} />
       <Star w={w} h={h} color={fill} z={-1} />
-      <Label px={f.small ? 72 : 112} kind="hero" color={ink} y={f.sub ? 30 : 0} maxWidth={w * 0.66}>{f.text}</Label>
-      {f.sub && <Label px={30} kind="body" font="bodyBold" color={ink} y={f.small ? -50 : -64} maxWidth={w * 0.6}>{f.sub}</Label>}
+      <Label px={px} kind="hero" color={ink} y={f.sub ? (f.top ? 28 : 30) : 0} maxWidth={w * 0.66}>{f.text}</Label>
+      {f.sub && <Label px={30} kind="body" font="bodyBold" color={ink} y={f.top ? -46 : f.small ? -50 : -64} maxWidth={w * (f.top ? 0.7 : 0.6)}>{f.sub}</Label>}
     </group>
   )
 }
@@ -45,7 +46,7 @@ function Burst({ f }: { f: FlashSpec }) {
 export function Callouts({ flash, banner }: { flash: FlashSpec | null; banner: string | null }) {
   return (
     <>
-      <Dais panelKey={flash ? String(flash.id) : null} visible lit={false} dist={8.4} offsetY={flash?.small ? 250 : 0}>
+      <Dais panelKey={flash ? String(flash.id) : null} visible lit={false} dist={8.4} offsetY={flash?.top ? 400 : flash?.small ? 250 : 0}>
         {() => (flash ? <Burst f={flash} /> : null)}
       </Dais>
       <Dais panelKey={banner} visible lit={false} dist={8.7} offsetY={380}>

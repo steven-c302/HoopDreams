@@ -23,7 +23,7 @@ export const buyCall = (s?: TurfSpace): string => `BUY IT FOR ${money(s?.price ?
 export const auctionHint = (bids: number): string => `${bids} bid${bids === 1 ? '' : 's'} · each bid resets the clock`
 
 /** A callout as the DOM stage queues it: fill and ink are CSS colours (usually var(--name)). */
-export interface FlashSpec { id: number; text: string; sub?: string; fill: string; ink?: string; ms: number; small?: boolean }
+export interface FlashSpec { id: number; text: string; sub?: string; fill: string; ink?: string; ms: number; small?: boolean; top?: boolean }
 
 /** The CSS variable name inside `var(--x)`, or null for anything else (plain colours, fallbacks). */
 export function varName(expr: string): string | null {

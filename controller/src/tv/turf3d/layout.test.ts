@@ -1,6 +1,6 @@
 // controller/src/tv/turf3d/layout.test.ts
 import { describe, expect, it } from 'vitest'
-import { CORNER, EDGE_W, HALF, crowdIndex, crowdSlot, sideOf, spacePos, tileOf } from './layout'
+import { CORNER, EDGE_W, HALF, crowdIndex, crowdSlot, sideOf, standPos, spacePos, tileOf } from './layout'
 
 const all = Array.from({ length: 40 }, (_, i) => tileOf(i))
 
@@ -89,5 +89,15 @@ describe('crowds on one space', () => {
     expect(idx.filter((_, k) => k !== 4).map((x) => x.count)).toEqual([3, 3, 3, 2, 2])
     expect(idx.slice(0, 3).map((x) => x.rank)).toEqual([0, 1, 2])
     expect([idx[3].rank, idx[5].rank]).toEqual([0, 1])
+  })
+})
+
+describe('standPos', () => {
+  it('moves pieces to the back of the top and bottom tiles, and leaves sides and corners on the centre', () => {
+    for (const i of [1, 5, 9, 21, 29]) expect(standPos(i).z).toBeLessThan(spacePos(i).z)
+    for (const i of [0, 10, 11, 19, 20, 30, 31, 39]) expect(standPos(i)).toEqual(spacePos(i))
+  })
+  it('keeps the piece on its own tile', () => {
+    for (let i = 0; i < 40; i++) { const t = tileOf(i), p = standPos(i); expect(Math.abs(p.z - t.cz)).toBeLessThan(t.ez / 2); expect(Math.abs(p.x - t.cx)).toBeLessThan(t.ex / 2) }
   })
 })

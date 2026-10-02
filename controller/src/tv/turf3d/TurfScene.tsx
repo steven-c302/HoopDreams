@@ -27,7 +27,7 @@ export function TurfScene({ tv, craft, hud, flash, people, railsReady, onPanelRe
       <CameraRig shot={craft.shot} focus={craft.focus} landedN={craft.landed?.n ?? 0} />
       <PanelHost tv={tv} hud={hud} people={people} visible={craft.shot === 'wide'} onReady={onPanelReady} />
       <Callouts flash={flash} banner={craft.banner} />
-      <Rails tv={tv} people={people} ready={railsReady} />
+      <Rails tv={tv} people={people} ready={railsReady && craft.shot !== 'close'} />
       <Lights />
       <Table />
       <Board3D tv={tv} />

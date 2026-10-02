@@ -12,7 +12,7 @@ describe('camera poses', () => {
     const focus = { x: 3, z: 5 }
     const wide = shotPose('wide', null, 16 / 9), follow = shotPose('follow', focus, 16 / 9), close = shotPose('close', focus, 16 / 9)
     expect(wide.pos[1]).toBeGreaterThan(follow.pos[1]); expect(follow.pos[1]).toBeGreaterThan(close.pos[1])
-    expect(close.look).toEqual([3, 0.2, 5])
+    expect(close.look).toEqual([3, 0.3, 5])
     expect(Math.hypot(close.pos[0] - 3, close.pos[1], close.pos[2] - 5)).toBeLessThan(6)
   })
   it('looks at the middle of the board for the dice', () => {

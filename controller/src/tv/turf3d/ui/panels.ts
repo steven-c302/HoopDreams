@@ -9,8 +9,8 @@ const PORTED: Partial<Record<TurfPhase, PanelName>> = { roll: 'roll', move: 'mov
 /** The 3D panel for a phase, or null while that phase still uses the DOM well. */
 export const panelFor = (phase: TurfPhase): PanelName | null => PORTED[phase] ?? null
 
-/** The setup panels are dense and nobody is walking then, so they get the bigger card. */
-export const panelSize = (name: PanelName): CardSize => (name === 'pieces' || name === 'deal' || name === 'trade' || name === 'tally' || name === 'teamup' ? 'setup' : 'std')
+/** The setup panels are dense and nobody is walking then, so they get the bigger card; the move phase gets just a header. */
+export const panelSize = (name: PanelName): CardSize => (name === 'move' ? 'strip' : name === 'pieces' || name === 'deal' || name === 'trade' || name === 'tally' || name === 'teamup' ? 'setup' : 'std')
 
 export const rollCall = (doubles: number, seatName: string): string => (doubles > 0 ? 'DOUBLES! ROLL AGAIN' : `${seatName.toUpperCase()} ROLLS`)
 export const chooseCall = (choose?: 'bus' | 'triples'): string => (choose === 'bus' ? 'BUS! PICK A MOVE' : 'TRIPLES! GO ANYWHERE')

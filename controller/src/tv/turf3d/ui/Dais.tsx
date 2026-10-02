@@ -6,6 +6,12 @@ import { REF_H, stepToward, worldPerPx } from './sizing'
 
 /** How far in front of the camera the card hangs. Its size on screen is set by REF_H and the field of view, not by this. */
 const DEFAULT_DIST = 9
+/**
+ * Cards hang this fraction of their [dist] from the camera. Close shots put the camera a few units above the board, so
+ * anything hung at the full distance sat behind the board and was cut by it; this keeps every card in front of the whole
+ * scene while [dist] still orders the cards among themselves and the on-screen size is unchanged.
+ */
+const NEAR = 0.15
 
 /**
  * Hangs whatever it is given in front of the camera, always at the same spot and size on screen, whatever the shot.
@@ -30,15 +36,15 @@ export function Dais({ panelKey, visible, dist = DEFAULT_DIST, offsetX = 0, offs
     if (panelKey !== shown && grow.current < 0.02) setShown(panelKey) // the old card has dropped away: swap
     g.visible = grow.current > 0.01
     g.quaternion.copy(cam.quaternion)
-    const wpp = worldPerPx(cam.fov, dist, REF_H)
-    g.position.copy(cam.position).add(tmp.set(offsetX * wpp, offsetY * wpp, -dist).applyQuaternion(cam.quaternion))
+    const wpp = worldPerPx(cam.fov, dist * NEAR, REF_H)
+    g.position.copy(cam.position).add(tmp.set(offsetX * wpp, offsetY * wpp, -dist * NEAR).applyQuaternion(cam.quaternion))
     g.scale.setScalar(wpp * grow.current)
     i.position.y = -(1 - grow.current) * 90
   })
 
   return (
     <group ref={group} visible={false}>
-      {lit && <pointLight position={[0, 140, 420]} intensity={14} distance={6} decay={2} />}
+      {lit && <pointLight position={[0, 140, 420]} intensity={14 * NEAR * NEAR} distance={6 * NEAR} decay={2} />}
       <group ref={inner}>
         <Suspense fallback={null}>{shown ? children(shown) : null}</Suspense>
       </group>

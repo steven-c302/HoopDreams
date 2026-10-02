@@ -4,13 +4,13 @@ import * as THREE from 'three'
 import type { TurfTv } from '../../types'
 import { Card, Plate, roundedRect } from './Card'
 import { CountText } from './CountText'
-import { money, type Person } from './copy'
+import type { Person } from './copy'
 import { DrinkIcon } from './DrinkIcon'
 import { FaceIcon } from './FaceIcon'
 import { SETUP_PHASES } from './hud'
 import { Label } from './Label'
 import { Pill } from './Pill'
-import { RAIL, badgesFor, changeNote, flowPills, pipPos } from './rails'
+import { RAIL, badgesFor, changeNote, pillWidth, pipPos, placeRow } from './rails'
 import { GOLD, GREEN, INK, MUTED, PAPER, PAPER_DARK, RED } from './theme'
 
 let pipGeo: THREE.ShapeGeometry | null = null
@@ -27,9 +27,12 @@ function Pip({ x, y, color, hollow }: { x: number; y: number; color: string; hol
   )
 }
 
-const BADGE_FILL: Record<string, string> = { 'IN TIMEOUT': '#3b5bdb' }
+const BADGE_FILL: Record<string, string> = { TIMEOUT: '#3b5bdb' }
 
-/** One player's card on a rail: who, cash (counting), worth, places, badges; gold behind it on their turn, dimmed and stamped OUT when bankrupt. */
+/**
+ * One player's card on a rail, kept light on purpose: their drink, name and face, big cash, a row of place squares and,
+ * only when it matters, one badge (Timeout or a Get Out card). Gold behind it on their turn; dimmed and stamped OUT when bankrupt.
+ */
 export function RailCard({ tv, i, people, y }: { tv: TurfTv; i: number; people: Person[]; y: number }) {
   const t = tv.tokens[i]
   const prev = useRef(t?.cash ?? 0)
@@ -46,37 +49,33 @@ export function RailCard({ tv, i, people, y }: { tv: TurfTv; i: number; people: 
   if (!t) return null
   const active = tv.turn === i && !SETUP_PHASES.has(tv.phase)
   const seat = t.seat ? people.find((p) => p.id === t.seat) : undefined
-  const members = t.members.map((id) => people.find((p) => p.id === id)).filter((p): p is Person => !!p)
   const owned = tv.owner.map((o, s) => (o === i ? s : -1)).filter((s) => s >= 0)
-  const badges = badgesFor(t)
-  const flow = flowPills(badges, RAIL.w - 48)
-  const left = -RAIL.w / 2 + 24
+  const row = placeRow(owned)
+  const badge = badgesFor(t)[0]
+  const bw = badge ? pillWidth(badge) : 0
+  const half = RAIL.w / 2
   return (
     <group position={[0, y, 0]}>
-      {active && <Plate w={RAIL.w + 30} h={RAIL.h + 30} r={32} color={GOLD} z={-4} />}
+      {active && <Plate w={RAIL.w + 28} h={RAIL.h + 28} r={30} color={GOLD} z={-4} />}
       <Card w={RAIL.w} h={RAIL.h}>
-        <Plate w={70} h={70} r={35} color={INK} x={-152} y={78} z={1} />
-        <Plate w={62} h={62} r={31} color={t.color} x={-152} y={78} z={2} />
-        <DrinkIcon piece={t.piece} color={t.color} size={44} x={-152} y={72} />
-        <Label px={40} kind="body" font="display" anchorX="left" align="left" x={-102} y={96} maxWidth={250}>{t.name}</Label>
-        {tv.teams
-          ? members.slice(0, 5).map((p, k) => <FaceIcon key={p.id} face={p.face} color={p.color} size={p.id === t.seat ? 40 : 30} dim={!p.connected} x={-82 + k * 38} y={58} />)
-          : seat && <FaceIcon face={seat.face} color={seat.color} size={40} dim={!seat.connected} x={-82} y={58} />}
-        <CountText value={t.cash} px={60} x={left} y={-2} />
-        <Label px={22} kind="label" font="bodyBold" color={MUTED} anchorX="right" align="right" x={RAIL.w / 2 - 24} y={-8}>{`WORTH ${money(t.worth)}`}</Label>
-        {note && <Label px={28} kind="body" font="bodyBold" color={note.tone === 'up' ? GREEN : RED} anchorX="right" align="right" x={RAIL.w / 2 - 24} y={24}>{note.text}</Label>}
-        {owned.length === 0 && <Label px={22} kind="label" color={MUTED} anchorX="left" align="left" x={left} y={-50}>No places yet</Label>}
-        {owned.slice(0, 40).map((s, k) => {
+        <Plate w={64} h={64} r={32} color={INK} x={-112} y={14} z={1} />
+        <Plate w={56} h={56} r={28} color={t.color} x={-112} y={14} z={2} />
+        <DrinkIcon piece={t.piece} color={t.color} size={38} x={-112} y={8} />
+        <Label px={34} kind="body" font="display" anchorX="left" align="left" x={-70} y={44} maxWidth={170}>{t.name}</Label>
+        {seat && <FaceIcon face={seat.face} color={seat.color} size={40} dim={!seat.connected} x={half - 34} y={40} />}
+        <CountText value={t.cash} px={56} x={-70} y={-4} />
+        {note && <Label px={28} kind="body" font="bodyBold" color={note.tone === 'up' ? GREEN : RED} anchorX="right" align="right" x={half - 16} y={-4}>{note.text}</Label>}
+        {owned.length === 0 && <Label px={22} kind="label" color={MUTED} anchorX="left" align="left" x={-140} y={-46}>No places yet</Label>}
+        {row.shown.map((s, k) => {
           const p = pipPos(k)
-          return <Pip key={s} x={left + 7 + p.x} y={-50 - p.row * 19} color={tv.board[s]?.color ?? '#2b2b2b'} hollow={tv.mortgaged.includes(s)} />
+          return <Pip key={s} x={-132 + p.x} y={-46} color={tv.board[s]?.color ?? '#2b2b2b'} hollow={tv.mortgaged.includes(s)} />
         })}
-        {badges.map((b, k) => (
-          <Pill key={b} w={flow[k].w} h={30} text={b} px={22} fill={BADGE_FILL[b] ?? (b.startsWith('GET') ? PAPER_DARK : GOLD)} textColor={BADGE_FILL[b] ? '#ffffff' : INK} x={left + flow[k].x + flow[k].w / 2} y={-104 - flow[k].row * 36} />
-        ))}
+        {row.more > 0 && <Label px={22} kind="label" font="bodyBold" color={MUTED} anchorX="left" align="left" x={-132 + row.shown.length * 14 - 4} y={-46}>{`+${row.more}`}</Label>}
+        {badge && <Pill w={bw} h={28} text={badge} px={22} fill={BADGE_FILL[badge] ?? PAPER_DARK} textColor={BADGE_FILL[badge] ? '#ffffff' : INK} x={half - 12 - bw / 2} y={-46} />}
         {t.bankrupt && (
           <>
             <Plate w={RAIL.w} h={RAIL.h} r={20} color={PAPER} opacity={0.62} z={20} />
-            <group rotation-z={0.17} position={[70, -20, 22]}><Label px={96} kind="hero" font="display" color={RED} outline={INK}>OUT</Label></group>
+            <group rotation-z={0.17} position={[50, -6, 22]}><Label px={72} kind="hero" font="display" color={RED} outline={INK}>OUT</Label></group>
           </>
         )}
       </Card>
