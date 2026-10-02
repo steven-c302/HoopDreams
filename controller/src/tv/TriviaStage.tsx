@@ -129,6 +129,7 @@ function TeamStrip({ g, byId, deltas }: { g: TriviaTv; byId: ById; deltas?: Reco
       {g.teams.map((t, i) => (
         <div key={t.id} className="strip-team">
           <TeamBadge team={t} byId={byId} size="sm" score delta={deltas?.[t.id]} tilt={i % 2 ? 0.8 : -0.8} />
+          {g.phase === 'bet' && g.bet?.locked.includes(t.id) && <span className="bet-in">BET IN</span>}
           {g.phase === 'question' && (
             <div className="pips">{t.members.map((id, k) => <i key={id} className={k < t.answered ? 'on' : ''} style={{ '--team': t.color } as CSSProperties} />)}</div>
           )}
@@ -140,7 +141,10 @@ function TeamStrip({ g, byId, deltas }: { g: TriviaTv; byId: ById; deltas?: Reco
 
 function deltasOf(g: TriviaTv): Record<string, number> {
   const out: Record<string, number> = {}
-  for (const a of g.reveal?.answers ?? []) if (a.points) out[a.team] = a.points
+  for (const a of g.reveal?.answers ?? []) {
+    const d = a.points + (a.bet?.delta ?? 0)
+    if (d) out[a.team] = d
+  }
   return out
 }
 
@@ -297,7 +301,7 @@ function Ballpark({ g, byId, clock }: { g: TriviaTv; byId: ById; clock: Clock })
     <>
       <Header g={g} clock={clock} />
       <Bubble tail="none" className={`q-bubble ${revealed ? 'small' : ''}`}>{g.prompt}</Bubble>
-      {!revealed ? (
+      {g.phase === 'bet' ? <BetLine g={g} /> : !revealed ? (
         <div className="ballpark-wait">
           <Panel className="unit-card" fill={C.paper} tilt={-2}>
             <span>Type a number on your phone</span>
@@ -308,7 +312,7 @@ function Ballpark({ g, byId, clock }: { g: TriviaTv; byId: ById; clock: Clock })
         </div>
       ) : <NumberLine g={g} />}
       <div className="trivia-foot">
-        {revealed ? <RevealTalk g={g} /> : <div />}
+        {revealed ? <RevealTalk g={g} /> : g.phase === 'bet' ? <HostSays line={g.hostLine} mood="smug" size={120} /> : <div />}
         <TeamStrip g={g} byId={byId} deltas={revealed ? deltasOf(g) : undefined} />
       </div>
     </>
@@ -316,6 +320,35 @@ function Ballpark({ g, byId, clock }: { g: TriviaTv; byId: ById; clock: Clock })
 }
 
 const fmt = (n: number) => (Number.isInteger(n) ? n.toLocaleString() : n.toLocaleString(undefined, { maximumFractionDigits: 2 }))
+
+/** Every team's guess planted on the number line with its odds; the answer stays hidden. */
+function BetLine({ g }: { g: TriviaTv }) {
+  const line = g.bet?.line ?? []
+  const locked = g.bet?.locked ?? []
+  useEffect(() => { if (locked.length > 0) sfx.stamp() }, [locked.length])
+  const nums = line.map((l) => l.number)
+  let lo = Math.min(...nums), hi = Math.max(...nums)
+  if (hi === lo) { lo -= Math.max(1, Math.abs(lo) * 0.1); hi += Math.max(1, Math.abs(hi) * 0.1) }
+  const pad = (hi - lo) * 0.1
+  lo -= pad; hi += pad
+  const x = (v: number) => `${Math.min(76, Math.max(14, ((v - lo) / (hi - lo)) * 100))}%`
+  return (
+    <div className="numberline bet">
+      <div className="nl-axis" />
+      {line.map((l, i) => {
+        const t = g.teams.find((tt) => tt.id === l.team)
+        if (!t) return null
+        return (
+          <motion.div key={l.team} className="nl-flag" style={{ left: x(l.number), top: 20 + (i % 3) * 80 }}
+            initial={{ y: -300, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ type: 'spring', stiffness: 380, damping: 18, delay: 0.12 * i }}>
+            <span className="pole" style={{ height: 250 - (i % 3) * 80 }} />
+            <span className="nl-team" style={{ background: t.color, color: inkOn(t.color) }}>{t.name}<em>{fmt(l.number)}</em><i className="odds">×{l.odds}</i></span>
+          </motion.div>
+        )
+      })}
+    </div>
+  )
+}
 
 function NumberLine({ g }: { g: TriviaTv }) {
   const r = g.reveal!
@@ -328,8 +361,10 @@ function NumberLine({ g }: { g: TriviaTv }) {
   lo -= pad; hi += pad
   // Clamped so labels at the extremes stay on screen.
   const x = (v: number) => `${Math.min(90, Math.max(10, ((v - lo) / (hi - lo)) * 100))}%`
+  const lift = r.answers.some((b) => b.bet?.on) ? 50 : 0
   const bull = guesses.some((a) => a.bullseye)
-  useLater(`bp${g.q}`, 1300, () => { sfx.stamp(); if (bull) sfx.jackpot() })
+  const longShot = r.answers.some((a) => a.bet?.won && a.bet.odds === 3)
+  useLater(`bp${g.q}`, 1300, () => { sfx.stamp(); if (bull || longShot) sfx.jackpot() })
   return (
     <div className="numberline">
       <div className="nl-axis" />
@@ -337,12 +372,23 @@ function NumberLine({ g }: { g: TriviaTv }) {
         const t = g.teams.find((tt) => tt.id === a.team)
         if (!t) return null
         return (
-          <motion.div key={a.team} className="nl-flag" style={{ left: x(a.number!), top: 20 + (i % 3) * 80 }}
+          <motion.div key={a.team} className="nl-flag" style={{ left: x(a.number!), top: 20 + lift + (i % 3) * 80 }}
             initial={{ y: -300, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ type: 'spring', stiffness: 380, damping: 18, delay: 0.12 * i }}>
-            <span className="pole" style={{ height: 250 - (i % 3) * 80 }} />
+            <span className="pole" style={{ height: 250 - lift - (i % 3) * 80 }} />
             <span className="nl-team" style={{ background: t.color, color: inkOn(t.color) }}>
               {a.rank === 1 && <Crown size={34} />}{t.name}<em>{fmt(a.number!)}</em>
             </span>
+            <div className="bet-chips">
+              {r.answers.filter((b) => b.bet?.on === a.team).map((b) => {
+                const bt = g.teams.find((tt) => tt.id === b.team)
+                const d = b.bet!.delta
+                return (
+                  <Pop key={b.team} delay={1.9}>
+                    <span className={`bet-chip ${b.bet!.won ? 'won' : 'lost'}`}>{bt?.name} {b.bet!.won ? `+${d.toLocaleString()}` : d ? d.toLocaleString() : 'LOST'}</span>
+                  </Pop>
+                )
+              })}
+            </div>
           </motion.div>
         )
       })}

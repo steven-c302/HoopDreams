@@ -67,6 +67,15 @@ const BEATS: Record<string, TriviaTv> = {
     reveal: { correct: [], answerText: '206 bones', number: 206, answers: [
       { team: 'T1', number: 180, picks: [], correct: false, points: 0, rank: 2, bullseye: false }, { team: 'T2', number: 206, picks: [], correct: true, points: 1500, rank: 1, bullseye: true },
       { team: 'T3', number: 320, picks: [], correct: false, points: 0, rank: 3, bullseye: false }] }, hostLine: 'Les Quizerables nailed it. Who\'s googling?', fact: 'Babies are born with around 300.' },
+  'ballpark-bet': { ...base, phase: 'bet', format: 'ballpark', prompt: 'How many bones are in the adult human body?', category: 'Body', unit: 'bones', options: [], durationMs: 15000,
+    bet: { line: [{ team: 'T1', number: 180, odds: 2 }, { team: 'T2', number: 206, odds: 1 }, { team: 'T3', number: 320, odds: 3 }], locked: ['T2'] },
+    hostLine: 'Back a guess. Bigger odds, bigger risk.' },
+  'ballpark-bet-reveal': { ...base, format: 'ballpark', phase: 'reveal', prompt: 'How many bones are in the adult human body?', category: 'Body', unit: 'bones', options: [],
+    reveal: { correct: [], answerText: '206 bones', number: 206, answers: [
+      { team: 'T1', number: 180, picks: [], correct: false, points: 0, rank: 2, bullseye: false, bet: { on: 'T2', stake: 500, odds: 1, won: true, delta: 500 } },
+      { team: 'T2', number: 206, picks: [], correct: true, points: 1500, rank: 1, bullseye: true },
+      { team: 'T3', number: 320, picks: [], correct: false, points: 0, rank: 3, bullseye: false, bet: { on: 'T3', stake: 250, odds: 3, won: false, delta: -250 } }] },
+    hostLine: 'Smarty Pints backed the right horse: +500.', fact: 'Babies are born with around 300.' },
   'sides-question': { ...base, format: 'sides', prompt: 'Platypus', category: 'Mammal or not?', q: 3, qTotal: 7, durationMs: 6000,
     options: [{ id: 'left', text: 'Mammal' }, { id: 'right', text: 'Not a mammal' }],
     sides: { left: 'Mammal', right: 'Not a mammal', item: 3, items: 7, history: [{ text: 'Dolphin', side: 'left', teamsRight: ['T1', 'T2'] }, { text: 'Seahorse', side: 'right', teamsRight: ['T3'] }] } },
