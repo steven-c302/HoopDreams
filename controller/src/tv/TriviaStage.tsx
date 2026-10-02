@@ -384,7 +384,7 @@ function NumberLine({ g }: { g: TriviaTv }) {
                 const d = b.bet!.delta
                 return (
                   <Pop key={b.team} delay={1.9}>
-                    <span className={`bet-chip ${b.bet!.won ? 'won' : 'lost'}`}>{bt?.name} {b.bet!.won ? `+${d.toLocaleString()}` : d ? d.toLocaleString() : 'LOST'}</span>
+                    <span className={`bet-chip ${b.bet!.won ? 'won' : 'lost'}`}><i style={{ background: bt?.color }} />{b.bet!.won ? `+${d.toLocaleString()}` : d ? d.toLocaleString() : 'LOST'}</span>
                   </Pop>
                 )
               })}

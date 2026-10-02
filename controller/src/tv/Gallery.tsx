@@ -76,6 +76,16 @@ const BEATS: Record<string, TriviaTv> = {
       { team: 'T2', number: 206, picks: [], correct: true, points: 1500, rank: 1, bullseye: true },
       { team: 'T3', number: 320, picks: [], correct: false, points: 0, rank: 3, bullseye: false, bet: { on: 'T3', stake: 250, odds: 3, won: false, delta: -250 } }] },
     hostLine: 'Smarty Pints backed the right horse: +500.', fact: 'Babies are born with around 300.' },
+  // Everyone backs the favourite: five chips on one flag must stay on screen and clear of the other flags.
+  'ballpark-bet-crowd': { ...base, format: 'ballpark', phase: 'reveal', prompt: 'How many bones are in the adult human body?', category: 'Body', unit: 'bones', options: [],
+    teams: [team(0, 'Smarty Pints', '#FF4B3E', 4200), team(1, 'Les Quizerables', '#2F6BFF', 5400), team(2, 'Sip Happens', '#2FBF55', 3100), team(3, 'Brain Freeze', '#8B4DFF', 2800, { members: ['p0'] }), team(4, 'Trivia Newton John', '#FF8A2B', 2500, { members: ['p1'] })],
+    reveal: { correct: [], answerText: '206 bones', number: 206, answers: [
+      { team: 'T1', number: 180, picks: [], correct: false, points: 0, rank: 3, bullseye: false, bet: { on: 'T2', stake: 500, odds: 1, won: true, delta: 500 } },
+      { team: 'T2', number: 206, picks: [], correct: true, points: 1500, rank: 1, bullseye: true, bet: { on: 'T2', stake: 1000, odds: 1, won: true, delta: 1000 } },
+      { team: 'T3', number: 320, picks: [], correct: false, points: 0, rank: 5, bullseye: false, bet: { on: 'T2', stake: 250, odds: 1, won: true, delta: 250 } },
+      { team: 'T4', number: 190, picks: [], correct: false, points: 0, rank: 4, bullseye: false, bet: { on: 'T2', stake: 500, odds: 1, won: true, delta: 500 } },
+      { team: 'T5', number: 215, picks: [], correct: false, points: 0, rank: 2, bullseye: false, bet: { on: 'T2', stake: 250, odds: 1, won: true, delta: 250 } }] },
+    hostLine: 'Everyone backed the favourite.' },
   'sides-question': { ...base, format: 'sides', prompt: 'Platypus', category: 'Mammal or not?', q: 3, qTotal: 7, durationMs: 6000,
     options: [{ id: 'left', text: 'Mammal' }, { id: 'right', text: 'Not a mammal' }],
     sides: { left: 'Mammal', right: 'Not a mammal', item: 3, items: 7, history: [{ text: 'Dolphin', side: 'left', teamsRight: ['T1', 'T2'] }, { text: 'Seahorse', side: 'right', teamsRight: ['T3'] }] } },
