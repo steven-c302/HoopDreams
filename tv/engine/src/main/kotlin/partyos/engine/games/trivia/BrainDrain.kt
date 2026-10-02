@@ -599,8 +599,9 @@ class BrainDrain(
             val add = (points[t.id] ?: 0) + (betDeltas[t.id] ?: 0)
             if (add == 0) t else t.copy(score = (t.score + add).coerceAtLeast(0))
         }
-        val winnings = points.toMutableMap().also { won -> betDeltas.filterValues { it > 0 }.forEach { (team, d) -> won[team] = (won[team] ?: 0) + d } }
-        val effects = winnings.flatMap { (teamId, pts) -> awardTeam(s.teams, teamId, pts, "${s.format} answer") }
+        // Every teammate gets what the team got, bets included, so the party standings keep up with the team scores.
+        val net = points.toMutableMap().also { n -> betDeltas.forEach { (team, d) -> n[team] = (n[team] ?: 0) + d } }.filterValues { it != 0 }
+        val effects = net.flatMap { (teamId, pts) -> awardTeam(s.teams, teamId, pts, "${s.format} answer") }
         val revealMs = when (s.format) { SIDES -> SIDES_REVEAL_MS; BALLPARK -> BALLPARK_REVEAL_MS; else -> REVEAL_MS }
         val next = s.copy(
             phase = REVEAL, teams = teams, reveal = TriviaReveal(s.correct, answerText, number, answers), heist = heist,

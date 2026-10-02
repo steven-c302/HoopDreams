@@ -378,6 +378,26 @@ class BrainDrainTest {
         assertEquals("reveal", tv.phase)
     }
 
+    @Test fun aLostBetCostsEveryTeammateInThePartyStandingsToo() {
+        val (a, b, c, d) = fourInTwoTeams()
+        e.host(HostCmd.SkipPhase) // intro → first Quick Draw question
+        val right = currentRight()
+        listOf(a, b, c, d).forEach { answer(it, right) }
+        assertEquals(1500, score("T2"), "both teams are on 1500 after a quick right answer")
+        skipRound()
+        e.host(HostCmd.SkipPhase); e.host(HostCmd.SkipPhase) // standings → ballpark intro → question
+        val t = tv.prompt.removePrefix("Number ").removeSuffix("?").toInt() * 100.0
+        act(a, "guess", "value" to t); act(b, "guess", "value" to t)
+        act(c, "guess", "value" to t * 5); act(d, "guess", "value" to t * 5)
+        assertEquals("bet", tv.phase)
+        listOf(a, b).forEach { assertEquals(ActionResult.Ack, bet(it, Betting.SKIP)) }
+        lockBet(c, "T2", 500); lockBet(d, "T2", 500)
+        assertEquals("reveal", tv.phase)
+        assertEquals(1000, score("T2"), "T2 lost a 500 bet")
+        assertEquals(1000, e.tvState().scores.single { it.id == c }.score, "and so did each of its players")
+        assertEquals(1000, e.tvState().scores.single { it.id == d }.score)
+    }
+
     @Test fun theHostSkippingTheBetSettlesOnlyTheBetsThatAreIn() {
         val (a, b) = atBallparkBet()
         lockBet(a, "T1", 250); lockBet(b, "T1", 250)
