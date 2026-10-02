@@ -398,6 +398,33 @@ class BrainDrainTest {
         assertEquals(1000, e.tvState().scores.single { it.id == d }.score)
     }
 
+    @Test fun aBigWinIsAnnouncedWithThousandsSeparators() {
+        val (a, b, c, d) = fourInTwoTeams()
+        e.host(HostCmd.SkipPhase) // intro → first Quick Draw question
+        val right = currentRight()
+        listOf(a, b, c, d).forEach { answer(it, right) } // both teams on 1500
+        skipRound()
+        e.host(HostCmd.SkipPhase); e.host(HostCmd.SkipPhase) // standings → ballpark intro → question
+        val t = tv.prompt.removePrefix("Number ").removeSuffix("?").toInt() * 100.0
+        act(a, "guess", "value" to t); act(b, "guess", "value" to t)
+        act(c, "guess", "value" to t * 5); act(d, "guess", "value" to t * 5)
+        lockBet(a, "T1", 1000); lockBet(b, "T1", 1000)
+        listOf(c, d).forEach { assertEquals(ActionResult.Ack, bet(it, Betting.SKIP)) }
+        assertEquals("reveal", tv.phase)
+        assertTrue(tv.hostLine!!.contains("+1,000"), tv.hostLine)
+    }
+
+    @Test fun theFirstTapWinsATieEvenIfThatPlayerLocksTheirStakeLast() {
+        val (a, b) = atBallparkBet()
+        assertEquals(ActionResult.Ack, bet(a, "T1")) // a taps first...
+        clock.advance(1_000)
+        lockBet(b, "T2", 250) // ...b taps and locks a second later...
+        clock.advance(5_000)
+        assertEquals(ActionResult.Ack, bet(a, Betting.stakeId(250))) // ...and a only locks a stake much later
+        e.host(HostCmd.SkipPhase)
+        assertEquals("T1", tv.reveal!!.answers.single { it.team == "T1" }.bet!!.on, "one backer each: the guess tapped first wins")
+    }
+
     @Test fun theHostSkippingTheBetSettlesOnlyTheBetsThatAreIn() {
         val (a, b) = atBallparkBet()
         lockBet(a, "T1", 250); lockBet(b, "T1", 250)

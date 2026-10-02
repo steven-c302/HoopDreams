@@ -266,9 +266,10 @@ class BrainDrain(
                     option == Betting.SKIP -> TBet(null, 0, ctx.now)
                     option == Betting.BACK -> TBet(null, null, ctx.now)
                     option.startsWith("s") -> {
-                        val on = s.bets[who.v]?.on ?: throw Reject("NOT_NOW")
+                        val prev = s.bets[who.v]
+                        val on = prev?.on ?: throw Reject("NOT_NOW")
                         val amount = Betting.stakeOf(option)?.takeIf { it in Betting.allowedStakes(team.score) } ?: throw Reject("BAD_STAKE")
-                        TBet(on, amount, ctx.now)
+                        TBet(on, amount, prev.at) // keep when they backed the guess, so "tapped first" isn't reset by locking a stake
                     }
                     else -> {
                         if (s.line.none { it.team == option }) throw Reject("BAD_OPTION")
@@ -489,9 +490,9 @@ class BrainDrain(
     private fun betTalk(s: TriviaState, settled: Map<String, BetResult>): String? {
         if (s.line.isNotEmpty() && settled.isEmpty()) return "Nobody dared to bet."
         val big = settled.entries.filter { it.value.won && (it.value.odds == 3 || it.value.stake == Betting.STAKES.last()) }.maxByOrNull { it.value.delta }
-        if (big != null) return "${nameOf(s, big.key)} bet big and it paid: +${big.value.delta}."
+        if (big != null) return "${nameOf(s, big.key)} bet big and it paid: +${formatNumber(big.value.delta.toDouble())}."
         val bust = settled.entries.filter { !it.value.won && it.value.stake >= 500 }.maxByOrNull { it.value.stake }
-        if (bust != null) return "${nameOf(s, bust.key)} lost a ${bust.value.stake} bet. Ouch."
+        if (bust != null) return "${nameOf(s, bust.key)} lost a ${formatNumber(bust.value.stake.toDouble())} bet. Ouch."
         return null
     }
 
