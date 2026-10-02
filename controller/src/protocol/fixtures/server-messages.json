@@ -530,6 +530,76 @@
             "paused": false,
             "remainingMs": 42000,
             "screen": {
+                "t": "choice",
+                "prompt": "Who's closest? Back a guess",
+                "options": [
+                    {
+                        "id": "T1",
+                        "text": "Quizzards",
+                        "color": "#FF4B3E",
+                        "detail": "guess 180 · pays 2×"
+                    },
+                    {
+                        "id": "skip",
+                        "text": "Skip betting"
+                    }
+                ],
+                "kind": "bet",
+                "style": "teams",
+                "votes": {},
+                "team": {
+                    "id": "T1",
+                    "name": "Quizzards",
+                    "color": "#FF4B3E"
+                }
+            },
+            "scores": [
+                {
+                    "id": "p-sam",
+                    "name": "Sam",
+                    "avatar": {
+                        "face": "p:01",
+                        "color": "#FF7A00"
+                    },
+                    "score": 1500
+                },
+                {
+                    "id": "p-al",
+                    "name": "Al",
+                    "avatar": {
+                        "face": "p:02",
+                        "color": "#22AA55"
+                    },
+                    "score": 500
+                }
+            ],
+            "captain": false,
+            "settings": {},
+            "crew": []
+        }
+    },
+    {
+        "t": "view",
+        "seq": 12,
+        "view": {
+            "me": {
+                "id": "p-sam",
+                "name": "Sam",
+                "avatar": {
+                    "face": "p:01",
+                    "color": "#FF7A00"
+                },
+                "role": "PLAYER",
+                "connected": true,
+                "water": false
+            },
+            "roomCode": "KXQT",
+            "gameId": "bluff",
+            "gameTitle": "Bluff Battle",
+            "round": 3,
+            "paused": false,
+            "remainingMs": 42000,
+            "screen": {
                 "t": "multi",
                 "prompt": "Which of these are Great Lakes?",
                 "options": [
@@ -735,6 +805,226 @@
                     },
                     "hostLine": "Only Quizzards knew that.",
                     "fact": "Saturn's count shot past 200 in 2025.",
+                    "finishLine": 10,
+                    "podium": [],
+                    "awards": []
+                }
+            },
+            "scores": [
+                {
+                    "id": "p-sam",
+                    "name": "Sam",
+                    "avatar": {
+                        "face": "p:01",
+                        "color": "#FF7A00"
+                    },
+                    "score": 1500
+                },
+                {
+                    "id": "p-al",
+                    "name": "Al",
+                    "avatar": {
+                        "face": "p:02",
+                        "color": "#22AA55"
+                    },
+                    "score": 500
+                }
+            ],
+            "gamesPlayed": 1,
+            "captain": "p-sam",
+            "settings": {
+                "rounds": 5,
+                "teams": 0,
+                "drinks": 1,
+                "game": 0
+            }
+        }
+    },
+    {
+        "t": "tv",
+        "seq": 70,
+        "tv": {
+            "roomCode": "KXQT",
+            "players": [
+                {
+                    "id": "p-sam",
+                    "name": "Sam",
+                    "avatar": {
+                        "face": "p:01",
+                        "color": "#FF7A00"
+                    },
+                    "role": "PLAYER",
+                    "connected": true,
+                    "water": false
+                }
+            ],
+            "stage": {
+                "gameId": "trivia",
+                "title": "Brain Drain",
+                "phaseSeq": 9,
+                "deadlineAt": 1700000068000,
+                "remainingMs": 8000,
+                "paused": false,
+                "game": {
+                    "t": "trivia",
+                    "phase": "bet",
+                    "format": "ballpark",
+                    "round": 2,
+                    "totalRounds": 5,
+                    "q": 1,
+                    "qTotal": 3,
+                    "durationMs": 15000,
+                    "prompt": "How many bones are in the adult human body?",
+                    "category": "Body",
+                    "options": [],
+                    "unit": "bones",
+                    "teams": [
+                        {
+                            "id": "T1",
+                            "name": "Quizzards",
+                            "color": "#FF4B3E",
+                            "members": [
+                                "p-sam"
+                            ],
+                            "score": 1250,
+                            "answered": 0,
+                            "position": 0,
+                            "headStart": 0
+                        }
+                    ],
+                    "answered": 0,
+                    "expected": 0,
+                    "bet": {
+                        "line": [
+                            {
+                                "team": "T1",
+                                "number": 180.0,
+                                "odds": 2
+                            },
+                            {
+                                "team": "T2",
+                                "number": 206.0,
+                                "odds": 1
+                            }
+                        ],
+                        "locked": [
+                            "T2"
+                        ]
+                    },
+                    "hostLine": "Back a guess. Bigger odds, bigger risk.",
+                    "finishLine": 10,
+                    "podium": [],
+                    "awards": []
+                }
+            },
+            "scores": [
+                {
+                    "id": "p-sam",
+                    "name": "Sam",
+                    "avatar": {
+                        "face": "p:01",
+                        "color": "#FF7A00"
+                    },
+                    "score": 1500
+                },
+                {
+                    "id": "p-al",
+                    "name": "Al",
+                    "avatar": {
+                        "face": "p:02",
+                        "color": "#22AA55"
+                    },
+                    "score": 500
+                }
+            ],
+            "gamesPlayed": 1,
+            "captain": "p-sam",
+            "settings": {
+                "rounds": 5,
+                "teams": 0,
+                "drinks": 1,
+                "game": 0
+            }
+        }
+    },
+    {
+        "t": "tv",
+        "seq": 71,
+        "tv": {
+            "roomCode": "KXQT",
+            "players": [
+                {
+                    "id": "p-sam",
+                    "name": "Sam",
+                    "avatar": {
+                        "face": "p:01",
+                        "color": "#FF7A00"
+                    },
+                    "role": "PLAYER",
+                    "connected": true,
+                    "water": false
+                }
+            ],
+            "stage": {
+                "gameId": "trivia",
+                "title": "Brain Drain",
+                "phaseSeq": 9,
+                "deadlineAt": 1700000068000,
+                "remainingMs": 8000,
+                "paused": false,
+                "game": {
+                    "t": "trivia",
+                    "phase": "reveal",
+                    "format": "ballpark",
+                    "round": 2,
+                    "totalRounds": 5,
+                    "q": 1,
+                    "qTotal": 3,
+                    "durationMs": 9000,
+                    "prompt": "How many bones are in the adult human body?",
+                    "category": "Body",
+                    "options": [],
+                    "unit": "bones",
+                    "teams": [
+                        {
+                            "id": "T1",
+                            "name": "Quizzards",
+                            "color": "#FF4B3E",
+                            "members": [
+                                "p-sam"
+                            ],
+                            "score": 1750,
+                            "answered": 0,
+                            "position": 0,
+                            "headStart": 0
+                        }
+                    ],
+                    "answered": 0,
+                    "expected": 0,
+                    "reveal": {
+                        "correct": [],
+                        "answerText": "206 bones",
+                        "number": 206.0,
+                        "answers": [
+                            {
+                                "team": "T1",
+                                "number": 206.0,
+                                "picks": [],
+                                "correct": true,
+                                "points": 1500,
+                                "rank": 1,
+                                "bullseye": true,
+                                "bet": {
+                                    "on": "T1",
+                                    "stake": 250,
+                                    "odds": 1,
+                                    "won": true,
+                                    "delta": 250
+                                }
+                            }
+                        ]
+                    },
+                    "hostLine": "Quizzards nailed it. Who's googling?",
                     "finishLine": 10,
                     "podium": [],
                     "awards": []

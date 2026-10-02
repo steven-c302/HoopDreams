@@ -5,6 +5,9 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import partyos.engine.Avatar
+import partyos.engine.BetInfo
+import partyos.engine.BetOption
+import partyos.engine.BetResult
 import partyos.engine.BluffDelta
 import partyos.engine.BluffReveal
 import partyos.engine.BluffTv
@@ -124,6 +127,7 @@ class ProtocolFixturesTest {
         ),
         view(Screen.ChoiceList("Pick a team", listOf(Choice("T1", "Quizzards", "#FF4B3E", "2 in")), "T1", "team", style = "teams", team = team)),
         view(Screen.NumberEntry("How many bones are in the adult human body?", "bones", 206.0, "guess", listOf(TeamGuess(PlayerId("p-al"), 180.0)), team)),
+        view(Screen.ChoiceList("Who's closest? Back a guess", listOf(Choice("T1", "Quizzards", "#FF4B3E", "guess 180 · pays 2×"), Choice("skip", "Skip betting")), null, "bet", style = "teams", team = team)),
         view(
             Screen.MultiSelect(
                 "Which of these are Great Lakes?", listOf(Choice("a", "Huron"), Choice("b", "Erie"), Choice("c", "Champlain")),
@@ -147,6 +151,53 @@ class ProtocolFixturesTest {
                         drink = DrinkCall(listOf("T2"), 1, "last place"),
                         hostLine = "Only Quizzards knew that.",
                         fact = "Saturn's count shot past 200 in 2025.",
+                    ),
+                ),
+                scores = rows,
+                lastResult = null,
+                gamesPlayed = 1,
+                captain = sam,
+                settings = mapOf("rounds" to 5, "teams" to 0, "drinks" to 1, "game" to 0),
+            ),
+        ),
+        ServerMsg.Tv(
+            70,
+            TvState(
+                roomCode = "KXQT",
+                players = listOf(me),
+                stage = StageInfo(
+                    "trivia", "Brain Drain", 9, 1_700_000_068_000, 8_000, false, null, null,
+                    game = TriviaTv(
+                        phase = "bet", format = "ballpark", round = 2, totalRounds = 5, q = 1, qTotal = 3, durationMs = 15_000,
+                        prompt = "How many bones are in the adult human body?", category = "Body", unit = "bones",
+                        teams = listOf(TriviaTeam("T1", "Quizzards", "#FF4B3E", listOf(sam), 1250)),
+                        bet = BetInfo(listOf(BetOption("T1", 180.0, 2), BetOption("T2", 206.0, 1)), locked = listOf("T2")),
+                        hostLine = "Back a guess. Bigger odds, bigger risk.",
+                    ),
+                ),
+                scores = rows,
+                lastResult = null,
+                gamesPlayed = 1,
+                captain = sam,
+                settings = mapOf("rounds" to 5, "teams" to 0, "drinks" to 1, "game" to 0),
+            ),
+        ),
+        ServerMsg.Tv(
+            71,
+            TvState(
+                roomCode = "KXQT",
+                players = listOf(me),
+                stage = StageInfo(
+                    "trivia", "Brain Drain", 9, 1_700_000_068_000, 8_000, false, null, null,
+                    game = TriviaTv(
+                        phase = "reveal", format = "ballpark", round = 2, totalRounds = 5, q = 1, qTotal = 3, durationMs = 9_000,
+                        prompt = "How many bones are in the adult human body?", category = "Body", unit = "bones",
+                        teams = listOf(TriviaTeam("T1", "Quizzards", "#FF4B3E", listOf(sam), 1750)),
+                        reveal = TriviaReveal(
+                            emptyList(), "206 bones", number = 206.0,
+                            answers = listOf(TeamAnswer("T1", number = 206.0, correct = true, points = 1500, rank = 1, bullseye = true, bet = BetResult("T1", 250, 1, true, 250))),
+                        ),
+                        hostLine = "Quizzards nailed it. Who's googling?",
                     ),
                 ),
                 scores = rows,
@@ -505,6 +556,7 @@ class ProtocolFixturesTest {
             "a-5", 10,
             JsonObject(mapOf("kind" to JsonPrimitive("multi"), "picks" to kotlinx.serialization.json.JsonArray(listOf(JsonPrimitive("a"))), "lock" to JsonPrimitive(true))),
         ),
+        ClientMsg.Action("a-bet", 11, JsonObject(mapOf("kind" to JsonPrimitive("bet"), "option" to JsonPrimitive("T1")))),
         ClientMsg.Host("h-2", HostCommand.Pause),
         ClientMsg.Host("h-3", HostCommand.Resume),
         ClientMsg.Host("h-4", HostCommand.Skip),

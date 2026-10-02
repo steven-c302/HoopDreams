@@ -33,11 +33,15 @@ export const isTrivia = (gameId?: string | null) => gameId === 'trivia' || gameI
 
 /** 'gauntlet' only appears in a show saved before it was retired. */
 export type TriviaFormat = 'teamup' | 'quick' | 'ballpark' | 'sides' | 'heist' | 'write' | 'gauntlet'
-export type TriviaPhase = 'teamup' | 'intro' | 'question' | 'reveal' | 'victim' | 'steal' | 'standings' | 'podium' | 'awards'
+export type TriviaPhase = 'teamup' | 'intro' | 'question' | 'bet' | 'reveal' | 'victim' | 'steal' | 'standings' | 'podium' | 'awards'
 export interface TriviaTeam { id: string; name: string; color: string; members: string[]; score: number; answered: number; position: number; headStart: number }
 /** One end-of-show award. `line` never names the player; the TV shows their face and name. */
 export interface TriviaAward { title: string; player: string; line: string; roast?: boolean }
-export interface TeamAnswer { team: string; choice?: string; number?: number; picks: string[]; correct: boolean; points: number; rank?: number; moved?: number; bullseye: boolean; seconds?: number; text?: string }
+/** Ballpark betting: one backable guess and what backing it pays (the multiplier on the stake). */
+export interface BetOption { team: string; number: number; odds: number }
+/** How a team's bet came out; `delta` is the real change to their score. */
+export interface BetResult { on?: string; stake: number; odds: number; won: boolean; delta: number }
+export interface TeamAnswer { team: string; choice?: string; number?: number; picks: string[]; correct: boolean; points: number; rank?: number; moved?: number; bullseye: boolean; seconds?: number; text?: string; bet?: BetResult }
 export interface TriviaTv {
   t: 'trivia'; phase: TriviaPhase; format: TriviaFormat; round: number; totalRounds: number; q: number; qTotal: number; durationMs?: number
   prompt: string; category?: string; options: { id: string; text: string }[]; unit?: string; teams: TriviaTeam[]; answered: number; expected: number
@@ -45,6 +49,8 @@ export interface TriviaTv {
   sides?: { left: string; right: string; item: number; items: number; history: { text: string; side: 'left' | 'right'; teamsRight: string[] }[] }
   heist?: { thief: string; victim?: string; amount: number }
   drink?: { teams: string[]; sips: number; reason: string }
+  /** The bet phase only: every guess with its odds, and which teams have a bet in (not who backed what). */
+  bet?: { line: BetOption[]; locked: string[] }
   hostLine?: string; fact?: string; finishLine: number; podium: string[]
   /** Where a live question came from ("Open Trivia DB"); absent for the bundled packs. */
   credit?: string
@@ -57,7 +63,7 @@ export const ROUND_TITLES: Record<string, string> = {
 }
 export const ROUND_RULES: Record<string, string> = {
   quick: "Four answers. Your team's top pick counts. Faster is worth more.",
-  ballpark: "Guess the number. Your team's guess is the middle of everyone's. Closest wins.",
+  ballpark: "Guess the number. Your team's guess is the middle of everyone's. Closest wins. Then bet on whose guess is closest.",
   sides: 'Quick calls, five seconds each. Which side does it belong on?',
   heist: 'Right answers win 500. The fastest team robs somebody.',
   write: "No options this time. Type the answer; your team's most-written one counts. Close spelling is fine.",

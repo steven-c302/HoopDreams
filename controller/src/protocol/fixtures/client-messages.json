@@ -99,6 +99,15 @@
         }
     },
     {
+        "t": "action",
+        "id": "a-bet",
+        "round": 11,
+        "payload": {
+            "kind": "bet",
+            "option": "T1"
+        }
+    },
+    {
         "t": "host",
         "id": "h-2",
         "cmd": {
