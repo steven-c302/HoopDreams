@@ -279,6 +279,8 @@ class BrainDrainTest {
         assertEquals(ActionResult.Ack, act(c, "guess", "value" to target * 3))
         assertEquals(ActionResult.Rejected("BAD_NUMBER"), act(d, "guess", "value" to "lots"))
         assertEquals(ActionResult.Ack, act(d, "guess", "value" to target * 5))
+        assertEquals("bet", tv.phase) // two guesses on the board: teams get to bet before the answer
+        e.host(HostCmd.SkipPhase)
         val r = assertNotNull(tv.reveal)
         val t1 = r.answers.single { it.team == "T1" }
         assertEquals(target, t1.number)
@@ -288,6 +290,119 @@ class BrainDrainTest {
         assertEquals(2, t2.rank)
         assertEquals(0, t2.points) // second place only pays with three or more teams
         assertEquals("Bullseye!", waiting(a).title)
+    }
+
+    private var target = 0.0
+
+    /** Four players in two teams at a Ballpark bet: T1 (a, b) guessed the answer exactly, T2 (c, d) four times too high. Both teams start on 0. */
+    private fun atBallparkBet(): List<PlayerId> {
+        val ids = fourInTwoTeams()
+        skipRound()
+        e.host(HostCmd.SkipPhase) // standings → ballpark intro
+        e.host(HostCmd.SkipPhase) // intro → question
+        assertEquals("ballpark", tv.format)
+        assertEquals("question", tv.phase)
+        target = tv.prompt.removePrefix("Number ").removeSuffix("?").toInt() * 100.0
+        act(ids[0], "guess", "value" to target - 10); act(ids[1], "guess", "value" to target + 10)
+        act(ids[2], "guess", "value" to target * 3); act(ids[3], "guess", "value" to target * 5)
+        assertEquals("bet", tv.phase)
+        return ids
+    }
+
+    private fun bet(who: PlayerId, option: String) = act(who, "bet", "option" to option)
+    private fun lockBet(who: PlayerId, team: String, stake: Int) {
+        assertEquals(ActionResult.Ack, bet(who, team))
+        assertEquals(ActionResult.Ack, bet(who, Betting.stakeId(stake)))
+    }
+
+    @Test fun theBetPhaseOpensWithEveryGuessAndItsOddsAndNoAnswer() {
+        atBallparkBet()
+        val info = assertNotNull(tv.bet)
+        assertEquals(listOf("T1", "T2"), info.line.map { it.team })
+        assertEquals(listOf(target, target * 4), info.line.map { it.number })
+        assertEquals(listOf(1, 1), info.line.map { it.odds })
+        assertTrue(info.locked.isEmpty())
+        assertNull(tv.reveal, "the answer stays hidden until the reveal")
+        assertEquals(Betting.BET_MS, tv.durationMs)
+    }
+
+    @Test fun betsSettleAtTheRevealOnTopOfTheRoundPoints() {
+        val (a, b, c, d) = atBallparkBet()
+        lockBet(a, "T1", 250); lockBet(b, "T1", 250)
+        lockBet(c, "T2", 250)
+        assertEquals("bet", tv.phase, "d has not decided yet")
+        assertEquals(listOf("T1", "T2"), tv.bet!!.locked, "only 'bet in' shows, not who backed what")
+        lockBet(d, "T2", 250)
+        assertEquals("reveal", tv.phase, "the phase ends early once everyone has decided")
+        val r = assertNotNull(tv.reveal)
+        val t1 = r.answers.single { it.team == "T1" }
+        assertEquals(BrainDrain.CLOSEST_POINTS + BrainDrain.BULLSEYE_POINTS, t1.points)
+        assertEquals(true, t1.bet!!.won)
+        assertEquals(250, t1.bet!!.delta)
+        assertEquals(1750, score("T1"))
+        val t2 = r.answers.single { it.team == "T2" }
+        assertEquals(false, t2.bet!!.won)
+        assertEquals(0, t2.bet!!.delta, "house money: a team on 0 loses nothing")
+        assertEquals(0, score("T2"))
+    }
+
+    @Test fun backingTheOtherTeamPaysWhenTheyWereClosest() {
+        val (a, b, c, d) = atBallparkBet()
+        listOf(a, b).forEach { assertEquals(ActionResult.Ack, bet(it, Betting.SKIP)) }
+        lockBet(c, "T1", 250); lockBet(d, "T1", 250)
+        assertEquals("reveal", tv.phase)
+        val t2 = tv.reveal!!.answers.single { it.team == "T2" }
+        assertEquals("T1", t2.bet!!.on)
+        assertEquals(250, t2.bet!!.delta)
+        assertNull(tv.reveal!!.answers.single { it.team == "T1" }.bet, "a team that skipped has no bet")
+        assertEquals(250, score("T2"))
+    }
+
+    @Test fun stakesAreCappedAndAGuessMustBePickedFirst() {
+        val (a) = atBallparkBet()
+        assertEquals(ActionResult.Rejected("NOT_NOW"), bet(a, Betting.stakeId(250)), "no guess backed yet")
+        assertEquals(ActionResult.Rejected("BAD_OPTION"), bet(a, "T9"))
+        assertEquals(ActionResult.Ack, bet(a, "T1"))
+        assertEquals(ActionResult.Rejected("BAD_STAKE"), bet(a, Betting.stakeId(500)), "the team is on 0, so only house money")
+        assertEquals(ActionResult.Rejected("BAD_STAKE"), bet(a, "s300"))
+        assertEquals(ActionResult.Ack, bet(a, Betting.stakeId(250)))
+    }
+
+    @Test fun changingYourMindResetsTheStakeAndTheTeamWaitsForYouAgain() {
+        val (a, b, c, d) = atBallparkBet()
+        lockBet(a, "T1", 250); lockBet(b, "T1", 250); lockBet(c, "T2", 250)
+        assertEquals(ActionResult.Ack, bet(a, "T2")) // a changes their mind: stake is gone
+        lockBet(d, "T2", 250)
+        assertEquals("bet", tv.phase, "a is still choosing a stake")
+        assertEquals(ActionResult.Ack, bet(a, Betting.stakeId(250)))
+        assertEquals("reveal", tv.phase)
+    }
+
+    @Test fun theHostSkippingTheBetSettlesOnlyTheBetsThatAreIn() {
+        val (a, b) = atBallparkBet()
+        lockBet(a, "T1", 250); lockBet(b, "T1", 250)
+        e.host(HostCmd.SkipPhase)
+        assertEquals("reveal", tv.phase)
+        assertEquals(250, tv.reveal!!.answers.single { it.team == "T1" }.bet!!.delta)
+        assertNull(tv.reveal!!.answers.single { it.team == "T2" }.bet)
+    }
+
+    @Test fun withFewerThanTwoGuessesThereIsNothingToBetOn() {
+        val (a) = fourInTwoTeams()
+        skipRound()
+        e.host(HostCmd.SkipPhase); e.host(HostCmd.SkipPhase)
+        assertEquals("question", tv.phase)
+        act(a, "guess", "value" to 5.0)
+        e.host(HostCmd.SkipPhase)
+        assertEquals("reveal", tv.phase)
+        assertNull(tv.reveal!!.answers.firstNotNullOfOrNull { it.bet })
+    }
+
+    @Test fun oldSavedShowStillLoads() {
+        val json = kotlinx.serialization.json.Json { ignoreUnknownKeys = true }
+        val s = json.decodeFromString(TriviaState.serializer(), """{"phase":"question","format":"ballpark"}""")
+        assertTrue(s.line.isEmpty())
+        assertTrue(s.bets.isEmpty())
     }
 
     @Test fun pickASideScoresEachCall() {

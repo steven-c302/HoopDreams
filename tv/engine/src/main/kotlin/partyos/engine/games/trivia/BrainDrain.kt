@@ -8,6 +8,9 @@ import kotlinx.serialization.json.booleanOrNull
 import kotlinx.serialization.json.doubleOrNull
 import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonPrimitive
+import partyos.engine.BetInfo
+import partyos.engine.BetOption
+import partyos.engine.BetResult
 import partyos.engine.Choice
 import partyos.engine.DrinkCall
 import partyos.engine.Effect
@@ -104,6 +107,10 @@ data class TriviaState(
     /** player id → running tally for the end-of-show awards. */
     val stats: Map<String, PStats> = emptyMap(),
     val awards: List<TriviaAward> = emptyList(),
+    /** Ballpark betting: each team's guess with its odds, frozen when the bet phase opens. */
+    val line: List<BetOption> = emptyList(),
+    /** player id → their bet this question (the guess they back and their stake). */
+    val bets: Map<String, TBet> = emptyMap(),
 )
 
 /** One player's show so far, for the awards. "Right" is their own pick, whatever their team went with. */
@@ -251,6 +258,25 @@ class BrainDrain(
                 }
                 Step(s.copy(votes = s.votes + (who.v to vote)))
             }
+            BET -> {
+                val team = teamOf(s, who) ?: throw Reject("NEXT_ROUND")
+                if (kind != "bet") throw Reject("NOT_NOW")
+                val option = str("option") ?: throw Reject("BAD_OPTION")
+                val bet = when {
+                    option == Betting.SKIP -> TBet(null, 0, ctx.now)
+                    option == Betting.BACK -> TBet(null, null, ctx.now)
+                    option.startsWith("s") -> {
+                        val on = s.bets[who.v]?.on ?: throw Reject("NOT_NOW")
+                        val amount = Betting.stakeOf(option)?.takeIf { it in Betting.allowedStakes(team.score) } ?: throw Reject("BAD_STAKE")
+                        TBet(on, amount, ctx.now)
+                    }
+                    else -> {
+                        if (s.line.none { it.team == option }) throw Reject("BAD_OPTION")
+                        TBet(option, null, ctx.now)
+                    }
+                }
+                Step(s.copy(bets = s.bets + (who.v to bet)))
+            }
             VICTIM -> {
                 val heist = s.heist ?: throw Reject("NOT_NOW")
                 if (kind != "victim") throw Reject("NOT_NOW")
@@ -265,7 +291,8 @@ class BrainDrain(
     override fun onDeadline(s: TriviaState, ctx: GameContext): Step<TriviaState> = when (s.phase) {
         TEAMUP -> finishTeamUp(s, ctx)
         INTRO -> nextQuestion(s, ctx)
-        QUESTION -> score(s, ctx)
+        QUESTION -> if (s.format == BALLPARK && teamGuesses(s).values.count { it != null } >= 2) enterBet(s, ctx) else score(s, ctx)
+        BET -> score(s, ctx)
         REVEAL -> afterReveal(s, ctx)
         VICTIM -> steal(s, ctx)
         STEAL -> nextOrStandings(s, ctx)
@@ -342,7 +369,7 @@ class BrainDrain(
         if (round > s0.order.size) return podium(s0, ctx)
         val format = s0.order[round - 1]
         var s = s0.copy(
-            phase = INTRO, format = format, round = round, q = 0, votes = emptyMap(), reveal = null, drink = null,
+            phase = INTRO, format = format, round = round, q = 0, votes = emptyMap(), reveal = null, drink = null, line = emptyList(), bets = emptyMap(),
             heist = null, eliminated = emptyMap(), sidesHistory = emptyList(), options = emptyList(), correct = emptyList(),
             itemId = null, teams = sync(s0.teams, ctx), hostLine = null,
         )
@@ -375,7 +402,7 @@ class BrainDrain(
     private fun nextQuestion(s0: TriviaState, ctx: GameContext): Step<TriviaState> {
         val q = s0.q + 1
         if (q > s0.qTotal) return endRound(s0, ctx)
-        val base = s0.copy(q = q, votes = emptyMap(), reveal = null, drink = null, heist = null, hostLine = null, live = null, teams = sync(s0.teams, ctx), startedAt = ctx.now)
+        val base = s0.copy(q = q, votes = emptyMap(), reveal = null, drink = null, line = emptyList(), bets = emptyMap(), heist = null, hostLine = null, live = null, teams = sync(s0.teams, ctx), startedAt = ctx.now)
         return when (s0.format) {
             QUICK, HEIST -> {
                 val item = pickMc(s0, ctx) { true } ?: return endRound(s0, ctx)
@@ -443,6 +470,31 @@ class BrainDrain(
 
     // ---- scoring --------------------------------------------------------------------------------
 
+    /** Each active team's Ballpark guess (the median of its members' numbers), or null if nobody typed one. */
+    private fun teamGuesses(s: TriviaState): Map<String, Double?> =
+        s.teams.filter { it.members.isNotEmpty() }.associate { t -> t.id to median(t.members.mapNotNull { s.votes[it.v]?.number }) }
+
+    /** Ballpark guesses are in: show them with their odds and let teams bet before the answer. */
+    private fun enterBet(s: TriviaState, ctx: GameContext): Step<TriviaState> {
+        val line = Betting.line(teamGuesses(s).mapNotNull { (id, g) -> g?.let { id to it } }.toMap())
+        val duration = ctx.timer(Betting.BET_MS)
+        val next = s.copy(
+            phase = BET, line = line, bets = emptyMap(), startedAt = ctx.now, durationMs = duration,
+            hostLine = pick(ctx, "Back a guess. Bigger odds, bigger risk.", "Who's closest? Put your points where your mouth is."),
+        )
+        return Step(next, listOf(Effect.Phase(duration)))
+    }
+
+    /** What Brainy says about the bets, if anything is worth saying. */
+    private fun betTalk(s: TriviaState, settled: Map<String, BetResult>): String? {
+        if (s.line.isNotEmpty() && settled.isEmpty()) return "Nobody dared to bet."
+        val big = settled.entries.filter { it.value.won && (it.value.odds == 3 || it.value.stake == Betting.STAKES.last()) }.maxByOrNull { it.value.delta }
+        if (big != null) return "${nameOf(s, big.key)} bet big and it paid: +${big.value.delta}."
+        val bust = settled.entries.filter { !it.value.won && it.value.stake >= 500 }.maxByOrNull { it.value.stake }
+        if (bust != null) return "${nameOf(s, bust.key)} lost a ${bust.value.stake} bet. Ouch."
+        return null
+    }
+
     private fun score(s: TriviaState, ctx: GameContext): Step<TriviaState> {
         val points = LinkedHashMap<String, Int>()
         val answers: List<TeamAnswer>
@@ -453,6 +505,7 @@ class BrainDrain(
         var number: Double? = null
         val line: String?
         val active = teams.filter { it.members.isNotEmpty() }
+        var betDeltas = emptyMap<String, Int>()
 
         when (s.format) {
             QUICK, HEIST, SIDES -> {
@@ -492,9 +545,17 @@ class BrainDrain(
                 val item = ballparkById.getValue(requireNotNull(s.itemId))
                 number = item.answer
                 answerText = (if (item.year) item.answer.toLong().toString() else formatNumber(item.answer)) + (item.unit?.let { " $it" } ?: "")
-                val guesses = active.associate { t -> t.id to median(t.members.mapNotNull { s.votes[it.v]?.number }) }
+                val guesses = teamGuesses(s)
                 val diffs = guesses.mapNotNull { (id, g) -> g?.let { id to abs(it - item.answer) } }.toMap()
                 val distinct = diffs.values.distinct().sorted()
+                val roundPoints = active.associate { t ->
+                    val rank = diffs[t.id]?.let { distinct.indexOf(it) + 1 }
+                    val bull = diffs[t.id]?.let { it <= abs(item.answer) * BULLSEYE_TOLERANCE } == true
+                    t.id to ((when { rank == 1 -> CLOSEST_POINTS; rank == 2 && active.size >= 3 -> SECOND_POINTS; else -> 0 }) + if (bull) BULLSEYE_POINTS else 0)
+                }
+                val teamBets = if (s.line.isEmpty()) emptyMap() else active.mapNotNull { t -> Betting.teamBet(t.members, s.bets)?.let { t.id to it } }.toMap()
+                val settled = Betting.settle(s.line, teamBets, item.answer, active.associate { it.id to it.score + (roundPoints[it.id] ?: 0) })
+                betDeltas = settled.mapValues { it.value.delta }
                 answers = active.map { t ->
                     val d = diffs[t.id]
                     val rank = d?.let { distinct.indexOf(it) + 1 }
@@ -505,10 +566,10 @@ class BrainDrain(
                         else -> 0
                     } + if (bull) BULLSEYE_POINTS else 0
                     if (pts > 0) points[t.id] = pts
-                    TeamAnswer(t.id, number = guesses[t.id], correct = rank == 1, points = pts, rank = rank, bullseye = bull)
+                    TeamAnswer(t.id, number = guesses[t.id], correct = rank == 1, points = pts, rank = rank, bullseye = bull, bet = settled[t.id])
                 }
                 val winners = answers.filter { it.rank == 1 }
-                line = when {
+                val closestLine = when {
                     winners.isEmpty() -> "Nobody guessed. Bold strategy."
                     winners.any { it.bullseye } -> pick(ctx, "{t} nailed it. Who's googling?", "Bullseye from {t}.")
                         .replace("{t}", nameOf(s, winners.first { it.bullseye }.team))
@@ -516,6 +577,7 @@ class BrainDrain(
                         .replace("{t}", winners.joinToString(" and ") { nameOf(s, it.team) })
                         .replace("{d}", formatNumber(diffs.getValue(winners.first().team)))
                 }
+                line = listOfNotNull(closestLine, betTalk(s, settled)).joinToString(" ")
             }
             GAUNTLET -> {
                 answerText = s.options.filter { it.fit }.joinToString(", ") { it.text }
@@ -533,8 +595,12 @@ class BrainDrain(
             else -> return Step(s)
         }
 
-        teams = teams.map { t -> points[t.id]?.let { t.copy(score = t.score + it) } ?: t }
-        val effects = points.flatMap { (teamId, pts) -> awardTeam(s.teams, teamId, pts, "${s.format} answer") }
+        teams = teams.map { t ->
+            val add = (points[t.id] ?: 0) + (betDeltas[t.id] ?: 0)
+            if (add == 0) t else t.copy(score = (t.score + add).coerceAtLeast(0))
+        }
+        val winnings = points.toMutableMap().also { won -> betDeltas.filterValues { it > 0 }.forEach { (team, d) -> won[team] = (won[team] ?: 0) + d } }
+        val effects = winnings.flatMap { (teamId, pts) -> awardTeam(s.teams, teamId, pts, "${s.format} answer") }
         val revealMs = when (s.format) { SIDES -> SIDES_REVEAL_MS; BALLPARK -> BALLPARK_REVEAL_MS; else -> REVEAL_MS }
         val next = s.copy(
             phase = REVEAL, teams = teams, reveal = TriviaReveal(s.correct, answerText, number, answers), heist = heist,
@@ -737,6 +803,7 @@ class BrainDrain(
             val v = s.votes[id.v]
             if (s.format == GAUNTLET) v?.locked != true else v == null
         }.toSet()
+        BET -> s.teams.flatMap { it.members }.filter { s.bets[it.v]?.stake == null }.toSet()
         VICTIM -> s.teams.firstOrNull { it.id == s.heist?.thief }?.members?.filter { it.v !in s.votes }?.toSet()
         else -> null
     }
@@ -746,7 +813,7 @@ class BrainDrain(
 
     override fun tvView(s: TriviaState, ctx: GameContext): TriviaTv {
         val showAnswer = s.phase in setOf(REVEAL, VICTIM, STEAL)
-        val live = s.phase == QUESTION || showAnswer
+        val live = s.phase == QUESTION || s.phase == BET || showAnswer
         val sides = s.itemId?.let(sidesById::get)?.takeIf { s.format == SIDES }
         val prompt = when {
             s.phase == TEAMUP -> "Team up!"
@@ -789,6 +856,7 @@ class BrainDrain(
             sides = sides?.let { SidesInfo(it.left, it.right, s.q, s.qTotal, s.sidesHistory) },
             heist = s.heist.takeIf { showAnswer },
             drink = s.drink,
+            bet = if (s.phase == BET) BetInfo(s.line, s.teams.filter { Betting.teamBet(it.members, s.bets) != null }.map { it.id }) else null,
             hostLine = s.hostLine,
             fact = if (showAnswer) factFor(s) else null,
             credit = if (live && s.format in setOf(QUICK, HEIST, WRITE)) mcOf(s)?.source else null,
@@ -1056,6 +1124,7 @@ class BrainDrain(
         const val VICTIM = "victim"
         const val STEAL = "steal"
         const val STANDINGS = "standings"
+        const val BET = "bet"
         const val PODIUM = "podium"
         const val AWARDS = "awards"
 
@@ -1090,7 +1159,7 @@ class BrainDrain(
         )
         val ROUND_RULES = mapOf(
             QUICK to "Four answers. Your team's top pick counts. Faster is worth more.",
-            BALLPARK to "Guess the number. Your team's guess is the middle of everyone's. Closest wins.",
+            BALLPARK to "Guess the number. Your team's guess is the middle of everyone's. Closest wins. Then bet on whose guess is closest.",
             SIDES to "Quick calls, five seconds each. Which side does it belong on?",
             HEIST to "Right answers win 500. The fastest team robs somebody.",
             WRITE to "No options this time. Type the answer; your team's most-written one counts. Close spelling is fine.",
