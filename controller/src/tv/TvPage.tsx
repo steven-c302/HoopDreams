@@ -293,7 +293,7 @@ function LobbyScreen({ tv, session, games, lobby, setOption, onStart, keys, play
   })
   return (
     <Scene color={C.sun}>
-      <div className={`lobby ${crowd}`}>
+      <div className={`lobby ${crowd} ${captain || tv.lastResult ? 'notes' : ''}`}>
         <div className="lobby-left">
           <PartyLogo />
           <Panel className="qr-panel" fill={C.white} tilt={-2}>

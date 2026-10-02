@@ -116,6 +116,9 @@
 .lobby.packed .cast-card { padding: 3px 12px 3px 4px; font-size: 27px; gap: 10px; }
 .lobby.packed .picker.six .cover { height: 165px; }
 .lobby.packed .picker.six .cover h2 { --h2: 24px; }
+/* The crown / last-game note takes a line under the players; the covers give that room back so the players never overflow. */
+.lobby.notes .picker.six .cover { height: 146px; }
+.lobby.notes.packed .picker.six .cover { height: 138px; }
 .cast-card { display: flex; align-items: center; gap: 16px; padding: 10px 18px 10px 10px; font-size: 38px; font-weight: 900; overflow: hidden; }
 .cast-card span { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
 .cast-card.away { opacity: .45; }

@@ -18,7 +18,8 @@ for (const game of ['turf', 'sprawl']) {
       expect(b!.y + b!.height).toBeLessThanOrEqual(720.5)
     }
     for (const card of await cards.all()) await fits(card)
-    await fits(page.locator(game === 'turf' ? '.turf-viewport' : '.sp-map'))
+    // Home Turf draws its board in 3D by default, so its board box (the same place in 3D and flat) is what has to fit.
+    await fits(page.locator(game === 'turf' ? '.turf-board-wrap' : '.sp-map'))
     await page.waitForTimeout(1100)
     await expect(page.locator('.game-dial span')).toHaveText('18')
   })
@@ -112,4 +113,16 @@ test('write it down on its own is a pub quiz; inside Brain Drain the round stays
   await page.goto('/tv?gallery=trivia&beat=write-reveal')
   await expect(page.locator('[data-game-theme]')).toHaveCount(0)
   await expect(page.locator('.brainy').first()).toBeVisible()
+})
+
+test('turf: the flat board still fits when 3D is turned off (?board=2d)', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 720 })
+  await page.goto('/tv?gallery=themes&game=turf&board=2d')
+  await expect(page.locator('.turf-card')).toHaveCount(6)
+  const b = await page.locator('.turf-viewport').boundingBox()
+  expect(b).not.toBeNull()
+  expect(b!.x).toBeGreaterThanOrEqual(0)
+  expect(b!.y).toBeGreaterThanOrEqual(0)
+  expect(b!.x + b!.width).toBeLessThanOrEqual(1280.5)
+  expect(b!.y + b!.height).toBeLessThanOrEqual(720.5)
 })
