@@ -32,6 +32,7 @@ Made with [brag](https://github.com/latent-spaces/brag)'s lightweight `brag-slim
 
 | Change | What it means on game night |
 | --- | --- |
+| **Song Drop** | A guess-the-song game on YouTube: the clip grows from 2 to 15 seconds, phones tap the right song, quicker and shorter scores more. The lobby checks that YouTube plays on this TV before you start. |
 | **Night in Review** | Between games, press **A** on the TV: the night's leaderboard, awards (Night Champ, Most Wins, Hot Streak, Comeback Kid, Wooden Spoon) and the best moments so far. |
 | **Cheers from the couch** | Anyone who joined to watch gets four buttons (YES, BOO, OOOH, WOW). Each one stamps on the TV with their name and face, one every 1.2 seconds. |
 | **Bluff veto** | While everyone is picking, the captain (crown sheet, tap twice) or the TV host (**Esc**) can hide an option. It shows as "Hidden by the host" whether it was a lie or the truth, so using it never gives anything away. |
@@ -170,6 +171,15 @@ teammates' faces show up on the answer they picked, and phones buzz on every tap
 refreshed or dropped phone rejoins as the same player.
 
 ## The other games
+
+**Song Drop.** Guess the song. The TV plays a clip from a YouTube video while the video stays covered (press **V** on the
+TV to see the player). The clip starts at 2 seconds and grows to 4, 8 and 15 each time nobody has it; phones tap the right
+song from four choices. Shorter clips and quicker taps score more, a wrong tap locks you out of that song, and the last
+song counts double. Pick the era with **E** and the number of songs with ↑/↓. It needs the internet on the Mac. In the
+lobby, focus Song Drop and wait for the **YouTube** line to say **OK**; if it says **NOT WORKING HERE**, check the Mac's
+internet. A song that won't play is skipped and remembered, and three in a row end the game with a message. The song deck
+(120 songs) is built by `controller/scripts/songs/build-deck.mjs` from `seed.txt`; fix a song's video or start time in
+`overrides.json` and rebuild.
 
 **Write It Down.** Brain Drain's typed-answer round as a game of its own: a pub quiz in three rounds. No options on
 screen, everyone types the answer, and the team's most-written answer counts (close spelling is fine). Same teams,
