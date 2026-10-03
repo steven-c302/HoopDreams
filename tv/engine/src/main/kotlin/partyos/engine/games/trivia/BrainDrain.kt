@@ -1040,6 +1040,36 @@ class BrainDrain(
                     )
                 }
             }
+            FINAL_CATEGORY -> Screen.Waiting("Final wager", s.finale?.category?.let { "Category: $it" }, team = tag)
+            FINAL_WAGER -> {
+                if (team == null) return Screen.Waiting("You're in next question", "We'll put you on the smallest team")
+                val labels = mapOf("w0" to "Play it safe", "w25" to "25%", "w50" to "50%", "w75" to "75%", Finale.ALL_IN to "ALL IN")
+                val picked = s.finale?.wagers?.get(who.v)?.option
+                val backers = LinkedHashMap<String, MutableList<PlayerId>>()
+                for (m in team.members) s.finale?.wagers?.get(m.v)?.option?.let { backers.getOrPut(it) { mutableListOf() } += m }
+                Screen.ChoiceList(
+                    "Wager on ${s.finale?.category ?: "the final"}. Question comes after",
+                    finaleOffered(s, team).map { Choice(it, labels.getValue(it), detail = formatNumber(Finale.amount(it, team.score).toDouble())) },
+                    picked, "finalWager", votes = backers, team = tag,
+                )
+            }
+            FINAL_QUESTION -> {
+                if (team == null) return Screen.Waiting("You're in next question", "We'll put you on the smallest team")
+                val names = ctx.players.associate { it.id to it.name }
+                val mates = team.members.filter { it != who }.mapNotNull { id -> s.votes[id.v]?.text?.let { "${names[id] ?: "?"}: $it" } }
+                Screen.TextEntry(
+                    mcOf(s)?.prompt ?: "", MAX_WRITE, mine?.text, "finalAnswer",
+                    hint = if (mates.isEmpty()) "Your team's most-written answer counts" else "Team: " + mates.joinToString(" · "),
+                    team = tag,
+                )
+            }
+            FINAL_REVEAL -> {
+                val r = team?.let { t -> s.finale?.results?.firstOrNull { it.team == t.id } }
+                    ?: return Screen.Waiting("Eyes on the TV", "Watch the reveal", team = tag)
+                val was = s.finale?.answerText?.let { "It was $it" }
+                if (r.right) Screen.Waiting("Correct! +${formatNumber(r.delta.toDouble())}", was, "win", tag)
+                else Screen.Waiting("Wrong. -${formatNumber(-r.delta.toDouble())}", was, "lose", tag)
+            }
             BET -> {
                 if (team == null) return Screen.Waiting("You're in next question", "We'll put you on the smallest team")
                 betScreen(s, team, tag, s.bets[who.v])

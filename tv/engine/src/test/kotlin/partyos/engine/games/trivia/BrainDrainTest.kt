@@ -635,6 +635,53 @@ class BrainDrainTest {
         assertNull(s.finale)
     }
 
+    @Test fun thePhoneOffersWagersWithTheirWorthAndOnlyUnderdogsSeeAllIn() {
+        val (a, _, c) = toFinale()
+        assertEquals("Final wager", waiting(a).title)
+        e.host(HostCmd.SkipPhase)
+        val leader = assertIs<Screen.ChoiceList>(e.phoneState(a).screen)
+        assertEquals("finalWager", leader.kind)
+        assertEquals(listOf("w0", "w25", "w50", "w75"), leader.options.map { it.id })
+        assertEquals("1,150", leader.options.first { it.id == "w75" }.detail) // 75% of 1500 is 1125, to the nearest 50
+        val last = assertIs<Screen.ChoiceList>(e.phoneState(c).screen)
+        assertEquals(listOf("w0", "w25", "w50", "w75", "wall"), last.options.map { it.id })
+        assertEquals("1,000", last.options.first { it.id == "wall" }.detail) // the floor
+        assertEquals("ALL IN", last.options.first { it.id == "wall" }.text)
+    }
+
+    @Test fun aPickedWagerIsHighlightedAndTeammatesSeeIt() {
+        val (a, b) = toFinale()
+        e.host(HostCmd.SkipPhase)
+        wager(a, "w50")
+        assertEquals("w50", assertIs<Screen.ChoiceList>(e.phoneState(a).screen).selected)
+        assertEquals(listOf(a), assertIs<Screen.ChoiceList>(e.phoneState(b).screen).votes["w50"])
+    }
+
+    @Test fun theQuestionPhoneIsATypedAnswerBoxWithTheQuestion() {
+        val (a, b, c) = toFinale()
+        e.host(HostCmd.SkipPhase)
+        wager(a, "w50"); wager(c, "w0")
+        val box = assertIs<Screen.TextEntry>(e.phoneState(a).screen)
+        assertEquals("finalAnswer", box.kind)
+        assertTrue(box.prompt.startsWith("Question "))
+        finalAnswer(a, "Rihgt")
+        assertEquals("Rihgt", assertIs<Screen.TextEntry>(e.phoneState(a).screen).value)
+        assertTrue(assertIs<Screen.TextEntry>(e.phoneState(b).screen).hint!!.contains("Rihgt"))
+    }
+
+    @Test fun theRevealPhoneSaysWhatYourTeamWonOrLost() {
+        val (a, b, c, d) = toFinale()
+        e.host(HostCmd.SkipPhase)
+        wager(a, "w50"); wager(c, "w25")
+        val right = currentRight()
+        finalAnswer(a, right); finalAnswer(b, right); finalAnswer(c, "Nope"); finalAnswer(d, "Nope")
+        assertEquals("final_reveal", tv.phase)
+        assertEquals("Correct! +750", waiting(a).title)
+        assertEquals("win", waiting(a).tone)
+        assertEquals("Wrong. -0", waiting(c).title) // a team on 0 loses nothing
+        assertEquals("lose", waiting(c).tone)
+    }
+
     @Test fun pickASideScoresEachCall() {
         val (a, b, c, d) = fourInTwoTeams()
         repeat(2) { skipRound(); e.host(HostCmd.SkipPhase) }
