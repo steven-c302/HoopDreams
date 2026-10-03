@@ -1,0 +1,12 @@
+{
+  "packId": "songdrop-core",
+  "title": "Song Drop seed",
+  "game": "songdrop",
+  "version": 1,
+  "items": [
+    { "id": "queen-bohemian-rhapsody", "title": "Bohemian Rhapsody", "artist": "Queen", "year": 1975, "genre": "rock", "videoId": "fJ9rUzIMcZQ", "startSec": 60 },
+    { "id": "rick-astley-never-gonna-give-you-up", "title": "Never Gonna Give You Up", "artist": "Rick Astley", "year": 1987, "genre": "pop", "videoId": "dQw4w9WgXcQ", "startSec": 43 },
+    { "id": "psy-gangnam-style", "title": "Gangnam Style", "artist": "PSY", "year": 2012, "genre": "dance", "videoId": "9bZkp7q19f0", "startSec": 52 },
+    { "id": "luis-fonsi-despacito", "title": "Despacito", "artist": "Luis Fonsi", "year": 2017, "genre": "latin", "videoId": "kJQP7kiw5Fk", "startSec": 55 }
+  ]
+}
