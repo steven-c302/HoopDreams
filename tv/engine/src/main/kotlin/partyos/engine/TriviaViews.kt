@@ -9,7 +9,7 @@ import kotlinx.serialization.Serializable
  */
 @Serializable @SerialName("trivia")
 data class TriviaTv(
-    /** teamup | intro | question | bet | reveal | victim | steal | standings | podium */
+    /** teamup | intro | question | bet | reveal | victim | steal | standings | final_category | final_wager | final_question | final_reveal | podium */
     val phase: String,
     /** teamup | quick | ballpark | sides | heist | write (gauntlet only in shows saved before it was retired) */
     val format: String,
@@ -35,6 +35,8 @@ data class TriviaTv(
     val drink: DrinkCall? = null,
     /** The bet phase: every guess with its odds and which teams have bet. Absent in every other phase. */
     val bet: BetInfo? = null,
+    /** The Final Wager: the category, who has wagered, and (reveal only) the answer and every result. Absent outside the finale. */
+    val finale: FinaleInfo? = null,
     val hostLine: String? = null,
     val fact: String? = null,
     /** Where a live question came from ("Open Trivia DB"), shown with it; null for the bundled packs. */

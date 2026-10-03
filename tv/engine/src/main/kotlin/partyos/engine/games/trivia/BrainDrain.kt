@@ -14,6 +14,8 @@ import partyos.engine.BetResult
 import partyos.engine.Choice
 import partyos.engine.DrinkCall
 import partyos.engine.Effect
+import partyos.engine.FinaleInfo
+import partyos.engine.FinaleResult
 import partyos.engine.GameContext
 import partyos.engine.GameInfo
 import partyos.engine.GameModule
@@ -111,6 +113,8 @@ data class TriviaState(
     val line: List<BetOption> = emptyList(),
     /** player id → their bet this question (the guess they back and their stake). */
     val bets: Map<String, TBet> = emptyMap(),
+    /** The Final Wager after the last round; null in shows saved before it existed and in Write It Down. */
+    val finale: FinaleState? = null,
 )
 
 /** One player's show so far, for the awards. "Right" is their own pick, whatever their team went with. */
@@ -278,6 +282,20 @@ class BrainDrain(
                 }
                 Step(s.copy(bets = s.bets + (who.v to bet)))
             }
+            FINAL_WAGER -> {
+                val team = teamOf(s, who) ?: throw Reject("NEXT_ROUND")
+                val fin = s.finale ?: throw Reject("NOT_NOW")
+                if (kind != "finalWager") throw Reject("NOT_NOW")
+                val option = str("option")?.takeIf { it in finaleOffered(s, team) } ?: throw Reject("BAD_OPTION")
+                Step(s.copy(finale = fin.copy(wagers = fin.wagers + (who.v to FWager(option, ctx.now)))))
+            }
+            FINAL_QUESTION -> {
+                teamOf(s, who) ?: throw Reject("NEXT_ROUND")
+                if (kind != "finalAnswer") throw Reject("NOT_NOW")
+                val text = cleanText(str("text") ?: "", MAX_WRITE) ?: throw Reject("BAD_TEXT")
+                val prev = s.votes[who.v]
+                Step(s.copy(votes = s.votes + (who.v to if (prev?.text == text) prev else TVote(text = text, at = ctx.now))))
+            }
             VICTIM -> {
                 val heist = s.heist ?: throw Reject("NOT_NOW")
                 if (kind != "victim") throw Reject("NOT_NOW")
@@ -294,6 +312,10 @@ class BrainDrain(
         INTRO -> nextQuestion(s, ctx)
         QUESTION -> if (s.format == BALLPARK && teamGuesses(s).values.count { it != null } >= 2) enterBet(s, ctx) else score(s, ctx)
         BET -> score(s, ctx)
+        FINAL_CATEGORY -> enterFinalWager(s, ctx)
+        FINAL_WAGER -> enterFinalQuestion(s, ctx)
+        FINAL_QUESTION -> finalReveal(s, ctx)
+        FINAL_REVEAL -> finishFinale(s, ctx)
         REVEAL -> afterReveal(s, ctx)
         VICTIM -> steal(s, ctx)
         STEAL -> nextOrStandings(s, ctx)
@@ -367,7 +389,7 @@ class BrainDrain(
     }
 
     private fun startRound(s0: TriviaState, round: Int, ctx: GameContext): Step<TriviaState> {
-        if (round > s0.order.size) return podium(s0, ctx)
+        if (round > s0.order.size) return if (hasFinale(s0)) enterFinale(s0, ctx) else podium(s0, ctx)
         val format = s0.order[round - 1]
         var s = s0.copy(
             phase = INTRO, format = format, round = round, q = 0, votes = emptyMap(), reveal = null, drink = null, line = emptyList(), bets = emptyMap(),
@@ -494,6 +516,77 @@ class BrainDrain(
         val bust = settled.entries.filter { !it.value.won && it.value.stake >= 500 }.maxByOrNull { it.value.stake }
         if (bust != null) return "${nameOf(s, bust.key)} lost a ${formatNumber(bust.value.stake.toDouble())} bet. Ouch."
         return null
+    }
+
+    /** Brain Drain only (not Write It Down on its own, nor a show saved with the retired Gauntlet), with a match to settle. */
+    private fun hasFinale(s: TriviaState) = mode == Mode.SHOW && GAUNTLET !in s.order && s.teams.count { it.members.isNotEmpty() } >= 2
+
+    /** The wagers this team may pick, from where it stands among the active teams. */
+    private fun finaleOffered(s: TriviaState, team: TTeam): List<String> =
+        Finale.options(team.score, s.teams.filter { it.members.isNotEmpty() }.map { it.score })
+
+    /** After the last round: pick a short typed question and slam its category. The question itself comes after the wagers. */
+    private fun enterFinale(s0: TriviaState, ctx: GameContext): Step<TriviaState> {
+        val item = pickMc(s0, ctx) { writable(it) && it.answer.length <= Finale.MAX_ANSWER } ?: return podium(s0, ctx)
+        val s = s0.copy(
+            phase = FINAL_CATEGORY, format = FINAL, teams = sync(s0.teams, ctx), itemId = item.id, live = item.takeIf { it.id !in mcById },
+            options = emptyList(), correct = emptyList(), votes = emptyMap(), reveal = null, drink = null, heist = null, line = emptyList(), bets = emptyMap(),
+            finale = FinaleState(category = item.category, answerText = item.answer), startedAt = ctx.now, durationMs = Finale.CATEGORY_MS,
+            hostLine = pick(ctx, "Final wager. The category is ${item.category}. Choose wisely.", "One last bet. ${item.category}. Go big or go home."),
+        )
+        return Step(s, listOf(Effect.UseContent(item.id), Effect.Phase(Finale.CATEGORY_MS)))
+    }
+
+    private fun enterFinalWager(s: TriviaState, ctx: GameContext): Step<TriviaState> {
+        val duration = ctx.timer(Finale.WAGER_MS)
+        val next = s.copy(
+            phase = FINAL_WAGER, startedAt = ctx.now, durationMs = duration, hostLine = "Pick your wager. Nobody sees it until the reveal.",
+            finale = s.finale?.copy(wagers = emptyMap()),
+        )
+        return Step(next, listOf(Effect.Phase(duration)))
+    }
+
+    private fun enterFinalQuestion(s: TriviaState, ctx: GameContext): Step<TriviaState> {
+        val duration = ctx.timer(Finale.QUESTION_MS)
+        return Step(s.copy(phase = FINAL_QUESTION, votes = emptyMap(), startedAt = ctx.now, durationMs = duration, hostLine = null), listOf(Effect.Phase(duration)))
+    }
+
+    /** The question is closed: work out every team's result, last place first, and start the reveal. Scores wait until it ends. */
+    private fun finalReveal(s: TriviaState, ctx: GameContext): Step<TriviaState> {
+        val fin = s.finale ?: return podium(s, ctx)
+        val active = s.teams.filter { it.members.isNotEmpty() }
+        val results = active.sortedBy { it.score }.map { t ->
+            val option = Finale.teamWager(t.members, fin.wagers, finaleOffered(s, t))
+            val wager = Finale.amount(option, t.score)
+            val written = teamWrite(t, s.votes, fin.answerText)
+            val right = written?.right == true
+            val delta = Finale.settle(t.score, wager, right)
+            FinaleResult(t.id, written?.text, right, option, wager, delta, t.score, (t.score + delta).coerceAtLeast(0))
+        }
+        val leader = active.maxByOrNull { it.score }
+        val winner = results.maxByOrNull { it.after }
+        val line = when {
+            winner == null -> null
+            leader != null && winner.team != leader.id -> "${nameOf(s, winner.team)} steal the win!"
+            else -> "${nameOf(s, winner.team)} hold on to win!"
+        }
+        val wrong = results.filter { !it.right }
+        val sips = if (wrong.any { it.option == "w75" || it.option == Finale.ALL_IN }) 2 else 1
+        val drink = if (s.drinks && wrong.isNotEmpty()) DrinkCall(wrong.map { it.team }, sips, "wrong final") else null
+        val duration = Finale.revealMs(results.size)
+        return Step(
+            s.copy(phase = FINAL_REVEAL, finale = fin.copy(results = results), drink = drink, hostLine = line, startedAt = ctx.now, durationMs = duration),
+            listOf(Effect.Phase(duration)),
+        )
+    }
+
+    /** The reveal is over: the wagers land on the scores (once), then the podium. */
+    private fun finishFinale(s: TriviaState, ctx: GameContext): Step<TriviaState> {
+        val results = s.finale?.results.orEmpty().associateBy { it.team }
+        val teams = s.teams.map { t -> results[t.id]?.let { t.copy(score = it.after) } ?: t }
+        val effects = results.values.filter { it.delta != 0 }.flatMap { awardTeam(s.teams, it.team, it.delta, "final wager") }
+        val next = podium(s.copy(teams = teams, finale = null), ctx)
+        return next.copy(effects = effects + next.effects)
     }
 
     private fun score(s: TriviaState, ctx: GameContext): Step<TriviaState> {
@@ -805,6 +898,9 @@ class BrainDrain(
             val v = s.votes[id.v]
             if (s.format == GAUNTLET) v?.locked != true else v == null
         }.toSet()
+        // Every team needs one pick; the question waits for every player's answer.
+        FINAL_WAGER -> s.teams.filter { t -> t.members.none { s.finale?.wagers?.containsKey(it.v) == true } }.flatMap { it.members }.toSet()
+        FINAL_QUESTION -> s.teams.flatMap { it.members }.filter { s.votes[it.v] == null }.toSet()
         BET -> s.teams.flatMap { it.members }.filter { s.bets[it.v]?.stake == null }.toSet()
         VICTIM -> s.teams.firstOrNull { it.id == s.heist?.thief }?.members?.filter { it.v !in s.votes }?.toSet()
         else -> null
@@ -815,12 +911,12 @@ class BrainDrain(
 
     override fun tvView(s: TriviaState, ctx: GameContext): TriviaTv {
         val showAnswer = s.phase in setOf(REVEAL, VICTIM, STEAL)
-        val live = s.phase == QUESTION || s.phase == BET || showAnswer
+        val live = s.phase == QUESTION || s.phase == BET || s.phase == FINAL_QUESTION || s.phase == FINAL_REVEAL || showAnswer
         val sides = s.itemId?.let(sidesById::get)?.takeIf { s.format == SIDES }
         val prompt = when {
             s.phase == TEAMUP -> "Team up!"
             live -> when (s.format) {
-                QUICK, HEIST, WRITE -> mcOf(s)?.prompt
+                QUICK, HEIST, WRITE, FINAL -> mcOf(s)?.prompt
                 BALLPARK -> ballparkById[s.itemId]?.prompt
                 SIDES -> sides?.let { sideItem(s, it) }?.text
                 GAUNTLET -> gauntletById[s.itemId]?.prompt
@@ -848,20 +944,28 @@ class BrainDrain(
             teams = s.teams.filter { it.members.isNotEmpty() || s.phase == TEAMUP }.map { t ->
                 TriviaTeam(
                     t.id, t.name, t.color, t.members, t.score,
-                    answered = if (s.phase == QUESTION) t.members.count { voted(s, it) } else 0,
+                    answered = if (s.phase == QUESTION || s.phase == FINAL_QUESTION) t.members.count { voted(s, it) } else 0,
                     position = t.position, headStart = t.headStart,
                 )
             },
-            answered = if (s.phase == QUESTION) s.teams.sumOf { t -> t.members.count { voted(s, it) } } else 0,
+            answered = if (s.phase == QUESTION || s.phase == FINAL_QUESTION) s.teams.sumOf { t -> t.members.count { voted(s, it) } } else 0,
             expected = s.teams.sumOf { it.members.size },
             reveal = if (showAnswer) s.reveal else null,
             sides = sides?.let { SidesInfo(it.left, it.right, s.q, s.qTotal, s.sidesHistory) },
             heist = s.heist.takeIf { showAnswer },
             drink = s.drink,
             bet = if (s.phase == BET) BetInfo(s.line, s.teams.filter { Betting.teamBet(it.members, s.bets) != null }.map { it.id }) else null,
+            finale = s.finale?.takeIf { s.phase in FINALE_PHASES }?.let { f ->
+                FinaleInfo(
+                    category = f.category,
+                    locked = if (s.phase == FINAL_WAGER) s.teams.filter { t -> t.members.any { f.wagers.containsKey(it.v) } }.map { it.id } else emptyList(),
+                    results = if (s.phase == FINAL_REVEAL) f.results else emptyList(),
+                    answerText = f.answerText.takeIf { s.phase == FINAL_REVEAL },
+                )
+            },
             hostLine = s.hostLine,
             fact = if (showAnswer) factFor(s) else null,
-            credit = if (live && s.format in setOf(QUICK, HEIST, WRITE)) mcOf(s)?.source else null,
+            credit = if (live && s.format in setOf(QUICK, HEIST, WRITE, FINAL)) mcOf(s)?.source else null,
             finishLine = FINISH,
             podium = s.podium,
             awards = if (s.phase == AWARDS) s.awards else emptyList(),
@@ -1163,6 +1267,12 @@ class BrainDrain(
         const val STEAL = "steal"
         const val STANDINGS = "standings"
         const val BET = "bet"
+        const val FINAL = "final"
+        const val FINAL_CATEGORY = "final_category"
+        const val FINAL_WAGER = "final_wager"
+        const val FINAL_QUESTION = "final_question"
+        const val FINAL_REVEAL = "final_reveal"
+        private val FINALE_PHASES = setOf(FINAL_CATEGORY, FINAL_WAGER, FINAL_QUESTION, FINAL_REVEAL)
         const val PODIUM = "podium"
         const val AWARDS = "awards"
 
@@ -1193,10 +1303,11 @@ class BrainDrain(
         private const val RIGHT_KEY = "✓"
 
         val ROUND_TITLES = mapOf(
-            QUICK to "Quick Draw", BALLPARK to "Ballpark", SIDES to "Pick a Side", HEIST to "The Heist", WRITE to "Write It Down", GAUNTLET to "The Gauntlet",
+            FINAL to "The Final Wager", QUICK to "Quick Draw", BALLPARK to "Ballpark", SIDES to "Pick a Side", HEIST to "The Heist", WRITE to "Write It Down", GAUNTLET to "The Gauntlet",
         )
         val ROUND_RULES = mapOf(
             QUICK to "Four answers. Your team's top pick counts. Faster is worth more.",
+            FINAL to "Bet your points before you see the question. Last place reveals first.",
             BALLPARK to "Guess the number. Your team's guess is the middle of everyone's. Closest wins. Then bet on whose guess is closest.",
             SIDES to "Quick calls, five seconds each. Which side does it belong on?",
             HEIST to "Right answers win 500. The fastest team robs somebody.",

@@ -489,6 +489,152 @@ class BrainDrainTest {
         assertTrue(waiting(c).detail!!.contains("bet +250"), waiting(c).detail)
     }
 
+    /** Four players in two teams, T1 (a, b) ahead 1500 to 0, skipped through to the Final Wager's category slam. */
+    /** Twelve questions, so after the five rounds have used eight there are still some nobody has played tonight for the finale. */
+    private val finalePack = pack.copy(mc = (1..12).map { McItem("tm$it", "Test", "Question $it?", "Right $it", listOf("Wrong A$it", "Wrong B$it", "Wrong C$it"), "Fact $it") })
+
+    private fun toFinale(): List<PlayerId> {
+        val ids = fourInTwoTeams(BrainDrain(finalePack, shuffleRounds = false))
+        e.host(HostCmd.SkipPhase) // intro → first Quick Draw question
+        val right = currentRight()
+        val wrong = options(ids[0]).first { it.text != right }.text
+        answer(ids[0], right); answer(ids[1], right); answer(ids[2], wrong); answer(ids[3], wrong)
+        var guard = 0
+        while (tv.phase != "final_category" && guard++ < 400) e.host(HostCmd.SkipPhase)
+        assertEquals("final_category", tv.phase)
+        assertEquals(1500, score("T1"))
+        assertEquals(0, score("T2"))
+        return ids
+    }
+
+    private fun wager(who: PlayerId, option: String) = act(who, "finalWager", "option" to option)
+    private fun finalAnswer(who: PlayerId, text: String) = act(who, "finalAnswer", "text" to text)
+
+    @Test fun theShowEndsWithACategorySlamThatHidesTheQuestion() {
+        toFinale()
+        assertEquals("final", tv.format)
+        val f = assertNotNull(tv.finale)
+        assertEquals("Test", f.category)
+        assertEquals("", tv.prompt, "the question stays hidden until the wager is made")
+        assertTrue(f.results.isEmpty() && f.answerText == null && f.locked.isEmpty())
+        e.host(HostCmd.SkipPhase)
+        assertEquals("final_wager", tv.phase)
+    }
+
+    @Test fun onlyUnderdogsMayGoAllIn() {
+        val (a, _, c) = toFinale()
+        e.host(HostCmd.SkipPhase) // category → wager
+        assertEquals(ActionResult.Rejected("BAD_OPTION"), wager(a, "wall"), "the leader may not go all in")
+        assertEquals(ActionResult.Rejected("BAD_OPTION"), wager(a, "w999"))
+        assertEquals(ActionResult.Ack, wager(c, "wall"), "last place may")
+        assertEquals(ActionResult.Ack, wager(a, "w50"))
+    }
+
+    @Test fun theWagerPhaseEndsOnceEveryTeamHasPickedAndShowsOnlyWhoIsIn() {
+        val (a, _, c) = toFinale()
+        e.host(HostCmd.SkipPhase)
+        assertEquals(ActionResult.Ack, wager(a, "w50"))
+        assertEquals(listOf("T1"), tv.finale!!.locked, "who is in shows; what they picked never does")
+        assertEquals("final_wager", tv.phase)
+        assertEquals(ActionResult.Ack, wager(c, "wall"))
+        assertEquals("final_question", tv.phase)
+        assertTrue(tv.prompt.startsWith("Question "))
+        assertNull(tv.finale!!.answerText, "the answer stays hidden until the reveal")
+    }
+
+    @Test fun theRevealRunsLastPlaceFirstAndScoresChangeOnlyAtTheEnd() {
+        val (a, b, c, d) = toFinale()
+        e.host(HostCmd.SkipPhase)
+        wager(a, "w50"); wager(c, "wall")
+        val right = currentRight()
+        finalAnswer(a, right); finalAnswer(b, right.lowercase()); finalAnswer(c, "Nope"); finalAnswer(d, "Nope")
+        assertEquals("final_reveal", tv.phase, "the question ends once every player has answered")
+        val f = assertNotNull(tv.finale)
+        assertEquals(right, f.answerText)
+        assertEquals(listOf("T2", "T1"), f.results.map { it.team }, "last place first, the leader last")
+        val t2 = f.results[0]
+        assertEquals("Nope", t2.text)
+        assertEquals(false, t2.right)
+        assertEquals(1000, t2.wager) // ALL IN on the 1000 floor
+        assertEquals(0, t2.delta, "a team on 0 loses nothing")
+        val t1 = f.results[1]
+        assertEquals(true, t1.right)
+        assertEquals(750, t1.wager) // 50% of 1500
+        assertEquals(750, t1.delta)
+        assertEquals(1500, t1.before); assertEquals(2250, t1.after)
+        assertEquals(1500, score("T1"), "scores hold their old values while the reveal plays")
+        assertEquals(Finale.revealMs(2), tv.durationMs)
+        e.host(HostCmd.SkipPhase)
+        assertEquals("podium", tv.phase)
+        assertEquals(2250, score("T1"))
+        assertEquals(0, score("T2"))
+        assertEquals(listOf("T1", "T2"), tv.podium)
+    }
+
+    @Test fun aWrongWagerCostsTheLeader() {
+        val (a, b, c, d) = toFinale()
+        e.host(HostCmd.SkipPhase)
+        wager(a, "w75"); wager(c, "w25")
+        val right = currentRight()
+        finalAnswer(c, right); finalAnswer(d, right); finalAnswer(a, "Nope"); finalAnswer(b, "Nope")
+        e.host(HostCmd.SkipPhase)
+        assertEquals("podium", tv.phase)
+        assertEquals(1500 - 1150, score("T1")) // 75% of 1500 is 1125, to the nearest 50 is 1150, wrong
+        assertEquals(250, score("T2")) // 25% of the 1000 floor, right
+        assertEquals(listOf("T1", "T2"), tv.podium)
+    }
+
+    @Test fun anEmptyFinaleStillEnds() {
+        toFinale()
+        var guard = 0
+        while (tv.phase != "podium" && guard++ < 20) e.host(HostCmd.SkipPhase)
+        assertEquals("podium", tv.phase)
+        assertEquals(1500, score("T1"))
+        assertEquals(0, score("T2"))
+        assertEquals(listOf("T1", "T2"), tv.podium)
+    }
+
+    @Test fun skippingTheRevealAppliesScoresOnce() {
+        val (a, b, c, d) = toFinale()
+        e.host(HostCmd.SkipPhase)
+        wager(a, "w50"); wager(c, "w0")
+        val right = currentRight()
+        listOf(a, b).forEach { finalAnswer(it, right) }
+        listOf(c, d).forEach { finalAnswer(it, "Nope") }
+        assertEquals("final_reveal", tv.phase)
+        e.host(HostCmd.SkipPhase)
+        assertEquals("podium", tv.phase)
+        assertEquals(2250, score("T1"))
+        e.host(HostCmd.SkipPhase) // podium → awards: the finale must not run again
+        assertEquals(2250, score("T1"))
+    }
+
+    @Test fun noShortQuestionSkipsTheFinale() {
+        val longPack = TriviaPack.validate(
+            TriviaPack(
+                mc = (1..12).map { McItem("tm$it", "Test", "Question $it?", "A long answer to type $it", listOf("Wrong A$it", "Wrong B$it", "Wrong C$it"), "Fact $it") },
+                ballpark = pack.ballpark, sides = pack.sides, gauntlet = pack.gauntlet,
+            ),
+        )
+        engine(BrainDrain(longPack, shuffleRounds = false))
+        val ids = listOf("A", "B", "C", "D").map { e.add(it) }
+        startShow()
+        join(ids[0], "T1"); join(ids[1], "T1"); join(ids[2], "T2"); join(ids[3], "T2")
+        name(ids[0], "Quizzards"); name(ids[2], "Brainiacs")
+        var guard = 0
+        while (tv.phase != "podium" && guard++ < 400) {
+            assertTrue(tv.phase !in setOf("final_category", "final_wager", "final_question", "final_reveal"), tv.phase)
+            e.host(HostCmd.SkipPhase)
+        }
+        assertEquals("podium", tv.phase)
+    }
+
+    @Test fun oldSavedShowsHaveNoFinale() {
+        val json = kotlinx.serialization.json.Json { ignoreUnknownKeys = true }
+        val s = json.decodeFromString(TriviaState.serializer(), """{"phase":"standings"}""")
+        assertNull(s.finale)
+    }
+
     @Test fun pickASideScoresEachCall() {
         val (a, b, c, d) = fourInTwoTeams()
         repeat(2) { skipRound(); e.host(HostCmd.SkipPhase) }
@@ -650,6 +796,7 @@ class BrainDrainTest {
         val formats = mutableListOf<String>()
         var answered = false
         while (tv.phase != "podium") {
+            assertTrue(tv.phase !in setOf("final_category", "final_wager", "final_question", "final_reveal"), "Write It Down has no finale")
             assertEquals(BrainDrain.WRITE_SHOW_ROUNDS, tv.totalRounds)
             if (tv.phase == "intro") formats += tv.format
             if (tv.phase == "question") {
