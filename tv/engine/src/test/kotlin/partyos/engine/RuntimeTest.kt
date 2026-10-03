@@ -153,6 +153,23 @@ class RuntimeTest {
         assertIs<Screen.Waiting>(e.phoneState(ids[0]).screen)
     }
 
+    @Test fun theNightRecapAppearsOnlyBetweenGamesAndSurvivesARestore() {
+        val (e, ids) = started("A", "B")
+        assertNull(e.tvState().night, "nothing to review during the first game")
+        e.action(ids[0], "1", e.round, tap)
+        clock.advance(10_000); e.tick()
+        clock.advance(5_000); e.tick()
+        val night = assertNotNull(e.tvState().night)
+        assertEquals(1, night.games)
+        assertEquals(listOf("A", "B"), night.board.map { it.name })
+        assertEquals("A", night.awards.single { it.title == "NIGHT CHAMP" }.players.single().name)
+        val back = PartyEngine.restore(e.snapshot(), clock, SeededEntropy(2), games)
+        assertEquals(night, back.tvState().night)
+        ids.forEach { back.setPresence(it, true) } // phones rejoin on their own after a restart
+        assertEquals(ActionResult.Ack, back.host(HostCmd.StartGame("countdown")))
+        assertNull(back.tvState().night, "the recap is not sent while a game is running")
+    }
+
     @Test fun endGameRecordsResultImmediately() {
         val (e, _) = started("A", "B")
         e.host(HostCmd.EndGame)
