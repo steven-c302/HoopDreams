@@ -108,6 +108,24 @@
         }
     },
     {
+        "t": "action",
+        "id": "a-fw",
+        "round": 12,
+        "payload": {
+            "kind": "finalWager",
+            "option": "w50"
+        }
+    },
+    {
+        "t": "action",
+        "id": "a-fa",
+        "round": 13,
+        "payload": {
+            "kind": "finalAnswer",
+            "text": "The Seine"
+        }
+    },
+    {
         "t": "host",
         "id": "h-2",
         "cmd": {

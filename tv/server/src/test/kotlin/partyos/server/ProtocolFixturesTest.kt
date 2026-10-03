@@ -12,6 +12,8 @@ import partyos.engine.BluffDelta
 import partyos.engine.BluffReveal
 import partyos.engine.BluffTv
 import partyos.engine.Choice
+import partyos.engine.FinaleInfo
+import partyos.engine.FinaleResult
 import partyos.engine.GameResult
 import partyos.engine.ImposterClue
 import partyos.engine.ImposterDelta
@@ -127,6 +129,7 @@ class ProtocolFixturesTest {
         ),
         view(Screen.ChoiceList("Pick a team", listOf(Choice("T1", "Quizzards", "#FF4B3E", "2 in")), "T1", "team", style = "teams", team = team)),
         view(Screen.NumberEntry("How many bones are in the adult human body?", "bones", 206.0, "guess", listOf(TeamGuess(PlayerId("p-al"), 180.0)), team)),
+        view(Screen.ChoiceList("Wager on Geography. Question comes after", listOf(Choice("w25", "25%", detail = "1,050"), Choice("wall", "ALL IN", detail = "4,200")), "w25", "finalWager", team = team)),
         view(Screen.ChoiceList("Who's closest? Back a guess", listOf(Choice("T1", "Quizzards", "#FF4B3E", "guess 180 · pays 2×"), Choice("skip", "Skip betting")), null, "bet", style = "teams", team = team)),
         view(
             Screen.MultiSelect(
@@ -198,6 +201,53 @@ class ProtocolFixturesTest {
                             answers = listOf(TeamAnswer("T1", number = 206.0, correct = true, points = 1500, rank = 1, bullseye = true, bet = BetResult("T1", 250, 1, true, 250))),
                         ),
                         hostLine = "Quizzards nailed it. Who's googling?",
+                    ),
+                ),
+                scores = rows,
+                lastResult = null,
+                gamesPlayed = 1,
+                captain = sam,
+                settings = mapOf("rounds" to 5, "teams" to 0, "drinks" to 1, "game" to 0),
+            ),
+        ),
+        ServerMsg.Tv(
+            72,
+            TvState(
+                roomCode = "KXQT",
+                players = listOf(me),
+                stage = StageInfo(
+                    "trivia", "Brain Drain", 9, 1_700_000_068_000, 8_000, false, null, null,
+                    game = TriviaTv(
+                        phase = "final_wager", format = "final", round = 5, totalRounds = 5, q = 0, qTotal = 0, durationMs = 20_000,
+                        prompt = "",
+                        teams = listOf(TriviaTeam("T1", "Quizzards", "#FF4B3E", listOf(sam), 4200)),
+                        finale = FinaleInfo(category = "Geography", locked = listOf("T1")),
+                        hostLine = "Pick your wager. Nobody sees it until the reveal.",
+                    ),
+                ),
+                scores = rows,
+                lastResult = null,
+                gamesPlayed = 1,
+                captain = sam,
+                settings = mapOf("rounds" to 5, "teams" to 0, "drinks" to 1, "game" to 0),
+            ),
+        ),
+        ServerMsg.Tv(
+            73,
+            TvState(
+                roomCode = "KXQT",
+                players = listOf(me),
+                stage = StageInfo(
+                    "trivia", "Brain Drain", 9, 1_700_000_068_000, 8_000, false, null, null,
+                    game = TriviaTv(
+                        phase = "final_reveal", format = "final", round = 5, totalRounds = 5, q = 0, qTotal = 0, durationMs = 14_000,
+                        prompt = "Which river runs through Paris?",
+                        teams = listOf(TriviaTeam("T1", "Quizzards", "#FF4B3E", listOf(sam), 4200)),
+                        finale = FinaleInfo(
+                            category = "Geography", answerText = "The Seine",
+                            results = listOf(FinaleResult("T1", "the sein", true, "w50", 2100, 2100, 4200, 6300)),
+                        ),
+                        hostLine = "Quizzards hold on to win!",
                     ),
                 ),
                 scores = rows,
@@ -557,6 +607,8 @@ class ProtocolFixturesTest {
             JsonObject(mapOf("kind" to JsonPrimitive("multi"), "picks" to kotlinx.serialization.json.JsonArray(listOf(JsonPrimitive("a"))), "lock" to JsonPrimitive(true))),
         ),
         ClientMsg.Action("a-bet", 11, JsonObject(mapOf("kind" to JsonPrimitive("bet"), "option" to JsonPrimitive("T1")))),
+        ClientMsg.Action("a-fw", 12, JsonObject(mapOf("kind" to JsonPrimitive("finalWager"), "option" to JsonPrimitive("w50")))),
+        ClientMsg.Action("a-fa", 13, JsonObject(mapOf("kind" to JsonPrimitive("finalAnswer"), "text" to JsonPrimitive("The Seine")))),
         ClientMsg.Host("h-2", HostCommand.Pause),
         ClientMsg.Host("h-3", HostCommand.Resume),
         ClientMsg.Host("h-4", HostCommand.Skip),

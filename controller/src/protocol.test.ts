@@ -31,6 +31,8 @@ describe('protocol fixtures shared with the Kotlin server', () => {
       { t: 'action', id: 'a-4', round: 9, payload: { kind: 'guess', value: 206 } },
       { t: 'action', id: 'a-5', round: 10, payload: { kind: 'multi', picks: ['a'], lock: true } },
       { t: 'action', id: 'a-bet', round: 11, payload: { kind: 'bet', option: 'T1' } },
+      { t: 'action', id: 'a-fw', round: 12, payload: { kind: 'finalWager', option: 'w50' } },
+      { t: 'action', id: 'a-fa', round: 13, payload: { kind: 'finalAnswer', text: 'The Seine' } },
       { t: 'host', id: 'h-2', cmd: { t: 'pause' } },
       { t: 'host', id: 'h-3', cmd: { t: 'resume' } },
       { t: 'host', id: 'h-4', cmd: { t: 'skip' } },

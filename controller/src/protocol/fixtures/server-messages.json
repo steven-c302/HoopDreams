@@ -531,6 +531,76 @@
             "remainingMs": 42000,
             "screen": {
                 "t": "choice",
+                "prompt": "Wager on Geography. Question comes after",
+                "options": [
+                    {
+                        "id": "w25",
+                        "text": "25%",
+                        "detail": "1,050"
+                    },
+                    {
+                        "id": "wall",
+                        "text": "ALL IN",
+                        "detail": "4,200"
+                    }
+                ],
+                "selected": "w25",
+                "kind": "finalWager",
+                "votes": {},
+                "team": {
+                    "id": "T1",
+                    "name": "Quizzards",
+                    "color": "#FF4B3E"
+                }
+            },
+            "scores": [
+                {
+                    "id": "p-sam",
+                    "name": "Sam",
+                    "avatar": {
+                        "face": "p:01",
+                        "color": "#FF7A00"
+                    },
+                    "score": 1500
+                },
+                {
+                    "id": "p-al",
+                    "name": "Al",
+                    "avatar": {
+                        "face": "p:02",
+                        "color": "#22AA55"
+                    },
+                    "score": 500
+                }
+            ],
+            "captain": false,
+            "settings": {},
+            "crew": []
+        }
+    },
+    {
+        "t": "view",
+        "seq": 12,
+        "view": {
+            "me": {
+                "id": "p-sam",
+                "name": "Sam",
+                "avatar": {
+                    "face": "p:01",
+                    "color": "#FF7A00"
+                },
+                "role": "PLAYER",
+                "connected": true,
+                "water": false
+            },
+            "roomCode": "KXQT",
+            "gameId": "bluff",
+            "gameTitle": "Bluff Battle",
+            "round": 3,
+            "paused": false,
+            "remainingMs": 42000,
+            "screen": {
+                "t": "choice",
                 "prompt": "Who's closest? Back a guess",
                 "options": [
                     {
@@ -1025,6 +1095,206 @@
                         ]
                     },
                     "hostLine": "Quizzards nailed it. Who's googling?",
+                    "finishLine": 10,
+                    "podium": [],
+                    "awards": []
+                }
+            },
+            "scores": [
+                {
+                    "id": "p-sam",
+                    "name": "Sam",
+                    "avatar": {
+                        "face": "p:01",
+                        "color": "#FF7A00"
+                    },
+                    "score": 1500
+                },
+                {
+                    "id": "p-al",
+                    "name": "Al",
+                    "avatar": {
+                        "face": "p:02",
+                        "color": "#22AA55"
+                    },
+                    "score": 500
+                }
+            ],
+            "gamesPlayed": 1,
+            "captain": "p-sam",
+            "settings": {
+                "rounds": 5,
+                "teams": 0,
+                "drinks": 1,
+                "game": 0
+            }
+        }
+    },
+    {
+        "t": "tv",
+        "seq": 72,
+        "tv": {
+            "roomCode": "KXQT",
+            "players": [
+                {
+                    "id": "p-sam",
+                    "name": "Sam",
+                    "avatar": {
+                        "face": "p:01",
+                        "color": "#FF7A00"
+                    },
+                    "role": "PLAYER",
+                    "connected": true,
+                    "water": false
+                }
+            ],
+            "stage": {
+                "gameId": "trivia",
+                "title": "Brain Drain",
+                "phaseSeq": 9,
+                "deadlineAt": 1700000068000,
+                "remainingMs": 8000,
+                "paused": false,
+                "game": {
+                    "t": "trivia",
+                    "phase": "final_wager",
+                    "format": "final",
+                    "round": 5,
+                    "totalRounds": 5,
+                    "q": 0,
+                    "qTotal": 0,
+                    "durationMs": 20000,
+                    "prompt": "",
+                    "options": [],
+                    "teams": [
+                        {
+                            "id": "T1",
+                            "name": "Quizzards",
+                            "color": "#FF4B3E",
+                            "members": [
+                                "p-sam"
+                            ],
+                            "score": 4200,
+                            "answered": 0,
+                            "position": 0,
+                            "headStart": 0
+                        }
+                    ],
+                    "answered": 0,
+                    "expected": 0,
+                    "finale": {
+                        "category": "Geography",
+                        "locked": [
+                            "T1"
+                        ],
+                        "results": []
+                    },
+                    "hostLine": "Pick your wager. Nobody sees it until the reveal.",
+                    "finishLine": 10,
+                    "podium": [],
+                    "awards": []
+                }
+            },
+            "scores": [
+                {
+                    "id": "p-sam",
+                    "name": "Sam",
+                    "avatar": {
+                        "face": "p:01",
+                        "color": "#FF7A00"
+                    },
+                    "score": 1500
+                },
+                {
+                    "id": "p-al",
+                    "name": "Al",
+                    "avatar": {
+                        "face": "p:02",
+                        "color": "#22AA55"
+                    },
+                    "score": 500
+                }
+            ],
+            "gamesPlayed": 1,
+            "captain": "p-sam",
+            "settings": {
+                "rounds": 5,
+                "teams": 0,
+                "drinks": 1,
+                "game": 0
+            }
+        }
+    },
+    {
+        "t": "tv",
+        "seq": 73,
+        "tv": {
+            "roomCode": "KXQT",
+            "players": [
+                {
+                    "id": "p-sam",
+                    "name": "Sam",
+                    "avatar": {
+                        "face": "p:01",
+                        "color": "#FF7A00"
+                    },
+                    "role": "PLAYER",
+                    "connected": true,
+                    "water": false
+                }
+            ],
+            "stage": {
+                "gameId": "trivia",
+                "title": "Brain Drain",
+                "phaseSeq": 9,
+                "deadlineAt": 1700000068000,
+                "remainingMs": 8000,
+                "paused": false,
+                "game": {
+                    "t": "trivia",
+                    "phase": "final_reveal",
+                    "format": "final",
+                    "round": 5,
+                    "totalRounds": 5,
+                    "q": 0,
+                    "qTotal": 0,
+                    "durationMs": 14000,
+                    "prompt": "Which river runs through Paris?",
+                    "options": [],
+                    "teams": [
+                        {
+                            "id": "T1",
+                            "name": "Quizzards",
+                            "color": "#FF4B3E",
+                            "members": [
+                                "p-sam"
+                            ],
+                            "score": 4200,
+                            "answered": 0,
+                            "position": 0,
+                            "headStart": 0
+                        }
+                    ],
+                    "answered": 0,
+                    "expected": 0,
+                    "finale": {
+                        "category": "Geography",
+                        "locked": [],
+                        "results": [
+                            {
+                                "team": "T1",
+                                "text": "the sein",
+                                "right": true,
+                                "option": "w50",
+                                "wager": 2100,
+                                "delta": 2100,
+                                "before": 4200,
+                                "after": 6300
+                            }
+                        ],
+                        "answerText": "The Seine"
+                    },
+                    "hostLine": "Quizzards hold on to win!",
                     "finishLine": 10,
                     "podium": [],
                     "awards": []
