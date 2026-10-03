@@ -17,6 +17,7 @@ const BACKDROPS: Record<string, Backdrop> = {
   hottype: { fill: '#eadfc2', pattern: 'grid', tint: '#d6c79c', size: 32 },
   jeopardy: { fill: '#1b1f57', pattern: 'grid', tint: '#2d3384', size: 34 },
   doodle: { fill: '#2f8f9c', pattern: 'dots', tint: '#5bb0bb', size: 24 },
+  songdrop: { fill: '#2a1450', pattern: 'dots', tint: '#4b2a86', size: 26 },
   imposter: { fill: '#2c3138', pattern: 'stripes', tint: '#3a4048', size: 30 },
 }
 const FALLBACK: Backdrop = { fill: 'var(--grape)', pattern: 'dots', tint: 'rgba(255,255,255,.3)', size: 26 }
@@ -148,6 +149,22 @@ const SCENES: Record<string, ReactNode> = {
         <path d="M70 74C74 30 88 30 92 56S112 84 140 30" fill="none" stroke="var(--ink)" strokeWidth="5" strokeLinecap="round" />
       </g>
       <g transform="rotate(38 200 50)"><rect x="192" y="0" width="16" height="84" fill="var(--tangerine)" {...ST} /><path d="M192 84L200 100L208 84Z" fill="#fff7e6" {...ST} /></g>
+    </>
+  ),
+  songdrop: (
+    <>
+      <g transform="rotate(-8 90 60)">
+        <circle cx="90" cy="60" r="46" fill="#15091f" {...ST} />
+        <circle cx="90" cy="60" r="34" fill="none" stroke="#3a2158" strokeWidth="3" />
+        <circle cx="90" cy="60" r="22" fill="none" stroke="#3a2158" strokeWidth="3" />
+        <circle cx="90" cy="60" r="14" fill="#ff4fa3" {...ST} />
+        <circle cx="90" cy="60" r="3" fill="var(--ink)" />
+      </g>
+      <g transform="rotate(10 178 52)">
+        <path d="M168 78V30L196 24V72" fill="none" stroke="var(--paper)" strokeWidth="7" strokeLinecap="round" strokeLinejoin="round" />
+        <ellipse cx="160" cy="80" rx="12" ry="9" fill="var(--paper)" {...ST} />
+        <ellipse cx="188" cy="74" rx="12" ry="9" fill="var(--paper)" {...ST} />
+      </g>
     </>
   ),
   imposter: (

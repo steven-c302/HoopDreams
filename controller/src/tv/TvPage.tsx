@@ -15,6 +15,7 @@ import { DoodleStage } from './DoodleStage'
 import { ImposterStage } from './ImposterStage'
 import { HotTypeStage } from './HotTypeStage'
 import { JeopardyStage } from './JeopardyStage'
+import { SongDropStage } from './SongDropStage'
 import { CheerLayer } from './CheerLayer'
 import { NightReview } from './NightReview'
 import { TriviaStage } from './TriviaStage'
@@ -136,7 +137,9 @@ function Show({ session }: { session: TvSession }) {
   const gameOver = !!tv && !tv.stage
   useEffect(() => { if (gameOver) ink.reset() }, [gameOver, ink])
   // Home Turf only counts down real decisions: a hop or a card reveal shouldn't tick.
-  const untimed = (tv?.stage?.gameId === 'turf' || tv?.stage?.gameId === 'sprawl') && !(tv.stage.game as { timed?: boolean } | undefined)?.timed
+  // Song Drop's clip is the sound: no countdown ticks over it.
+  const sdPhase = tv?.stage?.gameId === 'songdrop' ? (tv.stage.game as { phase?: string } | undefined)?.phase : undefined
+  const untimed = ((tv?.stage?.gameId === 'turf' || tv?.stage?.gameId === 'sprawl') && !(tv.stage.game as { timed?: boolean } | undefined)?.timed) || sdPhase === 'load' || sdPhase === 'stage'
   useCueDirector(live ? tv : null, untimed ? null : clock.deadline)
 
   // Hide the mouse when it stops moving: this is a TV.
@@ -206,6 +209,7 @@ function Show({ session }: { session: TvSession }) {
                 : stage.gameId === 'sprawl' ? <GameScene game="sprawl"><SprawlStage stage={stage} players={players} scores={tv.scores} clock={clock} /></GameScene>
                 : stage.gameId === 'jeopardy' ? <GameScene game="jeopardy"><JeopardyStage stage={stage} players={players} scores={tv.scores} clock={clock} cmd={cmd} /></GameScene>
                 : stage.gameId === 'imposter' ? <GameScene game="imposter"><ImposterStage stage={stage} players={players} scores={tv.scores} clock={clock} /></GameScene>
+                : stage.gameId === 'songdrop' ? <GameScene game="songdrop"><SongDropStage stage={stage} players={players} scores={tv.scores} clock={clock} cmd={cmd} /></GameScene>
                 : stage.gameId === 'doodle' ? <GameScene game="doodle"><DoodleStage stage={stage} players={players} scores={tv.scores} clock={clock} ink={ink} /></GameScene>
                 : stage.gameId === 'hottype' ? <GameScene game="hottype"><HotTypeStage stage={stage} players={players} scores={tv.scores} clock={clock} /></GameScene>
                 : <GameScene game="bluff"><BluffStage stage={stage} players={players} scores={tv.scores} clock={clock} /></GameScene>}

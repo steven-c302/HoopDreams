@@ -463,3 +463,21 @@ body:has(.play[data-game-theme])::before { display: none; }
 .play[data-game-theme='writeitdown'] textarea { border-width: 1px; border-radius: 6px; background: linear-gradient(90deg, transparent 30px, #c4453a77 30px 32px, transparent 32px), #fffaf0; padding-left: 44px; }
 .play[data-game-theme='writeitdown'] :is(.choice, .choice.team) { border-width: 2px; border-radius: 8px; }
 .play[data-game-theme='writeitdown'] .choice.team.on { outline-color: var(--paper); }
+
+/* Song Drop: a late-night record shop. Deep plum room, hot pink accent, a spinning-record glow from below. */
+[data-game-theme='songdrop'] {
+  --ink: #1c1030;
+  --ink-soft: #54447a;
+  --paper: #fff4fb;
+  --paper-2: #f3dff0;
+  --game-bg: #2a1450;
+  --game-accent: #ff4fa3;
+}
+.game-scene[data-game-theme='songdrop'] {
+  background-image:
+    radial-gradient(ellipse 80% 45% at 50% 125%, #ff4fa366 0, transparent 70%),
+    repeating-radial-gradient(circle at 50% 120%, #ffffff0a 0 3px, transparent 3px 26px);
+}
+/* The room is dark, so text sitting straight on it reads in paper, never ink. */
+[data-game-theme='songdrop'] .status-text { color: var(--paper); }
+[data-game-theme='songdrop'] .muted { color: var(--paper); opacity: .88; }
