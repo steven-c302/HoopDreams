@@ -32,6 +32,9 @@ Made with [brag](https://github.com/latent-spaces/brag)'s lightweight `brag-slim
 
 | Change | What it means on game night |
 | --- | --- |
+| **Night in Review** | Between games, press **A** on the TV: the night's leaderboard, awards (Night Champ, Most Wins, Hot Streak, Comeback Kid, Wooden Spoon) and the best moments so far. |
+| **Cheers from the couch** | Anyone who joined to watch gets four buttons (YES, BOO, OOOH, WOW). Each one stamps on the TV with their name and face, one every 1.2 seconds. |
+| **Bluff veto** | While everyone is picking, the captain (crown sheet, tap twice) or the TV host (**Esc**) can hide an option. It shows as "Hidden by the host" whether it was a lie or the truth, so using it never gives anything away. |
 | **Pick up where you left off** | If the Mac restarts or the Terminal closes mid-party, double-click the launcher again: same room code, same scores, the game paused, and phones rejoin on their own. |
 | **Selfies as faces** | Draw your face or snap a selfie or photo; the phone crops it and every screen shows it. Photos survive a restart too. |
 | **Every game has its own look** | Drunk Blackjack is an after-hours casino, Bluff Battle a tabloid front page, Write It Down a pub quiz, Home Turf and Sprawl get their own boards. Brain Drain keeps the cartoon show. |
@@ -99,6 +102,7 @@ node controller/scripts/bots.mjs 12
 | R | timers: normal, relaxed (1.5×) or no rush (2×) |
 | Esc | host controls: pause, skip ahead, end, remove players, give the crown, reset team names, phone control on/off, volume, Spotify |
 | N | next song (when Spotify is playing) |
+| A | Night in Review (lobby, after a game) |
 | P · M · F | pause · mute · full screen |
 
 <p align="center"><img src="docs/media/lobby.png" alt="The lobby: QR code, every player's hand-drawn face, and the games as comic-book covers" width="88%"></p>
