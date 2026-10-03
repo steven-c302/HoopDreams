@@ -21,6 +21,8 @@ data class GameInfo(
     val maxPlayers: Int,
     val tutorial: List<TutorialCard>,
     val lateJoin: LateJoin,
+    /** A video id the TV can try quietly in the lobby to check that playback works here (Song Drop). */
+    val probe: String? = null,
 )
 
 sealed interface Effect {
