@@ -2,6 +2,7 @@ import { useState } from 'react'
 import type { GameListing, HostCommand, OptionKey, PhoneState } from '../protocol'
 import { Face } from '../theme/Face'
 import { Crown } from '../tv/toon'
+import { ERA_NAMES } from '../tv/eras'
 import { isTrivia } from '../tv/types'
 
 const buzz = (ms: number | number[]) => { try { navigator.vibrate?.(ms) } catch { /* not supported */ } }
@@ -17,7 +18,7 @@ function settingsOf(view: PhoneState) {
   const s = view.settings ?? {}
   return {
     rounds: s.rounds ?? 5, teams: s.teams ?? 0, drinks: (s.drinks ?? 1) === 1, game: s.game ?? 0,
-    turfMode: s.turfMode ?? 0, minutes: s.minutes ?? 45, vp: s.vp ?? 8, timers: s.timers ?? 0, show: s.show ?? 0, pace: s.pace ?? 0,
+    turfMode: s.turfMode ?? 0, minutes: s.minutes ?? 45, vp: s.vp ?? 8, timers: s.timers ?? 0, show: s.show ?? 0, pace: s.pace ?? 0, era: s.era ?? 0,
   }
 }
 
@@ -29,7 +30,8 @@ export function CaptainLobby({ view, games, host }: { view: PhoneState; games: G
   const turf = game?.id === 'turf'
   const sprawl = game?.id === 'sprawl'
   const jeopardy = game?.id === 'jeopardy'
-  const set = (key: OptionKey, value: number) => { buzz(12); host({ t: 'setOption', key, value }) }
+  const songdrop = game?.id === 'songdrop'
+  const set =(key: OptionKey, value: number) => { buzz(12); host({ t: 'setOption', key, value }) }
   const minuteAt = Math.max(0, TURF_MINUTES.indexOf(s.minutes))
   const teamAt = Math.max(0, TEAM_CHOICES.indexOf(s.teams))
   return (
@@ -69,6 +71,12 @@ export function CaptainLobby({ view, games, host }: { view: PhoneState; games: G
             </>
           )
           : jeopardy ? <Stepper label="Show" value={s.show ? 'Full' : 'Short'} onDown={() => set('show', 0)} onUp={() => set('show', 1)} />
+          : songdrop ? (
+            <>
+              <Stepper label="Songs" value={String(s.rounds + 3)} onDown={() => set('rounds', Math.max(3, s.rounds - 1))} onUp={() => set('rounds', Math.min(8, s.rounds + 1))} />
+              <Stepper label="Era" value={ERA_NAMES[s.era] ?? ERA_NAMES[0]} onDown={() => set('era', (s.era + ERA_NAMES.length - 1) % ERA_NAMES.length)} onUp={() => set('era', (s.era + 1) % ERA_NAMES.length)} />
+            </>
+          )
           : <Stepper label={trivia ? 'Questions per round' : 'Rounds'} value={String(s.rounds)}
               onDown={() => set('rounds', Math.max(3, s.rounds - 1))} onUp={() => set('rounds', Math.min(8, s.rounds + 1))} />}
         {trivia && (
@@ -76,7 +84,7 @@ export function CaptainLobby({ view, games, host }: { view: PhoneState; games: G
             onDown={() => set('teams', TEAM_CHOICES[Math.max(0, TEAM_CHOICES.indexOf(s.teams) - 1)])}
             onUp={() => set('teams', TEAM_CHOICES[Math.min(TEAM_CHOICES.length - 1, TEAM_CHOICES.indexOf(s.teams) + 1)])} />
         )}
-        {(trivia || turf || sprawl || jeopardy) && (
+        {(trivia || turf || sprawl || jeopardy || songdrop) && (
           <div className="setting-row">
             <span>Drink calls</span>
             <button className={`toggle ${s.drinks ? 'on' : ''}`} role="switch" aria-checked={s.drinks} onClick={() => set('drinks', s.drinks ? 0 : 1)}>{s.drinks ? 'On' : 'Off'}</button>

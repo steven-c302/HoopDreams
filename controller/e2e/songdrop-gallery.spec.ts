@@ -26,6 +26,26 @@ for (const beat of ['load', 'stage', 'reveal', 'podium', 'dead']) {
   })
 }
 
+test('the lobby shows the era key and the YouTube song check for Song Drop', async ({ page, request }) => {
+  await page.setViewportSize({ width: 1280, height: 720 })
+  await page.goto('/tv?yt=fake')
+  await page.mouse.click(640, 360) // dismiss the GO LIVE gate
+  await expect(page.locator('.cast-card, .cast-empty').first()).toBeVisible()
+  const games = await request.get('/api/games').then((r) => r.json())
+  const at = games.findIndex((g: { id: string }) => g.id === 'songdrop')
+  expect(at).toBeGreaterThanOrEqual(0)
+  expect(games[at].probe).toBeTruthy()
+  // Focus Song Drop on the TV with the arrow keys (the lobby reads them from the window).
+  // One press at a time: the focus lives on the server, so a second press before the first lands would read a stale focus.
+  for (let i = 1; i <= at; i++) {
+    await page.keyboard.press('ArrowRight')
+    await expect(page.locator('.cover.focused')).toHaveClass(new RegExp(`cover-${games[i].id}`))
+  }
+  await expect(page.getByText('Era')).toBeVisible()
+  await expect(page.getByText('Songs')).toBeVisible()
+  await expect(page.locator('.stepper', { hasText: 'YouTube' })).toContainText('OK', { timeout: 8_000 })
+})
+
 test('song drop: the cover hides the video, V shows it, and the player is never display:none', async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 720 })
   await page.goto('/tv?gallery=songdrop&beat=stage')

@@ -16,6 +16,9 @@ import { ImposterStage } from './ImposterStage'
 import { HotTypeStage } from './HotTypeStage'
 import { JeopardyStage } from './JeopardyStage'
 import { SongDropStage } from './SongDropStage'
+import { ERA_NAMES } from './eras'
+import { useSongCheck } from './useSongCheck'
+import './songdrop.css'
 import { CheerLayer } from './CheerLayer'
 import { NightReview } from './NightReview'
 import { TriviaStage } from './TriviaStage'
@@ -80,12 +83,12 @@ function TvShow() {
  * Lobby settings live on the server so the TV and the captain's phone always agree. teams 0 = auto. Home Turf:
  * turfMode 0 auto / 1 solo / 2 teams, minutes = its game clock (0 = no limit).
  */
-interface Lobby { rounds: number; teams: number; drinks: boolean; game: number; phones: boolean; turfMode: number; minutes: number; vp: number; timers: number; show: number; grid: number; pace: number }
+interface Lobby { rounds: number; teams: number; drinks: boolean; game: number; phones: boolean; turfMode: number; minutes: number; vp: number; timers: number; show: number; grid: number; pace: number; era: number }
 function lobbyOf(tv: TvState | null): Lobby {
   const s = tv?.settings ?? {}
   return {
     rounds: s.rounds ?? 5, teams: s.teams ?? 0, drinks: (s.drinks ?? 1) === 1, game: s.game ?? 0, phones: (s.captain ?? 1) === 1,
-    turfMode: s.turfMode ?? 0, minutes: s.minutes ?? 45, vp: s.vp ?? 8, timers: s.timers ?? 0, show: s.show ?? 0, grid: s.grid ?? 0, pace: s.pace ?? 0,
+    turfMode: s.turfMode ?? 0, minutes: s.minutes ?? 45, vp: s.vp ?? 8, timers: s.timers ?? 0, show: s.show ?? 0, grid: s.grid ?? 0, pace: s.pace ?? 0, era: s.era ?? 0,
   }
 }
 type SetOption = (key: OptionKey, value: number) => void
@@ -274,6 +277,8 @@ function LobbyScreen({ tv, session, games, lobby, setOption, onStart, keys, play
   const sprawl = focused?.id === 'sprawl'
   const jeopardy = focused?.id === 'jeopardy'
   const hottype = focused?.id === 'hottype'
+  const songdrop = focused?.id === 'songdrop'
+  const check = useSongCheck(focused?.probe, songdrop)
   useEffect(() => {
     if (qr.current && session.joinUrl) QRCode.toCanvas(qr.current, session.joinUrl, { width: 360, margin: 4, errorCorrectionLevel: 'Q' })
   }, [session.joinUrl])
@@ -298,9 +303,10 @@ function LobbyScreen({ tv, session, games, lobby, setOption, onStart, keys, play
       else if (k === 's' && jeopardy) { setOption('show', lobby.show ? 0 : 1); sfx.focus() }
       else if (k === 's' && turf) { setOption('pace', lobby.pace ? 0 : 1); sfx.focus() }
       else if (k === 'g' && hottype) { setOption('grid', lobby.grid === 1 ? 0 : 1); sfx.focus() }
+      else if (k === 'e' && songdrop) { setOption('era', (lobby.era + 1) % ERA_NAMES.length); sfx.focus() }
       else if (k === 'r') { setOption('timers', (lobby.timers + 1) % TIMER_SCALES.length); sfx.focus() }
       else if (k === 't' && trivia) { setOption('teams', TEAM_CHOICES[(TEAM_CHOICES.indexOf(lobby.teams) + 1) % TEAM_CHOICES.length] ?? 0); sfx.focus() }
-      else if (k === 'd' && (trivia || turf || sprawl || jeopardy || hottype)) { setOption('drinks', lobby.drinks ? 0 : 1); sfx.focus() }
+      else if (k === 'd' && (trivia || turf || sprawl || jeopardy || hottype || songdrop)) { setOption('drinks', lobby.drinks ? 0 : 1); sfx.focus() }
       else if (e.key === 'Enter' && focused) onStart(focused)
     }
     window.addEventListener('keydown', onKey)
@@ -342,13 +348,15 @@ function LobbyScreen({ tv, session, games, lobby, setOption, onStart, keys, play
               ? <span className="stepper">Everyone deals once: <b>one hand per player</b></span>
               : turf || sprawl ? <span className="stepper"><Keycap label="↑" /><Keycap label="↓" /> Game clock <b>{turfMinutesText(lobby.minutes)}</b></span>
               : jeopardy ? <span className="stepper"><Keycap label="S" /> Show <b>{lobby.show ? 'FULL' : 'SHORT'}</b></span>
-              : <span className="stepper"><Keycap label="↑" /><Keycap label="↓" /> {trivia ? 'Questions per round' : 'Rounds'} <b>{lobby.rounds}</b></span>}
+              : <span className="stepper"><Keycap label="↑" /><Keycap label="↓" /> {trivia ? 'Questions per round' : songdrop ? 'Songs' : 'Rounds'} <b>{songdrop ? lobby.rounds + 3 : lobby.rounds}</b></span>}
             {trivia && <span className="stepper"><Keycap label="T" /> Teams <b>{lobby.teams === 0 ? 'AUTO' : lobby.teams}</b></span>}
             {turf && <span className="stepper"><Keycap label="T" /> Play <b>{turfModeText(lobby)}</b></span>}
             {turf && <span className="stepper"><Keycap label="S" /> Show <b>{lobby.pace ? 'QUICK' : 'THEATRE'}</b></span>}
             {sprawl && <span className="stepper"><Keycap label="V" /> First to <b>{lobby.vp} POINTS</b></span>}
             {hottype && <span className="stepper"><Keycap label="G" /> Board <b>{lobby.grid === 1 ? '5×5' : '4×4'}</b></span>}
-            {(trivia || turf || sprawl || jeopardy || hottype) && <span className="stepper"><Keycap label="D" /> Drink calls <b>{lobby.drinks ? 'ON' : 'OFF'}</b></span>}
+            {songdrop && <span className="stepper"><Keycap label="E" /> Era <b>{(ERA_NAMES[lobby.era] ?? ERA_NAMES[0]).toUpperCase()}</b></span>}
+            {songdrop && <span className="stepper">YouTube <b>{{ idle: '…', checking: 'CHECKING', ok: 'OK', fail: 'NOT WORKING HERE' }[check.state]}</b></span>}
+            {(trivia || turf || sprawl || jeopardy || hottype || songdrop) && <span className="stepper"><Keycap label="D" /> Drink calls <b>{lobby.drinks ? 'ON' : 'OFF'}</b></span>}
             <span className="stepper"><Keycap label="R" /> Timers <b>{TIMER_NAMES[lobby.timers] ?? TIMER_NAMES[0]}</b></span>
             {tv.night && <span className="stepper"><Keycap label="A" /> Night in Review</span>}
             <span style={{ flex: 1 }} />
@@ -356,6 +364,7 @@ function LobbyScreen({ tv, session, games, lobby, setOption, onStart, keys, play
             <span className="stepper"><Keycap label="Esc" /> host <Keycap label="M" /> mute</span>
             <span className="stepper"><Keycap label="←" /><Keycap label="→" /> pick <Keycap label="Enter" /> start</span>
           </div>
+          {songdrop && <div ref={check.host} className="sd-probe" aria-hidden="true" />}
           {/* Up to five games side by side, six in two rows of three, and seven or more in two rows: a third row would
               squeeze the players onto the settings above it. */}
           <div className={`picker ${games.length > 3 ? 'four' : ''} ${games.length === 5 ? 'five' : ''} ${games.length > 5 ? 'six' : ''}`}
