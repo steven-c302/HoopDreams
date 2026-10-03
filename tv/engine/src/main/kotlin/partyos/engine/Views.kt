@@ -309,7 +309,13 @@ data class TvState(
     val settings: Map<String, Int> = emptyMap(),
     /** The night so far, for the lobby's "Night in Review" card; only sent between games. */
     val night: NightRecap? = null,
+    /** The latest crowd cheers, oldest first. The TV shows each [Cheer.seq] it hasn't shown yet. */
+    val cheers: List<Cheer> = emptyList(),
 )
+
+/** One tap from someone watching: [kind] is one of [PartyEngine.CHEER_KINDS]; [seq] counts up from 1 for the whole party. */
+@Serializable
+data class Cheer(val seq: Int, val name: String, val avatar: Avatar, val kind: String)
 
 @Serializable
 data class PhoneState(

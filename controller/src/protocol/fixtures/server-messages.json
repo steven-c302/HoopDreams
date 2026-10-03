@@ -894,7 +894,8 @@
                 "teams": 0,
                 "drinks": 1,
                 "game": 0
-            }
+            },
+            "cheers": []
         }
     },
     {
@@ -1000,7 +1001,8 @@
                 "teams": 0,
                 "drinks": 1,
                 "game": 0
-            }
+            },
+            "cheers": []
         }
     },
     {
@@ -1112,7 +1114,8 @@
                 "teams": 0,
                 "drinks": 1,
                 "game": 0
-            }
+            },
+            "cheers": []
         }
     },
     {
@@ -1206,7 +1209,8 @@
                 "teams": 0,
                 "drinks": 1,
                 "game": 0
-            }
+            },
+            "cheers": []
         }
     },
     {
@@ -1310,7 +1314,8 @@
                 "teams": 0,
                 "drinks": 1,
                 "game": 0
-            }
+            },
+            "cheers": []
         }
     },
     {
@@ -1476,7 +1481,8 @@
                 ]
             },
             "gamesPlayed": 1,
-            "settings": {}
+            "settings": {},
+            "cheers": []
         }
     },
     {
@@ -1592,7 +1598,18 @@
                         "text": "Al fooled 3 people with “stars”"
                     }
                 ]
-            }
+            },
+            "cheers": [
+                {
+                    "seq": 1,
+                    "name": "Sam",
+                    "avatar": {
+                        "face": "p:01",
+                        "color": "#FF7A00"
+                    },
+                    "kind": "wow"
+                }
+            ]
         }
     },
     {
@@ -1907,7 +1924,8 @@
                 "turfMode": 0,
                 "minutes": 45,
                 "drinks": 1
-            }
+            },
+            "cheers": []
         }
     },
     {
@@ -2385,7 +2403,8 @@
                 "vp": 8,
                 "minutes": 45,
                 "drinks": 1
-            }
+            },
+            "cheers": []
         }
     },
     {
@@ -2660,7 +2679,8 @@
                 "game": 6,
                 "rounds": 5,
                 "drinks": 1
-            }
+            },
+            "cheers": []
         }
     },
     {
@@ -2741,7 +2761,8 @@
                 }
             ],
             "gamesPlayed": 1,
-            "settings": {}
+            "settings": {},
+            "cheers": []
         }
     },
     {
@@ -3011,7 +3032,8 @@
             "settings": {
                 "rounds": 5,
                 "drinks": 1
-            }
+            },
+            "cheers": []
         }
     },
     {
@@ -3306,7 +3328,8 @@
                 "game": 7,
                 "rounds": 3,
                 "grid": 0
-            }
+            },
+            "cheers": []
         }
     },
     {
@@ -3435,7 +3458,8 @@
                 }
             ],
             "gamesPlayed": 1,
-            "settings": {}
+            "settings": {},
+            "cheers": []
         }
     },
     {
@@ -3666,7 +3690,8 @@
                 "game": 6,
                 "show": 1,
                 "drinks": 1
-            }
+            },
+            "cheers": []
         }
     },
     {
@@ -3747,7 +3772,8 @@
                 }
             ],
             "gamesPlayed": 1,
-            "settings": {}
+            "settings": {},
+            "cheers": []
         }
     },
     {

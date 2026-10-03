@@ -58,6 +58,7 @@ describe('protocol fixtures shared with the Kotlin server', () => {
       { t: 'action', id: 'a-17', round: 4, payload: { kind: 'word', path: [0, 1, 5, 6, 9] } },
       { t: 'host', id: 'h-17', cmd: { t: 'setOption', key: 'grid', value: 1 } },
       { t: 'ping' },
+      { t: 'cheer', kind: 'wow' },
       { t: 'ink', round: 4, ops: [{ t: 'start', s: 1, c: 2, w: 1, x: 100, y: 100, p: 50 }, { t: 'pts', s: 1, pts: [110, 105, 50] }, { t: 'end', s: 1 }, { t: 'undo' }, { t: 'clear' }] },
     ]
     expect(ours.map((m) => JSON.parse(encodeClient(m)))).toEqual(clientFixtures)

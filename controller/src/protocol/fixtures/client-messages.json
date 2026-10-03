@@ -362,6 +362,10 @@
         "t": "ping"
     },
     {
+        "t": "cheer",
+        "kind": "wow"
+    },
+    {
         "t": "ink",
         "round": 4,
         "ops": [

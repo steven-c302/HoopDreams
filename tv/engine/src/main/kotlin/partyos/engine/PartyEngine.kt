@@ -62,6 +62,10 @@ class PartyEngine private constructor(
     private val results = ArrayList(results)
     private val memory = LinkedHashMap(memory)
     private var active: ActiveGame<*>? = null
+    /** The crowd's latest cheers. Not saved with the party: a restart starts with a quiet room. */
+    private val cheers = ArrayDeque<Cheer>()
+    private var cheerSeq = 0
+    private val lastCheerAt = HashMap<PlayerId, Long>()
 
     /** Games this party can start, in registry order. */
     val gameInfos: List<GameInfo> get() = games.all.map { it.info }
@@ -290,6 +294,21 @@ class PartyEngine private constructor(
         settle()
     }
 
+    /**
+     * A tap from the crowd: [kind] flashes on the TV with their name and face. Each person is held to one every
+     * [CHEER_GAP_MS], and only the latest [MAX_CHEERS] are kept.
+     */
+    fun cheer(id: PlayerId, kind: String): ActionResult {
+        val p = player(id) ?: return ActionResult.Rejected("NOT_PLAYER")
+        if (kind !in CHEER_KINDS) return ActionResult.Rejected("BAD_CHEER")
+        val now = clock.now()
+        if (now - (lastCheerAt[id] ?: Long.MIN_VALUE / 2) < CHEER_GAP_MS) return ActionResult.Rejected("SLOW_DOWN")
+        lastCheerAt[id] = now
+        cheers.addLast(Cheer(++cheerSeq, p.name, p.avatar, kind))
+        while (cheers.size > MAX_CHEERS) cheers.removeFirst()
+        return ActionResult.Ack
+    }
+
     fun nextDeadline(): Long? = active?.takeUnless { it.paused }?.deadlineAt
 
     // ---- views ----------------------------------------------------------------------------
@@ -306,6 +325,7 @@ class PartyEngine private constructor(
             captain = captain(),
             settings = settings.toMap(),
             night = if (g == null) nightRecap(results) else null,
+            cheers = cheers.toList(),
         )
     }
 
@@ -477,6 +497,10 @@ class PartyEngine private constructor(
         const val MAX_NAME = 16
         const val MAX_PER_ROLE = 16
         const val TUTORIAL_MS = 30_000L
+        /** The cheers on offer, drawn on the TV as comic words. */
+        val CHEER_KINDS = setOf("yes", "boo", "ooh", "wow")
+        const val MAX_CHEERS = 6
+        const val CHEER_GAP_MS = 1_200L
         private const val MAX_MEMORY_KEY = 64
         private const val MAX_MEMORY_VALUE = 8_192
         private const val MAX_SETTLE = 16

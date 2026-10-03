@@ -15,6 +15,7 @@ import { DoodleStage } from './DoodleStage'
 import { ImposterStage } from './ImposterStage'
 import { HotTypeStage } from './HotTypeStage'
 import { JeopardyStage } from './JeopardyStage'
+import { CheerLayer } from './CheerLayer'
 import { NightReview } from './NightReview'
 import { TriviaStage } from './TriviaStage'
 import { SprawlStage } from './SprawlStage'
@@ -226,6 +227,7 @@ function Show({ session }: { session: TvSession }) {
           </button>
         </div>
       )}
+      {tv && <CheerLayer cheers={tv.cheers ?? []} sound={live && mix.on} />}
       {recapOpen && night && <NightReview night={night} onClose={() => setRecap(false)} />}
       {overlay && tv && <HostOverlay tv={tv} cmd={cmd} mix={mix} setMix={updateMix} lobby={lobby} setOption={setOption} onClose={() => setOverlay(false)}
         spotify={spotify} toggleSpotify={toggleSpotify} />}

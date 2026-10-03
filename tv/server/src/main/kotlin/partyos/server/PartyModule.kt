@@ -229,6 +229,7 @@ private class PartySession(
     @Volatile private var lastSeen = cfg.clock.now()
     private val bucket = TokenBucket(cfg.actionsPerSecond, cfg.actionsPerSecond.toDouble(), cfg.clock::now)
     private val inkBucket = TokenBucket(200, 25.0, cfg.clock::now)
+    private val cheerBucket = TokenBucket(4, 2.0, cfg.clock::now)
 
     suspend fun run() {
         val role = pid?.let { id -> host.read { player(id)?.role } }
@@ -314,6 +315,7 @@ private class PartySession(
                 else host.mutate { action(pid, msg.id, msg.round, msg.payload) }
             }
             is ClientMsg.Ink -> if (pid != null && inkBucket.tryTake()) host.ink(pid, msg.round, msg.ops)
+            is ClientMsg.Cheer -> if (pid != null && cheerBucket.tryTake()) host.mutate { cheer(pid, msg.kind.take(MAX_CHEER_KIND)) }
             is ClientMsg.Host -> reply(msg.id) {
                 when {
                     isHost -> host.hostCommand(msg.id, msg.cmd.toCmd())

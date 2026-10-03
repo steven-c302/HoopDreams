@@ -1,0 +1,5 @@
+/* Crowd cheers stamped over the TV. Every class is cheer-prefixed so nothing here leaks into the games. */
+.cheer-layer { position: absolute; inset: 0; z-index: 43; pointer-events: none; overflow: hidden; }
+.cheer-stamp { position: absolute; display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 10px 28px 12px; border: 6px solid var(--ink); border-radius: 30px; box-shadow: 8px 8px 0 var(--ink); }
+.cheer-stamp b { font-family: var(--font-display); font-weight: 400; font-size: 72px; line-height: 1; }
+.cheer-stamp span { display: inline-flex; align-items: center; gap: 12px; font-size: 32px; font-weight: 900; max-width: 360px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }

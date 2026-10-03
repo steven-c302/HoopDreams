@@ -7,6 +7,7 @@ import { ScreenView, teamOf } from '../screens/ScreenView'
 import { Face } from '../theme/Face'
 import { gameThemeOf } from '../theme/gameTheme'
 import { Crown } from '../tv/toon'
+import { CheerPad } from './CheerPad'
 import { CaptainControls, CaptainLobby, ShuffleTeams, inTeamUp } from './Captain'
 import { useCountdown } from './useCountdown'
 import { useNoSleep } from './useNoSleep'
@@ -88,6 +89,7 @@ export function Play({ session, onLeave }: { session: Session; onLeave(why: stri
           ? <CaptainLobby view={view} games={games} host={host} />
           : <ScreenView screen={view.screen} disabled={view.paused} onAction={send} meId={view.me.id} people={people} seconds={seconds} rejected={rejected} ink={{ online: status === 'online' && !view.paused, send: sendInk }} />}
         {view.captain && inTeamUp(view) && <ShuffleTeams host={host} />}
+        {view.me.role === 'SPECTATOR' && <CheerPad onCheer={(kind) => conn.current?.cheer(kind)} />}
         {view.me.role === 'SPECTATOR' && !view.gameId && (
           <button className="primary big" onClick={() => void takeSeat(session.token, setToast)}>Join as a player</button>
         )}

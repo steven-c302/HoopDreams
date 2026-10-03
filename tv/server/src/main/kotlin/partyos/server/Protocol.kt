@@ -16,6 +16,8 @@ const val PROTOCOL_VERSION = 1
 /** Game settings a host may pass when starting a game. */
 private val START_OPTIONS = setOf("teams", "drinks")
 private const val MAX_GAME_ACTION = 32
+/** A cheer kind is a short fixed word; anything longer is cut before the engine looks at it. */
+internal const val MAX_CHEER_KIND = 12
 
 /** One JSON configuration for every wire message; sealed types carry their tag in "t". */
 val PartyJson = Json {
@@ -31,6 +33,8 @@ sealed interface ClientMsg {
     @Serializable @SerialName("action") data class Action(val id: String, val round: Int, val payload: JsonObject) : ClientMsg
     /** A drawer's strokes for the phase numbered [round]; fire-and-forget (no id, no ack, invalid batches are dropped). */
     @Serializable @SerialName("ink") data class Ink(val round: Int, val ops: List<InkOp>) : ClientMsg
+    /** A crowd tap ("yes", "boo", "ooh", "wow") shown on the TV; fire-and-forget like ink, so a reconnect never replays one. */
+    @Serializable @SerialName("cheer") data class Cheer(val kind: String) : ClientMsg
     @Serializable @SerialName("host") data class Host(val id: String, val cmd: HostCommand) : ClientMsg
     @Serializable @SerialName("ping") data object Ping : ClientMsg
 }

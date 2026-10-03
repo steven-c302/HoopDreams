@@ -1,4 +1,4 @@
-import { encodeClient, parseServerMsg, PROTOCOL_VERSION, type ActionPayload, type ClientMsg, type HostCommand, type ServerMsg } from '../protocol'
+import { encodeClient, parseServerMsg, PROTOCOL_VERSION, type ActionPayload, type CheerKind, type ClientMsg, type HostCommand, type ServerMsg } from '../protocol'
 import type { InkOp } from '../ink/types'
 import { backoffMs } from './backoff'
 import { Outbox } from './outbox'
@@ -61,6 +61,11 @@ export class Connection {
   /** Strokes for the phase numbered [round]. Fire-and-forget: no id, no resend (the drawer's pad resends its drawing on reconnect). */
   ink(round: number, ops: InkOp[]) {
     this.send({ t: 'ink', round, ops })
+  }
+
+  /** A crowd tap for the TV. Fire-and-forget like ink: no id and no resend, so a reconnect never replays an old cheer. */
+  cheer(kind: CheerKind) {
+    this.send({ t: 'cheer', kind })
   }
 
   host(cmd: HostCommand): string {

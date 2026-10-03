@@ -11,6 +11,7 @@ import partyos.engine.BetResult
 import partyos.engine.BluffDelta
 import partyos.engine.BluffReveal
 import partyos.engine.BluffTv
+import partyos.engine.Cheer
 import partyos.engine.Choice
 import partyos.engine.FinaleInfo
 import partyos.engine.FinaleResult
@@ -304,6 +305,7 @@ class ProtocolFixturesTest {
                     awards = listOf(NightAward("NIGHT CHAMP", listOf(NightPlayer(sam, "Sam", avatar)), "1 point")),
                     moments = listOf(NightMoment("Bluff Battle", "Al fooled 3 people with “stars”")),
                 ),
+                cheers = listOf(Cheer(1, "Sam", avatar, "wow")),
             ),
         ),
         ServerMsg.View(
@@ -675,6 +677,7 @@ class ProtocolFixturesTest {
         ClientMsg.Action("a-17", 4, JsonObject(mapOf("kind" to JsonPrimitive("word"), "path" to kotlinx.serialization.json.JsonArray(listOf(0, 1, 5, 6, 9).map { JsonPrimitive(it) })))),
         ClientMsg.Host("h-17", HostCommand.SetOption("grid", 1)),
         ClientMsg.Ping,
+        ClientMsg.Cheer("wow"),
         ClientMsg.Ink(4, listOf(InkOp.Start(1, 2, 1, 100, 100, 50), InkOp.Pts(1, listOf(110, 105, 50)), InkOp.End(1), InkOp.Undo, InkOp.Clear)),
     )
 

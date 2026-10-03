@@ -171,6 +171,10 @@ export interface NightMoment { game: string; text: string }
 /** The night so far, built from the finished games; only sent while no game is running. */
 export interface NightRecap { games: number; board: NightRow[]; awards: NightAward[]; moments: NightMoment[] }
 
+/** A crowd tap shown on the TV; [seq] counts up from 1 for the whole party. */
+export type CheerKind = 'yes' | 'boo' | 'ooh' | 'wow'
+export interface Cheer { seq: number; name: string; avatar: Avatar; kind: CheerKind }
+
 export interface GameResult { gameId: string; title: string; finishedAt: number; standings: ScoreRow[]; highlights: string[] }
 
 export interface TvState {
@@ -185,6 +189,8 @@ export interface TvState {
   /** Shared lobby settings: rounds, teams, drinks, game (index into /api/games), captain (phones allowed). */
   settings: Record<string, number>
   night?: NightRecap
+  /** The latest crowd cheers, oldest first. */
+  cheers?: Cheer[]
 }
 
 export type ServerMsg =
@@ -223,6 +229,7 @@ export type ClientMsg =
   | { t: 'hello'; protocol: number }
   | { t: 'action'; id: string; round: number; payload: ActionPayload }
   | { t: 'ink'; round: number; ops: InkOp[] }
+  | { t: 'cheer'; kind: CheerKind }
   | { t: 'host'; id: string; cmd: HostCommand }
   | { t: 'ping' }
 
