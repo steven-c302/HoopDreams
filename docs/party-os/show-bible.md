@@ -90,6 +90,7 @@ out from the TV. Removing players and switching phone control off are TV-only (J
 | Ballpark bet | every team's guess planted on the number line with a ×odds tag, the answer hidden, BET IN tags as teams lock; the reveal drops chips on the flags that were backed | stamp per lock; jackpot on a ×3 win; Brainy reacts to big wins and busts |
 | Pick a Side | split screen; each item slams in, then snaps to its side | fast bed; whoosh per call |
 | Heist | the fastest team picks a target; a loot sack flies, coins burst | sneaky bed; slide whistle + cha-ching; drink call |
+| Final Wager | the category slams in; secret wagers (WAGER IN tags); a typed question; then the reveal, last place first: answer, check or cross, wager, score, with a live ladder that reshuffles; the leader goes last with a drumroll | stamp on lock; drumroll before the leader; jackpot on a winning ALL IN; fanfare at the end |
 | Standings | team bars race to their scores, crown on the leader, last place gets a DRINK! card | strut; glass clink + brass hit |
 | Gauntlet | a ten-space race track with head starts; right picks move teams forward, wrong ones back | chase bed; whoosh per move |
 | Podium | third, second, first slam onto their blocks, the winners' faces hop under a crown | drumroll, crashes, fanfare, applause, confetti |

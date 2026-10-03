@@ -1,6 +1,9 @@
 import { expect, test, type Page } from '@playwright/test'
 import { clearParty, hostPage, phone } from './helpers'
 
+// The dev server is shared across spec files: leave the party empty for the next test.
+test.afterEach(async ({ browser }) => { await clearParty((await hostPage(browser)).host) })
+
 /** Names each team from its first phone, if the phone asks (trivia remembers team names between shows in one party). */
 async function nameTeams(namers: (readonly [Page, string])[]) {
   for (const [p, name] of namers) {
