@@ -118,3 +118,25 @@ data class BetResult(val on: String? = null, val stake: Int = 0, val odds: Int =
 /** The bet phase on the TV: every guess with its odds, and which teams have a bet in (not who backed what). */
 @Serializable
 data class BetInfo(val line: List<BetOption>, val locked: List<String> = emptyList())
+
+/** One team's result in the Final Wager reveal. [before] and [after] are its score around the wager; [text] is its typed answer. */
+@Serializable
+data class FinaleResult(
+    val team: String,
+    val text: String? = null,
+    val right: Boolean = false,
+    val option: String = "w0",
+    val wager: Int = 0,
+    val delta: Int = 0,
+    val before: Int = 0,
+    val after: Int = 0,
+)
+
+/** The Final Wager on the TV: the category, which teams have wagered, and (reveal only) the answer and every result, last place first. */
+@Serializable
+data class FinaleInfo(
+    val category: String,
+    val locked: List<String> = emptyList(),
+    val results: List<FinaleResult> = emptyList(),
+    val answerText: String? = null,
+)
