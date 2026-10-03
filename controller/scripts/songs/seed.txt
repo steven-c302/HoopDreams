@@ -1,0 +1,121 @@
+The Beatles | Hey Jude | 1968 | rock
+Queen | Bohemian Rhapsody | 1975 | rock
+Led Zeppelin | Stairway to Heaven | 1971 | rock
+ABBA | Dancing Queen | 1976 | pop
+Stevie Wonder | Superstition | 1972 | rnb
+Fleetwood Mac | Go Your Own Way | 1977 | rock
+Eagles | Hotel California | 1976 | rock
+Bee Gees | Stayin' Alive | 1977 | dance
+David Bowie | Heroes | 1977 | rock
+Marvin Gaye | Let's Get It On | 1973 | rnb
+Elton John | Rocket Man | 1972 | pop
+The Rolling Stones | Paint It Black | 1966 | rock
+Aretha Franklin | Respect | 1967 | rnb
+Donna Summer | I Feel Love | 1977 | dance
+Pink Floyd | Another Brick in the Wall | 1979 | rock
+Lynyrd Skynyrd | Sweet Home Alabama | 1974 | rock
+Earth, Wind & Fire | September | 1978 | dance
+Chic | Le Freak | 1978 | dance
+Dolly Parton | Jolene | 1973 | country
+Boston | More Than a Feeling | 1976 | rock
+Carole King | You've Got a Friend | 1971 | pop
+Bob Marley & The Wailers | Is This Love | 1978 | other
+The Jackson 5 | I Want You Back | 1969 | rnb
+Creedence Clearwater Revival | Fortunate Son | 1969 | rock
+Michael Jackson | Billie Jean | 1983 | pop
+Prince | When Doves Cry | 1984 | pop
+Madonna | Like a Prayer | 1989 | pop
+Whitney Houston | I Wanna Dance with Somebody | 1987 | pop
+a-ha | Take On Me | 1985 | pop
+Journey | Don't Stop Believin' | 1981 | rock
+Guns N' Roses | Sweet Child O' Mine | 1987 | rock
+Bon Jovi | Livin' on a Prayer | 1986 | rock
+Cyndi Lauper | Girls Just Want to Have Fun | 1983 | pop
+Rick Astley | Never Gonna Give You Up | 1987 | pop
+Toto | Africa | 1982 | rock
+Queen | Another One Bites the Dust | 1980 | rock
+AC/DC | Back in Black | 1980 | rock
+Survivor | Eye of the Tiger | 1982 | rock
+Wham! | Wake Me Up Before You Go-Go | 1984 | pop
+Tina Turner | What's Love Got to Do with It | 1984 | pop
+Eurythmics | Sweet Dreams (Are Made of This) | 1983 | pop
+Simple Minds | Don't You (Forget About Me) | 1985 | rock
+Michael Jackson | Thriller | 1982 | pop
+Phil Collins | In the Air Tonight | 1981 | pop
+Duran Duran | Hungry Like the Wolf | 1982 | pop
+Run-DMC | Walk This Way | 1986 | hiphop
+The Police | Every Breath You Take | 1983 | rock
+Def Leppard | Pour Some Sugar on Me | 1987 | rock
+Nirvana | Smells Like Teen Spirit | 1991 | rock
+Backstreet Boys | I Want It That Way | 1999 | pop
+Spice Girls | Wannabe | 1996 | pop
+TLC | No Scrubs | 1999 | rnb
+Britney Spears | ...Baby One More Time | 1998 | pop
+Oasis | Wonderwall | 1995 | rock
+Mariah Carey | All I Want for Christmas Is You | 1994 | pop
+Whitney Houston | I Will Always Love You | 1992 | pop
+R.E.M. | Losing My Religion | 1991 | rock
+Alanis Morissette | You Oughta Know | 1995 | rock
+Green Day | Basket Case | 1994 | rock
+Coolio | Gangsta's Paradise | 1995 | hiphop
+The Notorious B.I.G. | Juicy | 1994 | hiphop
+2Pac | California Love | 1995 | hiphop
+Shania Twain | Man! I Feel Like a Woman! | 1997 | country
+Garth Brooks | Friends in Low Places | 1990 | country
+Savage Garden | Truly Madly Deeply | 1997 | pop
+Radiohead | Creep | 1992 | rock
+Smash Mouth | All Star | 1999 | rock
+Aqua | Barbie Girl | 1997 | dance
+Ricky Martin | Livin' la Vida Loca | 1999 | latin
+Celine Dion | My Heart Will Go On | 1997 | pop
+Red Hot Chili Peppers | Under the Bridge | 1991 | rock
+Eiffel 65 | Blue (Da Ba Dee) | 1998 | dance
+OutKast | Hey Ya! | 2003 | hiphop
+Beyoncé | Crazy in Love | 2003 | rnb
+Eminem | Lose Yourself | 2002 | hiphop
+The Killers | Mr. Brightside | 2003 | rock
+Rihanna | Umbrella | 2007 | pop
+Coldplay | Yellow | 2000 | rock
+Kelly Clarkson | Since U Been Gone | 2004 | pop
+Usher | Yeah! | 2004 | rnb
+Amy Winehouse | Rehab | 2006 | other
+Shakira | Hips Don't Lie | 2005 | latin
+Green Day | Boulevard of Broken Dreams | 2004 | rock
+Gnarls Barkley | Crazy | 2006 | other
+Justin Timberlake | SexyBack | 2006 | pop
+Lady Gaga | Poker Face | 2008 | pop
+Linkin Park | In the End | 2001 | rock
+Evanescence | Bring Me to Life | 2003 | rock
+Daft Punk | One More Time | 2000 | dance
+50 Cent | In da Club | 2003 | hiphop
+Black Eyed Peas | I Gotta Feeling | 2009 | pop
+Kanye West | Gold Digger | 2005 | hiphop
+Fall Out Boy | Sugar, We're Goin Down | 2005 | rock
+Avril Lavigne | Complicated | 2002 | pop
+Katy Perry | Hot n Cold | 2008 | pop
+Maroon 5 | This Love | 2004 | pop
+Adele | Rolling in the Deep | 2010 | pop
+Mark Ronson | Uptown Funk | 2014 | pop
+Pharrell Williams | Happy | 2013 | pop
+Ed Sheeran | Shape of You | 2017 | pop
+Lizzo | Good as Hell | 2016 | pop
+Dua Lipa | Levitating | 2020 | pop
+The Weeknd | Blinding Lights | 2019 | pop
+Harry Styles | As It Was | 2022 | pop
+Taylor Swift | Shake It Off | 2014 | pop
+Billie Eilish | bad guy | 2019 | pop
+Lil Nas X | Old Town Road | 2019 | hiphop
+Post Malone | Circles | 2019 | hiphop
+Bruno Mars | Locked Out of Heaven | 2012 | pop
+Gotye | Somebody That I Used to Know | 2011 | other
+Imagine Dragons | Radioactive | 2012 | rock
+Lorde | Royals | 2013 | pop
+Luis Fonsi | Despacito | 2017 | latin
+Kendrick Lamar | HUMBLE. | 2017 | hiphop
+Olivia Rodrigo | drivers license | 2021 | pop
+Glass Animals | Heat Waves | 2020 | other
+Miley Cyrus | Flowers | 2023 | pop
+Sabrina Carpenter | Espresso | 2024 | pop
+Doja Cat | Say So | 2019 | pop
+Cardi B | Bodak Yellow | 2017 | hiphop
+PSY | Gangnam Style | 2012 | dance

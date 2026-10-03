@@ -3,6 +3,7 @@ package partyos.engine.games.songdrop
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
+import kotlin.test.assertTrue
 
 class SongPackTest {
     private fun song(id: String = "a-b", videoId: String = "abcdefghijk", year: Int = 1999, genre: String = "pop", start: Int = 30) =
@@ -39,6 +40,18 @@ class SongPackTest {
         assertFailsWith<IllegalArgumentException> { SongPack.parse(with(song("a-9", "eeeeeeeeeee", year = 1900))) }
         assertFailsWith<IllegalArgumentException> { SongPack.parse(with(song("a-9", "eeeeeeeeeee", genre = "polka"))) }
         assertFailsWith<IllegalArgumentException> { SongPack.parse(with(song("a-9", "eeeeeeeeeee", start = 5000))) }
+    }
+
+    @Test fun theBundledDeckIsBigEnoughAndGivesEveryEraRealChoices() {
+        val deck = SongPack.core().items
+        assertTrue(deck.size >= 100, "the real deck has at least 100 songs (the 4-song seed is a placeholder)")
+        for (era in 1..5) assertTrue(deck.count { it.era == era } >= 15, "era $era has too few songs")
+        val random = kotlin.random.Random(5)
+        for (song in deck) {
+            val options = SongRules.options(song, deck, random)
+            assertEquals(4, options.size, "${song.id} needs four options")
+            assertTrue(options.count { it.id == song.id } == 1)
+        }
     }
 
     @Test fun duplicateIdsOrVideosAreRefused() {
