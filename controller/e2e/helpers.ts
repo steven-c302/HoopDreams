@@ -17,7 +17,7 @@ export async function hostPage(browser: Browser): Promise<{ host: Page; room: st
   await host.getByRole('textbox').fill('4242')
   await host.getByRole('button', { name: 'Unlock host controls' }).click()
   const chip = host.locator('.room-chip')
-  await expect(chip).toHaveText(/Room [A-Z]{4}/)
+  await expect(chip).toHaveText(/Room [A-Z]{4}/, { timeout: 20_000 }) // a long run can leave the first connect slow
   return { host, room: (await chip.textContent())!.replace('Room ', '').trim() }
 }
 
