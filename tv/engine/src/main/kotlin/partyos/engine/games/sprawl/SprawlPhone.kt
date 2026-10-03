@@ -2,7 +2,6 @@ package partyos.engine.games.sprawl
 
 import partyos.engine.Choice
 import partyos.engine.GameContext
-import partyos.engine.ofWater
 import partyos.engine.PlayerId
 import partyos.engine.Screen
 import partyos.engine.SprawlBuild
@@ -52,7 +51,7 @@ internal class SprawlPhone(private val names: SprawlNames, private val game: Spr
             canTrade = mainNow,
             bank = s.bank,
             discard = if (seat != null && s.phase == DISCARD) s.discards.getOrElse(me) { 0 } else 0,
-            drink = drinkCall(s, me, ctx.player(who)?.water == true),
+            drink = drinkCall(s, me),
             drinks = s.drinks,
         )
     }
@@ -172,13 +171,13 @@ internal class SprawlPhone(private val names: SprawlNames, private val game: Spr
     )
 
     /** Your latest drink call this turn, as a line for the phone. */
-    private fun drinkCall(s: SprawlState, me: Int, water: Boolean): String? {
+    private fun drinkCall(s: SprawlState, me: Int): String? {
         if (!s.drinks || me < 0) return null
         val b = s.beats.lastOrNull { it.kind == "drink" && me in it.seats && it.seq > s.turnBeat } ?: return null
         val what = when (b.sips) {
-            FINISH -> if (water) "Finish your water" else "Finish your drink"
-            1 -> "Drink 1 sip${ofWater(water)}"
-            else -> "Drink ${b.sips} sips${ofWater(water)}"
+            FINISH -> "Finish your drink"
+            1 -> "Drink 1 sip"
+            else -> "Drink ${b.sips} sips"
         }
         return "$what: ${b.text ?: ""}".trimEnd(' ', ':')
     }

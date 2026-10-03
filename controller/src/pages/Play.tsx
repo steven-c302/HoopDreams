@@ -16,12 +16,6 @@ const BYE: Record<string, string> = {
   BAD_TOKEN: 'That party has ended or the TV restarted. Join again!',
 }
 
-/** Water tonight, on or off: the TV and this phone word this player's drink calls as water. */
-async function setWater(token: string, water: boolean, report: (m: string) => void) {
-  const r = await fetch('/api/water', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ token, water }) }).catch(() => null)
-  if (!r?.ok) report("Couldn't switch that right now.")
-}
-
 async function takeSeat(token: string, report: (m: string) => void) {
   const r = await fetch('/api/role', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ token, role: 'PLAYER' }) })
     .catch(() => null)
@@ -96,12 +90,6 @@ export function Play({ session, onLeave }: { session: Session; onLeave(why: stri
         {view.captain && inTeamUp(view) && <ShuffleTeams host={host} />}
         {view.me.role === 'SPECTATOR' && !view.gameId && (
           <button className="primary big" onClick={() => void takeSeat(session.token, setToast)}>Join as a player</button>
-        )}
-        {!view.gameId && view.me.role === 'PLAYER' && (
-          <div className="setting-row water-row">
-            <span>Water tonight<small>Your drink calls say water</small></span>
-            <button className={`toggle ${view.me.water ? 'on' : ''}`} role="switch" aria-checked={!!view.me.water} onClick={() => void setWater(session.token, !view.me.water, setToast)}>{view.me.water ? 'On' : 'Off'}</button>
-          </div>
         )}
       </section>
       {view.captain && view.gameId && <CaptainControls view={view} host={host} />}

@@ -10,7 +10,7 @@ data class JeopardyCellTv(val id: String, val col: Int, val row: Int, val value:
 @Serializable
 data class JeopardyDelta(val id: PlayerId, val name: String, val points: Int)
 
-/** [text] is the whole drink line, already worded for water. */
+/** [text] is the whole drink line. */
 @Serializable
 data class JeopardyDrink(val id: PlayerId, val name: String, val sips: Int, val text: String)
 

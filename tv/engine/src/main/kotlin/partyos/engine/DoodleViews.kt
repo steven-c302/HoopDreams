@@ -42,7 +42,7 @@ data class DoodleSolver(val id: PlayerId, val name: String, val points: Int? = n
 @Serializable
 data class DoodleMissTv(val id: PlayerId, val name: String, val text: String)
 
-/** [text] is the whole drink line, already worded for water. */
+/** [text] is the whole drink line. */
 @Serializable
 data class DoodleDrink(val id: PlayerId, val name: String, val sips: Int, val text: String)
 

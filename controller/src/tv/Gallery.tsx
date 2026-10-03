@@ -6,6 +6,7 @@ import { SuitSprite } from './Suits'
 import { TriviaStage } from './TriviaStage'
 import type { TriviaTeam, TriviaTv } from './types'
 import { TurfGallery } from './TurfGallery'
+import { NightGallery } from './NightGallery'
 
 const ThemeGallery = lazy(() => import('./ThemeGallery').then(m => ({ default: m.ThemeGallery })))
 
@@ -19,6 +20,7 @@ export function Gallery() {
   if (params.get('gallery') === 'themes') return <Suspense fallback={null}><ThemeGallery /></Suspense>
   if (params.get('gallery') === 'trivia') return <TriviaGallery beat={params.get('beat')} pub={params.get('show') === 'writeitdown'} />
   if (params.get('gallery') === 'turf') return <TurfGallery beat={params.get('beat')} />
+  if (params.get('gallery') === 'night') return <NightGallery />
   return (
     <div style={{ position: 'fixed', inset: 0, overflow: 'auto', background: 'var(--felt)', padding: 24 }}>
       <SuitSprite />

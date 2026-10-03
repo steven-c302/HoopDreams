@@ -24,7 +24,6 @@ import partyos.engine.Step
 import partyos.engine.TutorialCard
 import partyos.engine.games.bluff.cleanText
 import partyos.engine.games.trivia.AnswerMatch
-import partyos.engine.ofWater
 import kotlin.random.Random
 
 @Serializable
@@ -258,10 +257,10 @@ class Doodle(pack: DoodlePack = DoodlePack.core()) : GameModule<DoodleState>, In
         if ((ctx.settings["drinks"] ?: 1) == 0) return emptyList()
         val drawer = s.drawer?.let { ctx.player(it) }
         if (s.correct.isEmpty()) {
-            return listOfNotNull(drawer?.let { DoodleDrink(it.id, it.name, 2, "Nobody got it! Drink 2 sips${ofWater(it.water)}") })
+            return listOfNotNull(drawer?.let { DoodleDrink(it.id, it.name, 2, "Nobody got it! Drink 2 sips") })
         }
         return guessers(s).filter { it.v !in s.correct }.mapNotNull { id ->
-            ctx.player(id)?.let { DoodleDrink(it.id, it.name, 1, "Missed it. Drink 1 sip${ofWater(it.water)}") }
+            ctx.player(id)?.let { DoodleDrink(it.id, it.name, 1, "Missed it. Drink 1 sip") }
         }
     }
 

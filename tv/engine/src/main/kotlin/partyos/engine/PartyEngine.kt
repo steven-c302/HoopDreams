@@ -74,7 +74,7 @@ class PartyEngine private constructor(
 
     // ---- identity -------------------------------------------------------------------------
 
-    fun join(room: String, rawName: String, avatar: Avatar, role: Role, water: Boolean = false): JoinResult {
+    fun join(room: String, rawName: String, avatar: Avatar, role: Role): JoinResult {
         if (!room.trim().equals(roomCode, ignoreCase = true)) return JoinResult.Failed(JoinError.WRONG_ROOM)
         val name = rawName.trim()
         if (name.isEmpty() || name.length > MAX_NAME || name.any { Character.isISOControl(it) }) {
@@ -82,7 +82,7 @@ class PartyEngine private constructor(
         }
         if (players.any { it.name.equals(name, ignoreCase = true) }) return JoinResult.Failed(JoinError.NAME_TAKEN)
         if (players.count { it.role == role } >= MAX_PER_ROLE) return JoinResult.Failed(JoinError.FULL)
-        val player = Player(PlayerId(entropy.token().take(12)), name, avatar.sanitized(), role, clock.now(), water = water)
+        val player = Player(PlayerId(entropy.token().take(12)), name, avatar.sanitized(), role, clock.now())
         val token = entropy.token()
         roster[player.id] = player
         tokens[sha256(token)] = player.id
@@ -118,13 +118,6 @@ class PartyEngine private constructor(
         if (players.count { it.role == role } >= MAX_PER_ROLE) return "FULL"
         roster[id] = p.copy(role = role)
         return null
-    }
-
-    /** Water tonight (or not): any time, games included. Drink calls stay the same; screens word them as water. */
-    fun setWater(id: PlayerId, water: Boolean): Boolean {
-        val p = player(id) ?: return false
-        roster[id] = p.copy(water = water)
-        return true
     }
 
     /**
@@ -312,6 +305,7 @@ class PartyEngine private constructor(
             gamesPlayed = results.size,
             captain = captain(),
             settings = settings.toMap(),
+            night = if (g == null) nightRecap(results) else null,
         )
     }
 
@@ -477,7 +471,7 @@ class PartyEngine private constructor(
         .map { ScoreRow(it.id, it.name, it.avatar, scores[it.id] ?: 0) }
         .sortedByDescending { it.score }
 
-    private fun Player.summary() = PlayerSummary(id, name, avatar, role, connected, water)
+    private fun Player.summary() = PlayerSummary(id, name, avatar, role, connected)
 
     companion object {
         const val MAX_NAME = 16

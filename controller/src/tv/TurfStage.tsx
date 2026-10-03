@@ -10,7 +10,7 @@ import { GameHeader, Podium, Tutorial } from './Shared'
 import { Die, Piece, PIECE_NAMES } from './TurfArt'
 import { TurfBoard } from './TurfBoard'
 import { Burst, C, CountUp, Crown, Deal, Panel, Pop, Slam, Stamp, Timer, coinShower, fireConfetti, inkOn } from './toon'
-import { waterNote, type TurfBeat, type TurfTv } from './types'
+import { type TurfBeat, type TurfTv } from './types'
 import { ErrorBoundary } from './turf3d/ErrorBoundary'
 import { hasWebGL2, wants3d } from './turf3d/webgl'
 import { DECISION_MS, SETUP_PHASES, gameClockLeft, type Clock } from './turf3d/ui/hud'
@@ -72,7 +72,7 @@ function Turf({ g, stage, players, clock }: { g: TurfTv; stage: StageInfo; playe
   const faces = useMemo(() => players.map((p) => ({ id: p.id, name: p.name, face: p.avatar.face, color: p.avatar.color, connected: p.connected })), [players])
   const use3d = useMemo(() => !lost && wants3d(location.search, hasWebGL2()), [lost])
   const { display, zoom } = useHops(g, !use3d)
-  const flash = useFlashes(g, people)
+  const flash = useFlashes(g)
   useBeatSounds(g)
   const left = g.tokens.map((_, i) => i).filter((i) => i % 2 === 0)
   const right = g.tokens.map((_, i) => i).filter((i) => i % 2 === 1)
@@ -138,7 +138,7 @@ function useHops(g: TurfTv, enabled: boolean) {
 
 interface Flash { id: number; text: string; sub?: string; fill: string; ink?: string; ms: number; small?: boolean; top?: boolean }
 
-function flashFor(b: TurfBeat, g: TurfTv, people: Map<string, PlayerSummary>): Flash | null {
+function flashFor(b: TurfBeat, g: TurfTv): Flash | null {
   const name = (i: number) => g.tokens[i]?.name ?? ''
   const alive = g.tokens.filter((t) => !t.bankrupt).length
   switch (b.kind) {
@@ -149,9 +149,7 @@ function flashFor(b: TurfBeat, g: TurfTv, people: Map<string, PlayerSummary>): F
       const who = b.tokens.length > 1 && b.tokens.length >= alive - 1 && alive > 2
         ? `Everyone but ${name(g.tokens.findIndex((_, i) => !b.tokens.includes(i) && !g.tokens[i].bankrupt))}`
         : b.tokens.map(name).join(' + ')
-      // A token whose players are all on water tonight drinks water; the call itself is the same.
-      const water = b.tokens.filter((i) => (g.tokens[i]?.members.length ?? 0) > 0 && g.tokens[i].members.every((m) => people.get(m)?.water)).map(name)
-      return { id: b.seq, text: 'DRINK!', sub: `${who}: ${sipText(b.sips)}${waterNote(water)}`, fill: C.bubblegum, ms: 2200, top: true }
+      return { id: b.seq, text: 'DRINK!', sub: `${who}: ${sipText(b.sips)}`, fill: C.bubblegum, ms: 2200, top: true }
     }
     case 'jail': return { id: b.seq, text: 'TIMEOUT!', sub: `${name(b.token)} is off the board`, fill: C.blueberry, ink: C.white, ms: 1700, top: true }
     case 'bankrupt': return { id: b.seq, text: 'BANKRUPT!', sub: `${name(b.token)} is out`, fill: C.ink, ink: C.sun, ms: 2400 }
@@ -164,7 +162,7 @@ function flashFor(b: TurfBeat, g: TurfTv, people: Map<string, PlayerSummary>): F
   }
 }
 
-function useFlashes(g: TurfTv, people: Map<string, PlayerSummary>) {
+function useFlashes(g: TurfTv) {
   const [flash, setFlash] = useState<Flash | null>(null)
   const queue = useRef<Flash[]>([])
   const seen = useRef(latest(g.beats))
@@ -179,7 +177,7 @@ function useFlashes(g: TurfTv, people: Map<string, PlayerSummary>) {
   useEffect(() => {
     const fresh = g.beats.filter((b) => b.seq > seen.current)
     seen.current = Math.max(seen.current, latest(g.beats))
-    for (const b of fresh) { const f = flashFor(b, g, people); if (f) queue.current.push(f) }
+    for (const b of fresh) { const f = flashFor(b, g); if (f) queue.current.push(f) }
     if (!showing.current && queue.current.length) next()
   }, [g]) // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => () => { if (timer.current) clearTimeout(timer.current) }, [])

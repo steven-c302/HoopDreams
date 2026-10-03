@@ -25,7 +25,6 @@ import partyos.engine.ScoreRow
 import partyos.engine.Screen
 import partyos.engine.Step
 import partyos.engine.TutorialCard
-import partyos.engine.ofWater
 import kotlin.random.Random
 
 @Serializable
@@ -177,7 +176,7 @@ class HotType(
         if (lowest.size != 1) return emptyList()
         val p = lowest.single()
         val player = ctx.player(p) ?: return emptyList()
-        return listOf(HuntDrink(p, player.name, 2, "Last place! Drink 2 sips${ofWater(player.water)}"))
+        return listOf(HuntDrink(p, player.name, 2, "Last place! Drink 2 sips"))
     }
 
     override fun playerView(s: HotTypeState, who: PlayerId, ctx: GameContext): Screen {

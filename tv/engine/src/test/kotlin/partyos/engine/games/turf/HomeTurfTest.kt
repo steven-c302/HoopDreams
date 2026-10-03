@@ -326,17 +326,6 @@ class HomeTurfTest {
         assertEquals("manage", tv.phase)
     }
 
-    @Test fun aPlayerOnWaterSeesTheirDrinkCallAsWater() {
-        start(listOf("Ava", "Ben")); skipSetup()
-        rig { s -> s.clean().owning(1 to 1 - s.turn, 3 to 1 - s.turn) }
-        rigRoll { !it.doubles && it.move == 3 }
-        val t = state.turn
-        assertTrue(e.setWater(seatOf(t), true))
-        act(seatOf(t), "roll"); passTime(moveMs(3))
-        assertEquals("Drink 1 sip of water: paid rent at The Laundromat", phone(seatOf(t)).drink)
-        assertEquals(1, state.beats.last { it.kind == "drink" }.sips, "the call itself doesn't change")
-    }
-
     @Test fun drinkCallsCanBeOff() {
         start(listOf("Ava", "Ben"), "drinks" to 0); skipSetup()
         rig { s -> s.clean().owning(1 to 1 - s.turn, 3 to 1 - s.turn) }

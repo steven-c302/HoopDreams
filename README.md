@@ -36,7 +36,6 @@ Made with [brag](https://github.com/latent-spaces/brag)'s lightweight `brag-slim
 | **Selfies as faces** | Draw your face or snap a selfie or photo; the phone crops it and every screen shows it. Photos survive a restart too. |
 | **Every game has its own look** | Drunk Blackjack is an after-hours casino, Bluff Battle a tabloid front page, Write It Down a pub quiz, Home Turf and Sprawl get their own boards. Brain Drain keeps the cartoon show. |
 | **Timers: normal, relaxed, no rush** | Stretch every answer and decision timer 1.5× or 2× for a slower room (**R** on the TV or the captain's phone). Reveals keep their pace. |
-| **Water tonight** | A switch on each phone at join and between games. Drink calls stay the same, but yours are worded as water. |
 | **Phones stay awake** | Screens no longer dim and lock mid-question. |
 | **Team-name veto** | The host can send a typed team name back to its default (**Esc** → Team names), and the team gets to name itself again. |
 | **Sprawl** | The island-settling game on hexes named after the crew's places. Place settlements and roads on a mini-map on your phone, trade with anyone, and race to 8 points before the game clock runs out. |
@@ -126,7 +125,7 @@ before the buzzer. Five rounds, five different formats, dealt in a new order eve
 </p>
 
 - **Drink calls** (on by default, **D** turns them off): last place after each round drinks a sip, a Heist victim
-  drinks a sip, and the last-place team at the end drinks two. Water counts. The most points wins; The Heist never opens a show.
+  drinks a sip, and the last-place team at the end drinks two. The most points wins; The Heist never opens a show.
 - Teams carry over to the next show. Late arrivals join the smallest team at the next question.
 - **Shuffle:** friends always pile onto one team. During Team Up, press **S** on the TV (or tap "Shuffle evenly"
   on the captain's phone) to deal everyone evenly across the teams; names stay, everyone checks their new team.
@@ -162,8 +161,7 @@ ahead and end. The TV mirrors every choice. If their phone drops, the crown move
 comes back when they do; they can pass it on, and the TV's host controls can hand it to anyone or switch phone
 control off. Removing players stays on the TV.
 
-Scan, type a name, draw a face (or take a selfie), play. Flip **Water tonight** on and your drink calls are
-worded as water; the screen stays awake while a game runs. Buttons are thumb-sized, every choice is colour **and** shape **and** text,
+Scan, type a name, draw a face (or take a selfie), play. The screen stays awake while a game runs. Buttons are thumb-sized, every choice is colour **and** shape **and** text,
 teammates' faces show up on the answer they picked, and phones buzz on every tap and on your team's result. A
 refreshed or dropped phone rejoins as the same player.
 
@@ -207,7 +205,7 @@ dealer, and the dealer plays their own hand from their phone. If the dealer bust
 the moment you let go), type one word that proves you know the word without giving it away, then argue it out and vote on
 your phone. Name the imposter for points; the imposter scores for staying hidden, or for guessing the word once caught.
 Four to sixteen players (two imposters from nine), five rounds by default, the last one counts double. The vote comes with
-drink calls, and the lobby switch and Water tonight work as in the other games.
+drink calls, and the lobby switch works as in the other games.
 
 **Doodle Dash.** Pictionary-style: one player at a time gets a word (pick easy, medium or hard) and draws it on their phone while
 the TV shows every stroke live, on a big easel. Everyone else types guesses on their phones; wrong guesses float across the TV
@@ -324,4 +322,4 @@ Fonts: [Rammetto One](https://fonts.google.com/specimen/Rammetto+One), [Figtree]
 [@letele/playing-cards](https://github.com/letele/playing-cards) (CC0). Round formats nod to *Buzz!*, *You Don't Know
 Jack*, *Wits & Wagers* and *Trivia Murder Party*; the names, art and questions are original.
 
-Please drink responsibly. Sips of water count.
+Please drink responsibly.

@@ -23,7 +23,6 @@ import partyos.engine.Screen
 import partyos.engine.Step
 import partyos.engine.TutorialCard
 import partyos.engine.games.trivia.AnswerMatch
-import partyos.engine.ofWater
 import kotlin.random.Random
 
 @Serializable
@@ -324,7 +323,7 @@ class Jeopardy(private val pack: JeopardyPack = JeopardyPack.core()) : GameModul
         if ((ctx.settings["drinks"] ?: 1) == 0) return emptyList()
         return s.sips.mapNotNull { (id, sips) ->
             val p = ctx.player(PlayerId(id)) ?: return@mapNotNull null
-            JeopardyDrink(p.id, p.name, sips, "Drink $sips ${if (sips == 1) "sip" else "sips"}${ofWater(p.water)}")
+            JeopardyDrink(p.id, p.name, sips, "Drink $sips ${if (sips == 1) "sip" else "sips"}")
         }
     }
 

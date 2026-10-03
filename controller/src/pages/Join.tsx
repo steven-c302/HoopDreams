@@ -25,7 +25,6 @@ export function Join({ room, notice, onJoined }: { room: string | null; notice: 
   const [preset, setPreset] = useState(() => PRESETS[Math.floor(Math.random() * PRESETS.length)])
   const [mode, setMode] = useState<'draw' | 'pick' | 'photo'>('draw')
   const [photo, setPhoto] = useState<string | null>(null)
-  const [water, setWater] = useState(false)
   const [uploading, setUploading] = useState(false)
   const [error, setError] = useState<string | null>(notice)
   const [busy, setBusy] = useState(false)
@@ -53,7 +52,7 @@ export function Join({ room, notice, onJoined }: { room: string | null; notice: 
       const r = await fetch('/api/join', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ room: code.trim().toUpperCase(), name: name.trim(), avatar: { face, color }, spectator, water }),
+        body: JSON.stringify({ room: code.trim().toUpperCase(), name: name.trim(), avatar: { face, color }, spectator }),
       })
       const body = await r.json().catch(() => ({}))
       if (r.ok) onJoined({ room: code.trim().toUpperCase(), token: body.token, playerId: body.playerId })
@@ -122,10 +121,6 @@ export function Join({ room, notice, onJoined }: { room: string | null; notice: 
           </div>
         </div>
 
-        <div className="setting-row water-row">
-          <span>Water tonight<small>Your drink calls say water. Change it any time between games.</small></span>
-          <button type="button" className={`toggle ${water ? 'on' : ''}`} role="switch" aria-checked={water} onClick={() => setWater(!water)}>{water ? 'On' : 'Off'}</button>
-        </div>
         {error && <p className="error" role="alert">{error}</p>}
         <button className="primary big" disabled={!ready}>Join the party</button>
         <button type="button" className="ghost" disabled={!ready} onClick={() => join(true)}>Just watch</button>

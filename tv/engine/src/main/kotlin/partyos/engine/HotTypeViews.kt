@@ -47,6 +47,6 @@ data class HuntMissed(val word: String, val points: Int)
 @Serializable
 data class HuntDelta(val id: PlayerId, val name: String, val base: Int, val unique: Int, val longest: Int, val total: Int)
 
-/** [text] is the whole drink line, already worded for water. */
+/** [text] is the whole drink line. */
 @Serializable
 data class HuntDrink(val id: PlayerId, val name: String, val sips: Int, val text: String)

@@ -62,13 +62,10 @@ export function BlackjackStage({ stage, players, scores, clock }: { stage: Stage
       </div>
     )
   }
-  return <Table g={g} stage={stage} clock={clock} players={players} />
+  return <Table g={g} stage={stage} clock={clock} />
 }
 
-function Table({ g, stage, clock, players }: { g: BlackjackTv; stage: StageInfo; clock: { deadline: number | null; frozen: number | null }; players: PlayerSummary[] }) {
-  // Players on water tonight: their calls say so (the drinks themselves are the same).
-  const water = new Set(players.filter((p) => p.water).map((p) => p.id))
-  const dealerWater = g.dealerId != null && water.has(g.dealerId) ? ' OF WATER' : ''
+function Table({ g, stage, clock }: { g: BlackjackTv; stage: StageInfo; clock: { deadline: number | null; frozen: number | null } }) {
   const layout = useMemo(() => seatLayout(g.seats.length), [g.seats.length])
   const banner = `bj-banner ${layout.crowded ? 'crowded' : ''}`
   const signTop = layout.crowded ? 452 : 520
@@ -127,14 +124,14 @@ function Table({ g, stage, clock, players }: { g: BlackjackTv; stage: StageInfo;
       {g.phase === 'settle' && (
         <div className={banner} style={{ top: layout.crowded ? signTop : dealerBust ? 400 : 520 }}>
           {dealerBust ? (
-            <Slam from={1.6} tilt={-3} delay={0.1}><div className="bj-sign bust"><span>{who} BUSTS!</span><small>DRINK {sipLabel(g.dealerDrinks)}{dealerWater}</small></div></Slam>
+            <Slam from={1.6} tilt={-3} delay={0.1}><div className="bj-sign bust"><span>{who} BUSTS!</span><small>DRINK {sipLabel(g.dealerDrinks)}</small></div></Slam>
           ) : (
-            <Banner text={g.dealerDrinks > 0 ? `${who} HAS ${dealerTotal}: DRINKS ${sipLabel(g.dealerDrinks)}${dealerWater}` : `${who} HAS ${dealerTotal}`} tone={g.dealerDrinks > 0 ? 'brass' : 'ivory'} />
+            <Banner text={g.dealerDrinks > 0 ? `${who} HAS ${dealerTotal}: DRINKS ${sipLabel(g.dealerDrinks)}` : `${who} HAS ${dealerTotal}`} tone={g.dealerDrinks > 0 ? 'brass' : 'ivory'} />
           )}
         </div>
       )}
       {g.seats.map((s, i) => (
-        <Seat key={s.id} s={s} water={water.has(s.id)} phase={g.phase} pos={layout.pos[i]} cardW={layout.card} delayFor={(k) => (g.phase === 'play' ? dealDelay(i, k) : 0)} />
+        <Seat key={s.id} s={s} phase={g.phase} pos={layout.pos[i]} cardW={layout.card} delayFor={(k) => (g.phase === 'play' ? dealDelay(i, k) : 0)} />
       ))}
     </>
   )
@@ -153,7 +150,7 @@ function useSettleSounds(g: BlackjackTv, seq: number) {
   }, [seq]) // eslint-disable-line react-hooks/exhaustive-deps
 }
 
-function Seat({ s, water, phase, pos, cardW, delayFor }: { s: BjSeat; water: boolean; phase: BlackjackTv['phase']; pos: { x: number; y: number }; cardW: number; delayFor: (k: number) => number }) {
+function Seat({ s, phase, pos, cardW, delayFor }: { s: BjSeat; phase: BlackjackTv['phase']; pos: { x: number; y: number }; cardW: number; delayFor: (k: number) => number }) {
   const deciding = phase === 'play' && s.status === 'playing'
   const settled = phase === 'settle' && s.outcome
   const drinks = s.drinks ?? 0
@@ -166,7 +163,7 @@ function Seat({ s, water, phase, pos, cardW, delayFor }: { s: BjSeat; water: boo
             <span className="bj-call" style={{ fontSize: callSize, background: drinks > 0 ? C.tomato : drinks < 0 ? C.sun : C.paper, color: drinks > 0 ? C.white : C.ink }}>
               {drinks > 0 ? <MugIcon size={callSize * 1.25} /> : drinks < 0 ? <CheersIcon size={callSize * 1.25} /> : null}
               {/* Seats are close together on a crowded table: the red pill and the mug already say DRINK. */}
-              <b>{drinks > 0 ? `${cardW < 80 ? '' : 'DRINK '}${sipLabel(drinks)}${water ? ' OF WATER' : ''}` : drinks < 0 ? `DEALER +${-drinks}` : 'SAFE'}</b>
+              <b>{drinks > 0 ? `${cardW < 80 ? '' : 'DRINK '}${sipLabel(drinks)}` : drinks < 0 ? `DEALER +${-drinks}` : 'SAFE'}</b>
             </span>
           </Pop>
         </div>

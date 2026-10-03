@@ -31,8 +31,6 @@ data class Player(
     val joinedAt: Long,
     val connected: Boolean = false,
     val kicked: Boolean = false,
-    /** On water tonight: the TV and their phone call their drinks as water. */
-    val water: Boolean = false,
 )
 
 interface Clock {

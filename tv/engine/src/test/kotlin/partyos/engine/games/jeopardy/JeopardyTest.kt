@@ -300,19 +300,6 @@ class JeopardyTest {
         assertTrue(tv.drinks.isEmpty())
     }
 
-    @Test fun drinkLinesAreWordedAsWaterForAPlayerOnWater() {
-        e = PartyEngine(clock, SeededEntropy(7), GameRegistry(listOf(Jeopardy(pack()))))
-        val a = e.add("P1")
-        val b = e.add("P2")
-        val wet = (e.join(e.roomCode, "Wet", Avatar("p:00", "#123456"), Role.PLAYER, water = true) as JoinResult.Joined).player.id
-        e.setPresence(wet, true)
-        e.host(HostCmd.StartGame("jeopardy", mapOf("show" to 0)))
-        e.host(HostCmd.SkipPhase)
-        openPlain()
-        for (p in listOf(wet, a, b)) { act(p, "buzz"); act(p, "answer", "text" to "nope") }
-        assertTrue(tv.drinks.single { it.id == wet }.text.endsWith("Drink 1 sip of water"))
-    }
-
     @Test fun aPlayerWhoJoinsMidClueWatchesThatClueAndRingsInOnTheNext() {
         val ids = start(3)
         openPlain()

@@ -1,0 +1,31 @@
+/* Night in Review: the lobby's recap card. Every class is night-prefixed so nothing here leaks into the games. */
+.night-overlay { position: absolute; inset: 0; z-index: 44; background: color-mix(in oklab, var(--ink) 78%, transparent); display: flex; align-items: center; justify-content: center; }
+.night-panel { width: 1720px; height: 1000px; padding: 26px 40px 24px; display: flex; flex-direction: column; gap: 18px; overflow: hidden; }
+.night-head { display: flex; align-items: center; gap: 28px; }
+.night-head h2 { font-family: var(--font-display); font-weight: 400; font-size: 56px; line-height: 1; flex: 1; }
+.night-head .night-count { font-size: 34px; font-weight: 900; color: var(--ink-soft); }
+.night-head .night-close { display: inline-flex; align-items: center; gap: 12px; font-size: 30px; font-weight: 800; color: var(--ink-soft); }
+.night-body { flex: 1; min-height: 0; overflow: hidden; display: grid; grid-template-columns: 640px 1fr; gap: 32px; }
+
+.night-board { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.night-row { display: grid; grid-template-columns: 48px 52px 1fr auto; align-items: center; gap: 16px; padding: 2px 18px 2px 12px; background: var(--white);
+  border: 4px solid var(--ink); border-radius: 20px; font-size: 32px; font-weight: 900; min-height: 56px; line-height: 1.1; }
+.night-row.first { background: var(--sun); box-shadow: 6px 6px 0 var(--ink); }
+.night-rank { font-family: var(--font-display); font-size: 40px; text-align: center; }
+.night-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.night-pts { display: flex; align-items: baseline; justify-content: flex-end; gap: 12px; flex-direction: row-reverse; }
+.night-pts small { font-size: 28px; font-weight: 800; color: var(--ink-soft); line-height: 1; }
+.night-more { font-size: 30px; font-weight: 800; color: var(--ink-soft); padding-left: 14px; }
+
+.night-awards { display: grid; grid-template-columns: 1fr 1fr; grid-auto-rows: min-content; align-content: start; gap: 14px 20px; }
+.night-award { display: flex; flex-direction: column; gap: 6px; padding: 12px 20px 14px; border: 5px solid var(--ink); border-radius: 26px; box-shadow: 7px 7px 0 var(--ink); }
+.night-award h3 { font-family: var(--font-display); font-weight: 400; font-size: 32px; line-height: 1.05; }
+.night-people { display: flex; flex-wrap: wrap; gap: 4px 22px; }
+.night-who { display: flex; align-items: center; gap: 10px; font-size: 32px; font-weight: 900; line-height: 1.1; min-width: 0; max-width: 100%; }
+.night-who span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.night-award p { font-size: 28px; font-weight: 800; color: var(--ink-soft); line-height: 1.1; }
+.night-empty { grid-column: 1 / -1; font-size: 36px; font-weight: 800; color: var(--ink-soft); padding: 30px 0; }
+
+.night-moments { flex: none; list-style: none; margin: 0; padding: 12px 24px; display: flex; flex-direction: column; gap: 4px; background: var(--paper-2); border: 5px solid var(--ink); border-radius: 22px; }
+.night-moments li { font-size: 30px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.night-moments b { font-family: var(--font-display); font-weight: 400; margin-right: 12px; }

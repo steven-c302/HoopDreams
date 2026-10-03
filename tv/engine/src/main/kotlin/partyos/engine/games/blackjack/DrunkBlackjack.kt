@@ -8,7 +8,6 @@ import partyos.engine.BlackjackTv
 import partyos.engine.Choice
 import partyos.engine.Effect
 import partyos.engine.GameContext
-import partyos.engine.ofWater
 import partyos.engine.GameInfo
 import partyos.engine.GameModule
 import partyos.engine.LateJoin
@@ -265,8 +264,7 @@ class DrunkBlackjack : GameModule<BjState> {
     override fun playerView(s: BjState, who: PlayerId, ctx: GameContext): Screen {
         if (s.phase == PODIUM) return Screen.Scores("Sips handed out", rows(ctx))
         val rule = RULES.getValue(s.rule)
-        val water = ofWater(ctx.player(who)?.water == true)
-        if (who == s.dealerId) return dealerScreen(s, rule, water)
+        if (who == s.dealerId) return dealerScreen(s, rule)
         if (who !in s.participants) return Screen.Waiting("You're in next hand", "Grab a drink and watch the table")
         val hand = s.hands[who.v]
         val dealerName = s.dealerId?.let { ctx.player(it)?.name } ?: "the dealer"
@@ -287,7 +285,7 @@ class DrunkBlackjack : GameModule<BjState> {
                     if (h.cards.size == 2) add(Choice("double", "DOUBLE"))
                 }
                 val note = when {
-                    t > 21 -> "BUST! Drink ${sipLabel(h.bet)}$water."
+                    t > 21 -> "BUST! Drink ${sipLabel(h.bet)}."
                     isBlackjack(h.cards) -> "BLACKJACK! $dealerName drinks double."
                     h.done -> "Standing on $t. Now $dealerName plays…"
                     else -> "${sipLabel(h.bet)} riding · double to double the drinks"
@@ -308,7 +306,7 @@ class DrunkBlackjack : GameModule<BjState> {
                 }
                 val d = r?.drinks ?: 0
                 val call = when {
-                    d > 0 -> "DRINK ${sipLabel(d)}${water.uppercase()}"
+                    d > 0 -> "DRINK ${sipLabel(d)}"
                     d < 0 -> "$dealerName drinks ${sipLabel(-d)}"
                     else -> "Nobody drinks"
                 }
@@ -318,7 +316,7 @@ class DrunkBlackjack : GameModule<BjState> {
         }
     }
 
-    private fun dealerScreen(s: BjState, rule: Pair<String, String>, water: String): Screen {
+    private fun dealerScreen(s: BjState, rule: Pair<String, String>): Screen {
         val t = total(s.dealer)
         val line = onTheLine(s)
         return when (s.phase) {
@@ -330,14 +328,14 @@ class DrunkBlackjack : GameModule<BjState> {
                 "Your turn to deal", s.dealer, t, emptyList(),
                 if (s.dealerDone) emptyList() else buildList { add(Choice("hit", "HIT")); if (t >= DEALER_STANDS) add(Choice("stand", "STAND")) },
                 "move",
-                if (t < DEALER_STANDS) "Under 17: you must hit. Bust and you drink $line sips$water." else "$line sips riding. Stand, or push your luck?",
+                if (t < DEALER_STANDS) "Under 17: you must hit. Bust and you drink $line sips." else "$line sips riding. Stand, or push your luck?",
                 if (t > 21) "lose" else "neutral",
             )
             else -> {
                 val drank = s.results.values.sumOf { if (it.drinks < 0) -it.drinks else 0 }
                 val gave = s.results.values.sumOf { if (it.drinks > 0) it.drinks else 0 }
                 Screen.Cards(if (t > 21) "YOU BUSTED" else "House has $t", s.dealer, t, emptyList(), emptyList(), "move",
-                    if (drank > 0) "DRINK ${sipLabel(drank)}${water.uppercase()} · you made the table drink $gave" else "You drink nothing · the table drinks $gave",
+                    if (drank > 0) "DRINK ${sipLabel(drank)} · you made the table drink $gave" else "You drink nothing · the table drinks $gave",
                     if (drank > gave) "lose" else "win")
             }
         }

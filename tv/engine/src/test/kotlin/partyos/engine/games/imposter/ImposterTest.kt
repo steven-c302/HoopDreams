@@ -245,22 +245,6 @@ class ImposterTest {
         assertTrue(tv.drinks.isEmpty())
     }
 
-    @Test fun drinkLinesAreWordedAsWaterForAPlayerOnWater() {
-        e = PartyEngine(clock, SeededEntropy(7), GameRegistry(listOf(Imposter(pack))))
-        val plain = (1..3).map { e.add("P$it") }
-        val joined = assertIs<JoinResult.Joined>(e.join(e.roomCode, "Wet", Avatar("p:00", "#123456"), Role.PLAYER, water = true))
-        val wet = joined.player.id
-        e.setPresence(wet, true)
-        assertEquals(ActionResult.Ack, e.host(HostCmd.StartGame("imposter", mapOf("rounds" to 3))))
-        e.host(HostCmd.SkipPhase)
-        val ids = plain + wet
-        toVote(ids)
-        plain.forEach { vote(it, wet) }
-        vote(wet, plain.first())
-        assertEquals("result", tv.phase)
-        assertTrue(tv.drinks.single { it.id == wet }.text.endsWith("Drink 2 sips of water"))
-    }
-
     /** Everyone names the imposter (who names a crew member), so the imposter is accused and reaches the guess phase. */
     private fun catchTheImposter(r: Round) {
         val imp = r.imps.single()

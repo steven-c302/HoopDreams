@@ -8,8 +8,7 @@ export const PROTOCOL_VERSION = 1
 export type Role = 'PLAYER' | 'SPECTATOR'
 /** face: a preset `p:00`..`p:15` or a doodle `d:` + M/L points on a 0..99 grid. */
 export interface Avatar { face: string; color: string }
-/** water: on water tonight; drink calls for them are worded as water. */
-export interface PlayerSummary { id: string; name: string; avatar: Avatar; role: Role; connected: boolean; water?: boolean }
+export interface PlayerSummary { id: string; name: string; avatar: Avatar; role: Role; connected: boolean }
 export interface ScoreRow { id: string; name: string; avatar: Avatar; score: number }
 export interface Choice { id: string; text: string; color?: string; detail?: string }
 export interface TeamTag { id: string; name: string; color: string }
@@ -164,6 +163,14 @@ export interface StageInfo {
   game?: { t: string; [k: string]: unknown }
 }
 
+export interface NightPlayer { id: string; name: string; avatar: Avatar }
+export interface NightRow extends NightPlayer { points: number; wins: number }
+/** A title for how the night went; ties share it. */
+export interface NightAward { title: string; players: NightPlayer[]; note: string }
+export interface NightMoment { game: string; text: string }
+/** The night so far, built from the finished games; only sent while no game is running. */
+export interface NightRecap { games: number; board: NightRow[]; awards: NightAward[]; moments: NightMoment[] }
+
 export interface GameResult { gameId: string; title: string; finishedAt: number; standings: ScoreRow[]; highlights: string[] }
 
 export interface TvState {
@@ -177,6 +184,7 @@ export interface TvState {
   captain?: string
   /** Shared lobby settings: rounds, teams, drinks, game (index into /api/games), captain (phones allowed). */
   settings: Record<string, number>
+  night?: NightRecap
 }
 
 export type ServerMsg =

@@ -265,7 +265,7 @@ sealed interface TvGame
 data class GenericTv(val title: String, val lines: List<String>) : TvGame
 
 @Serializable
-data class PlayerSummary(val id: PlayerId, val name: String, val avatar: Avatar, val role: Role, val connected: Boolean, val water: Boolean = false)
+data class PlayerSummary(val id: PlayerId, val name: String, val avatar: Avatar, val role: Role, val connected: Boolean)
 
 @Serializable
 data class ScoreRow(val id: PlayerId, val name: String, val avatar: Avatar, val score: Int)
@@ -307,6 +307,8 @@ data class TvState(
     val captain: PlayerId? = null,
     /** Lobby settings shared by the TV and the captain's phone: rounds, teams, drinks, game (index), captain (0/1). */
     val settings: Map<String, Int> = emptyMap(),
+    /** The night so far, for the lobby's "Night in Review" card; only sent between games. */
+    val night: NightRecap? = null,
 )
 
 @Serializable

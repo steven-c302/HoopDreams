@@ -15,6 +15,7 @@ import { DoodleStage } from './DoodleStage'
 import { ImposterStage } from './ImposterStage'
 import { HotTypeStage } from './HotTypeStage'
 import { JeopardyStage } from './JeopardyStage'
+import { NightReview } from './NightReview'
 import { TriviaStage } from './TriviaStage'
 import { SprawlStage } from './SprawlStage'
 import { CoverArt } from './CoverArt'
@@ -101,6 +102,7 @@ function Show({ session }: { session: TvSession }) {
   const [status, setStatus] = useState<Status>('connecting')
   const [toast, setToast] = useState<string | null>(null)
   const [overlay, setOverlay] = useState(false)
+  const [recap, setRecap] = useState(false)
   const [live, setLive] = useState(() => unlockAudio())
   const [mix, setMixState] = useState<Mix>(loadMix)
   const [idle, setIdle] = useState(false)
@@ -155,6 +157,10 @@ function Show({ session }: { session: TvSession }) {
 
   const stage = tv?.stage
   const players = tv?.players ?? []
+  // The recap is a lobby card: a game starting (or the party being reset) puts it away.
+  const night = !stage ? tv?.night : undefined
+  const recapOpen = recap && !!night
+  useEffect(() => { if (recap && !night) setRecap(false) }, [recap, night])
   const start = (g: GameListing) => {
     sfx.select()
     cmd({ t: 'start', gameId: g.id, options: {} })
@@ -164,7 +170,9 @@ function Show({ session }: { session: TvSession }) {
     const onKey = (e: KeyboardEvent) => {
       // A focused button (the GO LIVE gate) already clicks on Enter/Space; going live twice doubles the intro sting.
       if (!live) { if ((e.key === 'Enter' || e.key === ' ') && !(e.target instanceof HTMLButtonElement)) goLive(); return }
-      if (e.key === 'Escape' || e.key === 'Backspace') { setOverlay((o) => { sfx[o ? 'back' : 'select'](); return !o }); e.preventDefault() }
+      if (recapOpen && (e.key === 'Escape' || e.key === 'Backspace' || e.key.toLowerCase() === 'a')) { setRecap(false); sfx.back(); e.preventDefault() }
+      else if (e.key === 'Escape' || e.key === 'Backspace') { setOverlay((o) => { sfx[o ? 'back' : 'select'](); return !o }); e.preventDefault() }
+      else if (e.key.toLowerCase() === 'a' && night && !overlay) { setRecap(true); sfx.select() }
       else if (e.key.toLowerCase() === 'f') document.documentElement.requestFullscreen?.().catch(() => undefined)
       else if (e.key.toLowerCase() === 'm') { const m = { ...mix, on: !mix.on }; setMix(m); setMixState(m) }
       else if (e.key.toLowerCase() === 'n' && mix.spotify) void spotify.send('next')
@@ -203,7 +211,7 @@ function Show({ session }: { session: TvSession }) {
               {stage.paused && <Paused reason={stage.pauseReason} />}
             </TimerScale.Provider>
           ) : (
-            <LobbyScreen tv={tv} session={session} games={games} lobby={lobby} setOption={setOption} onStart={start} keys={live && !overlay} playing={playing} />
+            <LobbyScreen tv={tv} session={session} games={games} lobby={lobby} setOption={setOption} onStart={start} keys={live && !overlay && !recapOpen} playing={playing} />
           )}
         </motion.div>
       </AnimatePresence>
@@ -218,6 +226,7 @@ function Show({ session }: { session: TvSession }) {
           </button>
         </div>
       )}
+      {recapOpen && night && <NightReview night={night} onClose={() => setRecap(false)} />}
       {overlay && tv && <HostOverlay tv={tv} cmd={cmd} mix={mix} setMix={updateMix} lobby={lobby} setOption={setOption} onClose={() => setOverlay(false)}
         spotify={spotify} toggleSpotify={toggleSpotify} />}
     </div>
@@ -335,6 +344,7 @@ function LobbyScreen({ tv, session, games, lobby, setOption, onStart, keys, play
             {hottype && <span className="stepper"><Keycap label="G" /> Board <b>{lobby.grid === 1 ? '5×5' : '4×4'}</b></span>}
             {(trivia || turf || sprawl || jeopardy || hottype) && <span className="stepper"><Keycap label="D" /> Drink calls <b>{lobby.drinks ? 'ON' : 'OFF'}</b></span>}
             <span className="stepper"><Keycap label="R" /> Timers <b>{TIMER_NAMES[lobby.timers] ?? TIMER_NAMES[0]}</b></span>
+            {tv.night && <span className="stepper"><Keycap label="A" /> Night in Review</span>}
             <span style={{ flex: 1 }} />
             {/* The TV's other keys (P pause, F full screen) are on the pause card and in the README. */}
             <span className="stepper"><Keycap label="Esc" /> host <Keycap label="M" /> mute</span>

@@ -26,17 +26,6 @@ class PartyEngineTest {
         }
     }
 
-    @Test fun waterTonightShowsOnTheTvAndSurvivesARestore() {
-        val e = engine()
-        val ava = assertIs<JoinResult.Joined>(e.join(e.roomCode, "Ava", avatar, Role.PLAYER, water = true)).player.id
-        val ben = e.joinOk("Ben").player.id
-        assertEquals(mapOf(ava to true, ben to false), e.tvState().players.associate { it.id to it.water })
-        assertTrue(e.setWater(ben, true))
-        assertFalse(e.setWater(PlayerId("nobody"), true))
-        val back = PartyEngine.restore(e.snapshot(), clock, SecureEntropy())
-        assertTrue(back.tvState().players.all { it.water })
-    }
-
     @Test fun roomCodeIsFourUnambiguousLetters() {
         repeat(50) {
             val code = engine().roomCode

@@ -15,6 +15,11 @@ import partyos.engine.Choice
 import partyos.engine.FinaleInfo
 import partyos.engine.FinaleResult
 import partyos.engine.GameResult
+import partyos.engine.NightAward
+import partyos.engine.NightMoment
+import partyos.engine.NightPlayer
+import partyos.engine.NightRecap
+import partyos.engine.NightRow
 import partyos.engine.ImposterClue
 import partyos.engine.ImposterDelta
 import partyos.engine.ImposterDrink
@@ -281,6 +286,24 @@ class ProtocolFixturesTest {
                 scores = rows,
                 lastResult = GameResult("bluff", "Bluff Battle", 1_700_000_000_000, rows, listOf("Al fooled 3 people with “stars”")),
                 gamesPlayed = 1,
+            ),
+        ),
+        // Between games the lobby also carries the night's recap.
+        ServerMsg.Tv(
+            50,
+            TvState(
+                roomCode = "KXQT",
+                players = listOf(me),
+                stage = null,
+                scores = rows,
+                lastResult = GameResult("bluff", "Bluff Battle", 1_700_000_000_000, rows, listOf("Al fooled 3 people with “stars”")),
+                gamesPlayed = 1,
+                night = NightRecap(
+                    games = 1,
+                    board = listOf(NightRow(sam, "Sam", avatar, 1, 1), NightRow(PlayerId("p-al"), "Al", Avatar("p:02", "#22AA55"), 0, 0)),
+                    awards = listOf(NightAward("NIGHT CHAMP", listOf(NightPlayer(sam, "Sam", avatar)), "1 point")),
+                    moments = listOf(NightMoment("Bluff Battle", "Al fooled 3 people with “stars”")),
+                ),
             ),
         ),
         ServerMsg.View(

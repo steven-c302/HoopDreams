@@ -23,8 +23,7 @@
                     "color": "#FF7A00"
                 },
                 "role": "PLAYER",
-                "connected": true,
-                "water": false
+                "connected": true
             },
             "roomCode": "KXQT",
             "gameId": "bluff",
@@ -74,8 +73,7 @@
                     "color": "#FF7A00"
                 },
                 "role": "PLAYER",
-                "connected": true,
-                "water": false
+                "connected": true
             },
             "roomCode": "KXQT",
             "gameId": "bluff",
@@ -130,8 +128,7 @@
                     "color": "#FF7A00"
                 },
                 "role": "PLAYER",
-                "connected": true,
-                "water": false
+                "connected": true
             },
             "roomCode": "KXQT",
             "gameId": "bluff",
@@ -183,8 +180,7 @@
                     "color": "#FF7A00"
                 },
                 "role": "PLAYER",
-                "connected": true,
-                "water": false
+                "connected": true
             },
             "roomCode": "KXQT",
             "gameId": "bluff",
@@ -246,8 +242,7 @@
                     "color": "#FF7A00"
                 },
                 "role": "PLAYER",
-                "connected": true,
-                "water": false
+                "connected": true
             },
             "roomCode": "KXQT",
             "gameId": "bluff",
@@ -316,8 +311,7 @@
                     "color": "#FF7A00"
                 },
                 "role": "PLAYER",
-                "connected": true,
-                "water": false
+                "connected": true
             },
             "roomCode": "KXQT",
             "gameId": "bluff",
@@ -389,8 +383,7 @@
                     "color": "#FF7A00"
                 },
                 "role": "PLAYER",
-                "connected": true,
-                "water": false
+                "connected": true
             },
             "roomCode": "KXQT",
             "gameId": "bluff",
@@ -456,8 +449,7 @@
                     "color": "#FF7A00"
                 },
                 "role": "PLAYER",
-                "connected": true,
-                "water": false
+                "connected": true
             },
             "roomCode": "KXQT",
             "gameId": "bluff",
@@ -520,8 +512,7 @@
                     "color": "#FF7A00"
                 },
                 "role": "PLAYER",
-                "connected": true,
-                "water": false
+                "connected": true
             },
             "roomCode": "KXQT",
             "gameId": "bluff",
@@ -590,8 +581,7 @@
                     "color": "#FF7A00"
                 },
                 "role": "PLAYER",
-                "connected": true,
-                "water": false
+                "connected": true
             },
             "roomCode": "KXQT",
             "gameId": "bluff",
@@ -660,8 +650,7 @@
                     "color": "#FF7A00"
                 },
                 "role": "PLAYER",
-                "connected": true,
-                "water": false
+                "connected": true
             },
             "roomCode": "KXQT",
             "gameId": "bluff",
@@ -742,8 +731,7 @@
                     "color": "#FF7A00"
                 },
                 "role": "PLAYER",
-                "connected": true,
-                "water": false
+                "connected": true
             },
             "roomCode": "KXQT",
             "gameId": "bluff",
@@ -801,8 +789,7 @@
                         "color": "#FF7A00"
                     },
                     "role": "PLAYER",
-                    "connected": true,
-                    "water": false
+                    "connected": true
                 }
             ],
             "stage": {
@@ -924,8 +911,7 @@
                         "color": "#FF7A00"
                     },
                     "role": "PLAYER",
-                    "connected": true,
-                    "water": false
+                    "connected": true
                 }
             ],
             "stage": {
@@ -1031,8 +1017,7 @@
                         "color": "#FF7A00"
                     },
                     "role": "PLAYER",
-                    "connected": true,
-                    "water": false
+                    "connected": true
                 }
             ],
             "stage": {
@@ -1144,8 +1129,7 @@
                         "color": "#FF7A00"
                     },
                     "role": "PLAYER",
-                    "connected": true,
-                    "water": false
+                    "connected": true
                 }
             ],
             "stage": {
@@ -1239,8 +1223,7 @@
                         "color": "#FF7A00"
                     },
                     "role": "PLAYER",
-                    "connected": true,
-                    "water": false
+                    "connected": true
                 }
             ],
             "stage": {
@@ -1342,8 +1325,7 @@
                     "color": "#FF7A00"
                 },
                 "role": "PLAYER",
-                "connected": true,
-                "water": false
+                "connected": true
             },
             "roomCode": "KXQT",
             "round": 0,
@@ -1368,8 +1350,7 @@
                         "color": "#FF7A00"
                     },
                     "role": "PLAYER",
-                    "connected": true,
-                    "water": false
+                    "connected": true
                 }
             ]
         }
@@ -1388,8 +1369,7 @@
                         "color": "#FF7A00"
                     },
                     "role": "PLAYER",
-                    "connected": true,
-                    "water": false
+                    "connected": true
                 }
             ],
             "stage": {
@@ -1500,6 +1480,122 @@
         }
     },
     {
+        "t": "tv",
+        "seq": 50,
+        "tv": {
+            "roomCode": "KXQT",
+            "players": [
+                {
+                    "id": "p-sam",
+                    "name": "Sam",
+                    "avatar": {
+                        "face": "p:01",
+                        "color": "#FF7A00"
+                    },
+                    "role": "PLAYER",
+                    "connected": true
+                }
+            ],
+            "scores": [
+                {
+                    "id": "p-sam",
+                    "name": "Sam",
+                    "avatar": {
+                        "face": "p:01",
+                        "color": "#FF7A00"
+                    },
+                    "score": 1500
+                },
+                {
+                    "id": "p-al",
+                    "name": "Al",
+                    "avatar": {
+                        "face": "p:02",
+                        "color": "#22AA55"
+                    },
+                    "score": 500
+                }
+            ],
+            "lastResult": {
+                "gameId": "bluff",
+                "title": "Bluff Battle",
+                "finishedAt": 1700000000000,
+                "standings": [
+                    {
+                        "id": "p-sam",
+                        "name": "Sam",
+                        "avatar": {
+                            "face": "p:01",
+                            "color": "#FF7A00"
+                        },
+                        "score": 1500
+                    },
+                    {
+                        "id": "p-al",
+                        "name": "Al",
+                        "avatar": {
+                            "face": "p:02",
+                            "color": "#22AA55"
+                        },
+                        "score": 500
+                    }
+                ],
+                "highlights": [
+                    "Al fooled 3 people with “stars”"
+                ]
+            },
+            "gamesPlayed": 1,
+            "settings": {},
+            "night": {
+                "games": 1,
+                "board": [
+                    {
+                        "id": "p-sam",
+                        "name": "Sam",
+                        "avatar": {
+                            "face": "p:01",
+                            "color": "#FF7A00"
+                        },
+                        "points": 1,
+                        "wins": 1
+                    },
+                    {
+                        "id": "p-al",
+                        "name": "Al",
+                        "avatar": {
+                            "face": "p:02",
+                            "color": "#22AA55"
+                        },
+                        "points": 0,
+                        "wins": 0
+                    }
+                ],
+                "awards": [
+                    {
+                        "title": "NIGHT CHAMP",
+                        "players": [
+                            {
+                                "id": "p-sam",
+                                "name": "Sam",
+                                "avatar": {
+                                    "face": "p:01",
+                                    "color": "#FF7A00"
+                                }
+                            }
+                        ],
+                        "note": "1 point"
+                    }
+                ],
+                "moments": [
+                    {
+                        "game": "Bluff Battle",
+                        "text": "Al fooled 3 people with “stars”"
+                    }
+                ]
+            }
+        }
+    },
+    {
         "t": "view",
         "seq": 15,
         "view": {
@@ -1511,8 +1607,7 @@
                     "color": "#FF7A00"
                 },
                 "role": "PLAYER",
-                "connected": true,
-                "water": false
+                "connected": true
             },
             "roomCode": "KXQT",
             "gameId": "turf",
@@ -1669,8 +1764,7 @@
                         "color": "#FF7A00"
                     },
                     "role": "PLAYER",
-                    "connected": true,
-                    "water": false
+                    "connected": true
                 }
             ],
             "stage": {
@@ -1828,8 +1922,7 @@
                     "color": "#FF7A00"
                 },
                 "role": "PLAYER",
-                "connected": true,
-                "water": false
+                "connected": true
             },
             "roomCode": "KXQT",
             "gameId": "sprawl",
@@ -2073,8 +2166,7 @@
                         "color": "#FF7A00"
                     },
                     "role": "PLAYER",
-                    "connected": true,
-                    "water": false
+                    "connected": true
                 }
             ],
             "stage": {
@@ -2308,8 +2400,7 @@
                     "color": "#FF7A00"
                 },
                 "role": "PLAYER",
-                "connected": true,
-                "water": false
+                "connected": true
             },
             "roomCode": "KXQT",
             "gameId": "imposter",
@@ -2364,8 +2455,7 @@
                     "color": "#FF7A00"
                 },
                 "role": "PLAYER",
-                "connected": true,
-                "water": false
+                "connected": true
             },
             "roomCode": "KXQT",
             "gameId": "imposter",
@@ -2425,8 +2515,7 @@
                     "color": "#FF7A00"
                 },
                 "role": "PLAYER",
-                "connected": true,
-                "water": false
+                "connected": true
             },
             "roomCode": "KXQT",
             "gameId": "imposter",
@@ -2491,8 +2580,7 @@
                         "color": "#FF7A00"
                     },
                     "role": "PLAYER",
-                    "connected": true,
-                    "water": false
+                    "connected": true
                 }
             ],
             "stage": {
@@ -2589,8 +2677,7 @@
                         "color": "#FF7A00"
                     },
                     "role": "PLAYER",
-                    "connected": true,
-                    "water": false
+                    "connected": true
                 }
             ],
             "stage": {
@@ -2669,8 +2756,7 @@
                     "color": "#FF7A00"
                 },
                 "role": "PLAYER",
-                "connected": true,
-                "water": false
+                "connected": true
             },
             "roomCode": "KXQT",
             "gameId": "bluff",
@@ -2724,8 +2810,7 @@
                     "color": "#FF7A00"
                 },
                 "role": "PLAYER",
-                "connected": true,
-                "water": false
+                "connected": true
             },
             "roomCode": "KXQT",
             "gameId": "bluff",
@@ -2858,8 +2943,7 @@
                         "color": "#FF7A00"
                     },
                     "role": "PLAYER",
-                    "connected": true,
-                    "water": false
+                    "connected": true
                 }
             ],
             "stage": {
@@ -2958,8 +3042,7 @@
                     "color": "#FF7A00"
                 },
                 "role": "PLAYER",
-                "connected": true,
-                "water": false
+                "connected": true
             },
             "roomCode": "KXQT",
             "gameId": "hottype",
@@ -3044,8 +3127,7 @@
                     "color": "#FF7A00"
                 },
                 "role": "PLAYER",
-                "connected": true,
-                "water": false
+                "connected": true
             },
             "roomCode": "KXQT",
             "gameId": "hottype",
@@ -3132,8 +3214,7 @@
                         "color": "#FF7A00"
                     },
                     "role": "PLAYER",
-                    "connected": true,
-                    "water": false
+                    "connected": true
                 }
             ],
             "stage": {
@@ -3242,8 +3323,7 @@
                         "color": "#FF7A00"
                     },
                     "role": "PLAYER",
-                    "connected": true,
-                    "water": false
+                    "connected": true
                 }
             ],
             "stage": {
@@ -3370,8 +3450,7 @@
                     "color": "#FF7A00"
                 },
                 "role": "PLAYER",
-                "connected": true,
-                "water": false
+                "connected": true
             },
             "roomCode": "KXQT",
             "gameId": "jeopardy",
@@ -3441,8 +3520,7 @@
                     "color": "#FF7A00"
                 },
                 "role": "PLAYER",
-                "connected": true,
-                "water": false
+                "connected": true
             },
             "roomCode": "KXQT",
             "gameId": "jeopardy",
@@ -3498,8 +3576,7 @@
                         "color": "#FF7A00"
                     },
                     "role": "PLAYER",
-                    "connected": true,
-                    "water": false
+                    "connected": true
                 }
             ],
             "stage": {
@@ -3606,8 +3683,7 @@
                         "color": "#FF7A00"
                     },
                     "role": "PLAYER",
-                    "connected": true,
-                    "water": false
+                    "connected": true
                 }
             ],
             "stage": {

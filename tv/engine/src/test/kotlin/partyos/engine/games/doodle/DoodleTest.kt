@@ -250,17 +250,16 @@ class DoodleTest {
         assertTrue(tv.drinks.all { it.sips == 1 })
     }
 
-    @Test fun drinkCallsFollowTheLobbySwitchAndWaterWording() {
+    @Test fun drinkCallsFollowTheLobbySwitch() {
         start(3, settings = mapOf("drinks" to 0))
         startDrawing()
         repeat(3) { skip() }
         assertTrue(tv.drinks.isEmpty())
 
         start(3)
-        val (drawer, _) = startDrawing()
-        e.setWater(drawer, true)
+        startDrawing()
         repeat(3) { skip() }
-        assertTrue(tv.drinks.single().text.endsWith("of water"), tv.drinks.single().text)
+        assertTrue(tv.drinks.single().text.endsWith("sips"), tv.drinks.single().text)
     }
 
     @Test fun theFinalTurnCountsDouble() {

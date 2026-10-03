@@ -38,7 +38,7 @@ data class ImposterVote(val voter: PlayerId, val suspect: PlayerId)
 @Serializable
 data class ImposterGuess(val id: PlayerId, val name: String, val text: String, val right: Boolean)
 
-/** [text] is the whole drink line, already worded for water. */
+/** [text] is the whole drink line. */
 @Serializable
 data class ImposterDrink(val id: PlayerId, val name: String, val sips: Int, val text: String)
 

@@ -4,8 +4,7 @@ Research date: 27 September 2026.
 
 **Built since:** phones stay awake during games (NoSleep: the Wake Lock API needs HTTPS, the phones use http, so it
 falls back to a silent video); a Timers setting (normal, relaxed 1.5×, no rush 2×) that stretches only decision
-timers; "Water tonight" per player, at join or between games, which words their drink calls as water on the TV and
-their phone; and a host reset for typed team names (TV → Esc → Team names). The Mac now saves the party (roster, scores,
+timers; ("Water tonight" was built and then removed on request); and a host reset for typed team names (TV → Esc → Team names). The Mac now saves the party (roster, scores,
 the game on screen) and photo faces under `~/Library/Application Support/PartyOS/`, so a restart within six hours
 comes back with the same room code, the game paused, and phones rejoining on their own (`PARTYOS_FRESH=1` starts over). A veto for Bluff lies is still open: any
 way for the captain to hide one tells them which options are lies.

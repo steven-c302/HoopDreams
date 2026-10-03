@@ -25,7 +25,6 @@ import partyos.engine.TutorialCard
 import partyos.engine.games.bluff.cleanText
 import partyos.engine.games.bluff.normalise
 import partyos.engine.games.trivia.AnswerMatch
-import partyos.engine.ofWater
 
 @Serializable
 data class ImposterState(
@@ -208,12 +207,11 @@ class Imposter(pack: ImposterPack = ImposterPack.core()) : GameModule<ImposterSt
         val imposters = s.imposters.map { it.v }.toSet()
         return s.participants.mapNotNull { p ->
             val player = ctx.player(p) ?: return@mapNotNull null
-            val water = ofWater(player.water)
             when {
-                p.v in s.accused && p.v in imposters -> ImposterDrink(p, player.name, 2, "Caught! Drink 2 sips$water")
-                p.v in s.accused -> ImposterDrink(p, player.name, 2, "Wrongly accused! Drink 2 sips$water")
+                p.v in s.accused && p.v in imposters -> ImposterDrink(p, player.name, 2, "Caught! Drink 2 sips")
+                p.v in s.accused -> ImposterDrink(p, player.name, 2, "Wrongly accused! Drink 2 sips")
                 p.v !in imposters && s.votes[p.v]?.let { it !in imposters } == true ->
-                    ImposterDrink(p, player.name, 1, "Voted for an innocent. Drink 1 sip$water")
+                    ImposterDrink(p, player.name, 1, "Voted for an innocent. Drink 1 sip")
                 else -> null
             }
         }

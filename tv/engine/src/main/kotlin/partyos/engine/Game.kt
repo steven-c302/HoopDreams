@@ -44,9 +44,6 @@ data class Step<S>(val state: S, val effects: List<Effect> = emptyList())
 
 val TIMER_SCALES = listOf(1.0, 1.5, 2.0)
 
-/** Drink wording for a player on water tonight: "Drink 2 sips" becomes "Drink 2 sips of water". */
-fun ofWater(water: Boolean) = if (water) " of water" else ""
-
 class GameContext(
     val now: Long,
     val random: Random,
