@@ -566,7 +566,7 @@ function Finale({ g, byId, clock }: { g: TriviaTv; byId: ById; clock: Clock }) {
               })()}
               {allDone && f.answerText && <Pop delay={0.3}><Panel className="write-answer" fill={C.sun} tilt={1}><small>THE ANSWER</small><b className="display">{f.answerText}</b></Panel></Pop>}
             </div>
-            <div className="final-ladder">
+            <div className={`final-ladder ${ladder.length > 4 ? 'many' : ''}`}>
               {ladder.map((t, i) => {
                 const r = results.findIndex((x) => x.team === t.id)
                 const mark = r >= 0 && r < shown ? results[r].right : null
@@ -586,7 +586,7 @@ function Finale({ g, byId, clock }: { g: TriviaTv; byId: ById; clock: Clock }) {
         {reveal ? <HostSays line={allDone ? g.hostLine : null} mood="smug" size={120} /> : <HostSays line={g.hostLine} mood="smug" size={g.phase === 'final_category' ? 160 : 120} />}
         <TeamStrip g={{ ...g, teams: live }} byId={byId} />
       </div>
-      {allDone && g.drink && <DrinkCall g={g} style={{ right: 50, top: 640 }} />}
+      {allDone && g.drink && <DrinkCall g={g} style={{ right: 50, top: ladder.length > 4 ? 30 : 640 }} />}
     </>
   )
 }
@@ -752,7 +752,7 @@ function Standings({ g, byId }: { g: TriviaTv; byId: ById }) {
     <>
       <div className="trivia-header"><ShowTitle small /><Chip fill={C.ink}>AFTER ROUND {g.round}</Chip><div style={{ flex: 1 }} /></div>
       <h1 className="standings-title display">STANDINGS</h1>
-      <div className="bars">
+      <div className={`bars ${sorted.length > 4 ? 'many' : ''}`}>
         {sorted.map((t, i) => (
           <Deal key={t.id} i={i} className="bar-row">
             <span className="rank-dot">{i + 1}</span>
@@ -760,7 +760,7 @@ function Standings({ g, byId }: { g: TriviaTv; byId: ById }) {
               <motion.div className="bar" style={{ background: t.color, color: inkOn(t.color) }} initial={{ width: '8%' }} animate={{ width: `${Math.max(16, (t.score / max) * 100)}%` }}
                 transition={{ type: 'spring', stiffness: 90, damping: 16, delay: 0.3 + i * 0.12 }}>
                 <span className="bar-name">{t.name}</span>
-                <FaceRow players={members(t, byId)} size={44} max={5} dimIds={NO_DIM} />
+                <FaceRow players={members(t, byId)} size={sorted.length > 4 ? 36 : 44} max={5} dimIds={NO_DIM} />
               </motion.div>
             </div>
             <span className="bar-score display"><CountUp from={0} to={t.score} delay={400 + i * 120} duration={1100} /></span>

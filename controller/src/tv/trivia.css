@@ -181,6 +181,8 @@
 .bar-track { height: 96px; }
 /* min-width: a team on 0 still shows its whole name rather than a clipped stub. */
 .bar { height: 100%; min-width: max-content; display: flex; align-items: center; gap: 18px; padding: 0 24px; border: var(--stroke-tv) solid var(--ink); border-radius: 24px; box-shadow: 8px 8px 0 var(--ink); overflow: hidden; }
+/* Five or six teams: shorter bars, so the host line under them stays on screen. */
+.bars.many { gap: 12px; } .bars.many .bar-track { height: 66px; } .bars.many .bar-name { font-size: 34px; } .bars.many .bar-score { font-size: 46px; }
 .bar-name { font-size: 40px; font-weight: 900; white-space: nowrap; }
 .bar-score { font-size: 54px; text-align: right; }
 
@@ -202,6 +204,9 @@
 .final-delta { font-family: var(--font-display); font-size: 64px; color: var(--lime); -webkit-text-stroke: 8px var(--ink); paint-order: stroke fill; }
 .final-delta.neg { color: var(--tomato); }
 .final-ladder { display: flex; flex-direction: column; gap: 12px; }
+/* Five or six teams: slimmer rows, so the list ends above the DRINK call and the scoreboard. */
+.final-ladder.many { gap: 8px; } .final-ladder.many .ladder-row { font-size: 28px; padding: 3px 18px; } .final-ladder.many .rank, .final-ladder.many .sc { font-size: 32px; } .final-ladder.many .mk { width: 36px; height: 36px; }
+.trivia-foot:has(.team-strip.many) { gap: 18px; }
 .ladder-row { display: flex; align-items: center; gap: 16px; font-size: 34px; font-weight: 900; border: 5px solid var(--ink); border-radius: 18px; padding: 8px 20px; box-shadow: 5px 5px 0 var(--ink); }
 .ladder-row .rank { font-family: var(--font-display); font-weight: 400; font-size: 40px; width: 40px; }
 .ladder-row .nm { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
