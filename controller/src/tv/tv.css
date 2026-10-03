@@ -216,6 +216,7 @@
 .play-cards { display: grid; gap: 26px; margin-top: 30px; }
 .play-card { display: flex; align-items: center; gap: 24px; padding: 24px 34px; font-weight: 900; font-size: 46px; line-height: 1.15; }
 .play-card.dense { padding: 12px 22px; font-size: 32px; border-radius: 22px; }
+.play-card.cut { opacity: .55; border-style: dashed; font-style: italic; }
 .play-card .pip { font-family: var(--font-display); font-size: 52px; width: 70px; flex: none; }
 .play-card.dense .pip { font-size: 38px; width: 50px; }
 .play-card.packed { padding: 8px 18px; gap: 16px; font-size: 27px; line-height: 1.12; }

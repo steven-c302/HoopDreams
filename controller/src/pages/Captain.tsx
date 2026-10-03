@@ -139,6 +139,28 @@ export function ShuffleTeams({ host }: { host(c: HostCommand): void }) {
   return <button className="ghost shuffle-teams" onClick={() => shuffle(host)}>Uneven teams? Shuffle evenly</button>
 }
 
+/**
+ * Bluff Battle's veto: while everyone is picking, the captain can cut an option out for the whole room. It shows as "Hidden by
+ * the host" on the TV and can't be picked, whether it was a lie or the truth, so using it tells the captain nothing.
+ * (A captain's own lie isn't on their phone, so it can't be listed here.)
+ */
+function HideAnOption({ view, host, close }: { view: PhoneState; host(c: HostCommand): void; close(): void }) {
+  const [armed, setArmed] = useState<string | null>(null)
+  const screen = view.screen
+  if (view.gameId !== 'bluff' || screen.t !== 'choice' || screen.kind !== 'pick' || screen.options.length === 0) return null
+  return (
+    <div className="hide-options">
+      <h3>Hide an option from the room</h3>
+      {screen.options.map((o) => (
+        <button key={o.id} className={`big ${armed === o.id ? 'danger' : ''}`}
+          onClick={() => { if (armed === o.id) { host({ t: 'gameAction', action: `hide:${o.id}` }); close() } else setArmed(o.id) }}>
+          {armed === o.id ? `Tap again to hide “${o.text}”` : o.text}
+        </button>
+      ))}
+    </div>
+  )
+}
+
 /** During a game: a crown button that opens the show controls (pause, skip ahead, end). */
 export function CaptainControls({ view, host }: { view: PhoneState; host(c: HostCommand): void }) {
   const [open, setOpen] = useState(false)
@@ -152,6 +174,7 @@ export function CaptainControls({ view, host }: { view: PhoneState; host(c: Host
           <div className="sheet" role="dialog" aria-label="Captain controls" onClick={(e) => e.stopPropagation()}>
             <div className="captain-head"><Crown size={44} /><h2>Captain controls</h2></div>
             {inTeamUp(view) && <button className="big" onClick={() => { shuffle(host); close() }}>Shuffle teams evenly</button>}
+            <HideAnOption view={view} host={host} close={close} />
             {view.paused
               ? <button className="primary big" onClick={() => { host({ t: 'resume' }); close() }}>Resume</button>
               : <button className="big" onClick={() => { host({ t: 'pause' }); close() }}>Pause</button>}

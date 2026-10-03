@@ -4,7 +4,7 @@ import { sfx } from './audio'
 import { useTimerScale } from './timerScale'
 import { Fill, GameHeader, Podium, ScoreBoard, Tutorial, useStep } from './Shared'
 import { AvatarFace, Bubble, Burst, C, Deal, fireConfetti, Panel, Pop, Slam, Stamp } from './toon'
-import type { BluffReveal, BluffTv } from './types'
+import { HIDDEN_OPTION, type BluffReveal, type BluffTv } from './types'
 
 const WRITE_MS = 60_000, PICK_MS = 30_000, REVEAL_STEP_MS = 2_500, REVEAL_TAIL_MS = 2_000, SCORES_MS = 8_000, PODIUM_MS = 15_000
 
@@ -75,8 +75,8 @@ function Pick({ g, seq }: { g: BluffTv; seq: number }) {
       <div style={{ marginTop: 28 }}><Prompt text={g.prompt} big={false} /></div>
       <div className="play-cards" style={{ gridTemplateColumns: `repeat(${cols}, 1fr)`, gap: dense ? 18 : 28 }}>
         {g.options.map((o, i) => (
-          <Deal key={o} i={i}>
-            <Panel className={`play-card ${dense}`} fill={C.paper} tilt={i % 2 ? 0.8 : -1}>
+          <Deal key={i} i={i}>
+            <Panel className={`play-card ${dense} ${o === HIDDEN_OPTION ? 'cut' : ''}`} fill={o === HIDDEN_OPTION ? C.paper2 : C.paper} tilt={i % 2 ? 0.8 : -1}>
               <span className="pip">{String.fromCharCode(65 + i)}</span>
               <span>{o}</span>
             </Panel>

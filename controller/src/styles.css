@@ -192,3 +192,8 @@ h2 { margin: 0; font-size: 1.2rem; }
 .casino-chip .bet-label { font-size: .95rem; }
 .casino-chip:active:not(:disabled) { transform: translateY(6px) rotate(8deg) scale(.96); box-shadow: 0 1px 0 var(--ink); }
 @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+
+/* Bluff Battle veto list inside the captain sheet. */
+.hide-options { display: flex; flex-direction: column; gap: 8px; }
+.hide-options h3 { margin: 0; font-size: 1rem; font-weight: 900; }
+.hide-options button { text-align: left; overflow-wrap: anywhere; }

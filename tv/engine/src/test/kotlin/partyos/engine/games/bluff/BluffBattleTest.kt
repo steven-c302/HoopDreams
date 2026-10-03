@@ -188,5 +188,64 @@ class BluffBattleTest {
         assertEquals("theatre", normalise("Theatre"))
     }
 
+    // ---- host veto ("hide that") ------------------------------------------------------------------
+
+    private val HIDDEN = "Hidden by the host"
+    /** The id the engine gave the option shown at [text] on the TV: option ids count up in the order the TV lists them. */
+    private fun idOf(text: String) = "o${tv.options.indexOf(text) + 1}"
+    private fun hide(text: String) = e.host(HostCmd.GameAction("hide:${idOf(text)}"))
+
+    @Test fun hidingALieTakesItOffThePhonesClearsItsPicksAndLeavesAPlaceholderOnTheTv() {
+        val (a, b, c, d) = start(listOf("A", "B", "C", "D"))
+        write(a, "Pyramids"); write(b, "zzz"); write(c, "yyy"); write(d, "xxx")
+        assertEquals("pick", tv.phase) // everyone has written, so the picking starts by itself
+        val slot = tv.options.indexOf("Pyramids")
+        val id = idOf("Pyramids")
+        assertEquals(ActionResult.Ack, pickText(c, "Pyramids"))
+        val before = tv.submitted
+        assertEquals(ActionResult.Ack, hide("Pyramids"))
+        assertEquals(HIDDEN, tv.options[slot])
+        assertEquals(before - 1, tv.submitted)
+        val phone = assertIs<Screen.ChoiceList>(e.phoneState(c).screen)
+        assertTrue(phone.options.none { it.text == "Pyramids" })
+        assertNull(phone.selected)
+        assertEquals(ActionResult.Rejected("BAD_OPTION"), e.action(d, "late", round, buildJsonObject { put("kind", JsonPrimitive("pick")); put("option", JsonPrimitive(id)) }))
+    }
+
+    @Test fun hidingTheTruthLooksTheSameAsHidingALieAndRevealStillShowsIt() {
+        val (a, b, c, d) = start(listOf("A", "B", "C", "D"))
+        write(a, "Pyramids"); write(b, "zzz"); write(c, "yyy"); write(d, "xxx")
+        assertEquals("pick", tv.phase) // everyone has written, so the picking starts by itself
+        val truth = currentQuestion().answer
+        assertEquals(ActionResult.Ack, hide(truth))
+        assertEquals(1, tv.options.count { it == HIDDEN })
+        toReveal()
+        val real = tv.reveal.single { it.kind == "truth" }
+        assertEquals(truth, real.text)
+        listOf(a, b, c, d).forEach { assertEquals(0, score(it)) }
+    }
+
+    @Test fun aHiddenLiesTextStaysOffTheRevealButItsAuthorsStillShow() {
+        val (a, b, c, d) = start(listOf("A", "B", "C", "D"))
+        write(a, "Pyramids"); write(b, "zzz"); write(c, "yyy"); write(d, "xxx")
+        assertEquals("pick", tv.phase) // everyone has written, so the picking starts by itself
+        hide("Pyramids")
+        toReveal()
+        val lie = tv.reveal.single { it.authors == listOf("A") }
+        assertEquals(HIDDEN, lie.text)
+        assertTrue(tv.reveal.none { it.text == "Pyramids" })
+    }
+
+    @Test fun theVetoOnlyWorksWhileTheyArePicking() {
+        val (a, b, c) = start(listOf("A", "B", "C"))
+        assertEquals(ActionResult.Rejected("NOT_NOW"), e.host(HostCmd.GameAction("hide:o1")))
+        write(a, "Pyramids"); write(b, "zzz"); write(c, "yyy")
+        assertEquals("pick", tv.phase) // everyone has written, so the picking starts by itself
+        assertEquals(ActionResult.Rejected("BAD_OPTION"), e.host(HostCmd.GameAction("hide:o99")))
+        assertEquals(ActionResult.Rejected("UNSUPPORTED"), e.host(HostCmd.GameAction("shuffle")))
+        assertEquals(ActionResult.Ack, e.host(HostCmd.GameAction("hide:o1")))
+        assertEquals(ActionResult.Ack, e.host(HostCmd.GameAction("hide:o1")), "hiding twice is harmless")
+    }
+
     private fun currentQuestion() = listOf(q1, q2, q3).single { it.prompt == tv.prompt }
 }

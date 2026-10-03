@@ -1,6 +1,9 @@
 import type { Avatar, PlayingCard, SprawlMap } from '../protocol'
 
 export interface BluffReveal { text: string; kind: 'fake' | 'decoy' | 'truth'; authors: string[]; fooled: string[] }
+/** What the server lists in place of an option the host cut (Bluff Battle's veto). */
+export const HIDDEN_OPTION = 'Hidden by the host'
+
 export interface BluffTv {
   t: 'bluff'; phase: 'write' | 'pick' | 'reveal' | 'scores' | 'podium'; round: number; totalRounds: number; finalRound: boolean
   prompt: string; submitted: number; expected: number; options: string[]; reveal: BluffReveal[]; deltas: { id: string; name: string; points: number }[]

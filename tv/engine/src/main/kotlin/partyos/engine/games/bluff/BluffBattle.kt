@@ -35,6 +35,8 @@ data class BluffState(
     /** picker id → option id */
     val picks: Map<String, String> = emptyMap(),
     val deltas: Map<String, Int> = emptyMap(),
+    /** Option ids the host hid while players were picking. They stay in their TV slot as a placeholder and can't be picked. */
+    val hidden: List<String> = emptyList(),
 )
 
 class BluffBattle(private val pack: BluffPack = BluffPack.core()) : GameModule<BluffState> {
@@ -80,11 +82,26 @@ class BluffBattle(private val pack: BluffPack = BluffPack.core()) : GameModule<B
             }
             s.phase == PICK && kind == "pick" -> {
                 val option = s.options.firstOrNull { it.id == payload["option"]?.jsonPrimitive?.content } ?: throw Reject("BAD_OPTION")
+                if (option.id in s.hidden) throw Reject("BAD_OPTION")
                 if (who in option.authors) throw Reject("OWN_ANSWER")
                 Step(s.copy(picks = s.picks + (who.v to option.id)))
             }
             else -> throw Reject("NOT_NOW")
         }
+    }
+
+    /**
+     * The veto: "hide:<option id>" while players are picking. A hidden option is cut out of play for everyone, whether it was
+     * a lie or the truth, and looks the same either way (a placeholder), so a captain who is also playing learns nothing
+     * from using it. Picks already on it are cleared so those players choose again.
+     */
+    override fun onHost(s: BluffState, action: String, ctx: GameContext): Step<BluffState> {
+        if (!action.startsWith(HIDE)) throw Reject("UNSUPPORTED")
+        if (s.phase != PICK) throw Reject("NOT_NOW")
+        val id = action.removePrefix(HIDE)
+        if (s.options.none { it.id == id }) throw Reject("BAD_OPTION")
+        if (id in s.hidden) return Step(s)
+        return Step(s.copy(hidden = s.hidden + id, picks = s.picks.filterValues { it != id }))
     }
 
     override fun onDeadline(s: BluffState, ctx: GameContext): Step<BluffState> = when (s.phase) {
@@ -154,7 +171,7 @@ class BluffBattle(private val pack: BluffPack = BluffPack.core()) : GameModule<B
             prompt = q?.prompt ?: "",
             submitted = if (s.phase == PICK) s.picks.size else s.fakes.size,
             expected = s.participants.size,
-            options = if (s.phase == PICK) s.options.map { it.text } else emptyList(),
+            options = if (s.phase == PICK) s.options.map { if (it.id in s.hidden) HIDDEN_TEXT else it.text } else emptyList(),
             reveal = if (showReveal) reveal(s, ctx) else emptyList(),
             deltas = s.deltas.map { (id, pts) -> BluffDelta(PlayerId(id), ctx.player(PlayerId(id))?.name ?: "?", pts) }
                 .sortedByDescending { it.points },
@@ -165,7 +182,8 @@ class BluffBattle(private val pack: BluffPack = BluffPack.core()) : GameModule<B
         fun fooledBy(o: BluffOption) = s.participants.filter { s.picks[it.v] == o.id }
         val lies = s.options.filter { it.kind != TRUTH }.sortedWith(compareBy({ fooledBy(it).size }, { it.id }))
         return (lies + s.options.filter { it.kind == TRUTH }).map { o ->
-            BluffReveal(o.text, o.kind, o.authors.mapNotNull { ctx.player(it)?.name }, fooledBy(o).mapNotNull { ctx.player(it)?.name })
+            // The truth always shows; a hidden lie keeps its placeholder, and its authors still get named.
+            BluffReveal(if (o.id in s.hidden && o.kind != TRUTH) HIDDEN_TEXT else o.text, o.kind, o.authors.mapNotNull { ctx.player(it)?.name }, fooledBy(o).mapNotNull { ctx.player(it)?.name })
         }
     }
 
@@ -183,7 +201,7 @@ class BluffBattle(private val pack: BluffPack = BluffPack.core()) : GameModule<B
             )
             PICK -> Screen.ChoiceList(
                 prompt = "Which one is the truth?",
-                options = s.options.filter { who !in it.authors }.map { Choice(it.id, it.text) },
+                options = s.options.filter { who !in it.authors && it.id !in s.hidden }.map { Choice(it.id, it.text) },
                 selected = s.picks[who.v],
                 kind = "pick",
             )
@@ -198,6 +216,8 @@ class BluffBattle(private val pack: BluffPack = BluffPack.core()) : GameModule<B
     private fun List<PlayerId>.names(ctx: GameContext) = mapNotNull { ctx.player(it)?.name }.joinToString(" & ")
 
     companion object {
+        const val HIDE = "hide:"
+        const val HIDDEN_TEXT = "Hidden by the host"
         const val WRITE = "write"
         const val PICK = "pick"
         const val REVEAL = "reveal"

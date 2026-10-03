@@ -23,7 +23,7 @@ import { TurfStage } from './TurfStage'
 import { useCueDirector, useDeadline } from './director'
 import { nowPlaying, useSpotify } from './spotify'
 import { TIMER_NAMES, TIMER_SCALES, TimerScale } from './timerScale'
-import { isTrivia, type TriviaTv } from './types'
+import { HIDDEN_OPTION, isTrivia, type BluffTv, type TriviaTv } from './types'
 import { Paused } from './Shared'
 import { SuitSprite } from './Suits'
 import { AvatarFace, Brainy, Burst, C, Crown, Keycap, Panel, Pop, Scene, Slam } from './toon'
@@ -422,6 +422,10 @@ function HostOverlay({ tv, cmd, mix, setMix, lobby, setOption, onClose, spotify,
   const stage = tv.stage
   const [confirmEnd, setConfirmEnd] = useState(false)
   const teams = stage && isTrivia(stage.gameId) ? (stage.game as unknown as TriviaTv | undefined)?.teams ?? [] : []
+  // Bluff Battle's veto: while everyone is picking, any option can be cut for the room. The server numbers the options o1, o2…
+  // in the order the TV lists them, and a hidden one reads the same whether it was a lie or the truth.
+  const bluff = stage?.gameId === 'bluff' ? (stage.game as unknown as BluffTv | undefined) : undefined
+  const bluffOptions = bluff?.phase === 'pick' ? bluff.options : []
   return (
     <div className="host-overlay" onClick={onClose}>
       <Slam from={1.2} tilt={-2}>
@@ -452,6 +456,19 @@ function HostOverlay({ tv, cmd, mix, setMix, lobby, setOption, onClose, spotify,
               {lobby.phones ? 'CAPTAIN CAN RUN THE SHOW' : 'TV ONLY'}
             </button>
           </div>
+          {bluffOptions.length > 0 && (
+            <>
+              <h2 style={{ fontSize: 32 }}>HIDE AN OPTION</h2>
+              <div className="host-players">
+                {bluffOptions.map((text, i) => (
+                  <div key={i}>
+                    <span className="name">{text}</span>
+                    {text !== HIDDEN_OPTION && <button className="tv-btn small quiet" onClick={() => cmd({ t: 'gameAction', action: `hide:o${i + 1}` })}>HIDE</button>}
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
           {teams.length > 0 && (
             <>
               <h2 style={{ fontSize: 32 }}>TEAM NAMES</h2>
