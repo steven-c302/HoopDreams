@@ -59,7 +59,8 @@ test('four phones play the Final Wager: wager, type the answer, watch the reveal
   // The reveal plays on the TV: last place first, then the ladder; every phone shows its result.
   await expect(tv.locator('.final-reveal')).toBeVisible({ timeout: 5_000 })
   await expect(tv.locator('.ladder-row')).toHaveCount(2)
-  for (const p of phones) await expect(p.getByRole('heading', { name: /Correct!|Wrong\./ })).toBeVisible()
+  // The phones stay neutral until the podium: a result on a phone now would spoil the reveal on the TV.
+  for (const p of phones) { await expect(p.getByRole('heading', { name: 'Eyes on the TV' })).toBeVisible(); await expect(p.getByText(/Correct!|Wrong\./)).toHaveCount(0) }
   await expect(tv.locator('.final-card')).toBeVisible()
 
   // Skipping the reveal lands the scores and moves on to the podium.

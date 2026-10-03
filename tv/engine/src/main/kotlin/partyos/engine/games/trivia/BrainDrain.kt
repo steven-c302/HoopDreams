@@ -564,11 +564,13 @@ class BrainDrain(
             FinaleResult(t.id, written?.text, right, option, wager, delta, t.score, (t.score + delta).coerceAtLeast(0))
         }
         val leader = active.maxByOrNull { it.score }
-        val winner = results.maxByOrNull { it.after }
+        // Level scores rank by team order, exactly as the podium and the TV ladder do, so the headline never contradicts them.
+        val after = results.associate { it.team to it.after }
+        val winner = active.sortedByDescending { after.getValue(it.id) }.firstOrNull()
         val line = when {
             winner == null -> null
-            leader != null && winner.team != leader.id -> "${nameOf(s, winner.team)} steal the win!"
-            else -> "${nameOf(s, winner.team)} hold on to win!"
+            leader != null && winner.id != leader.id -> "${winner.name} steal the win!"
+            else -> "${winner.name} hold on to win!"
         }
         val wrong = results.filter { !it.right }
         val sips = if (wrong.any { it.option == "w75" || it.option == Finale.ALL_IN }) 2 else 1
@@ -1063,13 +1065,8 @@ class BrainDrain(
                     team = tag,
                 )
             }
-            FINAL_REVEAL -> {
-                val r = team?.let { t -> s.finale?.results?.firstOrNull { it.team == t.id } }
-                    ?: return Screen.Waiting("Eyes on the TV", "Watch the reveal", team = tag)
-                val was = s.finale?.answerText?.let { "It was $it" }
-                if (r.right) Screen.Waiting("Correct! +${formatNumber(r.delta.toDouble())}", was, "win", tag)
-                else Screen.Waiting("Wrong. -${formatNumber(-r.delta.toDouble())}", was, "lose", tag)
-            }
+            // The TV reveals one team at a time, last place first; a phone showing its own result now would give the answer and the winner away.
+            FINAL_REVEAL -> Screen.Waiting("Eyes on the TV", "Watch the reveal", team = tag)
             BET -> {
                 if (team == null) return Screen.Waiting("You're in next question", "We'll put you on the smallest team")
                 betScreen(s, team, tag, s.bets[who.v])

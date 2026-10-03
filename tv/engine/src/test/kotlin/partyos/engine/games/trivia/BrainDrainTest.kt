@@ -669,17 +669,34 @@ class BrainDrainTest {
         assertTrue(assertIs<Screen.TextEntry>(e.phoneState(b).screen).hint!!.contains("Rihgt"))
     }
 
-    @Test fun theRevealPhoneSaysWhatYourTeamWonOrLost() {
+    @Test fun thePhonesDoNotSpoilTheRevealThatPlaysOnTheTv() {
         val (a, b, c, d) = toFinale()
         e.host(HostCmd.SkipPhase)
         wager(a, "w50"); wager(c, "w25")
         val right = currentRight()
         finalAnswer(a, right); finalAnswer(b, right); finalAnswer(c, "Nope"); finalAnswer(d, "Nope")
         assertEquals("final_reveal", tv.phase)
-        assertEquals("Correct! +750", waiting(a).title)
-        assertEquals("win", waiting(a).tone)
-        assertEquals("Wrong. -0", waiting(c).title) // a team on 0 loses nothing
-        assertEquals("lose", waiting(c).tone)
+        for (who in listOf(a, c)) {
+            val w = waiting(who)
+            assertEquals("Eyes on the TV", w.title)
+            assertNull(w.tone, "no win or lose colour before the TV has revealed this team")
+            assertTrue(w.detail?.contains(right) != true && w.detail?.contains("It was") != true, w.detail)
+        }
+    }
+
+    @Test fun aTieForFirstNamesTheSameWinnerAsThePodium() {
+        val (a, b, c, d) = toFinale()
+        e.host(HostCmd.SkipPhase)
+        wager(a, "w50"); wager(c, "w75") // T1 1500 wrong at 750 → 750; T2 0 right at 750 → 750: a tie
+        val right = currentRight()
+        finalAnswer(c, right); finalAnswer(d, right); finalAnswer(a, "Nope"); finalAnswer(b, "Nope")
+        assertEquals("final_reveal", tv.phase)
+        assertEquals(750, tv.finale!!.results.single { it.team == "T1" }.after)
+        assertEquals(750, tv.finale!!.results.single { it.team == "T2" }.after)
+        assertEquals("Quizzards hold on to win!", tv.hostLine, "level scores rank by team order, like the podium and the TV ladder")
+        e.host(HostCmd.SkipPhase)
+        assertEquals(listOf("T1", "T2"), tv.podium)
+        assertEquals("Quizzards win Brain Drain!", tv.hostLine)
     }
 
     @Test fun pickASideScoresEachCall() {

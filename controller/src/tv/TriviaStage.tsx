@@ -498,6 +498,8 @@ function Finale({ g, byId, clock }: { g: TriviaTv; byId: ById; clock: Clock }) {
   const live = g.teams.map((t) => ({ ...t, score: scoreNow(t.id) }))
   const ladder = [...live].sort((a, b) => b.score - a.score)
   const current = shown > 0 ? results[shown - 1] : null
+  const lockedCount = f.locked.length
+  useEffect(() => { if (g.phase === 'final_wager' && lockedCount > 0) sfx.stamp() }, [g.phase, lockedCount])
   useLater(current && shown === results.length ? `lead-${shown}` : null, 100, () => { sfx.drumroll(1.2) })
   useLater(current ? `v${current.team}-${shown}` : null, 1500, () => {
     if (!current) return

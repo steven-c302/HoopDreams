@@ -20,7 +20,7 @@ export function useDeadline(tv: TvState | null): { deadline: number | null; froz
   return { deadline: ref.current.deadline, frozen: null }
 }
 
-function musicFor(tv: TvState): Mode {
+export function musicFor(tv: TvState): Mode {
   const s = tv.stage
   if (!s) return 'lobby'
   if (s.tutorial) return s.gameId === 'blackjack' ? 'casino' : isTrivia(s.gameId) ? 'teamup' : 'lobby'
@@ -35,8 +35,8 @@ function musicFor(tv: TvState): Mode {
       case 'standings': case 'awards': return 'standings'
       case 'podium': return 'podium'
       case 'victim': case 'steal': return 'heist'
-      // Write It Down plays the retired Gauntlet's cue.
-      default: return g.format === 'teamup' ? 'teamup' : g.format === 'write' ? 'gauntlet' : (g.format as Mode)
+      // Write It Down plays the retired Gauntlet's cue; the Final Wager borrows the tense last-lap loop.
+      default: return g.format === 'teamup' ? 'teamup' : g.format === 'write' ? 'gauntlet' : g.format === 'final' ? 'lastlap' : (g.format as Mode)
     }
   }
   if ((g as { t: string }).t === 'doodle') {
