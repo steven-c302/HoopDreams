@@ -126,7 +126,7 @@ function TeamBadge({ team, byId, size = 'md', score, delta, tilt = 0, faces = tr
 /** Teams along the bottom: who has answered (pips) and the running scores. */
 function TeamStrip({ g, byId, deltas }: { g: TriviaTv; byId: ById; deltas?: Record<string, number> }) {
   return (
-    <div className="team-strip">
+    <div className={`team-strip ${g.teams.length > 4 ? 'many' : ''}`}>
       {g.teams.map((t, i) => (
         <div key={t.id} className="strip-team">
           <TeamBadge team={t} byId={byId} size="sm" score delta={deltas?.[t.id]} tilt={i % 2 ? 0.8 : -0.8} />
@@ -344,7 +344,7 @@ function BetLine({ g }: { g: TriviaTv }) {
           <motion.div key={l.team} className="nl-flag" style={{ left: x(l.number), top: 20 + (i % 3) * 80 }}
             initial={{ y: -300, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ type: 'spring', stiffness: 380, damping: 18, delay: 0.12 * i }}>
             <span className="pole" style={{ height: 250 - (i % 3) * 80 }} />
-            <span className="nl-team" style={{ background: t.color, color: inkOn(t.color) }}>{t.name}<em>{fmt(l.number)}</em><i className="odds">×{l.odds}</i></span>
+            <span className="nl-team" style={{ background: t.color, color: inkOn(t.color) }}>{t.name}<em>{fmt(l.number)}</em></span>
           </motion.div>
         )
       })}
@@ -639,10 +639,10 @@ function Victim({ g, byId, clock }: { g: TriviaTv; byId: ById; clock: Clock }) {
   return (
     <>
       <Header g={g} clock={clock} />
-      <div className="heist">
-        <Slam tilt={-6}><TeamBadge team={thief} byId={byId} size="lg" tilt={-3} /></Slam>
-        <Burst text="WHO GETS ROBBED?" width={1000} height={300} size={70} fill={C.white} tilt={-3} delay={0.2} />
-        <div className="targets">
+      <div className={`heist ${targets.length > 3 ? 'many' : ''}`}>
+        <Slam tilt={-6}><TeamBadge team={thief} byId={byId} size={targets.length > 3 ? 'md' : 'lg'} tilt={-3} /></Slam>
+        <Burst text="WHO GETS ROBBED?" width={targets.length > 3 ? 760 : 1000} height={targets.length > 3 ? 190 : 300} size={targets.length > 3 ? 54 : 70} fill={C.white} tilt={-3} delay={0.2} />
+        <div className={`targets ${targets.length > 3 ? 'many' : ''}`}>
           {targets.map((t, i) => (
             <Deal key={t.id} i={i}><div className="target"><TeamBadge team={t} byId={byId} size="md" score tilt={i % 2 ? 2 : -2} /><LootSack /></div></Deal>
           ))}
@@ -672,6 +672,7 @@ function Steal({ g, byId }: { g: TriviaTv; byId: ById }) {
         <Burst text={h.amount > 0 ? 'ROBBED!' : 'NOTHING TO TAKE'} width={900} height={340} size={110} fill={C.sun} tilt={-5} delay={0.2} />
         <HostSays line={g.hostLine} mood="smug" size={140} />
       </div>
+      <div className="trivia-foot"><div /><TeamStrip g={g} byId={byId} deltas={{ [thief.id]: h.amount, [victim.id]: -h.amount }} /></div>
       <DrinkCall g={g} style={{ right: 70, top: 40 }} />
     </>
   )

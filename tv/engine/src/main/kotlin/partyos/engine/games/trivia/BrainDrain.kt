@@ -1117,15 +1117,14 @@ class BrainDrain(
         for (m in team.members) s.bets[m.v]?.on?.let { backers.getOrPut(it) { mutableListOf() } += m }
         val on = mine?.on
         if (on != null && mine.stake == null) {
-            val odds = s.line.firstOrNull { it.team == on }?.odds ?: 1
-            val stakes = Betting.allowedStakes(team.score).map { Choice(Betting.stakeId(it), "$it pts", detail = "wins ${it * odds}") }
+            val stakes = Betting.allowedStakes(team.score).map { Choice(Betting.stakeId(it), "$it pts") }
             return Screen.ChoiceList(
-                "How much on ${nameOf(s, on)}? Pays $odds×", stakes + Choice(Betting.BACK, "Change guess"), null, "bet",
+                "How much on ${nameOf(s, on)}?", stakes + Choice(Betting.BACK, "Change guess"), null, "bet",
                 style = "teams", votes = backers, team = tag,
             )
         }
         val guesses = s.line.map { o ->
-            Choice(o.team, nameOf(s, o.team), s.teams.firstOrNull { it.id == o.team }?.color, "guess ${formatNumber(o.number)} · pays ${o.odds}×")
+            Choice(o.team, nameOf(s, o.team), s.teams.firstOrNull { it.id == o.team }?.color, "guess ${formatNumber(o.number)}")
         }
         val skipped = mine != null && mine.on == null && mine.stake == 0
         return Screen.ChoiceList(

@@ -54,21 +54,21 @@ test('four phones play a Ballpark question through the bet to the reveal', async
   await guess(ana, '7'); await guess(bo, '7')
   await guess(cal, '99'); await guess(di, '99')
 
-  // The bet phase: every phone is offered both guesses (with odds) and a way to skip.
+  // The bet phase: every phone is offered both guesses and a way to skip.
   for (const p of phones) await expect(p.getByRole('heading', { name: "Who's closest? Back a guess" })).toBeVisible()
   await expect(ana.locator('.choices.teams button')).toHaveCount(3)
-  await expect(ana.locator('.choices.teams button', { hasText: 'Quizzly Bears' })).toContainText('guess 7 · pays 1×')
-  await expect(ana.locator('.choices.teams button', { hasText: 'Smarty Pints' })).toContainText('guess 99 · pays 1×')
+  await expect(ana.locator('.choices.teams button', { hasText: 'Quizzly Bears' })).toHaveText(/guess 7$/)
+  await expect(ana.locator('.choices.teams button', { hasText: 'Smarty Pints' })).toHaveText(/guess 99$/)
   await expect(ana.getByRole('button', { name: 'Skip betting' })).toBeVisible()
 
-  // The TV shows the guesses with odds tags and no answer yet.
+  // The TV shows the guesses with no odds tags (they only push everyone onto the safe bet) and no answer yet.
   await expect(tv.locator('.numberline.bet .nl-team')).toHaveCount(2)
-  await expect(tv.locator('.numberline.bet .odds').first()).toHaveText('×1')
+  await expect(tv.locator('.numberline.bet .odds')).toHaveCount(0)
   await expect(tv.locator('.nl-truth')).toHaveCount(0)
 
   // Ana backs her own team's guess; the stake screen offers house money only, since the teams are on nothing.
   await ana.locator('.choices.teams button', { hasText: 'Quizzly Bears' }).click()
-  await expect(ana.getByRole('heading', { name: 'How much on Quizzly Bears? Pays 1×' })).toBeVisible()
+  await expect(ana.getByRole('heading', { name: 'How much on Quizzly Bears?' })).toBeVisible()
   await expect(ana.locator('.choices.teams button')).toHaveText([/250 pts/, /Change guess/])
   // Changing her mind goes back to the guess list; she picks again.
   await ana.getByRole('button', { name: 'Change guess' }).click()

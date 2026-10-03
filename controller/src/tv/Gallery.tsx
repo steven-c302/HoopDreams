@@ -19,7 +19,7 @@ const ThemeGallery = lazy(() => import('./ThemeGallery').then(m => ({ default: m
 export function Gallery() {
   const params = new URLSearchParams(location.search)
   if (params.get('gallery') === 'themes') return <Suspense fallback={null}><ThemeGallery /></Suspense>
-  if (params.get('gallery') === 'trivia') return <TriviaGallery beat={params.get('beat')} pub={params.get('show') === 'writeitdown'} />
+  if (params.get('gallery') === 'trivia') return <TriviaGallery beat={params.get('beat')} pub={params.get('show') === 'writeitdown'} teamCount={Number(params.get('teams')) || 0} />
   if (params.get('gallery') === 'turf') return <TurfGallery beat={params.get('beat')} />
   if (params.get('gallery') === 'night') return <NightGallery />
   if (params.get('gallery') === 'songdrop') return <SongDropGallery />
@@ -142,14 +142,26 @@ const BEATS: Record<string, TriviaTv> = {
   ] },
 }
 
-function TriviaGallery({ beat, pub }: { beat: string | null; pub: boolean }) {
+const MORE_TEAMS = [['Brain Freeze', '#8B4DFF'], ['Trivia Newton John', '#FF8A2B'], ['Quiz Khalifa', '#FF6FB5']] as const
+
+/** &teams=6 pads a beat out to that many teams, so the crowded layouts can be reviewed. */
+function withTeams(g: TriviaTv, n: number): TriviaTv {
+  if (!n || n <= g.teams.length) return g
+  const teams = [...g.teams]
+  while (teams.length < n) { const i = teams.length; const [name, color] = MORE_TEAMS[(i - 3) % MORE_TEAMS.length]; teams.push(team(i, name, color, 2000 + i * 300)) }
+  const line = g.bet ? { ...g.bet, line: teams.map((t, i) => g.bet!.line[i] ?? { team: t.id, number: 150 + i * 40, odds: 1 }) } : undefined
+  return { ...g, teams, ...(line ? { bet: line } : {}) }
+}
+
+function TriviaGallery({ beat, pub, teamCount }: { beat: string | null; pub: boolean; teamCount: number }) {
   const [scale, setScale] = useState(1)
   useLayoutEffect(() => {
     const fit = () => setScale(Math.min(window.innerWidth / 1920, window.innerHeight / 1080))
     fit(); window.addEventListener('resize', fit)
     return () => window.removeEventListener('resize', fit)
   }, [])
-  const g = beat ? BEATS[beat] : null
+  const raw = beat ? BEATS[beat] : null
+  const g = raw ? withTeams(raw, teamCount) : null
   if (!g) {
     return (
       <div style={{ padding: 40, fontSize: 24, fontFamily: 'var(--font-body)', background: 'var(--sun)', minHeight: '100vh' }}>

@@ -36,6 +36,11 @@
 .fact { flex: 1; font-size: 28px; font-weight: 800; line-height: 1.25; padding: 16px 22px; }
 .fact b { font-family: var(--font-display); font-weight: 400; font-size: 22px; background: var(--sun); border: 3px solid var(--ink); border-radius: 8px; padding: 1px 8px; margin-right: 8px; }
 .team-strip { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 22px; }
+/* Five or six teams: the name gets its own row (two lines at most) so it is never cut off. */
+.team-strip.many { gap: 14px; }
+.team-strip.many .team-badge { flex-wrap: wrap; padding: 8px 12px; gap: 2px 10px; }
+.team-strip.many .team-name { flex-basis: 100%; white-space: normal; font-size: 28px; line-height: 1.05; overflow-wrap: anywhere; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.team-strip.many .team-score { margin-left: auto; }
 .strip-team { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
 .team-badge { display: flex; align-items: center; gap: 14px; padding: 8px 16px; min-width: 0; }
 .team-badge .team-name { font-weight: 900; font-size: 30px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; flex: 1; }
@@ -130,6 +135,9 @@
 /* heist */
 .heist { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 24px; }
 .targets { display: flex; gap: 40px; }
+/* Four or more targets: a grid of three, so no team runs off the edge of the screen. */
+.heist.many { gap: 6px; } .heist.many .sack { display: none; }
+.targets.many { display: grid; grid-template-columns: repeat(3, auto); justify-content: center; gap: 22px 40px; }
 .target { display: flex; flex-direction: column; align-items: center; gap: 10px; }
 .steal { flex: 1; display: flex; align-items: center; justify-content: space-between; padding: 70px 30px 0; position: relative; }
 .steal .team-badge { width: 600px; }

@@ -458,7 +458,7 @@ class BrainDrainTest {
         assertEquals("bet", screen.kind)
         assertEquals("teams", screen.style)
         assertEquals(listOf("T1", "T2", Betting.SKIP), screen.options.map { it.id })
-        assertEquals("guess ${BrainDrain.formatNumber(target)} · pays 1×", screen.options.first().detail)
+        assertEquals("guess ${BrainDrain.formatNumber(target)}", screen.options.first().detail)
         assertEquals("Quizzards", screen.options.first().text)
     }
 
