@@ -1,6 +1,6 @@
 import './trivia.css'
 import { motion } from 'motion/react'
-import { createContext, useContext, useEffect, useMemo, useRef, type CSSProperties, type ReactNode } from 'react'
+import { createContext, useContext, useEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode } from 'react'
 import type { PlayerSummary, ScoreRow, StageInfo } from '../protocol'
 import { GameScene } from '../theme/GameScene'
 import { gameThemeOf, useGameTheme } from '../theme/gameTheme'
@@ -16,7 +16,7 @@ type Clock = { deadline: number | null; frozen: number | null }
 interface Props { stage: StageInfo; players: PlayerSummary[]; scores: ScoreRow[]; clock: Clock }
 type ById = Map<string, PlayerSummary>
 
-const SCENE: Record<string, string> = { teamup: C.sun, quick: C.sun, ballpark: C.sky, sides: C.paper, heist: C.lime, write: C.tangerine, gauntlet: C.tomato }
+const SCENE: Record<string, string> = { teamup: C.sun, quick: C.sun, ballpark: C.sky, sides: C.paper, heist: C.lime, write: C.tangerine, gauntlet: C.tomato, final: C.grape }
 const NO_DIM = new Set<string>()
 
 /** BRAIN DRAIN on the TV: one comic panel per beat, Brainy hosting, teams along the bottom. */
@@ -63,6 +63,7 @@ function Beat({ g, byId, clock }: { g: TriviaTv; byId: ById; clock: Clock }) {
     case 'awards': return <Awards g={g} byId={byId} />
     case 'victim': return <Victim g={g} byId={byId} clock={clock} />
     case 'steal': return <Steal g={g} byId={byId} />
+    case 'final_category': case 'final_wager': case 'final_question': case 'final_reveal': return <Finale g={g} byId={byId} clock={clock} />
     default:
       if (g.format === 'ballpark') return <Ballpark g={g} byId={byId} clock={clock} />
       if (g.format === 'sides') return <Sides g={g} byId={byId} clock={clock} />
@@ -97,7 +98,7 @@ function Header({ g, clock, extra }: { g: TriviaTv; clock: Clock; extra?: ReactN
         {g.credit && <span className="credit">from {g.credit} · CC BY-SA 4.0</span>}
         {extra}
       </div>
-      {g.phase === 'question' && g.expected > 0 && <span className="answered"><b>{g.answered}</b>/{g.expected} in</span>}
+      {(g.phase === 'question' || g.phase === 'final_question') && g.expected > 0 && <span className="answered"><b>{g.answered}</b>/{g.expected} in</span>}
       {timed && total > 0 && <Timer deadline={clock.deadline} frozen={clock.frozen} total={total} size={150} />}
     </div>
   )
@@ -130,7 +131,8 @@ function TeamStrip({ g, byId, deltas }: { g: TriviaTv; byId: ById; deltas?: Reco
         <div key={t.id} className="strip-team">
           <TeamBadge team={t} byId={byId} size="sm" score delta={deltas?.[t.id]} tilt={i % 2 ? 0.8 : -0.8} />
           {g.phase === 'bet' && g.bet?.locked.includes(t.id) && <span className="bet-in">BET IN</span>}
-          {g.phase === 'question' && (
+          {g.phase === 'final_wager' && g.finale?.locked.includes(t.id) && <span className="bet-in">WAGER IN</span>}
+          {(g.phase === 'question' || g.phase === 'final_question') && (
             <div className="pips">{t.members.map((id, k) => <i key={id} className={k < t.answered ? 'on' : ''} style={{ '--team': t.color } as CSSProperties} />)}</div>
           )}
         </div>
@@ -160,7 +162,7 @@ function DrinkCall({ g, byId, style }: { g: TriviaTv; byId: ById; style?: CSSPro
   useLater(call ? `${g.phase}-${g.round}-${g.q}-${call.teams.join()}` : null, 900, () => { if (call) sfx.drinkCall() })
   if (!call) return null
   const teams = g.teams.filter((t) => call.teams.includes(t.id))
-  const why = call.reason === 'robbed' ? 'You got robbed.' : call.reason === 'last place' ? 'Last place pays.' : "Didn't escape."
+  const why = call.reason === 'wrong final' ? 'Wrong answer. Pay up.' : call.reason === 'robbed' ? 'You got robbed.' : call.reason === 'last place' ? 'Last place pays.' : "Didn't escape."
   return (
     <Slam delay={0.9} from={2} tilt={8} className="drink-call" style={style}>
       <Panel fill={C.tomato} tilt={3} style={{ color: C.white }}>
@@ -461,6 +463,128 @@ function Write({ g, byId, clock }: { g: TriviaTv; byId: ById; clock: Clock }) {
         {revealed ? <RevealTalk g={g} /> : <div />}
         <TeamStrip g={g} byId={byId} deltas={revealed ? deltasOf(g) : undefined} />
       </div>
+    </>
+  )
+}
+
+// ---------- the final wager ----------
+
+const STEP_MS = 5000
+const msIn = (g: TriviaTv, clock: Clock): number => {
+  const total = g.durationMs ?? 0
+  const left = clock.frozen ?? (clock.deadline != null ? Math.max(0, clock.deadline - Date.now()) : total)
+  return Math.max(0, total - left)
+}
+function useTick(ms: number) {
+  const [, set] = useState(0)
+  useEffect(() => { const id = setInterval(() => set((n) => n + 1), ms); return () => clearInterval(id) }, [ms])
+}
+const wagerLabel = (r: { option: string }) => (r.option === 'wall' ? 'ALL IN' : r.option === 'w0' ? 'PLAYED IT SAFE' : `${r.option.slice(1)}%`)
+
+function Finale({ g, byId, clock }: { g: TriviaTv; byId: ById; clock: Clock }) {
+  useTick(250)
+  const f = g.finale!
+  const reveal = g.phase === 'final_reveal'
+  const at = msIn(g, clock)
+  const results = f.results
+  // Step i lands at i x STEP_MS; its score change lands 3.5 s later. The leader's step (the last) gets the drumroll.
+  const shown = reveal ? Math.min(results.length, Math.floor(at / STEP_MS) + 1) : 0
+  const settled = results.map((_, i) => reveal && at >= i * STEP_MS + 3500)
+  const allDone = reveal && results.length > 0 && settled[results.length - 1]
+  const scoreNow = (id: string) => {
+    const i = results.findIndex((r) => r.team === id)
+    return i < 0 ? (g.teams.find((t) => t.id === id)?.score ?? 0) : settled[i] ? results[i].after : results[i].before
+  }
+  const live = g.teams.map((t) => ({ ...t, score: scoreNow(t.id) }))
+  const ladder = [...live].sort((a, b) => b.score - a.score)
+  const current = shown > 0 ? results[shown - 1] : null
+  useLater(current && shown === results.length ? `lead-${shown}` : null, 100, () => { sfx.drumroll(1.2) })
+  useLater(current ? `v${current.team}-${shown}` : null, 1500, () => {
+    if (!current) return
+    if (current.right) { sfx.correct(); if (current.option === 'wall') sfx.jackpot() } else sfx.wrong()
+  })
+  useLater(allDone ? 'end' : null, 600, () => { sfx.fanfare(); sfx.applause(2) })
+  return (
+    <>
+      <div className="trivia-header">
+        <ShowTitle small />
+        <div className="row" style={{ flex: 1, flexWrap: 'wrap' }}>
+          <Chip>THE FINAL WAGER</Chip>
+          <Chip fill={C.white} ink={C.ink}>{f.category}</Chip>
+        </div>
+        {g.phase === 'final_question' && g.expected > 0 && <span className="answered"><b>{g.answered}</b>/{g.expected} in</span>}
+        {!reveal && (clock.deadline != null || clock.frozen != null) && (g.durationMs ?? 0) > 0 && <Timer deadline={clock.deadline} frozen={clock.frozen} total={g.durationMs ?? 0} size={150} />}
+      </div>
+      {g.phase === 'final_category' && (
+        <div className="final-stage">
+          <Burst text={f.category.toUpperCase()} width={1240} height={470} size={110} fill={C.white} tilt={-3} spikes={22} />
+        </div>
+      )}
+      {g.phase === 'final_wager' && (
+        <div className="final-stage">
+          <Panel className="unit-card" fill={C.paper} tilt={-2}>
+            <span>Pick your wager on your phone</span>
+            <b className="display">Nobody sees it yet</b>
+            <small>Underdogs can go ALL IN. The question comes next.</small>
+          </Panel>
+        </div>
+      )}
+      {g.phase === 'final_question' && (
+        <>
+          <Bubble tail="none" className="q-bubble">{g.prompt}</Bubble>
+          <div className="ballpark-wait">
+            <Panel className="unit-card" fill={C.paper} tilt={-2}>
+              <span>Type the answer on your phone</span>
+              <b className="display">Wagers are locked</b>
+              <small>Your team's most-written answer counts.</small>
+            </Panel>
+            <Brainy mood="smug" size={230} />
+          </div>
+        </>
+      )}
+      {reveal && (
+        <div className="final-reveal">
+          <Bubble tail="none" className="q-bubble small">{g.prompt}</Bubble>
+          <div className="final-body">
+            <div className="final-now">
+              {current && (() => {
+                const t = g.teams.find((x) => x.id === current.team)
+                if (!t) return null
+                return (
+                  <Slam key={`${current.team}-${shown}`} tilt={-2} from={1.5}>
+                    <Panel className="final-card" fill={C.white} tilt={-1}>
+                      <span className="flag" style={{ background: t.color, color: inkOn(t.color) }}>{t.name}</span>
+                      <span className="final-text">{current.text ? `“${current.text}”` : 'No answer'}</span>
+                      <Pop delay={1.5}><span className="write-mark">{current.right ? <Check /> : <Cross />}</span></Pop>
+                      <Pop delay={2.3}><span className="final-wager">{wagerLabel(current)} · {current.wager.toLocaleString()}</span></Pop>
+                      <Pop delay={3.3}><span className={`final-delta ${current.delta < 0 ? 'neg' : ''}`}>{current.delta > 0 ? '+' : ''}{current.delta.toLocaleString()}</span></Pop>
+                    </Panel>
+                  </Slam>
+                )
+              })()}
+              {allDone && f.answerText && <Pop delay={0.3}><Panel className="write-answer" fill={C.sun} tilt={1}><small>THE ANSWER</small><b className="display">{f.answerText}</b></Panel></Pop>}
+            </div>
+            <div className="final-ladder">
+              {ladder.map((t, i) => {
+                const r = results.findIndex((x) => x.team === t.id)
+                const mark = r >= 0 && r < shown ? results[r].right : null
+                return (
+                  <motion.div key={t.id} layout transition={{ type: 'spring', stiffness: 260, damping: 26 }} className="ladder-row" style={{ background: t.color, color: inkOn(t.color) }}>
+                    <b className="rank">{i + 1}</b><span className="nm">{t.name}</span>
+                    {mark != null && <span className="mk">{mark ? <Check /> : <Cross />}</span>}
+                    <span className="sc">{t.score.toLocaleString()}</span>
+                  </motion.div>
+                )
+              })}
+            </div>
+          </div>
+        </div>
+      )}
+      <div className="trivia-foot">
+        {reveal ? <HostSays line={allDone ? g.hostLine : null} mood="smug" size={120} /> : <HostSays line={g.hostLine} mood="smug" size={g.phase === 'final_category' ? 160 : 120} />}
+        <TeamStrip g={{ ...g, teams: live }} byId={byId} />
+      </div>
+      {allDone && g.drink && <DrinkCall g={g} byId={byId} style={{ right: 50, top: 640 }} />}
     </>
   )
 }

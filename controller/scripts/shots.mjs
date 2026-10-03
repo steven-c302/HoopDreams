@@ -8,7 +8,7 @@ const out = process.argv[2] ?? 'controller/test-results/shots'
 const base = process.argv[3] ?? 'http://127.0.0.1:8080'
 const gallery = process.argv[5] ?? 'trivia'
 const BEATS = {
-  trivia: ['teamup', 'intro', 'quick-question', 'live-question', 'quick-reveal', 'ballpark-question', 'ballpark-reveal', 'ballpark-bet', 'ballpark-bet-reveal', 'ballpark-bet-crowd', 'sides-question',
+  trivia: ['teamup', 'intro', 'quick-question', 'live-question', 'quick-reveal', 'ballpark-question', 'ballpark-reveal', 'ballpark-bet', 'ballpark-bet-reveal', 'ballpark-bet-crowd', 'final-category', 'final-wager', 'final-question', 'final-reveal', 'final-reveal-end', 'sides-question',
     'sides-reveal', 'victim', 'steal', 'standings', 'write-question', 'write-reveal', 'gauntlet-question', 'gauntlet-reveal', 'podium', 'awards'],
   turf: ['teamup', 'pieces', 'deal', 'roll', 'move', 'buy', 'auction', 'card', 'trade', 'debt', 'manage', 'jail', 'rent', 'home-turf',
     'last-lap', 'bankrupt', 'tally', 'podium'],

@@ -182,3 +182,23 @@
 .podium-faces.winner > * { animation: hop .6s var(--ease-out) infinite alternate; }
 .podium-faces.winner > *:nth-child(2n) { animation-delay: .3s; }
 @keyframes hop { from { transform: translateY(0); } to { transform: translateY(-16px); } }
+
+/* the final wager */
+.final-stage { flex: 1; display: flex; align-items: center; justify-content: center; gap: 60px; flex-direction: column; }
+.final-reveal { flex: 1; display: flex; flex-direction: column; min-height: 0; }
+.final-body { flex: 1; display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 40px; min-height: 0; align-items: start; padding-top: 10px; }
+.final-now { display: flex; flex-direction: column; gap: 22px; align-items: flex-start; }
+.final-card { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 18px; padding: 22px 28px; max-width: 880px; }
+.final-text { font-size: 44px; font-weight: 900; flex: 1 1 100%; overflow-wrap: anywhere; }
+.final-wager { font-size: 30px; font-weight: 900; background: var(--sun); border: 4px solid var(--ink); border-radius: 12px; padding: 2px 14px; box-shadow: 3px 3px 0 var(--ink); }
+.final-delta { font-family: var(--font-display); font-size: 64px; color: var(--lime); -webkit-text-stroke: 8px var(--ink); paint-order: stroke fill; }
+.final-delta.neg { color: var(--tomato); }
+.final-ladder { display: flex; flex-direction: column; gap: 12px; }
+.ladder-row { display: flex; align-items: center; gap: 16px; font-size: 34px; font-weight: 900; border: 5px solid var(--ink); border-radius: 18px; padding: 8px 20px; box-shadow: 5px 5px 0 var(--ink); }
+.ladder-row .rank { font-family: var(--font-display); font-weight: 400; font-size: 40px; width: 40px; }
+.ladder-row .nm { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ladder-row .mk { display: grid; place-items: center; width: 44px; height: 44px; border: 4px solid var(--ink); border-radius: 50%; background: var(--white); }
+.ladder-row .sc { font-family: var(--font-display); font-weight: 400; font-size: 40px; }
+.final-now .write-answer { padding: 8px 26px 10px; }
+.final-now .write-answer small { font-size: 22px; }
+.final-now .write-answer b { font-size: 56px; line-height: 1; }
