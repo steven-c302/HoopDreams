@@ -52,7 +52,9 @@ if ! kill -0 $SERVER 2>/dev/null || ! curl -fs "http://127.0.0.1:$PORT/healthz" 
   exit 1
 fi
 
-URL="http://127.0.0.1:$PORT/tv"
+# "localhost", not 127.0.0.1: YouTube's embedded player (Song Drop) refused to play on an IP-address origin (error 150),
+# while the same page on a hostname origin loaded it. The TV page only needs the request to come from this machine.
+URL="http://localhost:$PORT/tv"
 PROFILE="$HOME/Library/Application Support/PartyOS-TV"
 if [ -d "/Applications/Google Chrome.app" ]; then
   open -na "Google Chrome" --args --user-data-dir="$PROFILE" --kiosk --autoplay-policy=no-user-gesture-required --no-first-run --disable-features=Translate "$URL"

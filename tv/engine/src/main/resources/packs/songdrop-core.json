@@ -1,12 +1,1088 @@
 {
   "packId": "songdrop-core",
-  "title": "Song Drop seed",
+  "title": "Song Drop core",
   "game": "songdrop",
   "version": 1,
   "items": [
-    { "id": "queen-bohemian-rhapsody", "title": "Bohemian Rhapsody", "artist": "Queen", "year": 1975, "genre": "rock", "videoId": "fJ9rUzIMcZQ", "startSec": 60 },
-    { "id": "rick-astley-never-gonna-give-you-up", "title": "Never Gonna Give You Up", "artist": "Rick Astley", "year": 1987, "genre": "pop", "videoId": "dQw4w9WgXcQ", "startSec": 43 },
-    { "id": "psy-gangnam-style", "title": "Gangnam Style", "artist": "PSY", "year": 2012, "genre": "dance", "videoId": "9bZkp7q19f0", "startSec": 52 },
-    { "id": "luis-fonsi-despacito", "title": "Despacito", "artist": "Luis Fonsi", "year": 2017, "genre": "latin", "videoId": "kJQP7kiw5Fk", "startSec": 55 }
+    {
+      "id": "the-beatles-hey-jude",
+      "title": "Hey Jude",
+      "artist": "The Beatles",
+      "year": 1968,
+      "genre": "rock",
+      "videoId": "mQER0A0ej0M",
+      "startSec": 178
+    },
+    {
+      "id": "queen-bohemian-rhapsody",
+      "title": "Bohemian Rhapsody",
+      "artist": "Queen",
+      "year": 1975,
+      "genre": "rock",
+      "videoId": "fJ9rUzIMcZQ",
+      "startSec": 60
+    },
+    {
+      "id": "led-zeppelin-stairway-to-heaven",
+      "title": "Stairway to Heaven",
+      "artist": "Led Zeppelin",
+      "year": 1971,
+      "genre": "rock",
+      "videoId": "GwbcSDO9Eik",
+      "startSec": 419
+    },
+    {
+      "id": "abba-dancing-queen",
+      "title": "Dancing Queen",
+      "artist": "ABBA",
+      "year": 1976,
+      "genre": "pop",
+      "videoId": "-sVB91NTa4A",
+      "startSec": 21
+    },
+    {
+      "id": "stevie-wonder-superstition",
+      "title": "Superstition",
+      "artist": "Stevie Wonder",
+      "year": 1972,
+      "genre": "rnb",
+      "videoId": "ftdZ363R9kQ",
+      "startSec": 10
+    },
+    {
+      "id": "fleetwood-mac-go-your-own-way",
+      "title": "Go Your Own Way",
+      "artist": "Fleetwood Mac",
+      "year": 1977,
+      "genre": "rock",
+      "videoId": "oiosqtFLBBA",
+      "startSec": 32
+    },
+    {
+      "id": "eagles-hotel-california",
+      "title": "Hotel California",
+      "artist": "Eagles",
+      "year": 1976,
+      "genre": "rock",
+      "videoId": "dLl4PZtxia8",
+      "startSec": 262
+    },
+    {
+      "id": "bee-gees-stayin-alive",
+      "title": "Stayin' Alive",
+      "artist": "Bee Gees",
+      "year": 1977,
+      "genre": "dance",
+      "videoId": "fNFzfwLM72c",
+      "startSec": 32
+    },
+    {
+      "id": "david-bowie-heroes",
+      "title": "Heroes",
+      "artist": "David Bowie",
+      "year": 1977,
+      "genre": "rock",
+      "videoId": "44FId4BpMx0",
+      "startSec": 36
+    },
+    {
+      "id": "marvin-gaye-let-s-get-it-on",
+      "title": "Let's Get It On",
+      "artist": "Marvin Gaye",
+      "year": 1973,
+      "genre": "rnb",
+      "videoId": "tQj1kPmQXwE",
+      "startSec": 11
+    },
+    {
+      "id": "elton-john-rocket-man",
+      "title": "Rocket Man",
+      "artist": "Elton John",
+      "year": 1972,
+      "genre": "pop",
+      "videoId": "GuyGoiQkWAo",
+      "startSec": 59
+    },
+    {
+      "id": "the-rolling-stones-paint-it-black",
+      "title": "Paint It Black",
+      "artist": "The Rolling Stones",
+      "year": 1966,
+      "genre": "rock",
+      "videoId": "EBUFtoC2oj4",
+      "startSec": 14
+    },
+    {
+      "id": "aretha-franklin-respect",
+      "title": "Respect",
+      "artist": "Aretha Franklin",
+      "year": 1967,
+      "genre": "rnb",
+      "videoId": "9iayJ8u4Qew",
+      "startSec": 108
+    },
+    {
+      "id": "donna-summer-i-feel-love",
+      "title": "I Feel Love",
+      "artist": "Donna Summer",
+      "year": 1977,
+      "genre": "dance",
+      "videoId": "nTNcCKq6V2c",
+      "startSec": 76
+    },
+    {
+      "id": "pink-floyd-another-brick-in-the-wall",
+      "title": "Another Brick in the Wall",
+      "artist": "Pink Floyd",
+      "year": 1979,
+      "genre": "rock",
+      "videoId": "Te60_BiZlk0",
+      "startSec": 75
+    },
+    {
+      "id": "lynyrd-skynyrd-sweet-home-alabama",
+      "title": "Sweet Home Alabama",
+      "artist": "Lynyrd Skynyrd",
+      "year": 1974,
+      "genre": "rock",
+      "videoId": "-p8GXZcdrIk",
+      "startSec": 11
+    },
+    {
+      "id": "earth-wind-fire-september",
+      "title": "September",
+      "artist": "Earth, Wind & Fire",
+      "year": 1978,
+      "genre": "dance",
+      "videoId": "AWXub7E5moM",
+      "startSec": 49
+    },
+    {
+      "id": "chic-le-freak",
+      "title": "Le Freak",
+      "artist": "Chic",
+      "year": 1978,
+      "genre": "dance",
+      "videoId": "IHfsRbUjTXQ",
+      "startSec": 10
+    },
+    {
+      "id": "dolly-parton-jolene",
+      "title": "Jolene",
+      "artist": "Dolly Parton",
+      "year": 1973,
+      "genre": "country",
+      "videoId": "Ixrje2rXLMA",
+      "startSec": 36
+    },
+    {
+      "id": "boston-more-than-a-feeling",
+      "title": "More Than a Feeling",
+      "artist": "Boston",
+      "year": 1976,
+      "genre": "rock",
+      "videoId": "zOILAZHf2pE",
+      "startSec": 48
+    },
+    {
+      "id": "carole-king-you-ve-got-a-friend",
+      "title": "You've Got a Friend",
+      "artist": "Carole King",
+      "year": 1971,
+      "genre": "pop",
+      "videoId": "eAR_Ff5A8Rk",
+      "startSec": 12
+    },
+    {
+      "id": "bob-marley-the-wailers-is-this-love",
+      "title": "Is This Love",
+      "artist": "Bob Marley & The Wailers",
+      "year": 1978,
+      "genre": "other",
+      "videoId": "co2FK0WbXX0",
+      "startSec": 16
+    },
+    {
+      "id": "the-jackson-5-i-want-you-back",
+      "title": "I Want You Back",
+      "artist": "The Jackson 5",
+      "year": 1969,
+      "genre": "rnb",
+      "videoId": "UvynvnxZJ3Q",
+      "startSec": 49
+    },
+    {
+      "id": "creedence-clearwater-revival-fortunate-son",
+      "title": "Fortunate Son",
+      "artist": "Creedence Clearwater Revival",
+      "year": 1969,
+      "genre": "rock",
+      "videoId": "3RmQTYLD398",
+      "startSec": 15
+    },
+    {
+      "id": "michael-jackson-billie-jean",
+      "title": "Billie Jean",
+      "artist": "Michael Jackson",
+      "year": 1983,
+      "genre": "pop",
+      "videoId": "Kr4EQDVETuA",
+      "startSec": 85
+    },
+    {
+      "id": "prince-when-doves-cry",
+      "title": "When Doves Cry",
+      "artist": "Prince",
+      "year": 1984,
+      "genre": "pop",
+      "videoId": "Izx6DQUrsag",
+      "startSec": 17
+    },
+    {
+      "id": "madonna-like-a-prayer",
+      "title": "Like a Prayer",
+      "artist": "Madonna",
+      "year": 1989,
+      "genre": "pop",
+      "videoId": "zz_yJrQ5u5o",
+      "startSec": 144
+    },
+    {
+      "id": "whitney-houston-i-wanna-dance-with-somebody",
+      "title": "I Wanna Dance with Somebody",
+      "artist": "Whitney Houston",
+      "year": 1987,
+      "genre": "pop",
+      "videoId": "id2-K3daNRQ",
+      "startSec": 40
+    },
+    {
+      "id": "a-ha-take-on-me",
+      "title": "Take On Me",
+      "artist": "a-ha",
+      "year": 1985,
+      "genre": "pop",
+      "videoId": "NaQ083rNUwc",
+      "startSec": 15
+    },
+    {
+      "id": "journey-don-t-stop-believin",
+      "title": "Don't Stop Believin'",
+      "artist": "Journey",
+      "year": 1981,
+      "genre": "rock",
+      "videoId": "PIFUWHvSixw",
+      "startSec": 10
+    },
+    {
+      "id": "guns-n-roses-sweet-child-o-mine",
+      "title": "Sweet Child O' Mine",
+      "artist": "Guns N' Roses",
+      "year": 1987,
+      "genre": "rock",
+      "videoId": "D2gWc5Sw75w",
+      "startSec": 40
+    },
+    {
+      "id": "bon-jovi-livin-on-a-prayer",
+      "title": "Livin' on a Prayer",
+      "artist": "Bon Jovi",
+      "year": 1986,
+      "genre": "rock",
+      "videoId": "lDK9QqIzhwk",
+      "startSec": 92
+    },
+    {
+      "id": "cyndi-lauper-girls-just-want-to-have-fun",
+      "title": "Girls Just Want to Have Fun",
+      "artist": "Cyndi Lauper",
+      "year": 1983,
+      "genre": "pop",
+      "videoId": "jRr5EasAq84",
+      "startSec": 49
+    },
+    {
+      "id": "rick-astley-never-gonna-give-you-up",
+      "title": "Never Gonna Give You Up",
+      "artist": "Rick Astley",
+      "year": 1987,
+      "genre": "pop",
+      "videoId": "dQw4w9WgXcQ",
+      "startSec": 42
+    },
+    {
+      "id": "toto-africa",
+      "title": "Africa",
+      "artist": "Toto",
+      "year": 1982,
+      "genre": "rock",
+      "videoId": "FTQbiNvZqaY",
+      "startSec": 70
+    },
+    {
+      "id": "queen-another-one-bites-the-dust",
+      "title": "Another One Bites the Dust",
+      "artist": "Queen",
+      "year": 1980,
+      "genre": "rock",
+      "videoId": "rY0WxgSXdEE",
+      "startSec": 10
+    },
+    {
+      "id": "ac-dc-back-in-black",
+      "title": "Back in Black",
+      "artist": "AC/DC",
+      "year": 1980,
+      "genre": "rock",
+      "videoId": "wq0d9zz3Ca4",
+      "startSec": 11
+    },
+    {
+      "id": "survivor-eye-of-the-tiger",
+      "title": "Eye of the Tiger",
+      "artist": "Survivor",
+      "year": 1982,
+      "genre": "rock",
+      "videoId": "XxxfQ7-aMrE",
+      "startSec": 86
+    },
+    {
+      "id": "wham-wake-me-up-before-you-go-go",
+      "title": "Wake Me Up Before You Go-Go",
+      "artist": "Wham!",
+      "year": 1984,
+      "genre": "pop",
+      "videoId": "c5DGcQoBC9k",
+      "startSec": 20
+    },
+    {
+      "id": "tina-turner-what-s-love-got-to-do-with-it",
+      "title": "What's Love Got to Do with It",
+      "artist": "Tina Turner",
+      "year": 1984,
+      "genre": "pop",
+      "videoId": "1avX1lX7gSs",
+      "startSec": 43
+    },
+    {
+      "id": "eurythmics-sweet-dreams-are-made-of-this",
+      "title": "Sweet Dreams (Are Made of This)",
+      "artist": "Eurythmics",
+      "year": 1983,
+      "genre": "pop",
+      "videoId": "qeMFqkcPYcg",
+      "startSec": 10
+    },
+    {
+      "id": "simple-minds-don-t-you-forget-about-me",
+      "title": "Don't You (Forget About Me)",
+      "artist": "Simple Minds",
+      "year": 1985,
+      "genre": "rock",
+      "videoId": "z8v84520W6s",
+      "startSec": 338
+    },
+    {
+      "id": "michael-jackson-thriller",
+      "title": "Thriller",
+      "artist": "Michael Jackson",
+      "year": 1982,
+      "genre": "pop",
+      "videoId": "sO4vI8P88NM",
+      "startSec": 39
+    },
+    {
+      "id": "phil-collins-in-the-air-tonight",
+      "title": "In the Air Tonight",
+      "artist": "Phil Collins",
+      "year": 1981,
+      "genre": "pop",
+      "videoId": "MN3x-kAbgFU",
+      "startSec": 223
+    },
+    {
+      "id": "duran-duran-hungry-like-the-wolf",
+      "title": "Hungry Like the Wolf",
+      "artist": "Duran Duran",
+      "year": 1982,
+      "genre": "pop",
+      "videoId": "yLrF5j7up9Q",
+      "startSec": 46
+    },
+    {
+      "id": "run-dmc-walk-this-way",
+      "title": "Walk This Way",
+      "artist": "Run-DMC",
+      "year": 1986,
+      "genre": "hiphop",
+      "videoId": "xUScFNXAq0w",
+      "startSec": 65
+    },
+    {
+      "id": "the-police-every-breath-you-take",
+      "title": "Every Breath You Take",
+      "artist": "The Police",
+      "year": 1983,
+      "genre": "rock",
+      "videoId": "6cucosmPj-A",
+      "startSec": 179
+    },
+    {
+      "id": "def-leppard-pour-some-sugar-on-me",
+      "title": "Pour Some Sugar on Me",
+      "artist": "Def Leppard",
+      "year": 1987,
+      "genre": "rock",
+      "videoId": "Rqs4cMyMLnY",
+      "startSec": 10
+    },
+    {
+      "id": "nirvana-smells-like-teen-spirit",
+      "title": "Smells Like Teen Spirit",
+      "artist": "Nirvana",
+      "year": 1991,
+      "genre": "rock",
+      "videoId": "69Wqhhun5_o",
+      "startSec": 174
+    },
+    {
+      "id": "backstreet-boys-i-want-it-that-way",
+      "title": "I Want It That Way",
+      "artist": "Backstreet Boys",
+      "year": 1999,
+      "genre": "pop",
+      "videoId": "z6Wq59qrdB0",
+      "startSec": 55
+    },
+    {
+      "id": "spice-girls-wannabe",
+      "title": "Wannabe",
+      "artist": "Spice Girls",
+      "year": 1996,
+      "genre": "pop",
+      "videoId": "gJLIiF15wjQ",
+      "startSec": 49
+    },
+    {
+      "id": "tlc-no-scrubs",
+      "title": "No Scrubs",
+      "artist": "TLC",
+      "year": 1999,
+      "genre": "rnb",
+      "videoId": "18SwG-kep7s",
+      "startSec": 32
+    },
+    {
+      "id": "britney-spears-baby-one-more-time",
+      "title": "...Baby One More Time",
+      "artist": "Britney Spears",
+      "year": 1998,
+      "genre": "pop",
+      "videoId": "fEfvTTJNeAY",
+      "startSec": 46
+    },
+    {
+      "id": "oasis-wonderwall",
+      "title": "Wonderwall",
+      "artist": "Oasis",
+      "year": 1995,
+      "genre": "rock",
+      "videoId": "FVdjZYfDuLE",
+      "startSec": 80
+    },
+    {
+      "id": "mariah-carey-all-i-want-for-christmas-is-you",
+      "title": "All I Want for Christmas Is You",
+      "artist": "Mariah Carey",
+      "year": 1994,
+      "genre": "pop",
+      "videoId": "ueLKoC0wFJo",
+      "startSec": 57
+    },
+    {
+      "id": "whitney-houston-i-will-always-love-you",
+      "title": "I Will Always Love You",
+      "artist": "Whitney Houston",
+      "year": 1992,
+      "genre": "pop",
+      "videoId": "tP0zj220CbQ",
+      "startSec": 187
+    },
+    {
+      "id": "r-e-m-losing-my-religion",
+      "title": "Losing My Religion",
+      "artist": "R.E.M.",
+      "year": 1991,
+      "genre": "rock",
+      "videoId": "japBNRP47-8",
+      "startSec": 86
+    },
+    {
+      "id": "alanis-morissette-you-oughta-know",
+      "title": "You Oughta Know",
+      "artist": "Alanis Morissette",
+      "year": 1995,
+      "genre": "rock",
+      "videoId": "daR1a1jPfK8",
+      "startSec": 55
+    },
+    {
+      "id": "green-day-basket-case",
+      "title": "Basket Case",
+      "artist": "Green Day",
+      "year": 1994,
+      "genre": "rock",
+      "videoId": "VKjEdYrx9P0",
+      "startSec": 36
+    },
+    {
+      "id": "coolio-gangsta-s-paradise",
+      "title": "Gangsta's Paradise",
+      "artist": "Coolio",
+      "year": 1995,
+      "genre": "hiphop",
+      "videoId": "7DXlY8LhWnI",
+      "startSec": 48
+    },
+    {
+      "id": "the-notorious-b-i-g-juicy",
+      "title": "Juicy",
+      "artist": "The Notorious B.I.G.",
+      "year": 1994,
+      "genre": "hiphop",
+      "videoId": "7Y8VPQcPHhY",
+      "startSec": 14
+    },
+    {
+      "id": "2pac-california-love",
+      "title": "California Love",
+      "artist": "2Pac",
+      "year": 1995,
+      "genre": "hiphop",
+      "videoId": "J7_bMdYfSws",
+      "startSec": 137
+    },
+    {
+      "id": "shania-twain-man-i-feel-like-a-woman",
+      "title": "Man! I Feel Like a Woman!",
+      "artist": "Shania Twain",
+      "year": 1997,
+      "genre": "country",
+      "videoId": "o9OUSh_ADJ0",
+      "startSec": 54
+    },
+    {
+      "id": "garth-brooks-friends-in-low-places",
+      "title": "Friends in Low Places",
+      "artist": "Garth Brooks",
+      "year": 1990,
+      "genre": "country",
+      "videoId": "b7P97b64Q5E",
+      "startSec": 47
+    },
+    {
+      "id": "savage-garden-truly-madly-deeply",
+      "title": "Truly Madly Deeply",
+      "artist": "Savage Garden",
+      "year": 1997,
+      "genre": "pop",
+      "videoId": "jBVifG4_Ruk",
+      "startSec": 153
+    },
+    {
+      "id": "radiohead-creep",
+      "title": "Creep",
+      "artist": "Radiohead",
+      "year": 1992,
+      "genre": "rock",
+      "videoId": "XFkzRNyygfk",
+      "startSec": 56
+    },
+    {
+      "id": "aqua-barbie-girl",
+      "title": "Barbie Girl",
+      "artist": "Aqua",
+      "year": 1997,
+      "genre": "dance",
+      "videoId": "AWFQx0gGXjs",
+      "startSec": 23
+    },
+    {
+      "id": "ricky-martin-livin-la-vida-loca",
+      "title": "Livin' la Vida Loca",
+      "artist": "Ricky Martin",
+      "year": 1999,
+      "genre": "latin",
+      "videoId": "CN5hQOI__10",
+      "startSec": 48
+    },
+    {
+      "id": "celine-dion-my-heart-will-go-on",
+      "title": "My Heart Will Go On",
+      "artist": "Celine Dion",
+      "year": 1997,
+      "genre": "pop",
+      "videoId": "cJnSrovvM74",
+      "startSec": 204
+    },
+    {
+      "id": "red-hot-chili-peppers-under-the-bridge",
+      "title": "Under the Bridge",
+      "artist": "Red Hot Chili Peppers",
+      "year": 1991,
+      "genre": "rock",
+      "videoId": "GLvohMXgcBo",
+      "startSec": 26
+    },
+    {
+      "id": "eiffel-65-blue-da-ba-dee",
+      "title": "Blue (Da Ba Dee)",
+      "artist": "Eiffel 65",
+      "year": 1998,
+      "genre": "dance",
+      "videoId": "kyzIQKuSqBs",
+      "startSec": 48
+    },
+    {
+      "id": "outkast-hey-ya",
+      "title": "Hey Ya!",
+      "artist": "OutKast",
+      "year": 2003,
+      "genre": "hiphop",
+      "videoId": "-7XnDlYY9qw",
+      "startSec": 35
+    },
+    {
+      "id": "beyonce-crazy-in-love",
+      "title": "Crazy in Love",
+      "artist": "Beyoncé",
+      "year": 2003,
+      "genre": "rnb",
+      "videoId": "ViwtNLUqkMY",
+      "startSec": 14
+    },
+    {
+      "id": "eminem-lose-yourself",
+      "title": "Lose Yourself",
+      "artist": "Eminem",
+      "year": 2002,
+      "genre": "hiphop",
+      "videoId": "xFYQQPAOz7Y",
+      "startSec": 98
+    },
+    {
+      "id": "the-killers-mr-brightside",
+      "title": "Mr. Brightside",
+      "artist": "The Killers",
+      "year": 2003,
+      "genre": "rock",
+      "videoId": "gGdGFtwCNBE",
+      "startSec": 63
+    },
+    {
+      "id": "rihanna-umbrella",
+      "title": "Umbrella",
+      "artist": "Rihanna",
+      "year": 2007,
+      "genre": "pop",
+      "videoId": "CvBfHwUxHIk",
+      "startSec": 58
+    },
+    {
+      "id": "coldplay-yellow",
+      "title": "Yellow",
+      "artist": "Coldplay",
+      "year": 2000,
+      "genre": "rock",
+      "videoId": "tdVAqxNLXiw",
+      "startSec": 40
+    },
+    {
+      "id": "kelly-clarkson-since-u-been-gone",
+      "title": "Since U Been Gone",
+      "artist": "Kelly Clarkson",
+      "year": 2004,
+      "genre": "pop",
+      "videoId": "E5Lt9MHuUNc",
+      "startSec": 43
+    },
+    {
+      "id": "usher-yeah",
+      "title": "Yeah!",
+      "artist": "Usher",
+      "year": 2004,
+      "genre": "rnb",
+      "videoId": "Ifu6TZnytlU",
+      "startSec": 125
+    },
+    {
+      "id": "amy-winehouse-rehab",
+      "title": "Rehab",
+      "artist": "Amy Winehouse",
+      "year": 2006,
+      "genre": "other",
+      "videoId": "XOjDJRiUeGE",
+      "startSec": 32
+    },
+    {
+      "id": "shakira-hips-don-t-lie",
+      "title": "Hips Don't Lie",
+      "artist": "Shakira",
+      "year": 2005,
+      "genre": "latin",
+      "videoId": "p3pEe6aAJ4k",
+      "startSec": 10
+    },
+    {
+      "id": "green-day-boulevard-of-broken-dreams",
+      "title": "Boulevard of Broken Dreams",
+      "artist": "Green Day",
+      "year": 2004,
+      "genre": "rock",
+      "videoId": "hBvJyi3fbtA",
+      "startSec": 10
+    },
+    {
+      "id": "gnarls-barkley-crazy",
+      "title": "Crazy",
+      "artist": "Gnarls Barkley",
+      "year": 2006,
+      "genre": "other",
+      "videoId": "-N4jf6rtyuw",
+      "startSec": 10
+    },
+    {
+      "id": "justin-timberlake-sexyback",
+      "title": "SexyBack",
+      "artist": "Justin Timberlake",
+      "year": 2006,
+      "genre": "pop",
+      "videoId": "Cg6IDiTqIUs",
+      "startSec": 50
+    },
+    {
+      "id": "lady-gaga-poker-face",
+      "title": "Poker Face",
+      "artist": "Lady Gaga",
+      "year": 2008,
+      "genre": "pop",
+      "videoId": "s1A3X_VA-us",
+      "startSec": 40
+    },
+    {
+      "id": "linkin-park-in-the-end",
+      "title": "In the End",
+      "artist": "Linkin Park",
+      "year": 2001,
+      "genre": "rock",
+      "videoId": "gB9P0kpc1O4",
+      "startSec": 54
+    },
+    {
+      "id": "evanescence-bring-me-to-life",
+      "title": "Bring Me to Life",
+      "artist": "Evanescence",
+      "year": 2003,
+      "genre": "rock",
+      "videoId": "Yhwal9i1uyw",
+      "startSec": 173
+    },
+    {
+      "id": "daft-punk-one-more-time",
+      "title": "One More Time",
+      "artist": "Daft Punk",
+      "year": 2000,
+      "genre": "dance",
+      "videoId": "A2VpR8HahKc",
+      "startSec": 64
+    },
+    {
+      "id": "50-cent-in-da-club",
+      "title": "In da Club",
+      "artist": "50 Cent",
+      "year": 2003,
+      "genre": "hiphop",
+      "videoId": "z8BYGMdHDQ0",
+      "startSec": 13
+    },
+    {
+      "id": "black-eyed-peas-i-gotta-feeling",
+      "title": "I Gotta Feeling",
+      "artist": "Black Eyed Peas",
+      "year": 2009,
+      "genre": "pop",
+      "videoId": "hs_yk24ghzA",
+      "startSec": 240
+    },
+    {
+      "id": "kanye-west-gold-digger",
+      "title": "Gold Digger",
+      "artist": "Kanye West",
+      "year": 2005,
+      "genre": "hiphop",
+      "videoId": "LFFcyWGWz14",
+      "startSec": 14
+    },
+    {
+      "id": "fall-out-boy-sugar-we-re-goin-down",
+      "title": "Sugar, We're Goin Down",
+      "artist": "Fall Out Boy",
+      "year": 2005,
+      "genre": "rock",
+      "videoId": "EIzpJuLhZa0",
+      "startSec": 106
+    },
+    {
+      "id": "avril-lavigne-complicated",
+      "title": "Complicated",
+      "artist": "Avril Lavigne",
+      "year": 2002,
+      "genre": "pop",
+      "videoId": "E9LvMRGKge0",
+      "startSec": 40
+    },
+    {
+      "id": "katy-perry-hot-n-cold",
+      "title": "Hot n Cold",
+      "artist": "Katy Perry",
+      "year": 2008,
+      "genre": "pop",
+      "videoId": "kTHNpusq654",
+      "startSec": 36
+    },
+    {
+      "id": "maroon-5-this-love",
+      "title": "This Love",
+      "artist": "Maroon 5",
+      "year": 2004,
+      "genre": "pop",
+      "videoId": "XPpTgCho5ZA",
+      "startSec": 43
+    },
+    {
+      "id": "adele-rolling-in-the-deep",
+      "title": "Rolling in the Deep",
+      "artist": "Adele",
+      "year": 2010,
+      "genre": "pop",
+      "videoId": "bDtjO-R0QSo",
+      "startSec": 40
+    },
+    {
+      "id": "mark-ronson-uptown-funk",
+      "title": "Uptown Funk",
+      "artist": "Mark Ronson",
+      "year": 2014,
+      "genre": "pop",
+      "videoId": "OPf0YbXqDm0",
+      "startSec": 13
+    },
+    {
+      "id": "pharrell-williams-happy",
+      "title": "Happy",
+      "artist": "Pharrell Williams",
+      "year": 2013,
+      "genre": "pop",
+      "videoId": "4m-_cqRsoqA",
+      "startSec": 40
+    },
+    {
+      "id": "ed-sheeran-shape-of-you",
+      "title": "Shape of You",
+      "artist": "Ed Sheeran",
+      "year": 2017,
+      "genre": "pop",
+      "videoId": "_dK2tDK9grQ",
+      "startSec": 11
+    },
+    {
+      "id": "lizzo-good-as-hell",
+      "title": "Good as Hell",
+      "artist": "Lizzo",
+      "year": 2016,
+      "genre": "pop",
+      "videoId": "2i7i7fKJkmI",
+      "startSec": 31
+    },
+    {
+      "id": "dua-lipa-levitating",
+      "title": "Levitating",
+      "artist": "Dua Lipa",
+      "year": 2020,
+      "genre": "pop",
+      "videoId": "WHuBW3qKm9g",
+      "startSec": 28
+    },
+    {
+      "id": "the-weeknd-blinding-lights",
+      "title": "Blinding Lights",
+      "artist": "The Weeknd",
+      "year": 2019,
+      "genre": "pop",
+      "videoId": "fHI8X4OXluQ",
+      "startSec": 63
+    },
+    {
+      "id": "harry-styles-as-it-was",
+      "title": "As It Was",
+      "artist": "Harry Styles",
+      "year": 2022,
+      "genre": "pop",
+      "videoId": "H5v3kku4y6Q",
+      "startSec": 124
+    },
+    {
+      "id": "taylor-swift-shake-it-off",
+      "title": "Shake It Off",
+      "artist": "Taylor Swift",
+      "year": 2014,
+      "genre": "pop",
+      "videoId": "H59xVMF4zxE",
+      "startSec": 41
+    },
+    {
+      "id": "billie-eilish-bad-guy",
+      "title": "bad guy",
+      "artist": "Billie Eilish",
+      "year": 2019,
+      "genre": "pop",
+      "videoId": "DyDfgMOUjCI",
+      "startSec": 74
+    },
+    {
+      "id": "lil-nas-x-old-town-road",
+      "title": "Old Town Road",
+      "artist": "Lil Nas X",
+      "year": 2019,
+      "genre": "hiphop",
+      "videoId": "7ysFgElQtjI",
+      "startSec": 101
+    },
+    {
+      "id": "post-malone-circles",
+      "title": "Circles",
+      "artist": "Post Malone",
+      "year": 2019,
+      "genre": "hiphop",
+      "videoId": "wXhTHyIgQ_U",
+      "startSec": 70
+    },
+    {
+      "id": "bruno-mars-locked-out-of-heaven",
+      "title": "Locked Out of Heaven",
+      "artist": "Bruno Mars",
+      "year": 2012,
+      "genre": "pop",
+      "videoId": "e-fA-gBCkj0",
+      "startSec": 162
+    },
+    {
+      "id": "gotye-somebody-that-i-used-to-know",
+      "title": "Somebody That I Used to Know",
+      "artist": "Gotye",
+      "year": 2011,
+      "genre": "other",
+      "videoId": "8UVNT4wvIGY",
+      "startSec": 183
+    },
+    {
+      "id": "imagine-dragons-radioactive",
+      "title": "Radioactive",
+      "artist": "Imagine Dragons",
+      "year": 2012,
+      "genre": "rock",
+      "videoId": "w3viBe2Q0P8",
+      "startSec": 59
+    },
+    {
+      "id": "lorde-royals",
+      "title": "Royals",
+      "artist": "Lorde",
+      "year": 2013,
+      "genre": "pop",
+      "videoId": "ncgsL1GCFms",
+      "startSec": 40
+    },
+    {
+      "id": "luis-fonsi-despacito",
+      "title": "Despacito",
+      "artist": "Luis Fonsi",
+      "year": 2017,
+      "genre": "latin",
+      "videoId": "2bHBUs-k3ac",
+      "startSec": 105
+    },
+    {
+      "id": "kendrick-lamar-humble",
+      "title": "HUMBLE.",
+      "artist": "Kendrick Lamar",
+      "year": 2017,
+      "genre": "hiphop",
+      "videoId": "ov4WobPqoSA",
+      "startSec": 10
+    },
+    {
+      "id": "olivia-rodrigo-drivers-license",
+      "title": "drivers license",
+      "artist": "Olivia Rodrigo",
+      "year": 2021,
+      "genre": "pop",
+      "videoId": "tNJhkrpLGT8",
+      "startSec": 143
+    },
+    {
+      "id": "glass-animals-heat-waves",
+      "title": "Heat Waves",
+      "artist": "Glass Animals",
+      "year": 2020,
+      "genre": "other",
+      "videoId": "rfTgO9rpqck",
+      "startSec": 117
+    },
+    {
+      "id": "miley-cyrus-flowers",
+      "title": "Flowers",
+      "artist": "Miley Cyrus",
+      "year": 2023,
+      "genre": "pop",
+      "videoId": "SWpAYbgHmTo",
+      "startSec": 34
+    },
+    {
+      "id": "sabrina-carpenter-espresso",
+      "title": "Espresso",
+      "artist": "Sabrina Carpenter",
+      "year": 2024,
+      "genre": "pop",
+      "videoId": "51zjlMhdSTE",
+      "startSec": 12
+    },
+    {
+      "id": "doja-cat-say-so",
+      "title": "Say So",
+      "artist": "Doja Cat",
+      "year": 2019,
+      "genre": "pop",
+      "videoId": "uAYG46w1SCA",
+      "startSec": 14
+    },
+    {
+      "id": "cardi-b-bodak-yellow",
+      "title": "Bodak Yellow",
+      "artist": "Cardi B",
+      "year": 2017,
+      "genre": "hiphop",
+      "videoId": "PEGccV-NOm8",
+      "startSec": 16
+    },
+    {
+      "id": "psy-gangnam-style",
+      "title": "Gangnam Style",
+      "artist": "PSY",
+      "year": 2012,
+      "genre": "dance",
+      "videoId": "CVxMTl6cUSE",
+      "startSec": 66
+    }
   ]
 }
