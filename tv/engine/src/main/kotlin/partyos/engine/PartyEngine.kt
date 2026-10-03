@@ -190,6 +190,9 @@ class PartyEngine private constructor(
         // Hot Type: 0 = 4×4 board, 1 = 5×5.
         "grid" -> 0..1
 
+        // Song Drop: 0 any era, 1 60s and 70s, 2 80s, 3 90s, 4 00s, 5 10s and 20s.
+        "era" -> 0..5
+
         "game" -> 0..(games.all.size - 1).coerceAtLeast(0)
         else -> null
     }

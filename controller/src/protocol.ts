@@ -221,7 +221,7 @@ export type HostCommand =
  * Shared lobby settings. turfMode: Home Turf 0 auto, 1 solo, 2 teams; minutes: Home Turf's and Sprawl's game clock
  * (0 = no limit); vp: Sprawl's points to win (8 or 10); pace: Home Turf's TV show, 0 Theatre or 1 Quick.
  */
-export type OptionKey = 'rounds' | 'teams' | 'drinks' | 'game' | 'captain' | 'turfMode' | 'minutes' | 'vp' | 'timers' | 'show' | 'grid' | 'pace'
+export type OptionKey = 'rounds' | 'teams' | 'drinks' | 'game' | 'captain' | 'turfMode' | 'minutes' | 'vp' | 'timers' | 'show' | 'grid' | 'pace' | 'era'
 
 export type ActionPayload = { kind: string; [k: string]: string | number | boolean | string[] | number[] }
 
@@ -233,7 +233,7 @@ export type ClientMsg =
   | { t: 'host'; id: string; cmd: HostCommand }
   | { t: 'ping' }
 
-export interface GameListing { id: string; title: string; tagline: string; minPlayers: number; maxPlayers: number }
+export interface GameListing { id: string; title: string; tagline: string; minPlayers: number; maxPlayers: number; probe?: string }
 
 const SCREENS = new Set(['waiting', 'text', 'choice', 'number', 'multi', 'tutorial', 'scores', 'cards', 'turf', 'sprawl', 'secret', 'draw', 'guess', 'hunt', 'board', 'buzzer'])
 const isObj = (v: unknown): v is Record<string, unknown> => typeof v === 'object' && v !== null
@@ -269,6 +269,7 @@ export function rejectMessage(code: string): string {
     case 'TOO_TRUE': return "That's too close to the real answer. Try another fake!"
     case 'BAD_TEXT': return 'Answers need 1 to 60 characters.'
     case 'OWN_ANSWER': return "You can't pick your own answer."
+    case 'LOCKED': return "You're locked out of this song."
     case 'PAUSED': return 'The game is paused.'
     case 'NEXT_ROUND': return "You'll join in at the next question."
     case 'TAKEN': return 'A teammate already named your team.'

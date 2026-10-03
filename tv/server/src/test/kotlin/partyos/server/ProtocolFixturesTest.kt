@@ -12,6 +12,10 @@ import partyos.engine.BluffDelta
 import partyos.engine.BluffReveal
 import partyos.engine.BluffTv
 import partyos.engine.Cheer
+import partyos.engine.SongCard
+import partyos.engine.SongDrink
+import partyos.engine.SongDropTv
+import partyos.engine.SongSolver
 import partyos.engine.Choice
 import partyos.engine.FinaleInfo
 import partyos.engine.FinaleResult
@@ -306,6 +310,28 @@ class ProtocolFixturesTest {
                     moments = listOf(NightMoment("Bluff Battle", "Al fooled 3 people with “stars”")),
                 ),
                 cheers = listOf(Cheer(1, "Sam", avatar, "wow")),
+            ),
+        ),
+        // Song Drop: the clip view the TV plays from, and the reveal.
+        ServerMsg.Tv(
+            52,
+            TvState(
+                roomCode = "KXQT",
+                players = listOf(me),
+                stage = StageInfo(
+                    gameId = "songdrop", title = "Song Drop", phaseSeq = 6, deadlineAt = 1_700_000_070_000, remainingMs = 4_000, paused = false,
+                    pauseReason = null, tutorial = null,
+                    game = SongDropTv(
+                        phase = "reveal", song = 2, totalSongs = 8, finalSong = false, clipSeq = 4, videoId = "dQw4w9WgXcQ", startSec = 43,
+                        stage = 1, stages = 4, clipMs = 4_000, answered = 2, expected = 3,
+                        solvers = listOf(SongSolver(sam, "Sam", 1000)), lockedOut = listOf(PlayerId("p-al")),
+                        card = SongCard("Never Gonna Give You Up", "Rick Astley", 1987, "dQw4w9WgXcQ"),
+                        drinks = listOf(SongDrink(PlayerId("p-al"), "Al", 1, "Missed it. Drink 1 sip")),
+                    ),
+                ),
+                scores = rows,
+                lastResult = null,
+                gamesPlayed = 0,
             ),
         ),
         ServerMsg.View(

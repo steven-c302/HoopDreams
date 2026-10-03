@@ -61,7 +61,7 @@ class PartyHost(
     val version: StateFlow<Long> = _version.asStateFlow()
 
     val games: List<GameListing> =
-        engine.gameInfos.map { GameListing(it.id, it.title, it.tagline, it.minPlayers, it.maxPlayers) }
+        engine.gameInfos.map { GameListing(it.id, it.title, it.tagline, it.minPlayers, it.maxPlayers, it.probe) }
 
     init {
         persistJob = scope.launch {

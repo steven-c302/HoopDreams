@@ -289,6 +289,14 @@ class SongDropTest {
         assertTrue(tv.drinks.isEmpty())
     }
 
+    @Test fun eraIsALobbySettingFromZeroToFive() {
+        e = PartyEngine(clock, SeededEntropy(7), GameRegistry(listOf(SongDrop(SongPack.parse(packJson)))))
+        assertEquals(ActionResult.Ack, e.host(HostCmd.SetOption("era", 3)))
+        assertEquals(3, e.tvState().settings["era"])
+        assertEquals(ActionResult.Ack, e.host(HostCmd.SetOption("era", 99)))
+        assertEquals(5, e.tvState().settings["era"], "values clamp into 0..5")
+    }
+
     // ---- phones ---------------------------------------------------------------------------------
 
     @Test fun phonesSeeFourShapeOptionsLabelledWithTitleAndArtist() {

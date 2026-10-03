@@ -1613,6 +1613,96 @@
         }
     },
     {
+        "t": "tv",
+        "seq": 52,
+        "tv": {
+            "roomCode": "KXQT",
+            "players": [
+                {
+                    "id": "p-sam",
+                    "name": "Sam",
+                    "avatar": {
+                        "face": "p:01",
+                        "color": "#FF7A00"
+                    },
+                    "role": "PLAYER",
+                    "connected": true
+                }
+            ],
+            "stage": {
+                "gameId": "songdrop",
+                "title": "Song Drop",
+                "phaseSeq": 6,
+                "deadlineAt": 1700000070000,
+                "remainingMs": 4000,
+                "paused": false,
+                "game": {
+                    "t": "songdrop",
+                    "phase": "reveal",
+                    "song": 2,
+                    "totalSongs": 8,
+                    "finalSong": false,
+                    "clipSeq": 4,
+                    "videoId": "dQw4w9WgXcQ",
+                    "startSec": 43,
+                    "stage": 1,
+                    "stages": 4,
+                    "clipMs": 4000,
+                    "answered": 2,
+                    "expected": 3,
+                    "solvers": [
+                        {
+                            "id": "p-sam",
+                            "name": "Sam",
+                            "points": 1000
+                        }
+                    ],
+                    "lockedOut": [
+                        "p-al"
+                    ],
+                    "card": {
+                        "title": "Never Gonna Give You Up",
+                        "artist": "Rick Astley",
+                        "year": 1987,
+                        "videoId": "dQw4w9WgXcQ"
+                    },
+                    "drinks": [
+                        {
+                            "id": "p-al",
+                            "name": "Al",
+                            "sips": 1,
+                            "text": "Missed it. Drink 1 sip"
+                        }
+                    ],
+                    "gallery": []
+                }
+            },
+            "scores": [
+                {
+                    "id": "p-sam",
+                    "name": "Sam",
+                    "avatar": {
+                        "face": "p:01",
+                        "color": "#FF7A00"
+                    },
+                    "score": 1500
+                },
+                {
+                    "id": "p-al",
+                    "name": "Al",
+                    "avatar": {
+                        "face": "p:02",
+                        "color": "#22AA55"
+                    },
+                    "score": 500
+                }
+            ],
+            "gamesPlayed": 0,
+            "settings": {},
+            "cheers": []
+        }
+    },
+    {
         "t": "view",
         "seq": 15,
         "view": {

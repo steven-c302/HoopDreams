@@ -247,3 +247,21 @@ export interface HotTypeTv {
   deltas: { id: string; name: string; base: number; unique: number; longest: number; total: number }[]
   drinks: { id: string; name: string; sips: number; text: string }[]
 }
+
+// ---- Song Drop (tv/engine/.../SongDropViews.kt) ---------------------------------------------
+
+export interface SongCard { title: string; artist: string; year: number; videoId: string }
+export interface SongDropTv {
+  t: 'songdrop'; phase: 'load' | 'stage' | 'reveal' | 'podium' | 'dead'
+  song: number; totalSongs: number; finalSong: boolean
+  /** Counts up for every clip the TV starts; echoed back in ready:, bad: and replay:. */
+  clipSeq: number
+  videoId: string; startSec: number
+  stage: number; stages: number; clipMs: number
+  answered: number; expected: number
+  solvers: { id: string; name: string; points?: number }[]
+  lockedOut: string[]
+  card?: SongCard
+  drinks: { id: string; name: string; sips: number; text: string }[]
+  gallery: SongCard[]
+}

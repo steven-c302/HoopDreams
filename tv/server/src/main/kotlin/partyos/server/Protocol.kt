@@ -115,4 +115,4 @@ data class TvSessionResponse(val hostToken: String, val room: String, val joinUr
 data class ErrorResponse(val error: String, val retryAfterSec: Int? = null)
 
 @Serializable
-data class GameListing(val id: String, val title: String, val tagline: String, val minPlayers: Int, val maxPlayers: Int)
+data class GameListing(val id: String, val title: String, val tagline: String, val minPlayers: Int, val maxPlayers: Int, val probe: String? = null)
