@@ -83,8 +83,10 @@ class DoodleSimulatedPartyTest {
         private suspend fun DefaultClientWebSocketSession.action(round: Int, payload: JsonObject) =
             send(Frame.Text(PartyJson.encodeToString(ClientMsg.serializer(), ClientMsg.Action("$name-${n++}", round, payload))))
 
+        /** Like the phone's DrawPad: a socket that drops can lose the batch, so a new one clears and sends it all again. */
         private suspend fun DefaultClientWebSocketSession.draw(round: Int) {
-            val ops = listOf(
+            val ops = listOfNotNull(
+                InkOp.Clear.takeIf { round in inked },
                 InkOp.Start(1, 0, 1, 100, 100, 50), InkOp.Pts(1, listOf(150, 140, 50, 200, 180, 50)), InkOp.End(1),
                 InkOp.Start(2, 1, 1, 300, 300, 50), InkOp.Pts(2, listOf(350, 340, 50)), InkOp.End(2),
                 InkOp.Start(3, 2, 2, 500, 200, 50), InkOp.Pts(3, listOf(520, 260, 50, 560, 300, 50)), InkOp.End(3),
@@ -99,6 +101,7 @@ class DoodleSimulatedPartyTest {
                 try {
                     http.webSocket("ws://127.0.0.1:${server.port}/ws?token=$token") {
                         var dropped = false
+                        val drawnHere = HashSet<Int>()
                         while (!stop && !dropped) {
                             val frame = withTimeoutOrNull(150) { incoming.receive() }
                             if (frame is Frame.Text) {
@@ -113,7 +116,7 @@ class DoodleSimulatedPartyTest {
                                 is Screen.ChoiceList -> if (s.kind == "pick" && s.selected == null) action(v.round, obj("kind" to "pick", "option" to s.options.random(rnd).id))
                                 is Screen.Draw -> {
                                     secret = s.word
-                                    if (v.round !in inked) draw(v.round)
+                                    if (drawnHere.add(v.round)) draw(v.round)
                                 }
                                 is Screen.Guess -> if (!s.solved && rnd.nextDouble() < 0.3) {
                                     val text = secret?.takeIf { rnd.nextDouble() < 0.5 } ?: "nope${rnd.nextInt(1000)}"
