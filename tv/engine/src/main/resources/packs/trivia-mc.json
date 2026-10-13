@@ -3546,5 +3546,665 @@
    "Acrophobia"
   ],
   "fact": "Fear of heights is acrophobia."
+ },
+ {
+  "id": "tmx001",
+  "category": "Sports",
+  "prompt": "Which NBA player has the most career points ever?",
+  "answer": "LeBron James",
+  "wrong": [
+   "Kareem Abdul-Jabbar",
+   "Michael Jordan",
+   "Kobe Bryant"
+  ],
+  "fact": "LeBron passed Kareem's 38,387 in February 2023."
+ },
+ {
+  "id": "tmx002",
+  "category": "Sports",
+  "prompt": "How many Super Bowls has Tom Brady won?",
+  "answer": "7",
+  "wrong": [
+   "5",
+   "6",
+   "8"
+  ],
+  "fact": "Six with the Patriots, one with the Buccaneers. More than any franchise."
+ },
+ {
+  "id": "tmx003",
+  "category": "Sports",
+  "prompt": "What's the only NFL team to finish a full season unbeaten, including the Super Bowl?",
+  "answer": "Miami Dolphins",
+  "wrong": [
+   "New England Patriots",
+   "Chicago Bears",
+   "Green Bay Packers"
+  ],
+  "fact": "The 1972 Dolphins went 17-0. Some of them still pop champagne every year."
+ },
+ {
+  "id": "tmx004",
+  "category": "Sports",
+  "prompt": "In golf, what's it called when you finish a hole two under par?",
+  "answer": "Eagle",
+  "wrong": [
+   "Birdie",
+   "Albatross",
+   "Condor"
+  ],
+  "fact": "Three under is an albatross. Four under is a condor, and it's barely happened."
+ },
+ {
+  "id": "tmx005",
+  "category": "Sports",
+  "prompt": "Which boxer said 'Float like a butterfly, sting like a bee'?",
+  "answer": "Muhammad Ali",
+  "wrong": [
+   "Mike Tyson",
+   "Joe Frazier",
+   "Sugar Ray Leonard"
+  ],
+  "fact": "The line actually came from his corner man, Drew Bundini Brown."
+ },
+ {
+  "id": "tmx006",
+  "category": "Sports",
+  "prompt": "Which NHL player is known as 'The Great One'?",
+  "answer": "Wayne Gretzky",
+  "wrong": [
+   "Mario Lemieux",
+   "Bobby Orr",
+   "Gordie Howe"
+  ],
+  "fact": "His number 99 is retired across the entire league."
+ },
+ {
+  "id": "tmx007",
+  "category": "Sports",
+  "prompt": "Michael Jordan famously took a break from the NBA to play which sport?",
+  "answer": "Baseball",
+  "wrong": [
+   "Golf",
+   "Football",
+   "Tennis"
+  ],
+  "fact": "He hit .202 for the Birmingham Barons in 1994."
+ },
+ {
+  "id": "tmx008",
+  "category": "Sports",
+  "prompt": "How high is an NBA rim off the floor, in feet?",
+  "answer": "10",
+  "wrong": [
+   "9",
+   "11",
+   "12"
+  ],
+  "fact": "James Naismith nailed peach baskets to a 10-foot balcony in 1891, and it stuck."
+ },
+ {
+  "id": "tmx009",
+  "category": "Sports",
+  "prompt": "Which team won the first-ever Super Bowl?",
+  "answer": "Green Bay Packers",
+  "wrong": [
+   "Kansas City Chiefs",
+   "Dallas Cowboys",
+   "Baltimore Colts"
+  ],
+  "fact": "They beat the Chiefs 35-10 in January 1967. Tickets were $12."
+ },
+ {
+  "id": "tmx010",
+  "category": "Sports",
+  "prompt": "Which golfer has won the most majors in men's golf?",
+  "answer": "Jack Nicklaus",
+  "wrong": [
+   "Tiger Woods",
+   "Arnold Palmer",
+   "Ben Hogan"
+  ],
+  "fact": "Nicklaus has 18. Tiger is stuck on 15."
+ },
+ {
+  "id": "tmx011",
+  "category": "Sports",
+  "prompt": "What's the only MLB team to come back from 0-3 down to win a playoff series?",
+  "answer": "Boston Red Sox",
+  "wrong": [
+   "New York Yankees",
+   "Chicago Cubs",
+   "St. Louis Cardinals"
+  ],
+  "fact": "They did it to the Yankees in 2004, then won the World Series."
+ },
+ {
+  "id": "tmx012",
+  "category": "Screen Time",
+  "prompt": "In Anchorman, what city does Ron Burgundy anchor the news in?",
+  "answer": "San Diego",
+  "wrong": [
+   "Los Angeles",
+   "Phoenix",
+   "Miami"
+  ],
+  "fact": "San Diego. Which, he'll remind you, is German for 'a whale's vagina.'"
+ },
+ {
+  "id": "tmx013",
+  "category": "Screen Time",
+  "prompt": "In Step Brothers, what's the name of Dale and Brennan's business?",
+  "answer": "Prestige Worldwide",
+  "wrong": [
+   "Boats N Hoes Inc.",
+   "Catalina Ventures",
+   "Dragon Enterprises"
+  ],
+  "fact": "'Boats N Hoes' was the music video. Prestige Worldwide was the empire."
+ },
+ {
+  "id": "tmx014",
+  "category": "Screen Time",
+  "prompt": "In Fight Club, what's the first rule of Fight Club?",
+  "answer": "You do not talk about it",
+  "wrong": [
+   "No shirts, no shoes",
+   "Only two guys to a fight",
+   "Fights go on as long as they have to"
+  ],
+  "fact": "The second rule is the same as the first."
+ },
+ {
+  "id": "tmx015",
+  "category": "Screen Time",
+  "prompt": "What's the name of the bar in Cheers?",
+  "answer": "Cheers",
+  "wrong": [
+   "Moe's",
+   "MacLaren's",
+   "Paddy's Pub"
+  ],
+  "fact": "It's literally just called Cheers. MacLaren's is How I Met Your Mother."
+ },
+ {
+  "id": "tmx016",
+  "category": "Screen Time",
+  "prompt": "In The Big Lebowski, what does The Dude drink?",
+  "answer": "White Russian",
+  "wrong": [
+   "Old Fashioned",
+   "Gin and Tonic",
+   "Martini"
+  ],
+  "fact": "He calls it a Caucasian."
+ },
+ {
+  "id": "tmx017",
+  "category": "Screen Time",
+  "prompt": "Which movie has the line 'I feel the need... the need for speed'?",
+  "answer": "Top Gun",
+  "wrong": [
+   "Days of Thunder",
+   "Fast and Furious",
+   "Speed"
+  ],
+  "fact": "Maverick and Goose say it together. Iconic, slightly unhinged."
+ },
+ {
+  "id": "tmx018",
+  "category": "Screen Time",
+  "prompt": "In Breaking Bad, what's Walter White's alias?",
+  "answer": "Heisenberg",
+  "wrong": [
+   "Gus",
+   "Saul",
+   "Mr. Pink"
+  ],
+  "fact": "Named after the physicist behind the uncertainty principle."
+ },
+ {
+  "id": "tmx019",
+  "category": "Screen Time",
+  "prompt": "In Wedding Crashers, what's Rule #76?",
+  "answer": "No excuses, play like a champion",
+  "wrong": [
+   "Never leave a wedding early",
+   "Always use a fake name",
+   "Don't fall in love"
+  ],
+  "fact": "Vince Vaughn's Jeremy says it with total conviction. It means nothing."
+ },
+ {
+  "id": "tmx020",
+  "category": "Screen Time",
+  "prompt": "What's Happy Gilmore's original sport?",
+  "answer": "Hockey",
+  "wrong": [
+   "Baseball",
+   "Football",
+   "Bowling"
+  ],
+  "fact": "His swing is basically a slapshot."
+ },
+ {
+  "id": "tmx021",
+  "category": "Screen Time",
+  "prompt": "In Superbad, what's the name on McLovin's fake ID?",
+  "answer": "McLovin",
+  "wrong": [
+   "McGuire",
+   "Muhammad",
+   "Fogell Jr."
+  ],
+  "fact": "One name. Hawaiian organ donor, age 25."
+ },
+ {
+  "id": "tmx022",
+  "category": "Screen Time",
+  "prompt": "In The Sopranos, what's the name of the strip club Tony runs out of?",
+  "answer": "Bada Bing!",
+  "wrong": [
+   "Satriale's",
+   "Vesuvio",
+   "The Pork Store"
+  ],
+  "fact": "The real club in New Jersey is called Satin Dolls."
+ },
+ {
+  "id": "tmx023",
+  "category": "Screen Time",
+  "prompt": "Which actor played the Joker in The Dark Knight?",
+  "answer": "Heath Ledger",
+  "wrong": [
+   "Joaquin Phoenix",
+   "Jared Leto",
+   "Jack Nicholson"
+  ],
+  "fact": "He won an Oscar for it after he died."
+ },
+ {
+  "id": "tmx024",
+  "category": "Screen Time",
+  "prompt": "In Gladiator, Maximus was a general for which Roman emperor?",
+  "answer": "Marcus Aurelius",
+  "wrong": [
+   "Commodus",
+   "Julius Caesar",
+   "Nero"
+  ],
+  "fact": "Commodus is his son, the one Maximus wants dead."
+ },
+ {
+  "id": "tmx025",
+  "category": "Screen Time",
+  "prompt": "Which movie made 'Are you not entertained?!' a meme?",
+  "answer": "Gladiator",
+  "wrong": [
+   "300",
+   "Troy",
+   "Braveheart"
+  ],
+  "fact": "Russell Crowe yelled it after one fight. The internet hasn't stopped."
+ },
+ {
+  "id": "tmx026",
+  "category": "Screen Time",
+  "prompt": "In Talladega Nights, what's Ricky Bobby's catchphrase?",
+  "answer": "If you ain't first, you're last",
+  "wrong": [
+   "Shake and bake",
+   "Go fast or go home",
+   "I wanna go fast"
+  ],
+  "fact": "'Shake and bake' is the team move. Different thing."
+ },
+ {
+  "id": "tmx027",
+  "category": "Screen Time",
+  "prompt": "Which movie has the line 'Say hello to my little friend!'?",
+  "answer": "Scarface",
+  "wrong": [
+   "The Godfather",
+   "Goodfellas",
+   "Casino"
+  ],
+  "fact": "Al Pacino, with a grenade launcher."
+ },
+ {
+  "id": "tmx028",
+  "category": "Music",
+  "prompt": "Who sang 'Friends in Low Places'?",
+  "answer": "Garth Brooks",
+  "wrong": [
+   "George Strait",
+   "Alan Jackson",
+   "Kenny Chesney"
+  ],
+  "fact": "Released in 1990. Still destroys any bar at midnight."
+ },
+ {
+  "id": "tmx029",
+  "category": "Music",
+  "prompt": "Which artist released 'Sweet Caroline'?",
+  "answer": "Neil Diamond",
+  "wrong": [
+   "Billy Joel",
+   "Elton John",
+   "Bruce Springsteen"
+  ],
+  "fact": "Fenway has played it every 8th inning since the late '90s."
+ },
+ {
+  "id": "tmx030",
+  "category": "Music",
+  "prompt": "Which group sang 'Don't Stop Believin''?",
+  "answer": "Journey",
+  "wrong": [
+   "Boston",
+   "Foreigner",
+   "REO Speedwagon"
+  ],
+  "fact": "Released in 1981. Later the most-downloaded 20th-century song on iTunes."
+ },
+ {
+  "id": "tmx031",
+  "category": "Music",
+  "prompt": "Which rapper's album is 'The College Dropout'?",
+  "answer": "Kanye West",
+  "wrong": [
+   "Lupe Fiasco",
+   "J. Cole",
+   "Drake"
+  ],
+  "fact": "Released in 2004, recorded partly with his jaw wired shut after a car crash."
+ },
+ {
+  "id": "tmx032",
+  "category": "Music",
+  "prompt": "Whose song is 'Wagon Wheel', the bar singalong?",
+  "answer": "Darius Rucker",
+  "wrong": [
+   "Zac Brown Band",
+   "Luke Bryan",
+   "Florida Georgia Line"
+  ],
+  "fact": "Old Crow Medicine Show did it first. Bob Dylan wrote the chorus."
+ },
+ {
+  "id": "tmx033",
+  "category": "Music",
+  "prompt": "Which band's frontman is Anthony Kiedis?",
+  "answer": "Red Hot Chili Peppers",
+  "wrong": [
+   "Pearl Jam",
+   "Foo Fighters",
+   "Incubus"
+  ],
+  "fact": "Flea's been on bass since 1983."
+ },
+ {
+  "id": "tmx034",
+  "category": "Food & Drink",
+  "prompt": "Which country does Guinness come from?",
+  "answer": "Ireland",
+  "wrong": [
+   "Scotland",
+   "England",
+   "Wales"
+  ],
+  "fact": "Arthur Guinness signed a 9,000-year lease on the brewery in 1759."
+ },
+ {
+  "id": "tmx035",
+  "category": "Food & Drink",
+  "prompt": "What's the most-sold beer brand in the world?",
+  "answer": "Snow",
+  "wrong": [
+   "Bud Light",
+   "Corona",
+   "Heineken"
+  ],
+  "fact": "Snow is Chinese and barely sold anywhere else."
+ },
+ {
+  "id": "tmx036",
+  "category": "Food & Drink",
+  "prompt": "Which state invented the Buffalo wing?",
+  "answer": "New York",
+  "wrong": [
+   "Ohio",
+   "Pennsylvania",
+   "Illinois"
+  ],
+  "fact": "Anchor Bar, Buffalo, 1964."
+ },
+ {
+  "id": "tmx037",
+  "category": "Food & Drink",
+  "prompt": "Bourbon has to be made in what country?",
+  "answer": "The United States",
+  "wrong": [
+   "Kentucky only",
+   "Scotland",
+   "Ireland"
+  ],
+  "fact": "It doesn't have to be from Kentucky, though about 95% of it is."
+ },
+ {
+  "id": "tmx038",
+  "category": "Food & Drink",
+  "prompt": "Which fast-food chain sells the Baconator?",
+  "answer": "Wendy's",
+  "wrong": [
+   "Burger King",
+   "Hardee's",
+   "Five Guys"
+  ],
+  "fact": "Six strips of bacon on two patties."
+ },
+ {
+  "id": "tmx039",
+  "category": "History",
+  "prompt": "Who was the first person to walk on the moon?",
+  "answer": "Neil Armstrong",
+  "wrong": [
+   "Buzz Aldrin",
+   "Yuri Gagarin",
+   "John Glenn"
+  ],
+  "fact": "Buzz Aldrin was second, about 19 minutes later."
+ },
+ {
+  "id": "tmx040",
+  "category": "History",
+  "prompt": "Which US president is on the $100 bill?",
+  "answer": "Benjamin Franklin",
+  "wrong": [
+   "George Washington",
+   "Abraham Lincoln",
+   "Alexander Hamilton"
+  ],
+  "fact": "Trick question: Franklin was never president."
+ },
+ {
+  "id": "tmx041",
+  "category": "History",
+  "prompt": "Which ship carried the Pilgrims to America in 1620?",
+  "answer": "The Mayflower",
+  "wrong": [
+   "The Santa Maria",
+   "The Endeavour",
+   "The Bounty"
+  ],
+  "fact": "102 passengers, 66 days at sea."
+ },
+ {
+  "id": "tmx042",
+  "category": "History",
+  "prompt": "What were the Wright brothers' first names?",
+  "answer": "Orville and Wilbur",
+  "wrong": [
+   "Orson and William",
+   "Oliver and Walter",
+   "Otto and Wesley"
+  ],
+  "fact": "Orville flew first, 12 seconds, in 1903."
+ },
+ {
+  "id": "tmx046",
+  "category": "Geography",
+  "prompt": "Which US state has the most people?",
+  "answer": "California",
+  "wrong": [
+   "Texas",
+   "Florida",
+   "New York"
+  ],
+  "fact": "About 39 million, roughly 1 in 9 Americans."
+ },
+ {
+  "id": "tmx047",
+  "category": "Geography",
+  "prompt": "Las Vegas is in which US state?",
+  "answer": "Nevada",
+  "wrong": [
+   "Arizona",
+   "Utah",
+   "California"
+  ],
+  "fact": "The Strip is technically not in Las Vegas. It's in Paradise, Nevada."
+ },
+ {
+  "id": "tmx048",
+  "category": "Brands",
+  "prompt": "What's the name of the Monopoly man?",
+  "answer": "Rich Uncle Pennybags",
+  "wrong": [
+   "Mr. Moneybags",
+   "Sir Monopoly",
+   "Uncle Sam"
+  ],
+  "fact": "He's been officially called Mr. Monopoly since 1999. No monocle, ever."
+ },
+ {
+  "id": "tmx049",
+  "category": "Brands",
+  "prompt": "Which company's logo is a swoosh?",
+  "answer": "Nike",
+  "wrong": [
+   "Adidas",
+   "Puma",
+   "Under Armour"
+  ],
+  "fact": "A student designed it in 1971 for $35."
+ },
+ {
+  "id": "tmx050",
+  "category": "Tech",
+  "prompt": "What does 'GTA' stand for in the game series?",
+  "answer": "Grand Theft Auto",
+  "wrong": [
+   "Great Theft Action",
+   "Grand Total Assault",
+   "Gun Truck Assault"
+  ],
+  "fact": "GTA V has made more money than any movie ever."
+ },
+ {
+  "id": "tmx051",
+  "category": "Tech",
+  "prompt": "Which of these consoles sold the most units?",
+  "answer": "PlayStation 2",
+  "wrong": [
+   "Nintendo DS",
+   "Game Boy",
+   "Xbox 360"
+  ],
+  "fact": "About 160 million. The DS is close behind at 154 million."
+ },
+ {
+  "id": "tmx052",
+  "category": "Sports",
+  "prompt": "Who holds MLB's career home run record?",
+  "answer": "Barry Bonds",
+  "wrong": [
+   "Hank Aaron",
+   "Babe Ruth",
+   "Albert Pujols"
+  ],
+  "fact": "762. Aaron's 755 stood for 33 years before that."
+ },
+ {
+  "id": "tmx053",
+  "category": "Sports",
+  "prompt": "Which UFC fighter is nicknamed 'The Notorious'?",
+  "answer": "Conor McGregor",
+  "wrong": [
+   "Nate Diaz",
+   "Jon Jones",
+   "Khabib Nurmagomedov"
+  ],
+  "fact": "First UFC fighter to hold two belts at the same time."
+ },
+ {
+  "id": "tmx054",
+  "category": "Screen Time",
+  "prompt": "'Leave the gun. Take the...' what?",
+  "answer": "Cannoli",
+  "wrong": [
+   "Money",
+   "Car",
+   "Kid"
+  ],
+  "fact": "From The Godfather. The cannoli line was improvised."
+ },
+ {
+  "id": "tmx055",
+  "category": "Screen Time",
+  "prompt": "In Office Space, what does Milton want back?",
+  "answer": "His red stapler",
+  "wrong": [
+   "His desk",
+   "His paycheck",
+   "His radio"
+  ],
+  "fact": "Swingline didn't make a red one until fans demanded it after the movie."
+ },
+ {
+  "id": "tmx056",
+  "category": "Screen Time",
+  "prompt": "Which movie gave us 'Yippee-ki-yay'?",
+  "answer": "Die Hard",
+  "wrong": [
+   "Lethal Weapon",
+   "Predator",
+   "Speed"
+  ],
+  "fact": "Is Die Hard a Christmas movie? Bruce Willis says no."
+ },
+ {
+  "id": "tmx057",
+  "category": "Music",
+  "prompt": "Who sang 'Livin' on a Prayer'?",
+  "answer": "Bon Jovi",
+  "wrong": [
+   "Def Leppard",
+   "Poison",
+   "Journey"
+  ],
+  "fact": "Tommy and Gina. Jon Bon Jovi almost left it off the album."
+ },
+ {
+  "id": "tmx059",
+  "category": "Food & Drink",
+  "prompt": "Which whiskey has 'Old No. 7' on its black label?",
+  "answer": "Jack Daniel's",
+  "wrong": [
+   "Jim Beam",
+   "Maker's Mark",
+   "Wild Turkey"
+  ],
+  "fact": "It's made in Lynchburg, Tennessee, a dry county."
  }
 ]

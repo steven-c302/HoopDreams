@@ -482,5 +482,85 @@
   "answer": 4132,
   "unit": "miles",
   "fact": "About 6,650 km, ending in the Mediterranean."
+ },
+ {
+  "id": "tbx001",
+  "category": "Sports",
+  "prompt": "How many points did Wilt Chamberlain score in his famous single NBA game?",
+  "answer": 100,
+  "unit": "points",
+  "fact": "Nobody else has scored more than 81. That's Kobe."
+ },
+ {
+  "id": "tbx002",
+  "category": "Sports",
+  "prompt": "How long is a marathon, in miles?",
+  "answer": 26.2,
+  "unit": "miles",
+  "fact": "The extra 0.2 was so the 1908 race could finish in front of the royal box."
+ },
+ {
+  "id": "tbx003",
+  "category": "Sports",
+  "prompt": "How many dimples are on a standard golf ball, roughly?",
+  "answer": 336,
+  "unit": "dimples",
+  "fact": "Most balls have between 300 and 500. 336 is the classic count."
+ },
+ {
+  "id": "tbx004",
+  "category": "Sports",
+  "prompt": "In what year did Michael Jordan hit 'The Shot' over Bryon Russell to win his sixth title?",
+  "answer": 1998,
+  "fact": "Last shot of his last game with the Bulls. Mostly.",
+  "year": true
+ },
+ {
+  "id": "tbx005",
+  "category": "Sports",
+  "prompt": "How much does a regulation NFL football weigh, in ounces?",
+  "answer": 14,
+  "unit": "oz",
+  "fact": "Between 14 and 15 ounces, inflated to 12.5 to 13.5 psi. Ask Tom Brady."
+ },
+ {
+  "id": "tbx006",
+  "category": "Food & Drink",
+  "prompt": "How many calories are in a Big Mac?",
+  "answer": 590,
+  "unit": "calories",
+  "fact": "Bun, two patties, sauce, lettuce, cheese, pickles, onions. It adds up."
+ },
+ {
+  "id": "tbx007",
+  "category": "Screen Time",
+  "prompt": "In what year did the first Rocky movie come out?",
+  "answer": 1976,
+  "fact": "It beat Taxi Driver for Best Picture.",
+  "year": true
+ },
+ {
+  "id": "tbx008",
+  "category": "Music",
+  "prompt": "How many Grammys had Beyoncé won by 2025?",
+  "answer": 35,
+  "unit": "Grammys",
+  "fact": "More than anyone in history."
+ },
+ {
+  "id": "tbx009",
+  "category": "World",
+  "prompt": "How many people live on Earth, in billions?",
+  "answer": 8.2,
+  "unit": "billion",
+  "fact": "We crossed 8 billion in November 2022."
+ },
+ {
+  "id": "tbx010",
+  "category": "Body",
+  "prompt": "How many times does the average heart beat in a day, in thousands?",
+  "answer": 100,
+  "unit": "thousand",
+  "fact": "About 100,000 beats a day. 2.5 billion in a lifetime."
  }
 ]
